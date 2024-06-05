@@ -1,0 +1,84 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    
+    <changeSet author="bilelbanelhaq (generated)" id="1752141564027-7">
+        <createTable tableName="configuration">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="configurationPK"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="updated_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="bilelbanelhaq (generated)" id="1755594196294-1">
+        <addColumn tableName="configuration">
+            <column name="key" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="bilelbanelhaq (generated)" id="1755594196294-2">
+        <addColumn tableName="configuration">
+            <column name="scope" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet author="bilelbanelhaq (generated)" id="1755594196294-3">
+        <addUniqueConstraint columnNames="key" constraintName="UC_CONFIGURATIONKEY_COL" tableName="configuration"/>
+    </changeSet>
+    
+    <changeSet author="bilelbanelhaq (generated)" id="1755594196294-4">
+        <dropColumn columnName="name" tableName="configuration"/>
+    </changeSet>
+
+    <changeSet author="bilelbanelhaq (generated)" id="1756214488270-1">
+        <createTable tableName="configuration_translation">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="configuration_translationPK"/>
+            </column>
+            <column name="configuration_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="language" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet author="bilelbanelhaq" id="configuration-unique-scope-key">
+        <dropNotNullConstraint tableName="configuration" columnName="value" columnDataType="varchar(255)"/>
+        <dropUniqueConstraint tableName="configuration" constraintName="uc_configurationkey_col"/>
+        <addUniqueConstraint tableName="configuration" columnNames="scope, key"
+                             constraintName="uk_configuration_scope_key"/>
+    </changeSet>
+    
+    <changeSet author="bilelbanelhaq (generated)" id="1756214488270-3">
+        <addForeignKeyConstraint baseColumnNames="configuration_id" baseTableName="configuration_translation"
+                                 constraintName="FKja7incx071g1a7fdm2dxwkfrq" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="configuration" validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>

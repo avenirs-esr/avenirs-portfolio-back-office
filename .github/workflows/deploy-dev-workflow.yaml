@@ -1,0 +1,9 @@
+name: Deploy on dev server
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  call-main-ci:
+    uses: avenirs-esr/avenirs-workflows/.github/workflows/deploy-workflow.yaml@main
+    secrets: inherit
