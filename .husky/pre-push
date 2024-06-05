@@ -1,0 +1,38 @@
+echo "🔍 Checking commit messages..."
+
+# Get the range of commits being pushed
+remote="$1"
+url="$2"
+
+# Read from stdin to get the push information
+while read local_ref local_sha remote_ref remote_sha
+do
+    if [ "$local_sha" = "0000000000000000000000000000000000000000" ]
+    then
+        # Handle delete
+        :
+    else
+        if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]
+        then
+            # New branch, examine all commits
+            range="$local_sha"
+        else
+            # Update to existing branch, examine new commits
+            range="$remote_sha..$local_sha"
+        fi
+
+        # Check each commit message in the range
+        for commit in $(git rev-list "$range")
+        do
+            echo "Checking commit: $(git log --oneline -1 $commit)"
+            if ! git log --format=%B -n 1 $commit | npx commitlint
+            then
+                echo "❌ Commit message validation failed!"
+                echo "Please fix your commit messages before pushing."
+                exit 1
+            fi
+        done
+    fi
+done
+
+echo "✅ All commit messages are valid!"

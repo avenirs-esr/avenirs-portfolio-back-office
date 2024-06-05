@@ -1,0 +1,30 @@
+{
+  "name": "avenirs-portfolio-back-office",
+  "version": "1.0.0",
+  "description": "Avenirs portfolio back-office module",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 0",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/avenirs-esr/avenirs-portfolio-back-office.git"
+  },
+  "keywords": [
+    "Avenirs-ESR",
+    "Portfolio",
+    "Back-Office"
+  ],
+  "author": "A. Deman",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/avenirs-esr/avenirs-portfolio-back-office/issues"
+  },
+  "homepage": "https://github.com/avenirs-esr/avenirs-portfolio-back-office#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "husky": "^9.0.11"
+  }
+}
