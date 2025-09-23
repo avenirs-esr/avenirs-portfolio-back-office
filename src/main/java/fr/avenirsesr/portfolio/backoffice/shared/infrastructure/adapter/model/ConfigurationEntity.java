@@ -2,7 +2,6 @@ package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.model;
 
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfiguration;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
-import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.model.ConfigurationTranslationEntity;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
 import jakarta.persistence.*;
 import java.util.HashSet;
