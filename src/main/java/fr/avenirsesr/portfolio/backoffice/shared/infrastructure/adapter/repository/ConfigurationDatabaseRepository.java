@@ -5,7 +5,6 @@ import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScop
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.mapper.ConfigurationMapper;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.model.ConfigurationEntity;
-import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.repository.ConfigurationJpaRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.specification.ConfigurationSpecification;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import java.util.List;

@@ -1,6 +1,5 @@
 package fr.avenirsesr.portfolio.backoffice.additionalskill.application.dto;
 
-import fr.avenirsesr.portfolio.backoffice.additionalskill.application.dto.AdditionalSkillLevelDTO;
 import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.model.AdditionalSkillConfiguration;
 import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.model.AdditionalSkillLevel;
 import io.swagger.v3.oas.annotations.media.Schema;
