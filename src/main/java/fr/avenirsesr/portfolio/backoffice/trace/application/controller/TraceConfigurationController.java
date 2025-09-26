@@ -1,8 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.trace.application.controller;
 
 import fr.avenirsesr.portfolio.backoffice.trace.application.dto.TraceConfigurationDTO;
-import fr.avenirsesr.portfolio.backoffice.trace.domain.model.TraceConfiguration;
 import fr.avenirsesr.portfolio.backoffice.trace.domain.port.input.TraceConfigurationService;
+import fr.avenirsesr.portfolio.common.configuration.domain.model.TraceConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

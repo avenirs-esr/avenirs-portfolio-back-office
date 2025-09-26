@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.trace.infrastructure.seeder;
 
-import fr.avenirsesr.portfolio.backoffice.trace.domain.model.TraceConfiguration;
 import fr.avenirsesr.portfolio.backoffice.trace.domain.port.input.TraceConfigurationService;
+import fr.avenirsesr.portfolio.common.configuration.domain.model.TraceConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

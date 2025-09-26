@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.additionalskill.domain.model;
 
-import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfiguration;
+import fr.avenirsesr.portfolio.common.configuration.domain.model.EConfiguration;
 
 public enum EAdditionalSkillConfiguration implements EConfiguration {
   LEVEL_BEGINNER_LABEL,

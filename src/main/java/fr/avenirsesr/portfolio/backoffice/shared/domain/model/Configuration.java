@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.shared.domain.model;
 
+import fr.avenirsesr.portfolio.common.configuration.domain.model.EConfiguration;
 import fr.avenirsesr.portfolio.common.data.domain.model.AvenirsBaseModel;
 import java.time.Instant;
 import java.util.UUID;

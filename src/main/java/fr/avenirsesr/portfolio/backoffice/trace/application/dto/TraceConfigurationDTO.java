@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.trace.application.dto;
 
-import fr.avenirsesr.portfolio.backoffice.trace.domain.model.TraceConfiguration;
+import fr.avenirsesr.portfolio.common.configuration.domain.model.TraceConfiguration;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(

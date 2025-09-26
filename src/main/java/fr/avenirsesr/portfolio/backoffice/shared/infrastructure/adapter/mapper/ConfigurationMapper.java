@@ -3,8 +3,8 @@ package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.mapper;
 import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.model.EAdditionalSkillConfiguration;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.model.ConfigurationEntity;
-import fr.avenirsesr.portfolio.backoffice.trace.domain.model.ETraceConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteContentConfiguration;
+import fr.avenirsesr.portfolio.common.configuration.domain.model.ETraceConfiguration;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
 import fr.avenirsesr.portfolio.common.language.infrastructure.adapter.utils.TranslationUtil;
 
