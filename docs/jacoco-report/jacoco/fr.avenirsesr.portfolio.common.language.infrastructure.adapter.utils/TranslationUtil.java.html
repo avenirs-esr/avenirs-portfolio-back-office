@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TranslationUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.language.infrastructure.adapter.utils</a> &gt; <span class="el_source">TranslationUtil.java</span></div><h1>TranslationUtil.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.language.infrastructure.adapter.utils;
+
+import fr.avenirsesr.portfolio.common.error.domain.exception.LanguageException;
+import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import fr.avenirsesr.portfolio.common.language.infrastructure.adapter.model.TranslationEntity;
+import fr.avenirsesr.portfolio.common.web.infrastructure.context.RequestContext;
+import fr.avenirsesr.portfolio.common.web.infrastructure.context.RequestData;
+import java.util.Optional;
+import java.util.Set;
+
+public interface TranslationUtil {
+
+  static &lt;T extends TranslationEntity&gt; T getTranslation(Set&lt;T&gt; translations) {
+    var preferredLanguage =
+<span class="nc" id="L15">        Optional.ofNullable(RequestContext.get())</span>
+<span class="nc" id="L16">            .map(RequestData::preferredLanguage)</span>
+<span class="nc" id="L17">            .orElse(ELanguage.FALLBACK);</span>
+
+<span class="nc" id="L19">    return getTranslation(translations, preferredLanguage);</span>
+  }
+
+  static &lt;T extends TranslationEntity&gt; T getTranslation(
+      Set&lt;T&gt; translations, ELanguage selectedLanguage) {
+<span class="nc" id="L24">    return translations.stream()</span>
+<span class="nc" id="L25">        .filter(t -&gt; t.getLanguage().equals(selectedLanguage))</span>
+<span class="nc" id="L26">        .findFirst()</span>
+<span class="nc" id="L27">        .orElseThrow(</span>
+            () -&gt;
+<span class="nc" id="L29">                new LanguageException(</span>
+<span class="nc" id="L30">                    String.format(&quot;Fallback language [%s] not setup&quot;, ELanguage.FALLBACK)));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdditionalSkillConfigController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.additionalskill.application.controller</a> &gt; <span class="el_source">AdditionalSkillConfigController.java</span></div><h1>AdditionalSkillConfigController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.additionalskill.application.controller;
+
+import fr.avenirsesr.portfolio.backoffice.additionalskill.application.dto.AdditionalSkillConfigurationDTO;
+import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.model.AdditionalSkillConfiguration;
+import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.port.input.AdditionalSkillConfigurationService;
+import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+<span class="nc" id="L15">@Slf4j</span>
+@AllArgsConstructor
+@RestController
+@RequestMapping(&quot;back-office/config/additional-skills&quot;)
+public class AdditionalSkillConfigController {
+  private final AdditionalSkillConfigurationService service;
+
+  @GetMapping(path = &quot;setup&quot;)
+  public ResponseEntity&lt;Map&lt;ELanguage, AdditionalSkillConfigurationDTO&gt;&gt;
+      getAdditionalSkillConfigWithAllTranslations() {
+<span class="nc" id="L25">    log.debug(&quot;Received request to get additional-skills config for setup&quot;);</span>
+
+<span class="nc" id="L27">    Map&lt;ELanguage, AdditionalSkillConfiguration&gt; config =</span>
+<span class="nc" id="L28">        service.getConfigurationWithAllTranslations();</span>
+
+<span class="nc" id="L30">    return ResponseEntity.ok(</span>
+<span class="nc" id="L31">        config.entrySet().stream()</span>
+<span class="nc" id="L32">            .collect(</span>
+<span class="nc" id="L33">                Collectors.toMap(</span>
+                    Map.Entry::getKey,
+<span class="nc" id="L35">                    entry -&gt; AdditionalSkillConfigurationDTO.fromModel(entry.getValue()))));</span>
+  }
+
+  @PostMapping(path = &quot;setup&quot;)
+  public ResponseEntity&lt;Void&gt; postAdditionalSkillConfig(
+      @RequestBody Map&lt;ELanguage, AdditionalSkillConfigurationDTO&gt; configurations) {
+<span class="nc" id="L41">    log.debug(&quot;Received request to post additional-skills config : {}&quot;, configurations);</span>
+
+<span class="nc" id="L43">    service.postConfiguration(</span>
+<span class="nc" id="L44">        configurations.entrySet().stream()</span>
+<span class="nc" id="L45">            .collect(</span>
+<span class="nc" id="L46">                Collectors.toMap(</span>
+                    Map.Entry::getKey,
+<span class="nc" id="L48">                    entry -&gt; AdditionalSkillConfigurationDTO.toModel(entry.getValue()))));</span>
+
+<span class="nc" id="L50">    return ResponseEntity.status(HttpStatus.ACCEPTED).build();</span>
+  }
+
+  @GetMapping()
+  public ResponseEntity&lt;AdditionalSkillConfigurationDTO&gt; getAdditionalSkillConfig() {
+<span class="nc" id="L55">    log.debug(&quot;Received request to get additional-skills config&quot;);</span>
+
+<span class="nc" id="L57">    AdditionalSkillConfiguration config = service.getConfiguration();</span>
+
+<span class="nc" id="L59">    return ResponseEntity.ok(AdditionalSkillConfigurationDTO.fromModel(config));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebsiteContentConfigurationServiceConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.service</a> &gt; <span class="el_source">WebsiteContentConfigurationServiceConfig.java</span></div><h1>WebsiteContentConfigurationServiceConfig.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.service;
+
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.ConfigurationTranslationService;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.service.WebsiteContentConfigurationServiceImpl;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class WebsiteContentConfigurationServiceConfig {
+  private final ConfigurationRepository configurationRepository;
+  private final ConfigurationTranslationService configurationTranslationService;
+
+  public WebsiteContentConfigurationServiceConfig(
+      ConfigurationRepository configurationRepository,
+<span class="nc" id="L17">      ConfigurationTranslationService configurationTranslationService) {</span>
+<span class="nc" id="L18">    this.configurationRepository = configurationRepository;</span>
+<span class="nc" id="L19">    this.configurationTranslationService = configurationTranslationService;</span>
+<span class="nc" id="L20">  }</span>
+
+  @Bean
+  public WebsiteContentConfigurationService websiteContentConfigurationService() {
+<span class="nc" id="L24">    return new WebsiteContentConfigurationServiceImpl(</span>
+        configurationRepository, configurationTranslationService);
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

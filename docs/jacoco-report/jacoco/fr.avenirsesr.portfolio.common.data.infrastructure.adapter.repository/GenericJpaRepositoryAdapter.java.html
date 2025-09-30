@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericJpaRepositoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository</a> &gt; <span class="el_source">GenericJpaRepositoryAdapter.java</span></div><h1>GenericJpaRepositoryAdapter.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository;
+
+import fr.avenirsesr.portfolio.common.data.domain.model.AvenirsBaseModel;
+import fr.avenirsesr.portfolio.common.data.domain.port.output.repository.GenericRepositoryPort;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Function;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public abstract class GenericJpaRepositoryAdapter&lt;
+        D extends AvenirsBaseModel, E extends AvenirsBaseEntity&gt;
+    implements GenericRepositoryPort&lt;D&gt; {
+  protected final JpaRepository&lt;E, UUID&gt; jpaRepository;
+  protected final JpaSpecificationExecutor&lt;E&gt; jpaSpecificationExecutor;
+  private final Function&lt;D, E&gt; fromDomain;
+  private final Function&lt;E, D&gt; toDomain;
+
+  protected GenericJpaRepositoryAdapter(
+      JpaRepository&lt;E, UUID&gt; jpaRepository,
+      JpaSpecificationExecutor&lt;E&gt; jpaSpecificationExecutor,
+      Function&lt;D, E&gt; fromDomain,
+<span class="nc" id="L25">      Function&lt;E, D&gt; toDomain) {</span>
+<span class="nc" id="L26">    this.jpaRepository = jpaRepository;</span>
+<span class="nc" id="L27">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
+<span class="nc" id="L28">    this.fromDomain = fromDomain;</span>
+<span class="nc" id="L29">    this.toDomain = toDomain;</span>
+<span class="nc" id="L30">  }</span>
+
+  @Override
+  public D save(D domain) {
+<span class="nc" id="L34">    return toDomain.apply(jpaRepository.save(fromDomain.apply(domain)));</span>
+  }
+
+  @Override
+  public List&lt;D&gt; saveAll(List&lt;D&gt; domains) {
+<span class="nc" id="L39">    return jpaRepository.saveAll(domains.stream().map(fromDomain).toList()).stream()</span>
+<span class="nc" id="L40">        .map(toDomain)</span>
+<span class="nc" id="L41">        .toList();</span>
+  }
+
+  public void saveAllEntities(List&lt;E&gt; entities) {
+<span class="nc bnc" id="L45" title="All 4 branches missed.">    if (entities != null &amp;&amp; !entities.isEmpty()) {</span>
+<span class="nc" id="L46">      jpaRepository.saveAll(entities);</span>
+    }
+<span class="nc" id="L48">  }</span>
+
+  @Override
+  public Optional&lt;D&gt; findById(UUID id) {
+<span class="nc" id="L52">    E entity = jpaRepository.findById(id).orElse(null);</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">    return entity == null ? Optional.empty() : Optional.of(toDomain.apply(entity));</span>
+  }
+
+  @Override
+  public void flush() {
+<span class="nc" id="L58">    jpaRepository.flush();</span>
+<span class="nc" id="L59">  }</span>
+
+  @Override
+  public void removeFromDatabase(D domain) {
+<span class="nc" id="L63">    jpaRepository.delete(fromDomain.apply(domain));</span>
+<span class="nc" id="L64">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

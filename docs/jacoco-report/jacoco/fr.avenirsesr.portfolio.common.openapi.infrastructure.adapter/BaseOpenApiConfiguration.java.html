@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseOpenApiConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter</a> &gt; <span class="el_source">BaseOpenApiConfiguration.java</span></div><h1>BaseOpenApiConfiguration.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter;
+
+import io.swagger.v3.oas.models.OpenAPI;
+
+<span class="nc" id="L5">public class BaseOpenApiConfiguration {</span>
+
+  public void baseCustomization(OpenAPI openApi) {
+
+<span class="nc" id="L9">    openApi</span>
+<span class="nc" id="L10">        .getComponents()</span>
+<span class="nc" id="L11">        .addSchemas(&quot;EErrorCode&quot;, BaseSwaggerSchema.errorCodeSchema)</span>
+<span class="nc" id="L12">        .addSchemas(&quot;ELanguage&quot;, BaseSwaggerSchema.languageSchema)</span>
+<span class="nc" id="L13">        .addSchemas(&quot;ESortField&quot;, BaseSwaggerSchema.sortFieldSchema)</span>
+<span class="nc" id="L14">        .addSchemas(&quot;ESortOrder&quot;, BaseSwaggerSchema.sortOrderSchema)</span>
+<span class="nc" id="L15">        .addSchemas(&quot;EDurationUnit&quot;, BaseSwaggerSchema.durationUnitSchema);</span>
+<span class="nc" id="L16">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

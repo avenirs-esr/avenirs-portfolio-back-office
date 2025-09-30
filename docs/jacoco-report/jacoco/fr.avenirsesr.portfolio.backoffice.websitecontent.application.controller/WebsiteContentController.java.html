@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebsiteContentController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller</a> &gt; <span class="el_source">WebsiteContentController.java</span></div><h1>WebsiteContentController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller;
+
+import fr.avenirsesr.portfolio.backoffice.websitecontent.application.dto.BuildLifeProjectConfigDTO;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.BuildLifeProjectConfiguration;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
+import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import java.security.Principal;
+import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+<span class="nc" id="L16">@Slf4j</span>
+@AllArgsConstructor
+@RestController
+@RequestMapping(&quot;back-office/config/website-content&quot;)
+public class WebsiteContentController {
+  private final WebsiteContentConfigurationService service;
+
+  @PostMapping(path = &quot;/setup/build-life-project&quot;)
+  public ResponseEntity&lt;Void&gt; postBuildLifeProjectConfig(
+      @RequestBody Map&lt;ELanguage, BuildLifeProjectConfigDTO&gt; configurations) {
+<span class="nc" id="L26">    log.debug(&quot;Received request to post build life project config : {}&quot;, configurations);</span>
+
+<span class="nc" id="L28">    service.postLifeProjectConfiguration(</span>
+<span class="nc" id="L29">        configurations.entrySet().stream()</span>
+<span class="nc" id="L30">            .collect(</span>
+<span class="nc" id="L31">                Collectors.toMap(</span>
+                    Map.Entry::getKey,
+<span class="nc" id="L33">                    entry -&gt; new BuildLifeProjectConfiguration(entry.getValue().html()))));</span>
+
+<span class="nc" id="L35">    return ResponseEntity.status(HttpStatus.ACCEPTED).build();</span>
+  }
+
+  @GetMapping(path = &quot;/setup/build-life-project&quot;)
+  public ResponseEntity&lt;Map&lt;ELanguage, BuildLifeProjectConfigDTO&gt;&gt;
+      getBuildLifeProjectConfigWithAllTranslations() {
+<span class="nc" id="L41">    log.debug(&quot;Received request to get build life project config&quot;);</span>
+
+<span class="nc" id="L43">    Map&lt;ELanguage, BuildLifeProjectConfiguration&gt; config =</span>
+<span class="nc" id="L44">        service.getLifeProjectConfigurationWithAllTranslations();</span>
+
+<span class="nc" id="L46">    return ResponseEntity.ok(</span>
+<span class="nc" id="L47">        config.entrySet().stream()</span>
+<span class="nc" id="L48">            .collect(</span>
+<span class="nc" id="L49">                Collectors.toMap(</span>
+                    Map.Entry::getKey,
+<span class="nc" id="L51">                    entry -&gt; new BuildLifeProjectConfigDTO(entry.getValue().html()))));</span>
+  }
+
+  @GetMapping(path = &quot;/build-life-project&quot;)
+  public ResponseEntity&lt;BuildLifeProjectConfigDTO&gt; getBuildLifeProjectConfig(Principal principal) {
+<span class="nc" id="L56">    log.debug(&quot;Received request from {} to get build life project config&quot;, principal.getName());</span>
+
+<span class="nc" id="L58">    BuildLifeProjectConfiguration config = service.getLifeProjectConfiguration();</span>
+
+<span class="nc" id="L60">    return ResponseEntity.ok(new BuildLifeProjectConfigDTO(config.html()));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

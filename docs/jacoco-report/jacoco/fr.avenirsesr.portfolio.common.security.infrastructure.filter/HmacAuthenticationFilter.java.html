@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HmacAuthenticationFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.security.infrastructure.filter</a> &gt; <span class="el_source">HmacAuthenticationFilter.java</span></div><h1>HmacAuthenticationFilter.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.security.infrastructure.filter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
+import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
+import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.UserSecurityPayload;
+import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums.ESecurityKeys;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+<span class="nc" id="L27">@Slf4j</span>
+public class HmacAuthenticationFilter extends OncePerRequestFilter {
+
+  private final String permitAllPathsString;
+
+  private List&lt;String&gt; permitAllPathsList;
+
+<span class="nc" id="L34">  public HmacAuthenticationFilter(String permitAllPathsString) {</span>
+<span class="nc" id="L35">    this.permitAllPathsString = permitAllPathsString;</span>
+<span class="nc" id="L36">  }</span>
+
+  @Override
+  public void doFilterInternal(
+<span class="nc bnc" id="L40" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
+      throws ServletException, IOException {
+
+<span class="nc" id="L45">    String signature = request.getHeader(&quot;X-Context-Signature&quot;);</span>
+<span class="nc" id="L46">    String secretKey = ESecurityKeys.getSecretByKey(request.getHeader(&quot;X-Context-Kid&quot;));</span>
+<span class="nc" id="L47">    String payload = request.getHeader(&quot;X-Signed-Context&quot;);</span>
+<span class="nc" id="L48">    ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L49">    objectMapper.registerModule(new JavaTimeModule());</span>
+<span class="nc" id="L50">    UserSecurityPayload userSecurityPayload =</span>
+<span class="nc" id="L51">        objectMapper.readValue(payload, UserSecurityPayload.class);</span>
+
+<span class="nc bnc" id="L53" title="All 2 branches missed.">    if (!payloadIsValid(userSecurityPayload)) {</span>
+<span class="nc" id="L54">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
+<span class="nc" id="L55">      log.error(&quot;Invalid HMAC authentication attempt. Payload is expired or invalid. {}&quot;, payload);</span>
+<span class="nc" id="L56">      throw exception;</span>
+    }
+
+<span class="nc bnc" id="L59" title="All 4 branches missed.">    if (signature != null &amp;&amp; verifySignature(payload, signature, secretKey)) {</span>
+<span class="nc" id="L60">      Authentication auth = new HmacAuthenticationToken(userSecurityPayload.getSub());</span>
+<span class="nc" id="L61">      SecurityContextHolder.getContext().setAuthentication(auth);</span>
+
+<span class="nc" id="L63">      filterChain.doFilter(request, response);</span>
+<span class="nc" id="L64">    } else {</span>
+<span class="nc" id="L65">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
+<span class="nc" id="L66">      log.error(&quot;Invalid HMAC authentication attempt.{}&quot;, String.valueOf(exception));</span>
+<span class="nc" id="L67">      throw exception;</span>
+    }
+<span class="nc" id="L69">  }</span>
+
+  @Override
+<span class="nc bnc" id="L72" title="All 2 branches missed.">  public boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    if (permitAllPathsList == null) {</span>
+<span class="nc" id="L74">      permitAllPathsList =</span>
+<span class="nc" id="L75">          Arrays.stream(permitAllPathsString.split(&quot;,&quot;))</span>
+<span class="nc" id="L76">              .map(path -&gt; path.trim().replace(&quot;/**&quot;, &quot;&quot;))</span>
+<span class="nc" id="L77">              .toList();</span>
+    }
+
+<span class="nc" id="L80">    String path = request.getRequestURI();</span>
+<span class="nc" id="L81">    return permitAllPathsList.stream().anyMatch(path::startsWith);</span>
+  }
+
+  private boolean payloadIsValid(UserSecurityPayload payload) {
+<span class="nc bnc" id="L85" title="All 4 branches missed.">    return payload != null &amp;&amp; payload.getExp().isAfter(Instant.now());</span>
+  }
+
+  private boolean verifySignature(String payload, String signature, String secretKey) {
+    try {
+<span class="nc" id="L90">      Mac sha256Hmac = Mac.getInstance(&quot;HmacSHA256&quot;);</span>
+<span class="nc" id="L91">      SecretKeySpec secretKeySpec =</span>
+<span class="nc" id="L92">          new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), &quot;HmacSHA256&quot;);</span>
+<span class="nc" id="L93">      sha256Hmac.init(secretKeySpec);</span>
+
+<span class="nc" id="L95">      byte[] signedBytes = sha256Hmac.doFinal(payload.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L96">      String computedSignature = Base64.getEncoder().encodeToString(signedBytes);</span>
+
+<span class="nc" id="L98">      return computedSignature.equals(signature);</span>
+<span class="nc" id="L99">    } catch (Exception e) {</span>
+<span class="nc" id="L100">      return false;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

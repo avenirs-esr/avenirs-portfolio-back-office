@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TraceConfigurationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.trace.application.controller</a> &gt; <span class="el_source">TraceConfigurationController.java</span></div><h1>TraceConfigurationController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.trace.application.controller;
+
+import fr.avenirsesr.portfolio.backoffice.trace.application.dto.TraceConfigurationDTO;
+import fr.avenirsesr.portfolio.backoffice.trace.domain.port.input.TraceConfigurationService;
+import fr.avenirsesr.portfolio.common.configuration.domain.model.TraceConfiguration;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+<span class="nc" id="L12">@Slf4j</span>
+@AllArgsConstructor
+@RestController
+@RequestMapping(&quot;back-office/config/traces&quot;)
+public class TraceConfigurationController {
+  private final TraceConfigurationService traceConfigurationService;
+
+  @GetMapping
+  public ResponseEntity&lt;TraceConfigurationDTO&gt; getTraceConfig() {
+<span class="nc" id="L21">    log.debug(&quot;Received request to get trace config&quot;);</span>
+
+<span class="nc" id="L23">    var config = traceConfigurationService.getTraceConfiguration();</span>
+
+<span class="nc" id="L25">    return ResponseEntity.ok(TraceConfigurationDTO.of(config));</span>
+  }
+
+  @PostMapping
+  public ResponseEntity&lt;Void&gt; postTraceConfig(@RequestBody TraceConfigurationDTO config) {
+<span class="nc" id="L30">    log.debug(&quot;Received request to post trace config : {}&quot;, config);</span>
+
+<span class="nc" id="L32">    traceConfigurationService.postTraceConfiguration(</span>
+        new TraceConfiguration(
+<span class="nc" id="L34">            config.maxRemainingDays(),</span>
+<span class="nc" id="L35">            config.maxRemainingDaysBeforeWarning(),</span>
+<span class="nc" id="L36">            config.maxRemainingDaysBeforeCritical()));</span>
+
+<span class="nc" id="L38">    return ResponseEntity.status(HttpStatus.ACCEPTED).build();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

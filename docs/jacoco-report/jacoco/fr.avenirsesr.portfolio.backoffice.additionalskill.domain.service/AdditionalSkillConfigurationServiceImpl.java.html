@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdditionalSkillConfigurationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.additionalskill.domain.service</a> &gt; <span class="el_source">AdditionalSkillConfigurationServiceImpl.java</span></div><h1>AdditionalSkillConfigurationServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.additionalskill.domain.service;
+
+import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.model.AdditionalSkillConfiguration;
+import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.model.AdditionalSkillLevel;
+import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.model.EAdditionalSkillConfiguration;
+import fr.avenirsesr.portfolio.backoffice.additionalskill.domain.port.input.AdditionalSkillConfigurationService;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.ConfigurationTranslationService;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
+import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L20">@Slf4j</span>
+@AllArgsConstructor
+public class AdditionalSkillConfigurationServiceImpl
+    implements AdditionalSkillConfigurationService {
+  private final ConfigurationRepository configurationRepository;
+  private final ConfigurationTranslationService configurationTranslationService;
+
+  private String getAdditionalSkillLevelConfigFrom(
+      List&lt;Configuration&gt; configurations, EAdditionalSkillConfiguration key) {
+<span class="fc" id="L29">    return configurations.stream()</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        .filter(c -&gt; c.getKey() == key)</span>
+<span class="fc" id="L31">        .findFirst()</span>
+<span class="fc" id="L32">        .orElseThrow()</span>
+<span class="fc" id="L33">        .getValue();</span>
+  }
+
+  private AdditionalSkillConfiguration buildAdditionalSkillConfiguration(
+      List&lt;Configuration&gt; configurations) {
+<span class="fc" id="L38">    return new AdditionalSkillConfiguration(</span>
+        new AdditionalSkillLevel(
+<span class="fc" id="L40">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_BEGINNER_LABEL),
+<span class="fc" id="L42">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_BEGINNER_DESCRIPTION)),
+        new AdditionalSkillLevel(
+<span class="fc" id="L45">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_INTERMEDIATE_LABEL),
+<span class="fc" id="L47">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_INTERMEDIATE_DESCRIPTION)),
+        new AdditionalSkillLevel(
+<span class="fc" id="L50">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_COMPETENT_LABEL),
+<span class="fc" id="L52">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_COMPETENT_DESCRIPTION)),
+        new AdditionalSkillLevel(
+<span class="fc" id="L55">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_ADVANCED_LABEL),
+<span class="fc" id="L57">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_ADVANCED_DESCRIPTION)),
+        new AdditionalSkillLevel(
+<span class="fc" id="L60">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_EXPERT_LABEL),
+<span class="fc" id="L62">            getAdditionalSkillLevelConfigFrom(</span>
+                configurations, EAdditionalSkillConfiguration.LEVEL_EXPERT_DESCRIPTION)));
+  }
+
+  @Override
+  public AdditionalSkillConfiguration getConfiguration() {
+<span class="fc" id="L68">    List&lt;Configuration&gt; configurations =</span>
+<span class="fc" id="L69">        configurationRepository.inScope(EConfigurationScope.ADDITIONAL_SKILL);</span>
+
+<span class="fc" id="L71">    return buildAdditionalSkillConfiguration(configurations);</span>
+  }
+
+  @Override
+  public Map&lt;ELanguage, AdditionalSkillConfiguration&gt; getConfigurationWithAllTranslations() {
+<span class="nc" id="L76">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; configurationsByLanguage =</span>
+<span class="nc" id="L77">        configurationTranslationService.findInScopeWithAllTranslations(</span>
+            EConfigurationScope.ADDITIONAL_SKILL);
+
+<span class="nc" id="L80">    return configurationsByLanguage.entrySet().stream()</span>
+<span class="nc" id="L81">        .collect(</span>
+<span class="nc" id="L82">            Collectors.toMap(</span>
+<span class="nc" id="L83">                Map.Entry::getKey, entry -&gt; buildAdditionalSkillConfiguration(entry.getValue())));</span>
+  }
+
+  @Override
+  public void postConfiguration(Map&lt;ELanguage, AdditionalSkillConfiguration&gt; configurations) {
+<span class="fc" id="L88">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; savedConfigurations =</span>
+<span class="fc" id="L89">        configurationTranslationService.findInScopeWithAllTranslations(</span>
+            EConfigurationScope.ADDITIONAL_SKILL);
+
+<span class="fc" id="L92">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; newTranslatedConfigurations =</span>
+<span class="fc" id="L93">        configurations.entrySet().stream()</span>
+<span class="fc" id="L94">            .collect(</span>
+<span class="fc" id="L95">                Collectors.toMap(</span>
+                    Map.Entry::getKey,
+                    entry -&gt;
+<span class="fc" id="L98">                        updateConfigurationOfLanguage(</span>
+<span class="fc" id="L99">                            entry.getKey(), entry.getValue(), savedConfigurations)));</span>
+
+<span class="fc" id="L101">    configurationTranslationService.buildAndSaveTranslatedEntities(</span>
+        newTranslatedConfigurations, EConfigurationScope.ADDITIONAL_SKILL);
+
+<span class="fc" id="L104">    log.info(&quot;Added additional skill configurations : {}&quot;, newTranslatedConfigurations);</span>
+<span class="fc" id="L105">  }</span>
+
+  private List&lt;Configuration&gt; updateConfigurationOfLanguage(
+      ELanguage language,
+      AdditionalSkillConfiguration translatedConfiguration,
+      Map&lt;ELanguage, List&lt;Configuration&gt;&gt; savedConfigurations) {
+<span class="fc" id="L111">    var newConfigurations = new ArrayList&lt;Configuration&gt;();</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">    for (EAdditionalSkillConfiguration key : EAdditionalSkillConfiguration.values()) {</span>
+<span class="fc" id="L113">      var value =</span>
+<span class="fc bfc" id="L114" title="All 10 branches covered.">          switch (key) {</span>
+<span class="fc" id="L115">            case LEVEL_BEGINNER_LABEL -&gt; translatedConfiguration.BEGINNER().label();</span>
+<span class="fc" id="L116">            case LEVEL_BEGINNER_DESCRIPTION -&gt; translatedConfiguration.BEGINNER().description();</span>
+<span class="fc" id="L117">            case LEVEL_INTERMEDIATE_LABEL -&gt; translatedConfiguration.INTERMEDIATE().label();</span>
+            case LEVEL_INTERMEDIATE_DESCRIPTION -&gt;
+<span class="fc" id="L119">                translatedConfiguration.INTERMEDIATE().description();</span>
+<span class="fc" id="L120">            case LEVEL_COMPETENT_LABEL -&gt; translatedConfiguration.COMPETENT().label();</span>
+<span class="fc" id="L121">            case LEVEL_COMPETENT_DESCRIPTION -&gt; translatedConfiguration.COMPETENT().description();</span>
+<span class="fc" id="L122">            case LEVEL_ADVANCED_LABEL -&gt; translatedConfiguration.ADVANCED().label();</span>
+<span class="fc" id="L123">            case LEVEL_ADVANCED_DESCRIPTION -&gt; translatedConfiguration.ADVANCED().description();</span>
+<span class="fc" id="L124">            case LEVEL_EXPERT_LABEL -&gt; translatedConfiguration.EXPERT().label();</span>
+<span class="fc" id="L125">            case LEVEL_EXPERT_DESCRIPTION -&gt; translatedConfiguration.EXPERT().description();</span>
+          };
+
+      var newConfiguration =
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">          savedConfigurations.get(language) != null</span>
+<span class="pc bnc" id="L130" title="All 4 branches missed.">                  &amp;&amp; savedConfigurations.get(language).stream().anyMatch(c -&gt; c.getKey() == key)</span>
+<span class="nc" id="L131">              ? savedConfigurations.get(language).stream()</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                  .filter(c -&gt; c.getKey() == key)</span>
+<span class="nc" id="L133">                  .findAny()</span>
+<span class="nc" id="L134">                  .orElseThrow()</span>
+<span class="fc" id="L135">              : Configuration.create(</span>
+<span class="fc" id="L136">                  UUID.randomUUID(), EConfigurationScope.ADDITIONAL_SKILL, key, value);</span>
+
+<span class="fc" id="L138">      newConfiguration.setValue(value);</span>
+<span class="fc" id="L139">      newConfigurations.add(newConfiguration);</span>
+    }
+<span class="fc" id="L141">    return newConfigurations;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

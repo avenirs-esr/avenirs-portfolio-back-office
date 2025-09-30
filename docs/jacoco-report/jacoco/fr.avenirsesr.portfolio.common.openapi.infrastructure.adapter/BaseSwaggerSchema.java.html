@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BaseSwaggerSchema.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter</a> &gt; <span class="el_source">BaseSwaggerSchema.java</span></div><h1>BaseSwaggerSchema.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter;
+
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.ESortField;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.ESortOrder;
+import fr.avenirsesr.portfolio.common.error.domain.model.enums.EErrorCode;
+import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import fr.avenirsesr.portfolio.common.temporal.domain.model.enums.EDurationUnit;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import java.util.Arrays;
+
+public interface BaseSwaggerSchema {
+
+<span class="nc" id="L14">  Schema&lt;String&gt; errorCodeSchema =</span>
+      new StringSchema()
+<span class="nc" id="L16">          .name(&quot;EErrorCode&quot;)</span>
+<span class="nc" id="L17">          ._enum(Arrays.stream(EErrorCode.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L18">          .description(&quot;Enum for error codes&quot;);</span>
+
+<span class="nc" id="L20">  Schema&lt;String&gt; languageSchema =</span>
+      new StringSchema()
+<span class="nc" id="L22">          .name(&quot;ELanguage&quot;)</span>
+<span class="nc" id="L23">          ._enum(Arrays.stream(ELanguage.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L24">          .description(&quot;Enum for languages&quot;);</span>
+
+<span class="nc" id="L26">  Schema&lt;String&gt; sortFieldSchema =</span>
+      new StringSchema()
+<span class="nc" id="L28">          .name(&quot;ESortField&quot;)</span>
+<span class="nc" id="L29">          ._enum(Arrays.stream(ESortField.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L30">          .description(&quot;Enum for sort fields&quot;);</span>
+
+<span class="nc" id="L32">  Schema&lt;String&gt; sortOrderSchema =</span>
+      new StringSchema()
+<span class="nc" id="L34">          .name(&quot;ESortOrder&quot;)</span>
+<span class="nc" id="L35">          ._enum(Arrays.stream(ESortOrder.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L36">          .description(&quot;Enum for sort orders&quot;);</span>
+
+<span class="nc" id="L38">  Schema&lt;String&gt; durationUnitSchema =</span>
+      new StringSchema()
+<span class="nc" id="L40">          .name(&quot;EDurationUnit&quot;)</span>
+<span class="nc" id="L41">          ._enum(Arrays.stream(EDurationUnit.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L42">          .description(&quot;Enum for duration units&quot;);</span>
+
+  static Schema&lt;String&gt; createEnumSchema(Class&lt;? extends Enum&lt;?&gt;&gt; enumClass, String description) {
+<span class="nc" id="L45">    return new StringSchema()</span>
+<span class="nc" id="L46">        .name(enumClass.getSimpleName())</span>
+<span class="nc" id="L47">        ._enum(Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).toList())</span>
+<span class="nc" id="L48">        .description(description);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
