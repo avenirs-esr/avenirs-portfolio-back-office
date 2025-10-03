@@ -4,6 +4,7 @@ import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
 import fr.avenirsesr.portfolio.backoffice.trace.domain.port.input.TraceConfigurationService;
+import fr.avenirsesr.portfolio.common.configuration.domain.exception.ConfigurationException;
 import fr.avenirsesr.portfolio.common.configuration.domain.model.ETraceConfiguration;
 import fr.avenirsesr.portfolio.common.configuration.domain.model.TraceConfiguration;
 import java.util.List;
@@ -40,7 +41,10 @@ public class TraceConfigurationServiceImpl implements TraceConfigurationService 
         configurations.stream()
             .filter(c -> c.getKey() == traceConfiguration)
             .findAny()
-            .orElseThrow()
+            .orElseThrow(
+                () ->
+                    new ConfigurationException(
+                        "Missing trace configuration: " + traceConfiguration.name()))
             .getValue());
   }
 

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
+import fr.avenirsesr.portfolio.common.configuration.domain.exception.ConfigurationException;
 import fr.avenirsesr.portfolio.common.configuration.domain.model.ETraceConfiguration;
 import fr.avenirsesr.portfolio.common.configuration.domain.model.TraceConfiguration;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
@@ -83,8 +84,8 @@ class TraceConfigurationServiceImplTest {
                     "10")));
 
     BddLogger.when("getting the trace configuration");
-    BddLogger.then("it should throw NoSuchElementException");
-    assertThrows(NoSuchElementException.class, () -> service.getTraceConfiguration());
+    BddLogger.then("it should throw ConfigurationException");
+    assertThrows(ConfigurationException.class, () -> service.getTraceConfiguration());
   }
 
   @Test

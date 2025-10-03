@@ -7,6 +7,7 @@ import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.C
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.BuildLifeProjectConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteContentConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
+import fr.avenirsesr.portfolio.common.configuration.domain.exception.ConfigurationException;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,10 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
         configurations.stream()
             .filter(c -> c.getKey() == EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT)
             .findAny()
-            .orElseThrow()
+            .orElseThrow(
+                () ->
+                    new ConfigurationException(
+                        "Missing website content configuration: BUILD_LIFE_PROJECT_CONTENT"))
             .getValue());
   }
 
@@ -40,7 +44,10 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
         configurations.stream()
             .filter(c -> c.getKey() == EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT)
             .findAny()
-            .orElseThrow()
+            .orElseThrow(
+                () ->
+                    new ConfigurationException(
+                        "Missing website content configuration: BUILD_LIFE_PROJECT_CONTENT"))
             .getValue());
   }
 
@@ -87,7 +94,10 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
                                               == EWebsiteContentConfiguration
                                                   .BUILD_LIFE_PROJECT_CONTENT)
                                   .findAny()
-                                  .orElseThrow()
+                                  .orElseThrow(
+                                      () ->
+                                          new ConfigurationException(
+                                              "Missing website content configuration while updating: BUILD_LIFE_PROJECT_CONTENT"))
                               : Configuration.create(
                                   UUID.randomUUID(),
                                   EConfigurationScope.WEBSITE_CONTENT,
