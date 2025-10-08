@@ -1,3 +1,4 @@
 [submodule "libs/avenirs-portfolio-common"]
 	path = libs/avenirs-portfolio-common
 	url = git@github.com:avenirs-esr/avenirs-portfolio-common.git
+	branch = develop

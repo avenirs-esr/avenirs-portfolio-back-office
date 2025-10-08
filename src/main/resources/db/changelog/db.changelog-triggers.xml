@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create-set-updated-at-function" author="bilelbanelhaq">
+        <sql splitStatements="false" stripComments="true">
+            CREATE OR REPLACE FUNCTION set_updated_at()
+            RETURNS TRIGGER AS $BODY$
+        BEGIN
+              NEW.updated_at = now();
+        RETURN NEW;
+        END;
+        $BODY$ LANGUAGE plpgsql;
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-updated-at-trigger-configuration" author="bilelbanelhaq">
+        <sql>
+            DROP TRIGGER IF EXISTS trigger_set_updated_at_configuration ON configuration;
+            CREATE TRIGGER trigger_set_updated_at_configuration
+                BEFORE UPDATE
+                ON configuration
+                FOR EACH ROW
+                EXECUTE FUNCTION set_updated_at();
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-updated-at-trigger-configuration_translation" author="bilelbanelhaq">
+        <sql>
+            DROP TRIGGER IF EXISTS trigger_set_updated_at_configuration_translation ON configuration_translation;
+            CREATE TRIGGER trigger_set_updated_at_configuration_translation
+                BEFORE UPDATE
+                ON configuration_translation
+                FOR EACH ROW
+                EXECUTE FUNCTION set_updated_at();
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

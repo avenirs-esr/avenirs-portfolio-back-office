@@ -1,0 +1,14 @@
+name: Main Workflow
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  call-main-ci:
+    uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend-workflow.yaml@main
+    with:
+      run_integration_tests: true
+
+  call-check-imports:
+    uses: ./.github/workflows/check-domain-layer-imports.yaml
