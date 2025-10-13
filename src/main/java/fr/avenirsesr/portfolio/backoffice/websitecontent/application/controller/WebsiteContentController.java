@@ -52,8 +52,8 @@ public class WebsiteContentController {
   }
 
   @GetMapping(path = "/build-life-project")
-  public ResponseEntity<BuildLifeProjectConfigDTO> getBuildLifeProjectConfig(Principal principal) {
-    log.debug("Received request from {} to get build life project config", principal.getName());
+  public ResponseEntity<BuildLifeProjectConfigDTO> getBuildLifeProjectConfig() {
+    log.debug("Received request from to get build life project config");
 
     BuildLifeProjectConfiguration config =
         websiteContentConfigurationService.getLifeProjectConfiguration();
