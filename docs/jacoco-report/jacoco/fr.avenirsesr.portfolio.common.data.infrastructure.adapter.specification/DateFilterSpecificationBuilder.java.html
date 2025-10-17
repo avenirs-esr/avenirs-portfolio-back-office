@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DateFilterSpecificationBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification</a> &gt; <span class="el_source">DateFilterSpecificationBuilder.java</span></div><h1>DateFilterSpecificationBuilder.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification;
+
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EDateFilterKey;
+import java.time.LocalDate;
+import org.springframework.data.jpa.domain.Specification;
+
+<span class="nc" id="L7">public class DateFilterSpecificationBuilder&lt;T&gt;</span>
+    extends FilterSpecificationBuilder&lt;T, EDateFilterKey&gt; {
+  @Override
+  public Specification&lt;T&gt; getSpecification(EDateFilterKey key, Object value) {
+<span class="nc bnc" id="L11" title="All 2 branches missed.">    return switch (key) {</span>
+<span class="nc" id="L12">      case FROM_DATE -&gt; fromDate((LocalDate) value);</span>
+<span class="nc" id="L13">      case TO_DATE -&gt; toDate((LocalDate) value);</span>
+    };
+  }
+
+  private Specification&lt;T&gt; fromDate(LocalDate date) {
+<span class="nc" id="L18">    return (root, query, cb) -&gt;</span>
+<span class="nc bnc" id="L19" title="All 2 branches missed.">        date == null ? null : cb.greaterThanOrEqualTo(root.get(&quot;createdAt&quot;), date.atStartOfDay());</span>
+  }
+
+  private Specification&lt;T&gt; toDate(LocalDate date) {
+<span class="nc" id="L23">    return (root, query, cb) -&gt;</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        date == null ? null : cb.lessThan(root.get(&quot;createdAt&quot;), date.plusDays(1).atStartOfDay());</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

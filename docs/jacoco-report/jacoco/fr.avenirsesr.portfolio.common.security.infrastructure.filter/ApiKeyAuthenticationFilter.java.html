@@ -10,9 +10,11 @@ import java.util.List;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-<span class="nc" id="L15">@Slf4j</span>
+<span class="nc" id="L17">@Slf4j</span>
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
   private static final String API_KEY_HEADER = &quot;X-API-Key&quot;;
@@ -23,53 +25,71 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
   private List&lt;String&gt; permitAllPathsList;
 
-<span class="nc" id="L26">  public ApiKeyAuthenticationFilter(String expectedApiKey, String permitAllPathsString) {</span>
-<span class="nc" id="L27">    this.expectedApiKey = expectedApiKey;</span>
-<span class="nc" id="L28">    this.permitAllPathsString = permitAllPathsString;</span>
-<span class="nc" id="L29">  }</span>
+<span class="nc" id="L28">  public ApiKeyAuthenticationFilter(String expectedApiKey, String permitAllPathsString) {</span>
+<span class="nc" id="L29">    this.expectedApiKey = expectedApiKey;</span>
+<span class="nc" id="L30">    this.permitAllPathsString = permitAllPathsString;</span>
+<span class="nc" id="L31">  }</span>
 
   @Override
-<span class="nc bnc" id="L32" title="All 2 branches missed.">  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {</span>
-<span class="nc bnc" id="L33" title="All 4 branches missed.">    if (permitAllPathsList == null &amp;&amp; permitAllPathsString != null) {</span>
-<span class="nc" id="L34">      permitAllPathsList =</span>
-<span class="nc" id="L35">          Arrays.stream(permitAllPathsString.split(&quot;,&quot;))</span>
-<span class="nc" id="L36">              .map(path -&gt; path.trim().replace(&quot;/**&quot;, &quot;&quot;))</span>
-<span class="nc" id="L37">              .toList();</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {</span>
+<span class="nc bnc" id="L35" title="All 4 branches missed.">    if (permitAllPathsList == null &amp;&amp; permitAllPathsString != null) {</span>
+<span class="nc" id="L36">      permitAllPathsList =</span>
+<span class="nc" id="L37">          Arrays.stream(permitAllPathsString.split(&quot;,&quot;))</span>
+<span class="nc" id="L38">              .map(path -&gt; path.trim().replace(&quot;/**&quot;, &quot;&quot;))</span>
+<span class="nc" id="L39">              .toList();</span>
     }
 
-<span class="nc bnc" id="L40" title="All 2 branches missed.">    if (permitAllPathsList == null) {</span>
-<span class="nc" id="L41">      return false;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">    if (permitAllPathsList == null) {</span>
+<span class="nc" id="L43">      return false;</span>
     }
 
-<span class="nc" id="L44">    String path = request.getRequestURI();</span>
-<span class="nc" id="L45">    return permitAllPathsList.stream().anyMatch(path::startsWith);</span>
+<span class="nc" id="L46">    String path = request.getRequestURI();</span>
+<span class="nc" id="L47">    return permitAllPathsList.stream().anyMatch(path::startsWith);</span>
   }
 
   @Override
   protected void doFilterInternal(
-<span class="nc bnc" id="L50" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
       throws ServletException, IOException {
 
-<span class="nc" id="L55">    String providedApiKey = request.getHeader(API_KEY_HEADER);</span>
-
-<span class="nc bnc" id="L57" title="All 4 branches missed.">    if (providedApiKey == null || providedApiKey.isBlank()) {</span>
-<span class="nc" id="L58">      log.warn(&quot;API Key authentication failed: missing {} header&quot;, API_KEY_HEADER);</span>
-<span class="nc" id="L59">      response.setStatus(HttpStatus.UNAUTHORIZED.value());</span>
-<span class="nc" id="L60">      response.getWriter().write(&quot;Missing API Key&quot;);</span>
-<span class="nc" id="L61">      return;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">    if (isExternalRequest(request)) {</span>
+<span class="nc" id="L58">      log.trace(&quot;External request detected; continuing filter chain&quot;);</span>
+<span class="nc" id="L59">      filterChain.doFilter(request, response);</span>
+<span class="nc" id="L60">      return;</span>
     }
 
-<span class="nc bnc" id="L64" title="All 4 branches missed.">    if (expectedApiKey == null || !expectedApiKey.equals(providedApiKey)) {</span>
-<span class="nc" id="L65">      log.warn(&quot;API Key authentication failed: invalid API key provided&quot;);</span>
-<span class="nc" id="L66">      response.setStatus(HttpStatus.UNAUTHORIZED.value());</span>
-<span class="nc" id="L67">      response.getWriter().write(&quot;Invalid API Key&quot;);</span>
-<span class="nc" id="L68">      return;</span>
+<span class="nc" id="L63">    String providedApiKey = request.getHeader(API_KEY_HEADER);</span>
+
+<span class="nc bnc" id="L65" title="All 4 branches missed.">    if (providedApiKey == null || providedApiKey.isBlank()) {</span>
+<span class="nc" id="L66">      log.warn(&quot;API Key authentication failed: missing {} header&quot;, API_KEY_HEADER);</span>
+<span class="nc" id="L67">      response.setStatus(HttpStatus.UNAUTHORIZED.value());</span>
+<span class="nc" id="L68">      response.getWriter().write(&quot;Missing API Key&quot;);</span>
+<span class="nc" id="L69">      return;</span>
     }
 
-<span class="nc" id="L71">    log.debug(&quot;API Key authentication successful&quot;);</span>
-<span class="nc" id="L72">    filterChain.doFilter(request, response);</span>
-<span class="nc" id="L73">  }</span>
+<span class="nc bnc" id="L72" title="All 4 branches missed.">    if (expectedApiKey == null || !expectedApiKey.equals(providedApiKey)) {</span>
+<span class="nc" id="L73">      log.warn(&quot;API Key authentication failed: invalid API key provided&quot;);</span>
+<span class="nc" id="L74">      response.setStatus(HttpStatus.UNAUTHORIZED.value());</span>
+<span class="nc" id="L75">      response.getWriter().write(&quot;Invalid API Key&quot;);</span>
+<span class="nc" id="L76">      return;</span>
+    }
+
+    // Marks the request as authenticated so downstream filters can skip authentication.
+<span class="nc" id="L80">    var auth = new UsernamePasswordAuthenticationToken(&quot;internal-service&quot;, null, List.of());</span>
+<span class="nc" id="L81">    SecurityContextHolder.getContext().setAuthentication(auth);</span>
+
+<span class="nc" id="L83">    log.debug(&quot;API Key authentication successful&quot;);</span>
+<span class="nc" id="L84">    filterChain.doFilter(request, response);</span>
+<span class="nc" id="L85">  }</span>
+
+  private boolean isExternalRequest(HttpServletRequest request) {
+<span class="nc" id="L88">    String forwardedFor = request.getHeader(&quot;X-Forwarded-For&quot;);</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">    if (forwardedFor == null) return false;</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">    return !forwardedFor.startsWith(&quot;10.&quot;)</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        &amp;&amp; !forwardedFor.startsWith(&quot;172.&quot;)</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        &amp;&amp; !forwardedFor.startsWith(&quot;192.168.&quot;);</span>
+  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

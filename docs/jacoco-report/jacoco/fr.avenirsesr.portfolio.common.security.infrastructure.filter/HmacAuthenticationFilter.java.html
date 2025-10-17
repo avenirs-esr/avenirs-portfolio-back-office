@@ -3,6 +3,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
+import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.UserSecurityPayload;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.enums.ESecurityKeys;
@@ -24,80 +25,86 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-<span class="nc" id="L27">@Slf4j</span>
+<span class="nc" id="L28">@Slf4j</span>
 public class HmacAuthenticationFilter extends OncePerRequestFilter {
 
   private final String permitAllPathsString;
 
   private List&lt;String&gt; permitAllPathsList;
 
-<span class="nc" id="L34">  public HmacAuthenticationFilter(String permitAllPathsString) {</span>
-<span class="nc" id="L35">    this.permitAllPathsString = permitAllPathsString;</span>
-<span class="nc" id="L36">  }</span>
+<span class="nc" id="L35">  public HmacAuthenticationFilter(String permitAllPathsString) {</span>
+<span class="nc" id="L36">    this.permitAllPathsString = permitAllPathsString;</span>
+<span class="nc" id="L37">  }</span>
 
   @Override
   public void doFilterInternal(
-<span class="nc bnc" id="L40" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
-<span class="nc bnc" id="L41" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
-<span class="nc bnc" id="L42" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
       throws ServletException, IOException {
 
-<span class="nc" id="L45">    String signature = request.getHeader(&quot;X-Context-Signature&quot;);</span>
-<span class="nc" id="L46">    String secretKey = ESecurityKeys.getSecretByKey(request.getHeader(&quot;X-Context-Kid&quot;));</span>
-<span class="nc" id="L47">    String payload = request.getHeader(&quot;X-Signed-Context&quot;);</span>
-<span class="nc" id="L48">    ObjectMapper objectMapper = new ObjectMapper();</span>
-<span class="nc" id="L49">    objectMapper.registerModule(new JavaTimeModule());</span>
-<span class="nc" id="L50">    UserSecurityPayload userSecurityPayload =</span>
-<span class="nc" id="L51">        objectMapper.readValue(payload, UserSecurityPayload.class);</span>
+<span class="nc" id="L46">    String signature = request.getHeader(AvenirsSecurityHeaders.CONTEXT_SIGNATURE);</span>
+<span class="nc" id="L47">    String secretKey =</span>
+<span class="nc" id="L48">        ESecurityKeys.getSecretByKey(request.getHeader(AvenirsSecurityHeaders.CONTEXT_KID));</span>
+<span class="nc" id="L49">    String payload = request.getHeader(AvenirsSecurityHeaders.SIGNED_CONTEXT);</span>
+<span class="nc" id="L50">    ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L51">    objectMapper.registerModule(new JavaTimeModule());</span>
+<span class="nc" id="L52">    UserSecurityPayload userSecurityPayload =</span>
+<span class="nc" id="L53">        objectMapper.readValue(payload, UserSecurityPayload.class);</span>
 
-<span class="nc bnc" id="L53" title="All 2 branches missed.">    if (!payloadIsValid(userSecurityPayload)) {</span>
-<span class="nc" id="L54">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
-<span class="nc" id="L55">      log.error(&quot;Invalid HMAC authentication attempt. Payload is expired or invalid. {}&quot;, payload);</span>
-<span class="nc" id="L56">      throw exception;</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">    if (!payloadIsValid(userSecurityPayload)) {</span>
+<span class="nc" id="L56">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
+<span class="nc" id="L57">      log.error(&quot;Invalid HMAC authentication attempt. Payload is expired or invalid. {}&quot;, payload);</span>
+<span class="nc" id="L58">      throw exception;</span>
     }
 
-<span class="nc bnc" id="L59" title="All 4 branches missed.">    if (signature != null &amp;&amp; verifySignature(payload, signature, secretKey)) {</span>
-<span class="nc" id="L60">      Authentication auth = new HmacAuthenticationToken(userSecurityPayload.getSub());</span>
-<span class="nc" id="L61">      SecurityContextHolder.getContext().setAuthentication(auth);</span>
+<span class="nc bnc" id="L61" title="All 4 branches missed.">    if (signature != null &amp;&amp; verifySignature(payload, signature, secretKey)) {</span>
+<span class="nc" id="L62">      Authentication auth = new HmacAuthenticationToken(userSecurityPayload.getSub());</span>
+<span class="nc" id="L63">      SecurityContextHolder.getContext().setAuthentication(auth);</span>
 
-<span class="nc" id="L63">      filterChain.doFilter(request, response);</span>
-<span class="nc" id="L64">    } else {</span>
-<span class="nc" id="L65">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
-<span class="nc" id="L66">      log.error(&quot;Invalid HMAC authentication attempt.{}&quot;, String.valueOf(exception));</span>
-<span class="nc" id="L67">      throw exception;</span>
+<span class="nc" id="L65">      filterChain.doFilter(request, response);</span>
+<span class="nc" id="L66">    } else {</span>
+<span class="nc" id="L67">      UserNotAuthorizedException exception = new UserNotAuthorizedException();</span>
+<span class="nc" id="L68">      log.error(&quot;Invalid HMAC authentication attempt.{}&quot;, String.valueOf(exception));</span>
+<span class="nc" id="L69">      throw exception;</span>
     }
-<span class="nc" id="L69">  }</span>
+<span class="nc" id="L71">  }</span>
 
   @Override
-<span class="nc bnc" id="L72" title="All 2 branches missed.">  public boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">    if (permitAllPathsList == null) {</span>
-<span class="nc" id="L74">      permitAllPathsList =</span>
-<span class="nc" id="L75">          Arrays.stream(permitAllPathsString.split(&quot;,&quot;))</span>
-<span class="nc" id="L76">              .map(path -&gt; path.trim().replace(&quot;/**&quot;, &quot;&quot;))</span>
-<span class="nc" id="L77">              .toList();</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">  public boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {</span>
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">    if (SecurityContextHolder.getContext().getAuthentication() != null) {</span>
+<span class="nc" id="L77">      return true;</span>
     }
 
-<span class="nc" id="L80">    String path = request.getRequestURI();</span>
-<span class="nc" id="L81">    return permitAllPathsList.stream().anyMatch(path::startsWith);</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">    if (permitAllPathsList == null) {</span>
+<span class="nc" id="L81">      permitAllPathsList =</span>
+<span class="nc" id="L82">          Arrays.stream(permitAllPathsString.split(&quot;,&quot;))</span>
+<span class="nc" id="L83">              .map(path -&gt; path.trim().replace(&quot;/**&quot;, &quot;&quot;))</span>
+<span class="nc" id="L84">              .toList();</span>
+    }
+
+<span class="nc" id="L87">    String path = request.getRequestURI();</span>
+<span class="nc" id="L88">    return permitAllPathsList.stream().anyMatch(path::startsWith);</span>
   }
 
   private boolean payloadIsValid(UserSecurityPayload payload) {
-<span class="nc bnc" id="L85" title="All 4 branches missed.">    return payload != null &amp;&amp; payload.getExp().isAfter(Instant.now());</span>
+<span class="nc bnc" id="L92" title="All 4 branches missed.">    return payload != null &amp;&amp; payload.getExp().isAfter(Instant.now());</span>
   }
 
   private boolean verifySignature(String payload, String signature, String secretKey) {
     try {
-<span class="nc" id="L90">      Mac sha256Hmac = Mac.getInstance(&quot;HmacSHA256&quot;);</span>
-<span class="nc" id="L91">      SecretKeySpec secretKeySpec =</span>
-<span class="nc" id="L92">          new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), &quot;HmacSHA256&quot;);</span>
-<span class="nc" id="L93">      sha256Hmac.init(secretKeySpec);</span>
+<span class="nc" id="L97">      Mac sha256Hmac = Mac.getInstance(&quot;HmacSHA256&quot;);</span>
+<span class="nc" id="L98">      SecretKeySpec secretKeySpec =</span>
+<span class="nc" id="L99">          new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), &quot;HmacSHA256&quot;);</span>
+<span class="nc" id="L100">      sha256Hmac.init(secretKeySpec);</span>
 
-<span class="nc" id="L95">      byte[] signedBytes = sha256Hmac.doFinal(payload.getBytes(StandardCharsets.UTF_8));</span>
-<span class="nc" id="L96">      String computedSignature = Base64.getEncoder().encodeToString(signedBytes);</span>
+<span class="nc" id="L102">      byte[] signedBytes = sha256Hmac.doFinal(payload.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L103">      String computedSignature = Base64.getEncoder().encodeToString(signedBytes);</span>
 
-<span class="nc" id="L98">      return computedSignature.equals(signature);</span>
-<span class="nc" id="L99">    } catch (Exception e) {</span>
-<span class="nc" id="L100">      return false;</span>
+<span class="nc" id="L105">      return computedSignature.equals(signature);</span>
+<span class="nc" id="L106">    } catch (Exception e) {</span>
+<span class="nc" id="L107">      return false;</span>
     }
   }
 }
