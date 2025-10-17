@@ -4,7 +4,6 @@ import fr.avenirsesr.portfolio.backoffice.websitecontent.application.dto.BuildLi
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.BuildLifeProjectConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
-import java.security.Principal;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
