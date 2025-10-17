@@ -97,7 +97,8 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
                                   .orElseThrow(
                                       () ->
                                           new ConfigurationException(
-                                              "Missing website content configuration while updating: BUILD_LIFE_PROJECT_CONTENT"))
+                                              "Missing website content configuration while"
+                                                  + " updating: BUILD_LIFE_PROJECT_CONTENT"))
                               : Configuration.create(
                                   UUID.randomUUID(),
                                   EConfigurationScope.WEBSITE_CONTENT,
