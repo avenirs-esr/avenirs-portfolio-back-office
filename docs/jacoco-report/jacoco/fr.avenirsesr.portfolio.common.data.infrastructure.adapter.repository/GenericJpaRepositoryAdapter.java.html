@@ -48,19 +48,29 @@ public abstract class GenericJpaRepositoryAdapter&lt;
 <span class="nc" id="L48">  }</span>
 
   @Override
+  public List&lt;D&gt; findAll() {
+<span class="nc" id="L52">    return jpaRepository.findAll().stream().map(toDomain).toList();</span>
+  }
+
+  @Override
   public Optional&lt;D&gt; findById(UUID id) {
-<span class="nc" id="L52">    E entity = jpaRepository.findById(id).orElse(null);</span>
-<span class="nc bnc" id="L53" title="All 2 branches missed.">    return entity == null ? Optional.empty() : Optional.of(toDomain.apply(entity));</span>
+<span class="nc" id="L57">    E entity = jpaRepository.findById(id).orElse(null);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    return entity == null ? Optional.empty() : Optional.of(toDomain.apply(entity));</span>
+  }
+
+  @Override
+  public List&lt;D&gt; findAllById(List&lt;UUID&gt; ids) {
+<span class="nc" id="L63">    return jpaRepository.findAllById(ids).stream().map(toDomain).toList();</span>
   }
 
   @Override
   public void flush() {
-<span class="nc" id="L58">    jpaRepository.flush();</span>
-<span class="nc" id="L59">  }</span>
+<span class="nc" id="L68">    jpaRepository.flush();</span>
+<span class="nc" id="L69">  }</span>
 
   @Override
   public void removeFromDatabase(D domain) {
-<span class="nc" id="L63">    jpaRepository.delete(fromDomain.apply(domain));</span>
-<span class="nc" id="L64">  }</span>
+<span class="nc" id="L73">    jpaRepository.delete(fromDomain.apply(domain));</span>
+<span class="nc" id="L74">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
