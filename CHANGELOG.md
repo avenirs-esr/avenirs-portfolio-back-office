@@ -6,6 +6,10 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
 
 ---
 
+## [v1.0.4] - 2025-12-04
+
+- Fix missing indices
+
 ## [v1.0.2] - 2025-10-16
 
 - Settings for API Key.
