@@ -7,7 +7,9 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
 ---
 
 ## [v1.0.4] - 2025-12-04
+- Configuration to use NoOp User Service
 
+## [v1.0.3] - 2025-12-21
 - Fix missing indices
 
 ## [v1.0.2] - 2025-10-16
