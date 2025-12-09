@@ -6,6 +6,10 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
 
 ---
 
+## [v1.0.3] - 2025-12-21
+
+- Configuration to use NoOp User Service
+
 ## [v1.0.2] - 2025-10-16
 
 - Settings for API Key.
