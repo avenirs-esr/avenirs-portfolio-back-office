@@ -3,13 +3,20 @@ package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.model;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
 import fr.avenirsesr.portfolio.common.language.infrastructure.adapter.model.TranslationEntity;
 import jakarta.persistence.*;
+import jakarta.persistence.Index;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "configuration_translation")
+@Table(
+    name = "configuration_translation",
+    indexes = {
+      @Index(
+          name = "idx_configuration_translation_configuration_id",
+          columnList = "configuration_id")
+    })
 @NoArgsConstructor
 @Getter
 @Setter
