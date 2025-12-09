@@ -6,6 +6,12 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
 
 ---
 
+## [v1.0.3] - 2025-12-09
+
+- Fix:
+- remove user package as it is no longer used.
+- add missing user service configuration.
+
 ## [v1.0.2] - 2025-10-16
 
 - Settings for API Key.
