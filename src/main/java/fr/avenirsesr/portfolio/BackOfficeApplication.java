@@ -6,11 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication(
-    scanBasePackages = {
-      "fr.avenirsesr.portfolio.backoffice",
-      "fr.avenirsesr.portfolio.user",
-      "fr.avenirsesr.portfolio.common"
-    })
+    scanBasePackages = {"fr.avenirsesr.portfolio.backoffice", "fr.avenirsesr.portfolio.common"})
 public class BackOfficeApplication {
 
   public static void main(String[] args) {
