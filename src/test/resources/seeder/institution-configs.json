@@ -1,0 +1,22 @@
+[
+  {
+    "institutionId": "228e242d-cfe2-4596-b883-f3c13fa8d23f",
+    "apcEnabled": true,
+    "lifeProjectEnabled": false
+  },
+  {
+    "institutionId": "c919b790-acab-49a6-b950-184b2b40376a",
+    "apcEnabled": true,
+    "lifeProjectEnabled": false
+  },
+  {
+    "institutionId": "f3a9e7cd-8573-4dd0-bc21-0c9dcda816aa",
+    "apcEnabled": false,
+    "lifeProjectEnabled": true
+  },
+  {
+    "institutionId": "ec3a698c-d38c-4b07-899e-6352976172c6",
+    "apcEnabled": true,
+    "lifeProjectEnabled": true
+  }
+]
