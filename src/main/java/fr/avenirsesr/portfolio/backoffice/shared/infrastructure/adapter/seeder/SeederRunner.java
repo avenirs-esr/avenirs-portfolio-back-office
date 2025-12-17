@@ -1,10 +1,12 @@
 package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder;
 
 import fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.seeder.AdditionalSkillConfigSeeder;
+import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.InstitutionConfigSeeder;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
 import fr.avenirsesr.portfolio.backoffice.trace.infrastructure.seeder.TraceConfigSeeder;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.seeder.WebsiteContentConfigurationSeeder;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -17,6 +19,7 @@ public class SeederRunner implements CommandLineRunner {
   private final AdditionalSkillConfigSeeder additionalSkillConfigSeeder;
   private final TraceConfigSeeder traceConfigSeeder;
   private final WebsiteContentConfigurationSeeder websiteContentConfigurationSeeder;
+  private final InstitutionConfigSeeder institutionConfigSeeder;
   private final ConfigurationRepository configurationRepository;
 
   @Value("${seeder.enabled:false}")
@@ -26,10 +29,12 @@ public class SeederRunner implements CommandLineRunner {
       AdditionalSkillConfigSeeder additionalSkillConfigSeeder,
       TraceConfigSeeder traceConfigSeeder,
       WebsiteContentConfigurationSeeder websiteContentConfigurationSeeder,
+      InstitutionConfigSeeder institutionConfigSeeder,
       ConfigurationRepository configurationRepository) {
     this.additionalSkillConfigSeeder = additionalSkillConfigSeeder;
     this.traceConfigSeeder = traceConfigSeeder;
     this.websiteContentConfigurationSeeder = websiteContentConfigurationSeeder;
+    this.institutionConfigSeeder = institutionConfigSeeder;
     this.configurationRepository = configurationRepository;
   }
 
@@ -45,6 +50,7 @@ public class SeederRunner implements CommandLineRunner {
       additionalSkillConfigSeeder.seed();
       traceConfigSeeder.seed();
       websiteContentConfigurationSeeder.seed();
+      institutionConfigSeeder.seed(List.of());
 
       log.info("✔ Seeding successfully finished");
     } else
