@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-<span class="nc" id="L11">@Slf4j</span>
+<span class="fc" id="L11">@Slf4j</span>
 @Configuration
 public class AdditionalSkillConfigurationServiceConfig {
   private final ConfigurationRepository configurationRepository;
@@ -16,14 +16,14 @@ public class AdditionalSkillConfigurationServiceConfig {
 
   public AdditionalSkillConfigurationServiceConfig(
       ConfigurationRepository configurationRepository,
-<span class="nc" id="L19">      ConfigurationTranslationService configurationTranslationService) {</span>
-<span class="nc" id="L20">    this.configurationRepository = configurationRepository;</span>
-<span class="nc" id="L21">    this.configurationTranslationService = configurationTranslationService;</span>
-<span class="nc" id="L22">  }</span>
+<span class="fc" id="L19">      ConfigurationTranslationService configurationTranslationService) {</span>
+<span class="fc" id="L20">    this.configurationRepository = configurationRepository;</span>
+<span class="fc" id="L21">    this.configurationTranslationService = configurationTranslationService;</span>
+<span class="fc" id="L22">  }</span>
 
   @Bean
   public AdditionalSkillConfigurationService additionalSkillConfigurationService() {
-<span class="nc" id="L26">    return new AdditionalSkillConfigurationServiceImpl(</span>
+<span class="fc" id="L26">    return new AdditionalSkillConfigurationServiceImpl(</span>
         configurationRepository, configurationTranslationService);
   }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequestContextFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.web.infrastructure.context</a> &gt; <span class="el_source">RequestContextFilter.java</span></div><h1>RequestContextFilter.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.web.infrastructure.context;
 
+import fr.avenirsesr.portfolio.common.data.domain.model.User;
 import fr.avenirsesr.portfolio.common.error.domain.exception.UserNotFoundException;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
-import fr.avenirsesr.portfolio.common.security.infrastructure.configuration.SecurityConfig;
 import fr.avenirsesr.portfolio.common.user.domain.port.output.BaseUserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component(&quot;userRequestContextFilter&quot;)
-<span class="nc" id="L19">@Slf4j</span>
+<span class="fc" id="L19">@Slf4j</span>
 public class RequestContextFilter extends OncePerRequestFilter {
   private final BaseUserService userService;
 
-<span class="nc" id="L23">  public RequestContextFilter(BaseUserService userService) {</span>
-<span class="nc" id="L24">    this.userService = userService;</span>
-<span class="nc" id="L25">  }</span>
+<span class="fc" id="L23">  public RequestContextFilter(BaseUserService userService) {</span>
+<span class="fc" id="L24">    this.userService = userService;</span>
+<span class="fc" id="L25">  }</span>
 
   @Override
   public void doFilterInternal(
@@ -30,40 +30,35 @@ public class RequestContextFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     try {
-<span class="nc" id="L33">      var languageCode = Optional.ofNullable(request.getHeader(&quot;Accept-Language&quot;));</span>
-<span class="nc bnc" id="L34" title="All 2 branches missed.">      if (languageCode.isEmpty()) {</span>
-<span class="nc" id="L35">        languageCode = Optional.of(ELanguage.FALLBACK.getCode());</span>
+<span class="fc" id="L33">      var languageCode = Optional.ofNullable(request.getHeader(&quot;Accept-Language&quot;));</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">      if (languageCode.isEmpty()) {</span>
+<span class="fc" id="L35">        languageCode = Optional.of(ELanguage.FALLBACK.getCode());</span>
       }
-<span class="nc" id="L37">      ELanguage preferredLanguage = ELanguage.fromCode(languageCode.get());</span>
+<span class="fc" id="L37">      ELanguage preferredLanguage = ELanguage.fromCode(languageCode.get());</span>
 
       try {
-<span class="nc" id="L40">        var userLoggedIn =</span>
-<span class="nc" id="L41">            Optional.ofNullable(request.getUserPrincipal())</span>
-<span class="nc" id="L42">                .flatMap(</span>
+<span class="fc" id="L40">        Optional&lt;User&gt; userLoggedIn =</span>
+<span class="fc" id="L41">            Optional.ofNullable(request.getUserPrincipal())</span>
+<span class="fc" id="L42">                .flatMap(</span>
                     p -&gt; {
-<span class="nc bnc" id="L44" title="All 2 branches missed.">                      if (SecurityConfig.INTERNAL_SERVICE_PRINCIPAL.equals(p.getName())) {</span>
-<span class="nc" id="L45">                        log.debug(&quot;Internal service call detected, skipping user lookup&quot;);</span>
-<span class="nc" id="L46">                        return Optional.empty();</span>
-                      }
                       try {
-<span class="nc" id="L49">                        UUID userId = UUID.fromString(p.getName());</span>
-<span class="nc" id="L50">                        return Optional.of(userService.getUser(userId));</span>
-<span class="nc" id="L51">                      } catch (IllegalArgumentException e) {</span>
-<span class="nc" id="L52">                        log.warn(&quot;Principal '{}' is not a valid UUID&quot;, p.getName());</span>
-<span class="nc" id="L53">                        return Optional.empty();</span>
+<span class="nc" id="L45">                        return Optional.of(userService.getUser(UUID.fromString(p.getName())));</span>
+<span class="fc" id="L46">                      } catch (IllegalArgumentException ex) {</span>
+<span class="fc" id="L47">                        log.debug(&quot;Principal name is not a UUID: {}&quot;, p.getName());</span>
+<span class="fc" id="L48">                        return Optional.empty();</span>
                       }
                     });
 
-<span class="nc" id="L57">        RequestContext.set(new RequestData(userLoggedIn, preferredLanguage));</span>
-<span class="nc" id="L58">      } catch (UserNotFoundException e) {</span>
-<span class="nc" id="L59">        log.debug(&quot;User not found for principal {}&quot;, request.getUserPrincipal());</span>
-<span class="nc" id="L60">        RequestContext.set(new RequestData(Optional.empty(), preferredLanguage));</span>
-<span class="nc" id="L61">      }</span>
+<span class="fc" id="L52">        RequestContext.set(new RequestData(userLoggedIn, preferredLanguage));</span>
+<span class="nc" id="L53">      } catch (UserNotFoundException e) {</span>
+<span class="nc" id="L54">        log.debug(&quot;User not found for principal {}&quot;, request.getUserPrincipal());</span>
+<span class="nc" id="L55">        RequestContext.set(new RequestData(Optional.empty(), preferredLanguage));</span>
+<span class="fc" id="L56">      }</span>
 
-<span class="nc" id="L63">      filterChain.doFilter(request, response);</span>
+<span class="fc" id="L58">      filterChain.doFilter(request, response);</span>
     } finally {
-<span class="nc" id="L65">      RequestContext.clear();</span>
+<span class="fc" id="L60">      RequestContext.clear();</span>
     }
-<span class="nc" id="L67">  }</span>
+<span class="fc" id="L62">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

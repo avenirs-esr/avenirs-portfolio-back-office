@@ -6,7 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 <span class="nc" id="L7">public class ConfigurationSpecification {</span>
   public static Specification&lt;ConfigurationEntity&gt; inScope(EConfigurationScope scope) {
-<span class="nc" id="L9">    return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;scope&quot;), scope);</span>
+<span class="fc" id="L9">    return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;scope&quot;), scope);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

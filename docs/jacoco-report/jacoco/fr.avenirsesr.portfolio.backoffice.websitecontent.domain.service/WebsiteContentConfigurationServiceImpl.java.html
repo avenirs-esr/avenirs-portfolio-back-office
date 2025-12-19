@@ -80,7 +80,7 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
 <span class="fc" id="L80">                      var language = entry.getKey();</span>
 <span class="fc" id="L81">                      var value = entry.getValue().html();</span>
                       var newConfiguration =
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">                          savedConfigurations.get(language) != null</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                          savedConfigurations.get(language) != null</span>
 <span class="fc" id="L84">                                  &amp;&amp; savedConfigurations.get(language).stream()</span>
 <span class="fc bfc" id="L85" title="All 2 branches covered.">                                      .anyMatch(</span>
                                           c -&gt;

@@ -14,14 +14,14 @@ public class WebsiteContentConfigurationServiceConfig {
 
   public WebsiteContentConfigurationServiceConfig(
       ConfigurationRepository configurationRepository,
-<span class="nc" id="L17">      ConfigurationTranslationService configurationTranslationService) {</span>
-<span class="nc" id="L18">    this.configurationRepository = configurationRepository;</span>
-<span class="nc" id="L19">    this.configurationTranslationService = configurationTranslationService;</span>
-<span class="nc" id="L20">  }</span>
+<span class="fc" id="L17">      ConfigurationTranslationService configurationTranslationService) {</span>
+<span class="fc" id="L18">    this.configurationRepository = configurationRepository;</span>
+<span class="fc" id="L19">    this.configurationTranslationService = configurationTranslationService;</span>
+<span class="fc" id="L20">  }</span>
 
   @Bean
   public WebsiteContentConfigurationService websiteContentConfigurationService() {
-<span class="nc" id="L24">    return new WebsiteContentConfigurationServiceImpl(</span>
+<span class="fc" id="L24">    return new WebsiteContentConfigurationServiceImpl(</span>
         configurationRepository, configurationTranslationService);
   }
 }
