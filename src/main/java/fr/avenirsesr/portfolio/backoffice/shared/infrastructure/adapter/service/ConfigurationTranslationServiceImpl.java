@@ -32,7 +32,8 @@ public class ConfigurationTranslationServiceImpl implements ConfigurationTransla
                         translation ->
                             Map.entry(
                                 translation.getLanguage(),
-                                ConfigurationMapper.toDomain(entity, translation.getLanguage()))))
+                                ConfigurationMapper.INSTANCE.toTranslatedDomain(
+                                    entity, translation.getLanguage()))))
         .collect(
             Collectors.groupingBy(
                 Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
@@ -51,7 +52,8 @@ public class ConfigurationTranslationServiceImpl implements ConfigurationTransla
                       entities.stream()
                           .filter(e -> e.getId() == configuration.getId())
                           .findAny()
-                          .orElse(ConfigurationMapper.fromDomainWithoutValue(configuration));
+                          .orElse(
+                              ConfigurationMapper.INSTANCE.fromDomainWithoutValue(configuration));
 
                   domains
                       .keySet()

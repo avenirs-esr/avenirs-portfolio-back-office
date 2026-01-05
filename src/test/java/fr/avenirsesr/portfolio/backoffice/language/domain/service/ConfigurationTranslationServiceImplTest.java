@@ -126,7 +126,7 @@ class ConfigurationTranslationServiceImplTest {
   @Test
   void shouldAddNewTranslationForAnotherLanguage() {
     BddLogger.given("a ConfigurationTranslationServiceImpl service");
-    Configuration configFr = ConfigurationMapper.toDomain(entityFr);
+    Configuration configFr = ConfigurationMapper.INSTANCE.toDomain(entityFr);
     Configuration configEn =
         Configuration.create(
             entityFr.getId(),
@@ -154,7 +154,7 @@ class ConfigurationTranslationServiceImplTest {
   @Test
   void shouldThrowWhenMissingTranslationForLanguage() {
     BddLogger.given("a ConfigurationTranslationServiceImpl service");
-    Configuration configFr = ConfigurationMapper.toDomain(entityFr);
+    Configuration configFr = ConfigurationMapper.INSTANCE.toDomain(entityFr);
     Map<ELanguage, List<Configuration>> input =
         Map.of(
             ELanguage.FRENCH, List.of(configFr),

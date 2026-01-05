@@ -2,9 +2,13 @@ package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.ma
 
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionConfig;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionConfigEntity;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
 
-public interface InstitutionConfigMapper {
-  static InstitutionConfigEntity fromDomain(InstitutionConfig institutionConfig) {
+public class InstitutionConfigMapper implements Mapper<InstitutionConfigEntity, InstitutionConfig> {
+  public static final InstitutionConfigMapper INSTANCE = new InstitutionConfigMapper();
+
+  @Override
+  public InstitutionConfigEntity fromDomain(InstitutionConfig institutionConfig) {
     return InstitutionConfigEntity.of(
         institutionConfig.getId(),
         institutionConfig.getInstitutionId(),
@@ -14,7 +18,8 @@ public interface InstitutionConfigMapper {
         institutionConfig.getUpdatedAt());
   }
 
-  static InstitutionConfig toDomain(InstitutionConfigEntity entity) {
+  @Override
+  public InstitutionConfig toDomain(InstitutionConfigEntity entity) {
     return InstitutionConfig.of(
         entity.getId(),
         entity.getInstitutionId(),

@@ -5,11 +5,15 @@ import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.model.ConfigurationEntity;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteContentConfiguration;
 import fr.avenirsesr.portfolio.common.configuration.domain.model.ETraceConfiguration;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
 import fr.avenirsesr.portfolio.common.language.infrastructure.adapter.utils.TranslationUtil;
 
-public interface ConfigurationMapper {
-  static ConfigurationEntity fromDomain(Configuration configuration) {
+public class ConfigurationMapper implements Mapper<ConfigurationEntity, Configuration> {
+  public static final ConfigurationMapper INSTANCE = new ConfigurationMapper();
+
+  @Override
+  public ConfigurationEntity fromDomain(Configuration configuration) {
     return ConfigurationEntity.of(
         configuration.getId(),
         configuration.getScope(),
@@ -17,16 +21,18 @@ public interface ConfigurationMapper {
         configuration.getValue());
   }
 
-  static ConfigurationEntity fromDomainWithoutValue(Configuration configuration) {
+  public ConfigurationEntity fromDomainWithoutValue(Configuration configuration) {
     return ConfigurationEntity.of(
         configuration.getId(), configuration.getScope(), configuration.getKey(), null);
   }
 
-  static Configuration toDomain(ConfigurationEntity configurationEntity) {
-    return toDomain(configurationEntity, null);
+  @Override
+  public Configuration toDomain(ConfigurationEntity configurationEntity) {
+    return toTranslatedDomain(configurationEntity, null);
   }
 
-  static Configuration toDomain(ConfigurationEntity configurationEntity, ELanguage language) {
+  public Configuration toTranslatedDomain(
+      ConfigurationEntity configurationEntity, ELanguage language) {
     var translatedValue =
         configurationEntity.getValue().isPresent()
             ? configurationEntity.getValue().get()

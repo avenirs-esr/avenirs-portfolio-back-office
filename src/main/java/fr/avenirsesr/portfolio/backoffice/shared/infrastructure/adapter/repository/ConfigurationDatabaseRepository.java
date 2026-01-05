@@ -15,17 +15,13 @@ public class ConfigurationDatabaseRepository
     extends GenericJpaRepositoryAdapter<Configuration, ConfigurationEntity>
     implements ConfigurationRepository {
   public ConfigurationDatabaseRepository(ConfigurationJpaRepository jpaRepository) {
-    super(
-        jpaRepository,
-        jpaRepository,
-        ConfigurationMapper::fromDomain,
-        ConfigurationMapper::toDomain);
+    super(jpaRepository, jpaRepository, ConfigurationEntity.class, ConfigurationMapper.INSTANCE);
   }
 
   @Override
   public List<Configuration> inScope(EConfigurationScope scope) {
     return jpaSpecificationExecutor.findAll(ConfigurationSpecification.inScope(scope)).stream()
-        .map(ConfigurationMapper::toDomain)
+        .map(ConfigurationMapper.INSTANCE::toDomain)
         .toList();
   }
 

@@ -19,8 +19,8 @@ public class InstitutionConfigDatabaseRepository
     super(
         jpaRepository,
         jpaRepository,
-        InstitutionConfigMapper::fromDomain,
-        InstitutionConfigMapper::toDomain);
+        InstitutionConfigEntity.class,
+        InstitutionConfigMapper.INSTANCE);
     this.jpaRepository = jpaRepository;
   }
 
@@ -31,6 +31,6 @@ public class InstitutionConfigDatabaseRepository
     if (institutionConfigEntity == null) {
       throw new InstitutionConfigNotFoundException();
     }
-    return InstitutionConfigMapper.toDomain(institutionConfigEntity);
+    return InstitutionConfigMapper.INSTANCE.toDomain(institutionConfigEntity);
   }
 }
