@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EntityGrapher.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.data.infrastructure.adapter</a> &gt; <span class="el_source">EntityGrapher.java</span></div><h1>EntityGrapher.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.data.infrastructure.adapter;
+
+import fr.avenirsesr.portfolio.common.data.domain.FetchGraph;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.AttributeNode;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Subgraph;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Utility class for building JPA {@link EntityGraph EntityGraphs} fluently. Provides a clean API to
+ * dynamically define fetch plans and nested subgraphs, allowing precise control over entity
+ * relationship loading at runtime.
+ *
+ * @param &lt;T&gt; the root entity type
+ */
+public class EntityGrapher&lt;T&gt; {
+
+  private final EntityGraph&lt;T&gt; rootGraph;
+<span class="nc" id="L23">  private final Map&lt;String, Subgraph&lt;?&gt;&gt; subgraphs = new HashMap&lt;&gt;();</span>
+  private Object currentGraph;
+
+<span class="nc" id="L26">  private EntityGrapher(Class&lt;T&gt; rootClass, EntityManager em) {</span>
+<span class="nc" id="L27">    this.rootGraph = em.createEntityGraph(rootClass);</span>
+<span class="nc" id="L28">    this.currentGraph = rootGraph;</span>
+<span class="nc" id="L29">  }</span>
+
+  /**
+   * Creates a new {@code EntityGrapher} instance for the given root entity class.
+   *
+   * &lt;p&gt;This method initializes the root {@link EntityGraph} using the provided {@link
+   * EntityManager}. It marks the starting point from which the graph will be constructed.
+   *
+   * @param rootClass the root entity class for which the graph will be created
+   * @param em the {@link EntityManager} used to instantiate the underlying {@link EntityGraph}
+   * @return a new {@code EntityGrapher} positioned at the root graph
+   */
+  public static &lt;T&gt; EntityGrapher&lt;T&gt; of(Class&lt;T&gt; rootClass, EntityManager em) {
+<span class="nc" id="L42">    return new EntityGrapher&lt;&gt;(rootClass, em);</span>
+  }
+
+  /**
+   * Moves the grapher’s cursor to an existing node within the graph.
+   *
+   * &lt;p&gt;This allows continuing the graph definition from a previously added subgraph. The node must
+   * have been added beforehand using {@link #add(String)}, otherwise an {@code
+   * IllegalArgumentException} will be thrown.
+   *
+   * @param node the name of the attribute node to navigate to
+   * @return the {@code EntityGrapher} positioned at the specified node
+   * @throws IllegalArgumentException if the node does not exist in the graph
+   */
+  public EntityGrapher&lt;T&gt; from(String node) {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">    if (!subgraphs.containsKey(node)) {</span>
+<span class="nc" id="L58">      throw new IllegalArgumentException(&quot;Node &quot; + node + &quot; does not exists&quot;);</span>
+    }
+<span class="nc" id="L60">    currentGraph = subgraphs.get(node);</span>
+<span class="nc" id="L61">    return this;</span>
+  }
+
+  /**
+   * Adds the specified attribute as a subgraph and moves the grapher’s cursor to it.
+   *
+   * &lt;p&gt;This both fetches the attribute and creates a new subgraph level for defining deeper
+   * relationships.
+   *
+   * @param attribute the name of the attribute to fetch and add as a subgraph
+   * @return the {@code EntityGrapher} positioned at the newly added node
+   * @throws IllegalArgumentException if the attribute node already exists in the graph
+   */
+  public EntityGrapher&lt;T&gt; add(String attribute) {
+<span class="nc bnc" id="L75" title="All 2 branches missed.">    if (subgraphs.containsKey(attribute)) {</span>
+<span class="nc" id="L76">      throw new IllegalArgumentException(&quot;Attribute &quot; + attribute + &quot; already exists&quot;);</span>
+    }
+
+<span class="nc" id="L79">    fetch(attribute);</span>
+<span class="nc" id="L80">    currentGraph = subgraphs.get(attribute);</span>
+<span class="nc" id="L81">    return this;</span>
+  }
+
+  /**
+   * Fetches the specified attribute at the current graph level without moving deeper.
+   *
+   * &lt;p&gt;This is typically used when the attribute needs to be eagerly loaded but does not require
+   * defining additional nested relationships.
+   *
+   * @param attribute the name of the attribute to fetch
+   * @return the current {@code EntityGrapher} instance
+   */
+  public EntityGrapher&lt;T&gt; fetch(String attribute) {
+<span class="nc bnc" id="L94" title="All 3 branches missed.">    switch (currentGraph) {</span>
+<span class="nc" id="L95">      case EntityGraph&lt;?&gt; entityGraph -&gt; entityGraph.addAttributeNodes(attribute);</span>
+<span class="nc" id="L96">      case Subgraph&lt;?&gt; subgraph -&gt; subgraph.addAttributeNodes(attribute);</span>
+<span class="nc" id="L97">      default -&gt; throw new IllegalStateException(&quot;Graph type not supported for &quot; + attribute);</span>
+    }
+    Object newGraph =
+<span class="nc bnc" id="L100" title="All 3 branches missed.">        switch (currentGraph) {</span>
+<span class="nc" id="L101">          case EntityGraph&lt;?&gt; entityGraph -&gt; entityGraph.addSubgraph(attribute);</span>
+<span class="nc" id="L102">          case Subgraph&lt;?&gt; subgraph -&gt; subgraph.addSubgraph(attribute);</span>
+<span class="nc" id="L103">          default -&gt; throw new IllegalStateException(&quot;Graph type not supported for &quot; + attribute);</span>
+        };
+
+<span class="nc" id="L106">    subgraphs.put(attribute, (Subgraph&lt;?&gt;) newGraph);</span>
+<span class="nc" id="L107">    return this;</span>
+  }
+
+  /**
+   * Moves the grapher’s cursor back to the root of the graph.
+   *
+   * &lt;p&gt;Useful when defining multiple top-level branches of the entity graph.
+   *
+   * @return the {@code EntityGrapher} positioned at the root node
+   */
+  public EntityGrapher&lt;T&gt; root() {
+<span class="nc" id="L118">    currentGraph = rootGraph;</span>
+<span class="nc" id="L119">    return this;</span>
+  }
+
+  /**
+   * Finalizes the graph construction and returns the built {@link EntityGraph}.
+   *
+   * &lt;p&gt;This graph can then be passed to a JPA query using {@code
+   * query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph)}.
+   *
+   * @return the fully built {@link EntityGraph}
+   */
+  public EntityGraph&lt;T&gt; build() {
+<span class="nc" id="L131">    return rootGraph;</span>
+  }
+
+  public List&lt;String&gt; attributes() {
+    var attributes =
+<span class="nc bnc" id="L136" title="All 3 branches missed.">        switch (currentGraph) {</span>
+<span class="nc" id="L137">          case EntityGraph&lt;?&gt; entityGraph -&gt;</span>
+<span class="nc" id="L138">              entityGraph.getAttributeNodes().stream()</span>
+<span class="nc" id="L139">                  .map(AttributeNode::getAttributeName)</span>
+<span class="nc" id="L140">                  .toList();</span>
+<span class="nc" id="L141">          case Subgraph&lt;?&gt; subgraph -&gt;</span>
+<span class="nc" id="L142">              subgraph.getAttributeNodes().stream().map(AttributeNode::getAttributeName).toList();</span>
+<span class="nc" id="L143">          default -&gt; throw new IllegalStateException(&quot;Graph type not supported&quot;);</span>
+        };
+<span class="nc" id="L145">    root();</span>
+<span class="nc" id="L146">    return attributes;</span>
+  }
+
+  /**
+   * Build the {@link EntityGraph} based on an provided {@link FetchGraph}
+   *
+   * @return the fully built {@link EntityGraph}
+   */
+  public static &lt;T&gt; EntityGrapher&lt;T&gt; from(
+      FetchGraph fetchGraph, Class&lt;T&gt; rootClass, EntityManager em) {
+<span class="nc" id="L156">    var graph = EntityGrapher.of(rootClass, em);</span>
+<span class="nc" id="L157">    apply(fetchGraph, null, graph);</span>
+
+<span class="nc" id="L159">    return graph;</span>
+  }
+
+  private static void apply(
+      FetchGraph fetchGraph, @Nullable String parentAttribute, EntityGrapher&lt;?&gt; grapher) {
+<span class="nc bnc" id="L164" title="All 2 branches missed.">    for (var entry : fetchGraph.children().entrySet()) {</span>
+<span class="nc" id="L165">      String attribute = entry.getKey();</span>
+<span class="nc" id="L166">      FetchGraph child = entry.getValue();</span>
+
+<span class="nc" id="L168">      grapher.fetch(attribute);</span>
+
+<span class="nc bnc" id="L170" title="All 2 branches missed.">      if (!child.children().isEmpty()) {</span>
+<span class="nc" id="L171">        grapher.from(attribute);</span>
+<span class="nc" id="L172">        apply(child, attribute, grapher);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        if (parentAttribute != null) {</span>
+<span class="nc" id="L174">          grapher.from(parentAttribute);</span>
+        } else {
+<span class="nc" id="L176">          grapher.root();</span>
+        }
+      }
+<span class="nc" id="L179">    }</span>
+<span class="nc" id="L180">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

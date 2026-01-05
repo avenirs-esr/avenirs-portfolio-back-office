@@ -2,6 +2,7 @@
 
 import fr.avenirsesr.portfolio.common.data.domain.model.DeletableAvenirsBaseModel;
 import fr.avenirsesr.portfolio.common.data.domain.port.output.repository.GenericDeletableRepositoryPort;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.DeletableAvenirsBaseEntity;
 import java.util.UUID;
 import java.util.function.Function;
@@ -13,24 +14,22 @@ public abstract class GenericDeletableJpaRepositoryAdapter&lt;
     extends GenericJpaRepositoryAdapter&lt;D, E&gt; implements GenericDeletableRepositoryPort&lt;D&gt; {
   protected final JpaRepository&lt;E, UUID&gt; jpaRepository;
   protected final JpaSpecificationExecutor&lt;E&gt; jpaSpecificationExecutor;
-  private final Function&lt;D, E&gt; fromDomain;
-  private final Function&lt;E, D&gt; toDomain;
+  private final Mapper&lt;E, D&gt; mapper;
 
   protected GenericDeletableJpaRepositoryAdapter(
       JpaRepository&lt;E, UUID&gt; jpaRepository,
       JpaSpecificationExecutor&lt;E&gt; jpaSpecificationExecutor,
-      Function&lt;D, E&gt; fromDomain,
-      Function&lt;E, D&gt; toDomain) {
-<span class="nc" id="L24">    super(jpaRepository, jpaSpecificationExecutor, fromDomain, toDomain);</span>
+      Class&lt;E&gt; entityClass,
+      Mapper&lt;E, D&gt; mapper) {
+<span class="nc" id="L24">    super(jpaRepository, jpaSpecificationExecutor, entityClass, mapper);</span>
 <span class="nc" id="L25">    this.jpaRepository = jpaRepository;</span>
 <span class="nc" id="L26">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
-<span class="nc" id="L27">    this.fromDomain = fromDomain;</span>
-<span class="nc" id="L28">    this.toDomain = toDomain;</span>
-<span class="nc" id="L29">  }</span>
+<span class="nc" id="L27">    this.mapper = mapper;</span>
+<span class="nc" id="L28">  }</span>
 
   @Override
   public void delete(D domain) {
-<span class="nc" id="L33">    jpaRepository.delete(fromDomain.apply(domain));</span>
-<span class="nc" id="L34">  }</span>
+<span class="nc" id="L32">    jpaRepository.delete(mapper.fromDomain(domain));</span>
+<span class="nc" id="L33">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

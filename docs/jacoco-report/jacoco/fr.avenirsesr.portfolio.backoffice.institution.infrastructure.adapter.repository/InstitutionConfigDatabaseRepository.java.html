@@ -19,8 +19,8 @@ public class InstitutionConfigDatabaseRepository
 <span class="fc" id="L19">    super(</span>
         jpaRepository,
         jpaRepository,
-        InstitutionConfigMapper::fromDomain,
-        InstitutionConfigMapper::toDomain);
+        InstitutionConfigEntity.class,
+        InstitutionConfigMapper.INSTANCE);
 <span class="fc" id="L24">    this.jpaRepository = jpaRepository;</span>
 <span class="fc" id="L25">  }</span>
 
@@ -31,7 +31,7 @@ public class InstitutionConfigDatabaseRepository
 <span class="fc bfc" id="L31" title="All 2 branches covered.">    if (institutionConfigEntity == null) {</span>
 <span class="fc" id="L32">      throw new InstitutionConfigNotFoundException();</span>
     }
-<span class="fc" id="L34">    return InstitutionConfigMapper.toDomain(institutionConfigEntity);</span>
+<span class="fc" id="L34">    return InstitutionConfigMapper.INSTANCE.toDomain(institutionConfigEntity);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

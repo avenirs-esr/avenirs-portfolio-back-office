@@ -15,26 +15,22 @@ public class ConfigurationDatabaseRepository
     extends GenericJpaRepositoryAdapter&lt;Configuration, ConfigurationEntity&gt;
     implements ConfigurationRepository {
   public ConfigurationDatabaseRepository(ConfigurationJpaRepository jpaRepository) {
-<span class="fc" id="L18">    super(</span>
-        jpaRepository,
-        jpaRepository,
-        ConfigurationMapper::fromDomain,
-        ConfigurationMapper::toDomain);
-<span class="fc" id="L23">  }</span>
+<span class="fc" id="L18">    super(jpaRepository, jpaRepository, ConfigurationEntity.class, ConfigurationMapper.INSTANCE);</span>
+<span class="fc" id="L19">  }</span>
 
   @Override
   public List&lt;Configuration&gt; inScope(EConfigurationScope scope) {
-<span class="fc" id="L27">    return jpaSpecificationExecutor.findAll(ConfigurationSpecification.inScope(scope)).stream()</span>
-<span class="fc" id="L28">        .map(ConfigurationMapper::toDomain)</span>
-<span class="fc" id="L29">        .toList();</span>
+<span class="fc" id="L23">    return jpaSpecificationExecutor.findAll(ConfigurationSpecification.inScope(scope)).stream()</span>
+<span class="fc" id="L24">        .map(ConfigurationMapper.INSTANCE::toDomain)</span>
+<span class="fc" id="L25">        .toList();</span>
   }
 
   public List&lt;ConfigurationEntity&gt; inScopeEntities(EConfigurationScope scope) {
-<span class="fc" id="L33">    return jpaSpecificationExecutor.findAll(ConfigurationSpecification.inScope(scope));</span>
+<span class="fc" id="L29">    return jpaSpecificationExecutor.findAll(ConfigurationSpecification.inScope(scope));</span>
   }
 
   public void saveAllEntities(List&lt;ConfigurationEntity&gt; entities) {
-<span class="fc" id="L37">    super.saveAllEntities(entities);</span>
-<span class="fc" id="L38">  }</span>
+<span class="fc" id="L33">    super.saveAllEntities(entities);</span>
+<span class="fc" id="L34">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -32,61 +32,63 @@ public class ConfigurationTranslationServiceImpl implements ConfigurationTransla
                         translation -&gt;
 <span class="fc" id="L33">                            Map.entry(</span>
 <span class="fc" id="L34">                                translation.getLanguage(),</span>
-<span class="fc" id="L35">                                ConfigurationMapper.toDomain(entity, translation.getLanguage()))))</span>
-<span class="fc" id="L36">        .collect(</span>
-<span class="fc" id="L37">            Collectors.groupingBy(</span>
-<span class="fc" id="L38">                Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));</span>
+<span class="fc" id="L35">                                ConfigurationMapper.INSTANCE.toTranslatedDomain(</span>
+<span class="fc" id="L36">                                    entity, translation.getLanguage()))))</span>
+<span class="fc" id="L37">        .collect(</span>
+<span class="fc" id="L38">            Collectors.groupingBy(</span>
+<span class="fc" id="L39">                Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));</span>
   }
 
   @Override
   public void buildAndSaveTranslatedEntities(
       Map&lt;ELanguage, List&lt;Configuration&gt;&gt; domains, EConfigurationScope scope) {
-<span class="fc" id="L44">    var entities = configurationRepository.inScopeEntities(scope);</span>
+<span class="fc" id="L45">    var entities = configurationRepository.inScopeEntities(scope);</span>
 
-<span class="fc" id="L46">    List&lt;ConfigurationEntity&gt; configurationsToSave =</span>
-<span class="fc" id="L47">        domains.get(ELanguage.FRENCH).stream()</span>
-<span class="fc" id="L48">            .map(</span>
+<span class="fc" id="L47">    List&lt;ConfigurationEntity&gt; configurationsToSave =</span>
+<span class="fc" id="L48">        domains.get(ELanguage.FRENCH).stream()</span>
+<span class="fc" id="L49">            .map(</span>
                 configuration -&gt; {
-<span class="fc" id="L50">                  var entity =</span>
-<span class="fc" id="L51">                      entities.stream()</span>
-<span class="pc bpc" id="L52" title="1 of 2 branches missed.">                          .filter(e -&gt; e.getId() == configuration.getId())</span>
-<span class="fc" id="L53">                          .findAny()</span>
-<span class="fc" id="L54">                          .orElse(ConfigurationMapper.fromDomainWithoutValue(configuration));</span>
+<span class="fc" id="L51">                  var entity =</span>
+<span class="fc" id="L52">                      entities.stream()</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">                          .filter(e -&gt; e.getId() == configuration.getId())</span>
+<span class="fc" id="L54">                          .findAny()</span>
+<span class="fc" id="L55">                          .orElse(</span>
+<span class="fc" id="L56">                              ConfigurationMapper.INSTANCE.fromDomainWithoutValue(configuration));</span>
 
-<span class="fc" id="L56">                  domains</span>
-<span class="fc" id="L57">                      .keySet()</span>
-<span class="fc" id="L58">                      .forEach(</span>
+<span class="fc" id="L58">                  domains</span>
+<span class="fc" id="L59">                      .keySet()</span>
+<span class="fc" id="L60">                      .forEach(</span>
                           language -&gt;
-<span class="fc" id="L60">                              addTranslationToEntity(domains, configuration, language, entity));</span>
-<span class="fc" id="L61">                  return entity;</span>
+<span class="fc" id="L62">                              addTranslationToEntity(domains, configuration, language, entity));</span>
+<span class="fc" id="L63">                  return entity;</span>
                 })
-<span class="fc" id="L63">            .toList();</span>
+<span class="fc" id="L65">            .toList();</span>
 
-<span class="fc" id="L65">    configurationRepository.saveAllEntities(configurationsToSave);</span>
-<span class="fc" id="L66">  }</span>
+<span class="fc" id="L67">    configurationRepository.saveAllEntities(configurationsToSave);</span>
+<span class="fc" id="L68">  }</span>
 
   private static void addTranslationToEntity(
       Map&lt;ELanguage, List&lt;Configuration&gt;&gt; domains,
       Configuration configuration,
       ELanguage language,
       ConfigurationEntity entity) {
-<span class="fc" id="L73">    var newValue =</span>
-<span class="fc" id="L74">        domains.get(language).stream()</span>
-<span class="fc" id="L75">            .filter(c -&gt; Objects.equals(c.getKey(), configuration.getKey()))</span>
-<span class="fc" id="L76">            .findAny()</span>
-<span class="fc" id="L77">            .orElseThrow()</span>
-<span class="fc" id="L78">            .getValue();</span>
+<span class="fc" id="L75">    var newValue =</span>
+<span class="fc" id="L76">        domains.get(language).stream()</span>
+<span class="fc" id="L77">            .filter(c -&gt; Objects.equals(c.getKey(), configuration.getKey()))</span>
+<span class="fc" id="L78">            .findAny()</span>
+<span class="fc" id="L79">            .orElseThrow()</span>
+<span class="fc" id="L80">            .getValue();</span>
 
-<span class="fc" id="L80">    entity.getTranslations().stream()</span>
-<span class="fc" id="L81">        .filter(t -&gt; t.getLanguage().equals(language))</span>
-<span class="fc" id="L82">        .findFirst()</span>
-<span class="fc" id="L83">        .ifPresentOrElse(</span>
-<span class="fc" id="L84">            translation -&gt; translation.setValue(newValue),</span>
+<span class="fc" id="L82">    entity.getTranslations().stream()</span>
+<span class="fc" id="L83">        .filter(t -&gt; t.getLanguage().equals(language))</span>
+<span class="fc" id="L84">        .findFirst()</span>
+<span class="fc" id="L85">        .ifPresentOrElse(</span>
+<span class="fc" id="L86">            translation -&gt; translation.setValue(newValue),</span>
             () -&gt; {
               var newTranslation =
-<span class="fc" id="L87">                  ConfigurationTranslationEntity.of(UUID.randomUUID(), language, entity, newValue);</span>
-<span class="fc" id="L88">              entity.getTranslations().add(newTranslation);</span>
-<span class="fc" id="L89">            });</span>
-<span class="fc" id="L90">  }</span>
+<span class="fc" id="L89">                  ConfigurationTranslationEntity.of(UUID.randomUUID(), language, entity, newValue);</span>
+<span class="fc" id="L90">              entity.getTranslations().add(newTranslation);</span>
+<span class="fc" id="L91">            });</span>
+<span class="fc" id="L92">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

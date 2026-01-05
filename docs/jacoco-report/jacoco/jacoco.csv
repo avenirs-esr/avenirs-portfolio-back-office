@@ -1,5 +1,5 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.repository,InstitutionConfigDatabaseRepository,0,24,0,2,0,8,0,3,0,2
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.repository,InstitutionConfigDatabaseRepository,0,25,0,2,0,8,0,3,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseOpenApiConfiguration,22,0,0,0,9,0,2,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseSwaggerSchema,88,0,0,0,24,0,2,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContext,3,16,0,0,1,6,1,4,1,4
@@ -12,10 +12,10 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils.infrastructure.adapter.util,TestResourceUtils,26,0,2,0,5,0,3,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter,InstitutionConfigMapper,0,8,0,0,0,2,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils,BddLogger,4,18,0,0,2,8,1,4,1,4
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.repository,ConfigurationDatabaseRepository,0,27,0,0,0,8,0,4,0,4
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.repository,ConfigurationDatabaseRepository,0,31,0,0,0,8,0,4,0,4
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller,WebsiteContentController,66,4,0,0,19,1,5,1,5,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.specification,ConfigurationSpecification,3,10,0,0,1,1,1,2,1,2
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.service,ConfigurationTranslationServiceImpl,1,140,1,1,0,42,1,12,0,12
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.service,ConfigurationTranslationServiceImpl,1,142,1,1,0,44,1,12,0,12
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.domain.service,WebsiteContentConfigurationServiceImpl,44,129,5,7,11,37,9,11,5,9
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.validation.infrastructure.adapter.utils,ValidationUtils,14,0,4,0,4,0,4,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.language.infrastructure.adapter.utils,TranslationUtil,34,28,0,0,9,8,4,3,4,3
@@ -33,9 +33,11 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.user.infrastructure.service,NoOpUserService,2,3,0,0,1,1,1,1,1,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.service,WebsiteContentConfigurationServiceConfig,0,17,0,0,0,5,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio,BackOfficeApplication,5,3,0,0,2,1,1,1,1,1
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository,GenericJpaRepositoryAdapter,139,55,4,2,27,13,15,4,12,4
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository,GenericDeletableJpaRepositoryAdapter,28,0,0,0,8,0,2,0,2,0
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository,GenericJpaRepositoryAdapter,441,63,18,2,72,13,26,4,16,4
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository,GenericDeletableJpaRepositoryAdapter,25,0,0,0,7,0,2,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.trace.domain.service,TraceConfigurationServiceImpl,1,160,1,7,0,51,1,12,0,9
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.domain,FetchGraph,97,0,6,0,23,0,10,0,7,0
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter,EntityGrapher,259,0,19,0,53,0,21,0,10,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.trace.application.controller,TraceConfigurationController,31,4,0,0,9,1,2,1,2,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionConfigController,0,16,0,0,0,4,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.validation.domain.utils,FieldValidationUtils,67,0,18,0,20,0,13,0,4,0
