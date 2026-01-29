@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericTranslatableJpaRepositoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository</a> &gt; <span class="el_source">GenericTranslatableJpaRepositoryAdapter.java</span></div><h1>GenericTranslatableJpaRepositoryAdapter.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository;
+
+import fr.avenirsesr.portfolio.common.data.domain.model.AvenirsBaseModel;
+import fr.avenirsesr.portfolio.common.data.domain.port.output.repository.GenericTranslatableRepositoryPort;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.TranslatableEntity;
+import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import fr.avenirsesr.portfolio.common.language.infrastructure.adapter.model.TranslationEntity;
+import fr.avenirsesr.portfolio.common.language.infrastructure.adapter.utils.TranslationUtil;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+import java.util.UUID;
+
+public abstract class GenericTranslatableJpaRepositoryAdapter&lt;
+        D extends AvenirsBaseModel, T extends TranslationEntity, E extends TranslatableEntity&lt;T&gt;&gt;
+    extends GenericJpaRepositoryAdapter&lt;D, E&gt; implements GenericTranslatableRepositoryPort&lt;D&gt; {
+  protected final JpaRepository&lt;E, UUID&gt; jpaRepository;
+  protected final JpaSpecificationExecutor&lt;E&gt; jpaSpecificationExecutor;
+  private final Mapper&lt;E, D&gt; mapper;
+  TranslationUtil.CreationFunction&lt;AvenirsBaseModel, E, ELanguage, T&gt; create;
+  TranslationUtil.UpdateFunction&lt;TranslationEntity, AvenirsBaseModel&gt; update;
+
+  protected GenericTranslatableJpaRepositoryAdapter(
+      JpaRepository&lt;E, UUID&gt; jpaRepository,
+      JpaSpecificationExecutor&lt;E&gt; jpaSpecificationExecutor,
+      Class&lt;E&gt; entityClass,
+      Mapper&lt;E, D&gt; mapper,
+      TranslationUtil.CreationFunction&lt;AvenirsBaseModel, E, ELanguage, T&gt; create,
+      TranslationUtil.UpdateFunction&lt;TranslationEntity, AvenirsBaseModel&gt; update) {
+<span class="nc" id="L31">    super(jpaRepository, jpaSpecificationExecutor, entityClass, mapper);</span>
+<span class="nc" id="L32">    this.jpaRepository = jpaRepository;</span>
+<span class="nc" id="L33">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
+<span class="nc" id="L34">    this.mapper = mapper;</span>
+<span class="nc" id="L35">    this.create = create;</span>
+<span class="nc" id="L36">    this.update = update;</span>
+<span class="nc" id="L37">  }</span>
+
+  @Override
+  public D save(D domain) {
+<span class="nc" id="L41">    var entity = jpaRepository.findById(domain.getId());</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">    if (entity.isPresent()) {</span>
+<span class="nc" id="L43">      TranslationUtil.addTranslation(domain, entity.get(), create, update);</span>
+<span class="nc" id="L44">      jpaRepository.save(entity.get());</span>
+<span class="nc" id="L45">      return mapper.toDomain(entity.get());</span>
+<span class="nc" id="L46">    } else return mapper.toDomain(jpaRepository.save(mapper.fromDomain(domain)));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
