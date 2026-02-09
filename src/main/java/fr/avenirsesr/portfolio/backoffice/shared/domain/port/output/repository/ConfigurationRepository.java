@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ConfigurationRepository extends GenericRepositoryPort<Configuration> {
   List<Configuration> inScope(EConfigurationScope scope);
+
+  long countAllInScope(EConfigurationScope scope);
 }

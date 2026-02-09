@@ -1,0 +1,41 @@
+package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder;
+
+import fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.seeder.AdditionalSkillConfigSeeder;
+import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.InstitutionConfigSeeder;
+import fr.avenirsesr.portfolio.backoffice.trace.infrastructure.seeder.TraceConfigSeeder;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.seeder.WebsiteContentConfigurationSeeder;
+import fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration.SeedingState;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class SeederOrchestrator {
+  private final AdditionalSkillConfigSeeder additionalSkillConfigSeeder;
+  private final TraceConfigSeeder traceConfigSeeder;
+  private final WebsiteContentConfigurationSeeder websiteContentConfigurationSeeder;
+  private final InstitutionConfigSeeder institutionConfigSeeder;
+  private final SeedingState seedingState;
+
+  @Transactional()
+  public void seedAll() {
+    try {
+      log.info("Seeding enabled and starting...");
+
+      additionalSkillConfigSeeder.seed();
+      traceConfigSeeder.seed();
+      websiteContentConfigurationSeeder.seed();
+      institutionConfigSeeder.seed(List.of());
+
+      log.info("✔ Seeding successfully finished");
+    } catch (Exception e) {
+      seedingState.markFailed(e);
+      log.error("✘ Seeding failed", e);
+      throw e;
+    }
+  }
+}
