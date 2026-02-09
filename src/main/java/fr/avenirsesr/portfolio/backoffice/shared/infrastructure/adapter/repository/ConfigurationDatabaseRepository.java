@@ -25,6 +25,11 @@ public class ConfigurationDatabaseRepository
         .toList();
   }
 
+  @Override
+  public long countAllInScope(EConfigurationScope scope) {
+    return jpaSpecificationExecutor.count(ConfigurationSpecification.inScope(scope));
+  }
+
   public List<ConfigurationEntity> inScopeEntities(EConfigurationScope scope) {
     return jpaSpecificationExecutor.findAll(ConfigurationSpecification.inScope(scope));
   }
