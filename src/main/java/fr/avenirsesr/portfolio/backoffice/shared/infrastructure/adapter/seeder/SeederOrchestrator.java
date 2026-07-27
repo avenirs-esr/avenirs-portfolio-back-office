@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder;
 
 import fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.seeder.AdditionalSkillConfigSeeder;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.InstitutionConfigSeeder;
+import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.InstitutionSeeder;
 import fr.avenirsesr.portfolio.backoffice.trace.infrastructure.seeder.TraceConfigSeeder;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.seeder.WebsiteContentConfigurationSeeder;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration.SeedingState;
@@ -18,6 +19,7 @@ public class SeederOrchestrator {
   private final AdditionalSkillConfigSeeder additionalSkillConfigSeeder;
   private final TraceConfigSeeder traceConfigSeeder;
   private final WebsiteContentConfigurationSeeder websiteContentConfigurationSeeder;
+  private final InstitutionSeeder institutionSeeder;
   private final InstitutionConfigSeeder institutionConfigSeeder;
   private final SeedingState seedingState;
 
@@ -29,6 +31,7 @@ public class SeederOrchestrator {
       additionalSkillConfigSeeder.seed();
       traceConfigSeeder.seed();
       websiteContentConfigurationSeeder.seed();
+      institutionSeeder.seed();
       institutionConfigSeeder.seed(List.of());
 
       log.info("✔ Seeding successfully finished");
