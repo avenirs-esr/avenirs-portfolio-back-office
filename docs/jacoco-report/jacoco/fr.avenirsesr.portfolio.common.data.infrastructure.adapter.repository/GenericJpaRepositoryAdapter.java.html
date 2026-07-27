@@ -8,15 +8,13 @@ import fr.avenirsesr.portfolio.common.data.domain.port.output.repository.Generic
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.EntityGrapher;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.Predicate;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,176 +34,253 @@ public abstract class GenericJpaRepositoryAdapter&lt;
       JpaRepository&lt;E, UUID&gt; jpaRepository,
       JpaSpecificationExecutor&lt;E&gt; jpaSpecificationExecutor,
       Class&lt;E&gt; entityClass,
-<span class="fc" id="L39">      Mapper&lt;E, D&gt; mapper) {</span>
-<span class="fc" id="L40">    this.jpaRepository = jpaRepository;</span>
-<span class="fc" id="L41">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
-<span class="fc" id="L42">    this.entityClass = entityClass;</span>
-<span class="fc" id="L43">    this.mapper = mapper;</span>
-<span class="fc" id="L44">  }</span>
+<span class="fc" id="L37">      Mapper&lt;E, D&gt; mapper) {</span>
+<span class="fc" id="L38">    this.jpaRepository = jpaRepository;</span>
+<span class="fc" id="L39">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
+<span class="fc" id="L40">    this.entityClass = entityClass;</span>
+<span class="fc" id="L41">    this.mapper = mapper;</span>
+<span class="fc" id="L42">  }</span>
 
   @Override
   public D save(D domain) {
-<span class="fc" id="L48">    return mapper.toDomain(jpaRepository.save(mapper.fromDomain(domain)));</span>
+<span class="fc" id="L46">    return mapper.toDomain(jpaRepository.save(mapper.fromDomain(domain)));</span>
   }
 
   @Override
   public List&lt;D&gt; saveAll(List&lt;D&gt; domains) {
-<span class="fc" id="L53">    return jpaRepository.saveAll(domains.stream().map(mapper::fromDomain).toList()).stream()</span>
-<span class="fc" id="L54">        .map(mapper::toDomain)</span>
-<span class="fc" id="L55">        .toList();</span>
+<span class="fc" id="L51">    return jpaRepository.saveAll(domains.stream().map(mapper::fromDomain).toList()).stream()</span>
+<span class="fc" id="L52">        .map(mapper::toDomain)</span>
+<span class="fc" id="L53">        .toList();</span>
   }
 
   public void saveAllEntities(List&lt;E&gt; entities) {
-<span class="pc bpc" id="L59" title="2 of 4 branches missed.">    if (entities != null &amp;&amp; !entities.isEmpty()) {</span>
-<span class="fc" id="L60">      jpaRepository.saveAll(entities);</span>
+<span class="pc bpc" id="L57" title="2 of 4 branches missed.">    if (entities != null &amp;&amp; !entities.isEmpty()) {</span>
+<span class="fc" id="L58">      jpaRepository.saveAll(entities);</span>
     }
-<span class="fc" id="L62">  }</span>
+<span class="fc" id="L60">  }</span>
 
   @Override
   public Optional&lt;D&gt; findById(UUID id) {
-<span class="nc" id="L66">    E entity = jpaRepository.findById(id).orElse(null);</span>
-<span class="nc bnc" id="L67" title="All 2 branches missed.">    return entity == null ? Optional.empty() : Optional.of(mapper.toDomain(entity));</span>
+<span class="nc" id="L64">    E entity = jpaRepository.findById(id).orElse(null);</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">    return entity == null ? Optional.empty() : Optional.of(mapper.toDomain(entity));</span>
   }
 
   @Override
   public Optional&lt;D&gt; findById(UUID id, FetchGraph fetchGraph) {
-<span class="nc" id="L72">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
+<span class="nc" id="L70">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
 
-<span class="nc" id="L74">    var cb = em.getCriteriaBuilder();</span>
-<span class="nc" id="L75">    var cq = cb.createQuery(entityClass);</span>
-<span class="nc" id="L76">    var root = cq.from(entityClass);</span>
+<span class="nc" id="L72">    var cb = em.getCriteriaBuilder();</span>
+<span class="nc" id="L73">    var cq = cb.createQuery(entityClass);</span>
+<span class="nc" id="L74">    var root = cq.from(entityClass);</span>
 
-<span class="nc" id="L78">    cq.select(root).where(cb.equal(root.get(&quot;id&quot;), id));</span>
+<span class="nc" id="L76">    cq.select(root).where(cb.equal(root.get(&quot;id&quot;), id));</span>
 
-<span class="nc" id="L80">    var query = em.createQuery(cq);</span>
-<span class="nc" id="L81">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
+<span class="nc" id="L78">    var query = em.createQuery(cq);</span>
+<span class="nc" id="L79">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
 
-<span class="nc" id="L83">    var result = query.getResultList();</span>
+<span class="nc" id="L81">    var result = query.getResultList();</span>
 
-<span class="nc bnc" id="L85" title="All 2 branches missed.">    if (result.isEmpty()) {</span>
-<span class="nc" id="L86">      return Optional.empty();</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">    if (result.isEmpty()) {</span>
+<span class="nc" id="L84">      return Optional.empty();</span>
     }
 
-<span class="nc" id="L89">    return Optional.of(mapper.toDomain(result.getFirst(), graph));</span>
+<span class="nc" id="L87">    return Optional.of(mapper.toDomain(result.getFirst(), graph));</span>
   }
 
   @Override
   public List&lt;D&gt; findAllById(List&lt;UUID&gt; ids) {
-<span class="nc" id="L94">    return jpaRepository.findAllById(ids).stream().map(mapper::toDomain).toList();</span>
+<span class="nc" id="L92">    return jpaRepository.findAllById(ids).stream().map(mapper::toDomain).toList();</span>
   }
 
   protected List&lt;D&gt; findAllById(List&lt;UUID&gt; ids, FetchGraph fetchGraph) {
 
-<span class="nc bnc" id="L99" title="All 4 branches missed.">    if (ids == null || ids.isEmpty()) {</span>
-<span class="nc" id="L100">      return List.of();</span>
+<span class="nc bnc" id="L97" title="All 4 branches missed.">    if (ids == null || ids.isEmpty()) {</span>
+<span class="nc" id="L98">      return List.of();</span>
     }
 
-<span class="nc" id="L103">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
+<span class="nc" id="L101">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
 
-<span class="nc" id="L105">    var cb = em.getCriteriaBuilder();</span>
-<span class="nc" id="L106">    var cq = cb.createQuery(entityClass);</span>
-<span class="nc" id="L107">    var root = cq.from(entityClass);</span>
+<span class="nc" id="L103">    var cb = em.getCriteriaBuilder();</span>
+<span class="nc" id="L104">    var cq = cb.createQuery(entityClass);</span>
+<span class="nc" id="L105">    var root = cq.from(entityClass);</span>
 
-<span class="nc" id="L109">    cq.select(root).where(root.get(&quot;id&quot;).in(ids)).distinct(true);</span>
+<span class="nc" id="L107">    cq.select(root).where(root.get(&quot;id&quot;).in(ids)).distinct(true);</span>
 
-<span class="nc" id="L111">    var query = em.createQuery(cq);</span>
-<span class="nc" id="L112">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
+<span class="nc" id="L109">    var query = em.createQuery(cq);</span>
+<span class="nc" id="L110">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
 
-<span class="nc" id="L114">    return query.getResultList().stream().map(e -&gt; mapper.toDomain(e, graph)).toList();</span>
+<span class="nc" id="L112">    return query.getResultList().stream().map(e -&gt; mapper.toDomain(e, graph)).toList();</span>
+  }
+
+  protected List&lt;D&gt; findAllById(List&lt;UUID&gt; ids, Specification&lt;E&gt; specification) {
+<span class="nc bnc" id="L116" title="All 4 branches missed.">    if (ids == null || ids.isEmpty()) {</span>
+<span class="nc" id="L117">      return List.of();</span>
+    }
+
+<span class="nc" id="L120">    var cb = em.getCriteriaBuilder();</span>
+<span class="nc" id="L121">    var cq = cb.createQuery(entityClass);</span>
+<span class="nc" id="L122">    var root = cq.from(entityClass);</span>
+
+<span class="nc" id="L124">    Predicate idPredicate = root.get(&quot;id&quot;).in(ids);</span>
+<span class="nc" id="L125">    Predicate specPredicate = specification.toPredicate(root, cq, cb);</span>
+
+<span class="nc bnc" id="L127" title="All 2 branches missed.">    if (specPredicate != null) {</span>
+<span class="nc" id="L128">      cq.where(cb.and(idPredicate, specPredicate));</span>
+    } else {
+<span class="nc" id="L130">      cq.where(idPredicate);</span>
+    }
+
+<span class="nc" id="L133">    cq.select(root).distinct(true);</span>
+
+<span class="nc" id="L135">    var query = em.createQuery(cq);</span>
+
+<span class="nc" id="L137">    return query.getResultList().stream().map(mapper::toDomain).toList();</span>
+  }
+
+  protected List&lt;D&gt; findAllById(
+      List&lt;UUID&gt; ids, Specification&lt;E&gt; specification, FetchGraph fetchGraph) {
+<span class="nc bnc" id="L142" title="All 4 branches missed.">    if (ids == null || ids.isEmpty()) {</span>
+<span class="nc" id="L143">      return List.of();</span>
+    }
+
+<span class="nc" id="L146">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
+<span class="nc" id="L147">    var cb = em.getCriteriaBuilder();</span>
+<span class="nc" id="L148">    var cq = cb.createQuery(entityClass);</span>
+<span class="nc" id="L149">    var root = cq.from(entityClass);</span>
+
+<span class="nc" id="L151">    Predicate idPredicate = root.get(&quot;id&quot;).in(ids);</span>
+
+<span class="nc" id="L153">    Predicate specPredicate = specification.toPredicate(root, cq, cb);</span>
+
+<span class="nc bnc" id="L155" title="All 2 branches missed.">    if (specPredicate != null) {</span>
+<span class="nc" id="L156">      cq.where(cb.and(idPredicate, specPredicate));</span>
+    } else {
+<span class="nc" id="L158">      cq.where(idPredicate);</span>
+    }
+
+<span class="nc" id="L161">    cq.select(root).distinct(true);</span>
+
+<span class="nc" id="L163">    var query = em.createQuery(cq);</span>
+<span class="nc" id="L164">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
+
+<span class="nc" id="L166">    return query.getResultList().stream().map(e -&gt; mapper.toDomain(e, graph)).toList();</span>
   }
 
   @Override
   public void removeFromDatabase(D domain) {
-<span class="nc" id="L119">    jpaRepository.delete(mapper.fromDomain(domain));</span>
-<span class="nc" id="L120">  }</span>
+<span class="nc" id="L171">    jpaRepository.delete(mapper.fromDomain(domain));</span>
+<span class="nc" id="L172">  }</span>
 
   @Override
   public void removeAllFromDatabase(List&lt;D&gt; domains) {
-<span class="nc" id="L124">    jpaRepository.deleteAll(domains.stream().map(mapper::fromDomain).toList());</span>
-<span class="nc" id="L125">  }</span>
+<span class="nc" id="L176">    jpaRepository.deleteAll(domains.stream().map(mapper::fromDomain).toList());</span>
+<span class="nc" id="L177">  }</span>
 
   protected PagedResult&lt;D&gt; toPagedResult(Page&lt;E&gt; page) {
-<span class="nc" id="L128">    var content = page.getContent().stream().map(mapper::toDomain).toList();</span>
+<span class="nc" id="L180">    var content = page.getContent().stream().map(mapper::toDomain).toList();</span>
 
-<span class="nc" id="L130">    return new PagedResult&lt;&gt;(</span>
+<span class="nc" id="L182">    return new PagedResult&lt;&gt;(</span>
         content,
         new PageInfo(
-<span class="nc" id="L133">            page.getPageable().getPageNumber(),</span>
-<span class="nc" id="L134">            page.getPageable().getPageSize(),</span>
-<span class="nc" id="L135">            page.getTotalElements()));</span>
+<span class="nc" id="L185">            page.getPageable().getPageNumber(),</span>
+<span class="nc" id="L186">            page.getPageable().getPageSize(),</span>
+<span class="nc" id="L187">            page.getTotalElements()));</span>
   }
 
   @Override
   public List&lt;D&gt; findAll() {
-<span class="nc" id="L140">    return jpaRepository.findAll().stream().map(mapper::toDomain).toList();</span>
+<span class="nc" id="L192">    return jpaRepository.findAll().stream().map(mapper::toDomain).toList();</span>
   }
 
   protected List&lt;D&gt; findAll(Specification&lt;E&gt; specification) {
-<span class="nc" id="L144">    return jpaSpecificationExecutor.findAll(specification).stream().map(mapper::toDomain).toList();</span>
+<span class="nc" id="L196">    return jpaSpecificationExecutor.findAll(specification).stream().map(mapper::toDomain).toList();</span>
   }
 
   protected List&lt;D&gt; findAll(Specification&lt;E&gt; specification, FetchGraph fetchGraph) {
-<span class="nc" id="L148">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
-<span class="nc" id="L149">    var cb = em.getCriteriaBuilder();</span>
-<span class="nc" id="L150">    var cq = cb.createQuery(entityClass);</span>
-<span class="nc" id="L151">    var root = cq.from(entityClass);</span>
+<span class="nc" id="L200">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
+<span class="nc" id="L201">    var cb = em.getCriteriaBuilder();</span>
+<span class="nc" id="L202">    var cq = cb.createQuery(entityClass);</span>
+<span class="nc" id="L203">    var root = cq.from(entityClass);</span>
 
-<span class="nc" id="L153">    Predicate predicate = specification.toPredicate(root, cq, cb);</span>
-<span class="nc bnc" id="L154" title="All 2 branches missed.">    if (predicate != null) {</span>
-<span class="nc" id="L155">      cq.where(predicate);</span>
+<span class="nc" id="L205">    Predicate predicate = specification.toPredicate(root, cq, cb);</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">    if (predicate != null) {</span>
+<span class="nc" id="L207">      cq.where(predicate);</span>
     }
 
-<span class="nc" id="L158">    cq.select(root).distinct(true);</span>
+<span class="nc" id="L210">    cq.select(root).distinct(true);</span>
 
-<span class="nc" id="L160">    var query = em.createQuery(cq);</span>
-<span class="nc" id="L161">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
+<span class="nc" id="L212">    var query = em.createQuery(cq);</span>
+<span class="nc" id="L213">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
 
-<span class="nc" id="L163">    return query.getResultList().stream().map(e -&gt; mapper.toDomain(e, graph)).toList();</span>
+<span class="nc" id="L215">    return query.getResultList().stream().map(e -&gt; mapper.toDomain(e, graph)).toList();</span>
   }
 
   protected PagedResult&lt;D&gt; findAll(Specification&lt;E&gt; specification, PageRequest pageRequest) {
-<span class="nc" id="L167">    var page = jpaSpecificationExecutor.findAll(specification, pageRequest);</span>
+<span class="nc" id="L219">    var page = jpaSpecificationExecutor.findAll(specification, pageRequest);</span>
 
-<span class="nc" id="L169">    return toPagedResult(page);</span>
+<span class="nc" id="L221">    return toPagedResult(page);</span>
   }
 
   protected PagedResult&lt;D&gt; findAll(
       Specification&lt;E&gt; specification, PageRequest pageRequest, FetchGraph fetchGraph) {
-<span class="nc" id="L174">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
-<span class="nc" id="L175">    var cb = em.getCriteriaBuilder();</span>
+<span class="nc" id="L226">    var graph = EntityGrapher.from(fetchGraph, entityClass, em);</span>
+<span class="nc" id="L227">    var cb = em.getCriteriaBuilder();</span>
 
-<span class="nc" id="L177">    var cq = cb.createQuery(entityClass);</span>
-<span class="nc" id="L178">    var root = cq.from(entityClass);</span>
+<span class="nc" id="L229">    var cq = cb.createQuery(entityClass);</span>
+<span class="nc" id="L230">    var root = cq.from(entityClass);</span>
 
-<span class="nc" id="L180">    Predicate predicate = specification.toPredicate(root, cq, cb);</span>
-<span class="nc bnc" id="L181" title="All 2 branches missed.">    if (predicate != null) {</span>
-<span class="nc" id="L182">      cq.where(predicate);</span>
+<span class="nc" id="L232">    Predicate predicate = specification.toPredicate(root, cq, cb);</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">    if (predicate != null) {</span>
+<span class="nc" id="L234">      cq.where(predicate);</span>
     }
 
-<span class="nc bnc" id="L185" title="All 2 branches missed.">    if (pageRequest.getSort().isSorted()) {</span>
-<span class="nc" id="L186">      var orders =</span>
-<span class="nc" id="L187">          pageRequest.getSort().stream()</span>
-<span class="nc" id="L188">              .map(</span>
-                  order -&gt;
-<span class="nc bnc" id="L190" title="All 2 branches missed.">                      order.isAscending()</span>
-<span class="nc" id="L191">                          ? cb.asc(root.get(order.getProperty()))</span>
-<span class="nc" id="L192">                          : cb.desc(root.get(order.getProperty())))</span>
-<span class="nc" id="L193">              .toList();</span>
-<span class="nc" id="L194">      cq.orderBy(orders);</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">    if (pageRequest.getSort().isSorted()) {</span>
+<span class="nc" id="L238">      var orders =</span>
+<span class="nc" id="L239">          pageRequest.getSort().stream()</span>
+<span class="nc" id="L240">              .map(</span>
+                  order -&gt; {
+<span class="nc" id="L242">                    Path&lt;?&gt; path = resolvePath(root, order.getProperty());</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">                    return order.isAscending() ? cb.asc(path) : cb.desc(path);</span>
+                  })
+<span class="nc" id="L245">              .toList();</span>
+<span class="nc" id="L246">      cq.orderBy(orders);</span>
     }
 
-<span class="nc" id="L197">    cq.select(root).distinct(true);</span>
+<span class="nc" id="L249">    cq.select(root).distinct(true);</span>
 
-<span class="nc" id="L199">    var query = em.createQuery(cq);</span>
-<span class="nc" id="L200">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
-<span class="nc" id="L201">    query.setFirstResult((int) pageRequest.getOffset());</span>
-<span class="nc" id="L202">    query.setMaxResults(pageRequest.getPageSize());</span>
+<span class="nc" id="L251">    var query = em.createQuery(cq);</span>
+<span class="nc" id="L252">    query.setHint(&quot;jakarta.persistence.fetchgraph&quot;, graph.build());</span>
+<span class="nc" id="L253">    query.setFirstResult((int) pageRequest.getOffset());</span>
+<span class="nc" id="L254">    query.setMaxResults(pageRequest.getPageSize());</span>
 
-<span class="nc" id="L204">    var content = query.getResultList().stream().map(e -&gt; mapper.toDomain(e, graph)).toList();</span>
+<span class="nc" id="L256">    var content = query.getResultList().stream().map(e -&gt; mapper.toDomain(e, graph)).toList();</span>
 
-<span class="nc" id="L206">    return new PagedResult&lt;&gt;(</span>
+<span class="nc" id="L258">    return new PagedResult&lt;&gt;(</span>
         content,
-<span class="nc" id="L208">        new PageInfo(pageRequest.getPageNumber(), pageRequest.getPageSize(), content.size()));</span>
+<span class="nc" id="L260">        new PageInfo(pageRequest.getPageNumber(), pageRequest.getPageSize(), count(specification)));</span>
+  }
+
+  private long count(Specification&lt;E&gt; specification) {
+<span class="nc" id="L264">    var cb = em.getCriteriaBuilder();</span>
+<span class="nc" id="L265">    var cq = cb.createQuery(Long.class);</span>
+<span class="nc" id="L266">    var root = cq.from(entityClass);</span>
+
+<span class="nc" id="L268">    Predicate predicate = specification.toPredicate(root, cq, cb);</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">    if (predicate != null) {</span>
+<span class="nc" id="L270">      cq.where(predicate);</span>
+    }
+
+<span class="nc" id="L273">    cq.select(cb.countDistinct(root));</span>
+
+<span class="nc" id="L275">    return em.createQuery(cq).getSingleResult();</span>
+  }
+
+  private Path&lt;?&gt; resolvePath(Path&lt;?&gt; root, String propertyPath) {
+<span class="nc" id="L279">    Path&lt;?&gt; path = root;</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">    for (String part : propertyPath.split(&quot;\\.&quot;)) {</span>
+<span class="nc" id="L281">      path = path.get(part);</span>
+    }
+<span class="nc" id="L283">    return path;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

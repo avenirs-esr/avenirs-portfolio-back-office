@@ -6,36 +6,35 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.UUID;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-<span class="nc" id="L16">@Slf4j</span>
+<span class="nc" id="L15">@Slf4j</span>
 public class DevAuthenticationFilter extends OncePerRequestFilter {
 
-<span class="nc" id="L19">  public DevAuthenticationFilter() {}</span>
+<span class="nc" id="L18">  public DevAuthenticationFilter() {}</span>
 
   @Override
-<span class="nc bnc" id="L22" title="All 2 branches missed.">  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {</span>
-<span class="nc" id="L23">    return false;</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {</span>
+<span class="nc" id="L22">    return false;</span>
   }
 
   @Override
   protected void doFilterInternal(
-<span class="nc bnc" id="L28" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
-<span class="nc bnc" id="L29" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
       throws ServletException, IOException {
-<span class="nc" id="L32">    String devUser = request.getHeader(&quot;user-id&quot;);</span>
-<span class="nc bnc" id="L33" title="All 4 branches missed.">    if (devUser != null &amp;&amp; !devUser.isBlank()) {</span>
-<span class="nc" id="L34">      Authentication auth = new HmacAuthenticationToken(UUID.fromString(devUser));</span>
-<span class="nc" id="L35">      SecurityContextHolder.getContext().setAuthentication(auth);</span>
-<span class="nc" id="L36">      log.debug(&quot;Dev authentication enabled for user: {}&quot;, devUser);</span>
+<span class="nc" id="L31">    String devUser = request.getHeader(&quot;eppn&quot;);</span>
+<span class="nc bnc" id="L32" title="All 4 branches missed.">    if (devUser != null &amp;&amp; !devUser.isBlank()) {</span>
+<span class="nc" id="L33">      Authentication auth = new HmacAuthenticationToken(devUser);</span>
+<span class="nc" id="L34">      SecurityContextHolder.getContext().setAuthentication(auth);</span>
+<span class="nc" id="L35">      log.debug(&quot;Dev authentication enabled for user: {}&quot;, devUser);</span>
     }
-<span class="nc" id="L38">    filterChain.doFilter(request, response);</span>
-<span class="nc" id="L39">  }</span>
+<span class="nc" id="L37">    filterChain.doFilter(request, response);</span>
+<span class="nc" id="L38">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

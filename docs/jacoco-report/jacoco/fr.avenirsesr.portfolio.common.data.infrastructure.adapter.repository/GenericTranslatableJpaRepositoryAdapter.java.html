@@ -7,10 +7,9 @@ import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.Translat
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
 import fr.avenirsesr.portfolio.common.language.infrastructure.adapter.model.TranslationEntity;
 import fr.avenirsesr.portfolio.common.language.infrastructure.adapter.utils.TranslationUtil;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
-import java.util.UUID;
 
 public abstract class GenericTranslatableJpaRepositoryAdapter&lt;
         D extends AvenirsBaseModel, T extends TranslationEntity, E extends TranslatableEntity&lt;T&gt;&gt;
@@ -28,22 +27,22 @@ public abstract class GenericTranslatableJpaRepositoryAdapter&lt;
       Mapper&lt;E, D&gt; mapper,
       TranslationUtil.CreationFunction&lt;AvenirsBaseModel, E, ELanguage, T&gt; create,
       TranslationUtil.UpdateFunction&lt;TranslationEntity, AvenirsBaseModel&gt; update) {
-<span class="nc" id="L31">    super(jpaRepository, jpaSpecificationExecutor, entityClass, mapper);</span>
-<span class="nc" id="L32">    this.jpaRepository = jpaRepository;</span>
-<span class="nc" id="L33">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
-<span class="nc" id="L34">    this.mapper = mapper;</span>
-<span class="nc" id="L35">    this.create = create;</span>
-<span class="nc" id="L36">    this.update = update;</span>
-<span class="nc" id="L37">  }</span>
+<span class="nc" id="L30">    super(jpaRepository, jpaSpecificationExecutor, entityClass, mapper);</span>
+<span class="nc" id="L31">    this.jpaRepository = jpaRepository;</span>
+<span class="nc" id="L32">    this.jpaSpecificationExecutor = jpaSpecificationExecutor;</span>
+<span class="nc" id="L33">    this.mapper = mapper;</span>
+<span class="nc" id="L34">    this.create = create;</span>
+<span class="nc" id="L35">    this.update = update;</span>
+<span class="nc" id="L36">  }</span>
 
   @Override
   public D save(D domain) {
-<span class="nc" id="L41">    var entity = jpaRepository.findById(domain.getId());</span>
-<span class="nc bnc" id="L42" title="All 2 branches missed.">    if (entity.isPresent()) {</span>
-<span class="nc" id="L43">      TranslationUtil.addTranslation(domain, entity.get(), create, update);</span>
-<span class="nc" id="L44">      jpaRepository.save(entity.get());</span>
-<span class="nc" id="L45">      return mapper.toDomain(entity.get());</span>
-<span class="nc" id="L46">    } else return mapper.toDomain(jpaRepository.save(mapper.fromDomain(domain)));</span>
+<span class="nc" id="L40">    var entity = jpaRepository.findById(domain.getId());</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">    if (entity.isPresent()) {</span>
+<span class="nc" id="L42">      TranslationUtil.addTranslation(domain, entity.get(), create, update);</span>
+<span class="nc" id="L43">      jpaRepository.save(entity.get());</span>
+<span class="nc" id="L44">      return mapper.toDomain(entity.get());</span>
+<span class="nc" id="L45">    } else return mapper.toDomain(jpaRepository.save(mapper.fromDomain(domain)));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

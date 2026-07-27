@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InstitutionDatabaseRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.repository</a> &gt; <span class="el_source">InstitutionDatabaseRepository.java</span></div><h1>InstitutionDatabaseRepository.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.repository;
+
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.mapper.InstitutionMapper;
+import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
+import fr.avenirsesr.portfolio.common.institution.domain.model.Institution;
+import java.util.Optional;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class InstitutionDatabaseRepository
+    extends GenericJpaRepositoryAdapter&lt;Institution, InstitutionEntity&gt;
+    implements InstitutionRepository {
+  private final InstitutionJpaRepository jpaRepository;
+
+  public InstitutionDatabaseRepository(InstitutionJpaRepository jpaRepository) {
+<span class="fc" id="L18">    super(jpaRepository, jpaRepository, InstitutionEntity.class, InstitutionMapper.INSTANCE);</span>
+<span class="fc" id="L19">    this.jpaRepository = jpaRepository;</span>
+<span class="fc" id="L20">  }</span>
+
+  @Override
+  public boolean existsByHai(String hai) {
+<span class="fc" id="L24">    return jpaRepository.existsByHai(hai);</span>
+  }
+
+  @Override
+  public Optional&lt;Institution&gt; findByHai(String hai) {
+<span class="fc" id="L29">    return jpaRepository.findByHai(hai).map(InstitutionMapper.INSTANCE::toDomain);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

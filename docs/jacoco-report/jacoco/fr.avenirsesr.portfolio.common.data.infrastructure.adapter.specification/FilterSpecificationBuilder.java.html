@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FilterSpecificationBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification</a> &gt; <span class="el_source">FilterSpecificationBuilder.java</span></div><h1>FilterSpecificationBuilder.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification;
 
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.data.jpa.domain.Specification;
 
-<span class="nc" id="L6">public abstract class FilterSpecificationBuilder&lt;T, K extends Enum&lt;K&gt;&gt; {</span>
-  public Specification&lt;T&gt; build(Map&lt;K, Object&gt; filters) {
-<span class="nc" id="L8">    Specification&lt;T&gt; spec = Specification.where(null);</span>
+<span class="nc" id="L7">public abstract class FilterSpecificationBuilder&lt;T, K extends Enum&lt;K&gt;&gt; {</span>
+  public Optional&lt;Specification&lt;T&gt;&gt; build(Map&lt;K, Object&gt; filters) {
+<span class="nc" id="L9">    Specification&lt;T&gt; spec = null;</span>
 
-<span class="nc bnc" id="L10" title="All 2 branches missed.">    for (var entry : filters.entrySet()) {</span>
-<span class="nc" id="L11">      Specification&lt;T&gt; s = getSpecification(entry.getKey(), entry.getValue());</span>
-<span class="nc bnc" id="L12" title="All 2 branches missed.">      if (s != null) {</span>
-<span class="nc" id="L13">        spec = spec.and(s);</span>
+<span class="nc bnc" id="L11" title="All 2 branches missed.">    for (var entry : filters.entrySet()) {</span>
+<span class="nc" id="L12">      Specification&lt;T&gt; s = getSpecification(entry.getKey(), entry.getValue());</span>
+<span class="nc bnc" id="L13" title="All 2 branches missed.">      if (s != null) {</span>
+<span class="nc bnc" id="L14" title="All 2 branches missed.">        spec = spec == null ? Specification.where(s) : spec.and(s);</span>
       }
-<span class="nc" id="L15">    }</span>
+<span class="nc" id="L16">    }</span>
 
-<span class="nc" id="L17">    return spec;</span>
+<span class="nc" id="L18">    return Optional.ofNullable(spec);</span>
   }
 
   protected abstract Specification&lt;T&gt; getSpecification(K key, Object value);
