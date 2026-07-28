@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Licence Informatique",
+    "idSiSco": "10000001",
+    "institutionHai": "0350001A",
+    "codeSise": "11000001",
+    "startDate": "2023-09-01",
+    "endDate": "2026-08-31",
+    "type": "PROGRAM",
+    "parentIdSiSco": null
+  },
+  {
+    "name": "Licence Informatique - Parcours IA",
+    "idSiSco": "10000002",
+    "institutionHai": "0350001A",
+    "codeSise": "11000002",
+    "startDate": "2023-09-01",
+    "endDate": "2025-08-31",
+    "type": "PROGRAM_OPTION",
+    "parentIdSiSco": "10000001"
+  },
+  {
+    "name": "Groupe A",
+    "idSiSco": "10000003",
+    "institutionHai": "0350001A",
+    "codeSise": "11000003",
+    "startDate": "2024-09-01",
+    "endDate": "2025-06-30",
+    "type": "STUDENT_GROUP",
+    "parentIdSiSco": "10000002"
+  },
+  {
+    "name": "Licence Mathematiques",
+    "idSiSco": "10000004",
+    "institutionHai": "0330001C",
+    "codeSise": "11000004",
+    "startDate": "2023-09-01",
+    "endDate": "2026-08-31",
+    "type": "PROGRAM",
+    "parentIdSiSco": null
+  },
+  {
+    "name": "Groupe B",
+    "idSiSco": "10000005",
+    "institutionHai": "0330001C",
+    "codeSise": "11000005",
+    "startDate": "2024-09-01",
+    "endDate": "2025-06-30",
+    "type": "STUDENT_GROUP",
+    "parentIdSiSco": "10000004"
+  }
+]
