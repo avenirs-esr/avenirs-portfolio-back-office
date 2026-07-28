@@ -16,6 +16,7 @@ public class GroupServiceConfig {
 
   @Bean
   public GroupService groupService() {
-    return new GroupServiceImpl(groupRepository, institutionRepository);
+    return new TransactionalGroupService(
+        new GroupServiceImpl(groupRepository, institutionRepository));
   }
 }
