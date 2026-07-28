@@ -61,8 +61,8 @@ public abstract class GenericJpaRepositoryAdapter&lt;
 
   @Override
   public Optional&lt;D&gt; findById(UUID id) {
-<span class="nc" id="L64">    E entity = jpaRepository.findById(id).orElse(null);</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">    return entity == null ? Optional.empty() : Optional.of(mapper.toDomain(entity));</span>
+<span class="fc" id="L64">    E entity = jpaRepository.findById(id).orElse(null);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">    return entity == null ? Optional.empty() : Optional.of(mapper.toDomain(entity));</span>
   }
 
   @Override
@@ -168,8 +168,8 @@ public abstract class GenericJpaRepositoryAdapter&lt;
 
   @Override
   public void removeFromDatabase(D domain) {
-<span class="nc" id="L171">    jpaRepository.delete(mapper.fromDomain(domain));</span>
-<span class="nc" id="L172">  }</span>
+<span class="fc" id="L171">    jpaRepository.delete(mapper.fromDomain(domain));</span>
+<span class="fc" id="L172">  }</span>
 
   @Override
   public void removeAllFromDatabase(List&lt;D&gt; domains) {
