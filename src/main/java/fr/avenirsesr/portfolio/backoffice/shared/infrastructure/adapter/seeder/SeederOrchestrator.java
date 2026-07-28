@@ -1,12 +1,14 @@
 package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder;
 
 import fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.seeder.AdditionalSkillConfigSeeder;
+import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.GroupSeeder;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.InstitutionConfigSeeder;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.InstitutionSeeder;
 import fr.avenirsesr.portfolio.backoffice.trace.infrastructure.seeder.TraceConfigSeeder;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.seeder.WebsiteContentConfigurationSeeder;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.configuration.SeedingState;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class SeederOrchestrator {
   private final WebsiteContentConfigurationSeeder websiteContentConfigurationSeeder;
   private final InstitutionSeeder institutionSeeder;
   private final InstitutionConfigSeeder institutionConfigSeeder;
+  private final GroupSeeder groupSeeder;
   private final SeedingState seedingState;
 
   @Transactional()
@@ -31,8 +34,9 @@ public class SeederOrchestrator {
       additionalSkillConfigSeeder.seed();
       traceConfigSeeder.seed();
       websiteContentConfigurationSeeder.seed();
-      institutionSeeder.seed();
+      List<UUID> savedInstitutionIds = institutionSeeder.seed();
       institutionConfigSeeder.seed(List.of());
+      groupSeeder.seed(savedInstitutionIds);
 
       log.info("✔ Seeding successfully finished");
     } catch (Exception e) {
