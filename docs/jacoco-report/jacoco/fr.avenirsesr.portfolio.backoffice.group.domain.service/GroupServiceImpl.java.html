@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroupServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.group.domain.service</a> &gt; <span class="el_source">GroupServiceImpl.java</span></div><h1>GroupServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.group.domain.service;
+
+import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupIdSiScoAlreadyExistsException;
+import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupNotFoundException;
+import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupProgramCannotHaveParentException;
+import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupProgramOptionParentMustBeProgramException;
+import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupProgramOptionRequiresParentException;
+import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupStudentGroupParentMustBeProgramOrOptionException;
+import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupStudentGroupRequiresParentException;
+import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
+import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
+import fr.avenirsesr.portfolio.common.group.domain.model.Group;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import java.time.LocalDate;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+<span class="fc" id="L19">@Slf4j</span>
+@AllArgsConstructor
+public class GroupServiceImpl implements GroupService {
+  private final GroupRepository groupRepository;
+
+  @Override
+  public Group create(
+      String name,
+      String idSiSco,
+      UUID institutionId,
+      String codeSise,
+      LocalDate startDate,
+      LocalDate endDate,
+      EGroupType type,
+      String parentIdSiSco) {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">    if (groupRepository.existsByIdSiSco(idSiSco)) {</span>
+<span class="fc" id="L35">      throw new GroupIdSiScoAlreadyExistsException();</span>
+    }
+
+<span class="fc" id="L38">    Group parent = resolveParent(type, parentIdSiSco);</span>
+
+    Group group =
+<span class="fc" id="L41">        Group.create(</span>
+<span class="fc" id="L42">            UUID.randomUUID(),</span>
+            name,
+            idSiSco,
+            institutionId,
+            codeSise,
+            startDate,
+            endDate,
+            type,
+            parent);
+<span class="fc" id="L51">    return groupRepository.save(group);</span>
+  }
+
+  private Group resolveParent(EGroupType type, String parentIdSiSco) {
+<span class="fc bfc" id="L55" title="All 3 branches covered.">    return switch (type) {</span>
+      case PROGRAM -&gt; {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (parentIdSiSco != null) {</span>
+<span class="fc" id="L58">          throw new GroupProgramCannotHaveParentException();</span>
+        }
+<span class="fc" id="L60">        yield null;</span>
+      }
+      case PROGRAM_OPTION -&gt; {
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
+<span class="fc" id="L64">          throw new GroupProgramOptionRequiresParentException();</span>
+        }
+<span class="fc" id="L66">        Group parent = findParentOrThrow(parentIdSiSco);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM) {</span>
+<span class="fc" id="L68">          throw new GroupProgramOptionParentMustBeProgramException();</span>
+        }
+<span class="fc" id="L70">        yield parent;</span>
+      }
+      case STUDENT_GROUP -&gt; {
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
+<span class="fc" id="L74">          throw new GroupStudentGroupRequiresParentException();</span>
+        }
+<span class="fc" id="L76">        Group parent = findParentOrThrow(parentIdSiSco);</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            &amp;&amp; parent.getType() != EGroupType.PROGRAM_OPTION) {</span>
+<span class="fc" id="L79">          throw new GroupStudentGroupParentMustBeProgramOrOptionException();</span>
+        }
+<span class="fc" id="L81">        yield parent;</span>
+      }
+    };
+  }
+
+  private Group findParentOrThrow(String parentIdSiSco) {
+<span class="fc" id="L87">    return groupRepository.findByIdSiSco(parentIdSiSco).orElseThrow(GroupNotFoundException::new);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
