@@ -3,6 +3,7 @@
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.service.GroupServiceImpl;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +12,11 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 public class GroupServiceConfig {
   private final GroupRepository groupRepository;
+  private final InstitutionRepository institutionRepository;
 
   @Bean
   public GroupService groupService() {
-<span class="fc" id="L17">    return new GroupServiceImpl(groupRepository);</span>
+<span class="fc" id="L19">    return new GroupServiceImpl(groupRepository, institutionRepository);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
