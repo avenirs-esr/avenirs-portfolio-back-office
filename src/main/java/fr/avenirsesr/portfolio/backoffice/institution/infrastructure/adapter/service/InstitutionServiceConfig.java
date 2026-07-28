@@ -14,6 +14,6 @@ public class InstitutionServiceConfig {
 
   @Bean
   public InstitutionService institutionService() {
-    return new InstitutionServiceImpl(institutionRepository);
+    return new TransactionalInstitutionService(new InstitutionServiceImpl(institutionRepository));
   }
 }
