@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExternalUserDatabaseRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.repository</a> &gt; <span class="el_source">ExternalUserDatabaseRepository.java</span></div><h1>ExternalUserDatabaseRepository.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.repository;
+
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
+import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.mapper.ExternalUserMapper;
+import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.model.ExternalUserEntity;
+import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
+import java.util.Optional;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ExternalUserDatabaseRepository
+    extends GenericJpaRepositoryAdapter&lt;ExternalUser, ExternalUserEntity&gt;
+    implements ExternalUserRepository {
+
+  private final ExternalUserJpaRepository jpaRepository;
+
+  public ExternalUserDatabaseRepository(ExternalUserJpaRepository jpaRepository) {
+<span class="fc" id="L19">    super(jpaRepository, jpaRepository, ExternalUserEntity.class, ExternalUserMapper.INSTANCE);</span>
+<span class="fc" id="L20">    this.jpaRepository = jpaRepository;</span>
+<span class="fc" id="L21">  }</span>
+
+  @Override
+  public Optional&lt;ExternalUser&gt; findByEppn(String eppn) {
+<span class="nc" id="L25">    return Optional.ofNullable(</span>
+<span class="nc" id="L26">        ExternalUserMapper.INSTANCE.toDomain(jpaRepository.findByEppn(eppn)));</span>
+  }
+
+  @Override
+  public int countAll() {
+<span class="nc" id="L31">    return jpaRepository.findAll().size();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
