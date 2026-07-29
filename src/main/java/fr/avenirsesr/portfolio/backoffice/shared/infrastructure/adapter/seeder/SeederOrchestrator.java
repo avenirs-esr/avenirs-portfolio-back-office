@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder;
 
 import fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.seeder.AdditionalSkillConfigSeeder;
+import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.seeder.ExternalUserSeeder;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.GroupSeeder;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.InstitutionConfigSeeder;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.InstitutionSeeder;
@@ -24,6 +25,7 @@ public class SeederOrchestrator {
   private final InstitutionSeeder institutionSeeder;
   private final InstitutionConfigSeeder institutionConfigSeeder;
   private final GroupSeeder groupSeeder;
+  private final ExternalUserSeeder externalUserSeeder;
   private final SeedingState seedingState;
 
   @Transactional()
@@ -37,6 +39,7 @@ public class SeederOrchestrator {
       List<UUID> savedInstitutionIds = institutionSeeder.seed();
       institutionConfigSeeder.seed(List.of());
       groupSeeder.seed(savedInstitutionIds);
+      externalUserSeeder.seed();
 
       log.info("✔ Seeding successfully finished");
     } catch (Exception e) {

@@ -5,4 +5,68 @@
             <column name="id_si_sco"/>
         </createIndex>
     </changeSet>
+    <changeSet author="iamgreendev (generated)" id="1785300000000-1">
+        <createTable tableName="external_user">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="external_userPK"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="updated_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="eppn" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="external_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="iamgreendev (generated)" id="1785300000000-2">
+        <addUniqueConstraint columnNames="eppn" constraintName="external_user_eppn_uk" tableName="external_user"/>
+    </changeSet>
+    <changeSet author="iamgreendev (generated)" id="1785300000000-3">
+        <addUniqueConstraint columnNames="external_id, source" constraintName="external_user_external_id_source_uk" tableName="external_user"/>
+    </changeSet>
+    <changeSet author="iamgreendev (generated)" id="1785300000000-4">
+        <createIndex indexName="idx_ext_user_email" tableName="external_user">
+            <column name="email"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="iamgreendev (generated)" id="1785300000000-5">
+        <createIndex indexName="idx_ext_user_source_external_id" tableName="external_user">
+            <column name="source"/>
+            <column name="external_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="iamgreendev (generated)" id="1785300000000-6">
+        <createIndex indexName="idx_ext_user_status" tableName="external_user">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="iamgreendev (generated)" id="1785300000000-7">
+        <createIndex indexName="idx_ext_user_eppn" tableName="external_user">
+            <column name="eppn"/>
+        </createIndex>
+    </changeSet>
 </databaseChangeLog>
