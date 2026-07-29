@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransactionalGroupService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.service</a> &gt; <span class="el_source">TransactionalGroupService.java</span></div><h1>TransactionalGroupService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.service;
+
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
+import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
+import fr.avenirsesr.portfolio.common.group.domain.model.Group;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * Wraps the domain {@link GroupService} to add transaction boundaries around bulk operations,
+ * keeping the Spring transaction dependency out of the domain layer.
+ */
+@AllArgsConstructor
+public class TransactionalGroupService implements GroupService {
+  private final GroupService delegate;
+
+  @Override
+  public Group create(
+      String name,
+      String idSiSco,
+      UUID institutionId,
+      String codeSise,
+      LocalDate startDate,
+      LocalDate endDate,
+      EGroupType type,
+      String parentIdSiSco) {
+<span class="fc" id="L32">    return delegate.create(</span>
+        name, idSiSco, institutionId, codeSise, startDate, endDate, type, parentIdSiSco);
+  }
+
+  @Override
+  @Transactional
+  public GroupImportSummary createAll(List&lt;GroupData&gt; groups) {
+<span class="fc" id="L39">    return delegate.createAll(groups);</span>
+  }
+
+  @Override
+  public Group update(
+      String idSiSco,
+      String name,
+      UUID institutionId,
+      String codeSise,
+      LocalDate startDate,
+      LocalDate endDate,
+      EGroupType type,
+      String parentIdSiSco) {
+<span class="nc" id="L52">    return delegate.update(</span>
+        idSiSco, name, institutionId, codeSise, startDate, endDate, type, parentIdSiSco);
+  }
+
+  @Override
+  @Transactional
+  public List&lt;Group&gt; updateAll(List&lt;GroupData&gt; groups) {
+<span class="fc" id="L59">    return delegate.updateAll(groups);</span>
+  }
+
+  @Override
+  public List&lt;Group&gt; findAll() {
+<span class="nc" id="L64">    return delegate.findAll();</span>
+  }
+
+  @Override
+  public Group findById(UUID id) {
+<span class="nc" id="L69">    return delegate.findById(id);</span>
+  }
+
+  @Override
+  public void delete(UUID id) {
+<span class="fc" id="L74">    delegate.delete(id);</span>
+<span class="fc" id="L75">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
