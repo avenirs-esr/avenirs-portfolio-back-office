@@ -1,11 +1,11 @@
 package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.data.InstitutionCreationData;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.fake.FakeInstitution;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.ESeederSource;
 import fr.avenirsesr.portfolio.common.utils.FileReader;
 import java.util.ArrayList;

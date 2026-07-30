@@ -1,8 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.mapper;
 
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 
 public class InstitutionMapper implements Mapper<InstitutionEntity, Institution> {
   public static final InstitutionMapper INSTANCE = new InstitutionMapper();

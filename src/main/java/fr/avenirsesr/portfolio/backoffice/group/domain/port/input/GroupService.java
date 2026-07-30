@@ -1,8 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.group.domain.port.input;
 
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
 import java.util.List;

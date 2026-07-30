@@ -1,10 +1,10 @@
 package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.service;
 
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
-import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;

@@ -1,6 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.domain.model;
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.common.data.domain.model.AvenirsBaseModel;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
@@ -20,6 +22,8 @@ public class ExternalUser extends AvenirsBaseModel {
   private final String email;
   private final String firstName;
   private final String lastName;
+  private final Institution institution;
+  private final Group group;
 
   @Setter private EUserStatus status;
 
@@ -34,6 +38,8 @@ public class ExternalUser extends AvenirsBaseModel {
       String email,
       String firstName,
       String lastName,
+      Institution institution,
+      Group group,
       EUserStatus status) {
     super(id, createdAt, updatedAt);
     this.eppn = eppn;
@@ -43,6 +49,8 @@ public class ExternalUser extends AvenirsBaseModel {
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.institution = institution;
+    this.group = group;
     this.status = status;
   }
 
@@ -54,6 +62,8 @@ public class ExternalUser extends AvenirsBaseModel {
       String email,
       String firstName,
       String lastName,
+      Institution institution,
+      Group group,
       EUserStatus status) {
     Instant now = Instant.now();
 
@@ -68,6 +78,8 @@ public class ExternalUser extends AvenirsBaseModel {
         email,
         firstName,
         lastName,
+        institution,
+        group,
         status);
   }
 
@@ -82,6 +94,8 @@ public class ExternalUser extends AvenirsBaseModel {
       String email,
       String firstName,
       String lastName,
+      Institution institution,
+      Group group,
       EUserStatus status) {
     return new ExternalUser(
         id,
@@ -94,6 +108,8 @@ public class ExternalUser extends AvenirsBaseModel {
         email,
         firstName,
         lastName,
+        institution,
+        group,
         status);
   }
 
