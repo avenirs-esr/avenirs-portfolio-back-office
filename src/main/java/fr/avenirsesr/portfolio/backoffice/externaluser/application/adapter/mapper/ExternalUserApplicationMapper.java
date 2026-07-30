@@ -16,6 +16,8 @@ public class ExternalUserApplicationMapper {
         externalUser.getCategory(),
         externalUser.getExternalId(),
         externalUser.getSource().name(),
+        externalUser.getInstitution().getId(),
+        externalUser.getGroup() != null ? externalUser.getGroup().getId() : null,
         externalUser.getStatus());
   }
 }

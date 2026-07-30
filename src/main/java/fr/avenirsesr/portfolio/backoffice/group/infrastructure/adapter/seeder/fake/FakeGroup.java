@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.fake;
 
-import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.data.GroupCreationData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.data.GroupCreationData;
 import fr.avenirsesr.portfolio.common.seeder.domain.port.output.SharedDataGenerator;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.DataGeneratorProvider;
 import java.time.LocalDate;

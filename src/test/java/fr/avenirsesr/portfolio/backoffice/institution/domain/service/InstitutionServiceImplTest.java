@@ -7,11 +7,11 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.Instituti
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionParentMustBePrimaryException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionPrimaryCannotHaveParentException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionSecondaryRequiresParentException;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionData;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionImportSummary;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.util.List;
 import java.util.Optional;

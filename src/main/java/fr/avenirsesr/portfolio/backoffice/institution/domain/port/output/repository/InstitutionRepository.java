@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository;
 
-import fr.avenirsesr.portfolio.common.data.domain.port.output.repository.GenericRepositoryPort;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
+import fr.avenirsesr.portfolio.common.data.domain.port.output.repository.GenericRepositoryPort;
 import java.util.Optional;
 
 public interface InstitutionRepository extends GenericRepositoryPort<Institution> {

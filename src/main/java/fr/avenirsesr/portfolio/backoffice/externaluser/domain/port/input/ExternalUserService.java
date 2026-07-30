@@ -18,6 +18,8 @@ public interface ExternalUserService {
       EUserCategory category,
       String externalId,
       EExternalSource source,
+      UUID institutionId,
+      UUID groupId,
       EUserStatus status);
 
   List<ExternalUser> getAllExternalUsers();
