@@ -4,7 +4,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.reposit
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.mapper.InstitutionMapper;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
-import fr.avenirsesr.portfolio.common.institution.domain.model.Institution;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 

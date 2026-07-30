@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model;
 
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
-import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

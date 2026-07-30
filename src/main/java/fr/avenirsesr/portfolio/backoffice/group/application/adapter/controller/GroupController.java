@@ -5,7 +5,7 @@ import fr.avenirsesr.portfolio.backoffice.group.application.adapter.dto.GroupRes
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
-import fr.avenirsesr.portfolio.common.group.domain.model.Group;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

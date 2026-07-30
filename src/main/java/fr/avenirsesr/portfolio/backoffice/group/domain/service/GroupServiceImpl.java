@@ -14,9 +14,9 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.Gr
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
-import fr.avenirsesr.portfolio.common.group.domain.model.Group;
-import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
-import fr.avenirsesr.portfolio.common.institution.domain.model.Institution;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

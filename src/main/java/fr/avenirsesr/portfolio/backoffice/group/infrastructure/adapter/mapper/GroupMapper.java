@@ -3,7 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.mapper;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model.GroupEntity;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.mapper.InstitutionMapper;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.mapper.Mapper;
-import fr.avenirsesr.portfolio.common.group.domain.model.Group;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 
 public class GroupMapper implements Mapper<GroupEntity, Group> {
   public static final GroupMapper INSTANCE = new GroupMapper();

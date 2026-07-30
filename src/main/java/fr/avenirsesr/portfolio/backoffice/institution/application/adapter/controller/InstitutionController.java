@@ -5,7 +5,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.In
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionData;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionImportSummary;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
-import fr.avenirsesr.portfolio.common.institution.domain.model.Institution;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

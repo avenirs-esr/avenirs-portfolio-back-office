@@ -10,8 +10,8 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionIm
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
-import fr.avenirsesr.portfolio.common.institution.domain.model.Institution;
-import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

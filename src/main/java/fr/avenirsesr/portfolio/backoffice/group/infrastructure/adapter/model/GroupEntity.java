@@ -2,7 +2,7 @@ package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model;
 
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
-import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

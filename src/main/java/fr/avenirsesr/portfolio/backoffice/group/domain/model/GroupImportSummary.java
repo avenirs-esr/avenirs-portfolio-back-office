@@ -1,6 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.group.domain.model;
 
-import fr.avenirsesr.portfolio.common.group.domain.model.Group;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import java.util.List;
 
 public record GroupImportSummary(
