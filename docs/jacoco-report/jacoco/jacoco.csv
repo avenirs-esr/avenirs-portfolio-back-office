@@ -52,11 +52,11 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils,BddLogger
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller,GroupController,44,114,8,8,11,26,8,7,1,6
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller,WebsiteContentController,66,4,0,0,19,1,5,1,5,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.service,ConfigurationTranslationServiceImpl,1,142,1,1,0,44,1,12,0,12
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.domain.service,ExternalUserServiceImpl,21,39,2,2,6,9,2,6,1,5
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.domain.service,ExternalUserServiceImpl,21,61,2,4,6,15,2,7,1,5
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.domain.service,WebsiteContentConfigurationServiceImpl,44,129,5,7,11,37,9,11,5,9
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.validation.infrastructure.adapter.utils,ValidationUtils,14,0,4,0,4,0,4,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.dependency.domain.service,DependencyCheckerImpl,293,0,20,0,63,0,16,0,6,0
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.service,ExternalUserServiceConfig,0,6,0,0,0,1,0,1,0,1
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.service,ExternalUserServiceConfig,0,10,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.service,AdditionalSkillConfigurationServiceConfig,0,21,0,0,0,6,0,3,0,3
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.service,WebsiteContentConfigurationServiceConfig,0,17,0,0,0,5,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio,BackOfficeApplication,5,3,0,0,2,1,1,1,1,1
