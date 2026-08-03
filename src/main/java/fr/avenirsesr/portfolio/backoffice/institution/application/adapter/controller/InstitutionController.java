@@ -5,6 +5,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.In
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionData;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionImportSummary;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -36,13 +38,15 @@ public class InstitutionController {
 
   @GetMapping
   public ResponseEntity<List<InstitutionResponse>> findAll(
+      @RequestParam(required = false) UUID parentId,
+      @RequestParam(required = false) EInstitutionType type,
       @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
     HttpStatus rejection = checkAdminToken(token);
     if (rejection != null) {
       return ResponseEntity.status(rejection).build();
     }
 
-    List<Institution> institutions = institutionService.findAll();
+    List<Institution> institutions = institutionService.findAll(parentId, type);
     return ResponseEntity.ok(institutions.stream().map(InstitutionResponse::from).toList());
   }
 

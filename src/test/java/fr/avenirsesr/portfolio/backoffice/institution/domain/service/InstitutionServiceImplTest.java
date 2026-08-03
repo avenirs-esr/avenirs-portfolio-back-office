@@ -385,10 +385,10 @@ class InstitutionServiceImplTest {
             "siren",
             EInstitutionType.PRIMARY,
             null);
-    when(institutionRepository.findAll()).thenReturn(List.of(institution));
+    when(institutionRepository.findAll(null, null)).thenReturn(List.of(institution));
 
     BddLogger.when("fetching all institutions");
-    List<Institution> result = service.findAll();
+    List<Institution> result = service.findAll(null, null);
 
     BddLogger.then("it should return every institution");
     assertEquals(List.of(institution), result);

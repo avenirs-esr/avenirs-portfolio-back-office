@@ -18,7 +18,7 @@ public interface InstitutionService {
 
   List<Institution> updateAll(List<InstitutionData> institutions);
 
-  List<Institution> findAll();
+  List<Institution> findAll(UUID parentId, EInstitutionType type);
 
   Institution findById(UUID id);
 

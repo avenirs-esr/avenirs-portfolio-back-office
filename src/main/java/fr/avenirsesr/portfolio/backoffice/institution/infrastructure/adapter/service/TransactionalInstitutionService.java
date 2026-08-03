@@ -53,8 +53,8 @@ public class TransactionalInstitutionService implements InstitutionService {
   }
 
   @Override
-  public List<Institution> findAll() {
-    return delegate.findAll();
+  public List<Institution> findAll(UUID parentId, EInstitutionType type) {
+    return delegate.findAll(parentId, type);
   }
 
   @Override
