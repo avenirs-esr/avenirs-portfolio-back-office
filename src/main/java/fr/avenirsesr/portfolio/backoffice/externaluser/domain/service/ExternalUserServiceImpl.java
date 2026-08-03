@@ -146,7 +146,9 @@ public class ExternalUserServiceImpl implements ExternalUserService {
         externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);
 
     Institution institution =
-        institutionRepository.findById(institutionId).orElseThrow(InstitutionNotFoundException::new);
+        institutionRepository
+            .findById(institutionId)
+            .orElseThrow(InstitutionNotFoundException::new);
     Group group =
         groupId != null
             ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)
@@ -185,8 +187,8 @@ public class ExternalUserServiceImpl implements ExternalUserService {
   }
 
   @Override
-  public List<ExternalUser> getAllExternalUsers() {
-    return externalUserRepository.findAll();
+  public List<ExternalUser> getAllExternalUsers(UUID institutionId, UUID groupId) {
+    return externalUserRepository.findAll(institutionId, groupId);
   }
 
   @Override

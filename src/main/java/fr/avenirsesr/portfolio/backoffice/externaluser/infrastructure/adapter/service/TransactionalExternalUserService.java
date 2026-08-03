@@ -34,7 +34,16 @@ public class TransactionalExternalUserService implements ExternalUserService {
       UUID groupId,
       EUserStatus status) {
     return delegate.importExternalUser(
-        eppn, firstName, lastName, email, category, externalId, source, institutionId, groupId, status);
+        eppn,
+        firstName,
+        lastName,
+        email,
+        category,
+        externalId,
+        source,
+        institutionId,
+        groupId,
+        status);
   }
 
   @Override
@@ -56,7 +65,16 @@ public class TransactionalExternalUserService implements ExternalUserService {
       UUID groupId,
       EUserStatus status) {
     return delegate.update(
-        eppn, firstName, lastName, email, category, externalId, source, institutionId, groupId, status);
+        eppn,
+        firstName,
+        lastName,
+        email,
+        category,
+        externalId,
+        source,
+        institutionId,
+        groupId,
+        status);
   }
 
   @Override
@@ -66,8 +84,8 @@ public class TransactionalExternalUserService implements ExternalUserService {
   }
 
   @Override
-  public List<ExternalUser> getAllExternalUsers() {
-    return delegate.getAllExternalUsers();
+  public List<ExternalUser> getAllExternalUsers(UUID institutionId, UUID groupId) {
+    return delegate.getAllExternalUsers(institutionId, groupId);
   }
 
   @Override

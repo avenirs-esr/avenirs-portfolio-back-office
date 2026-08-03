@@ -40,7 +40,7 @@ public interface ExternalUserService {
 
   List<ExternalUser> updateAll(List<ExternalUserData> externalUsers);
 
-  List<ExternalUser> getAllExternalUsers();
+  List<ExternalUser> getAllExternalUsers(UUID institutionId, UUID groupId);
 
   Optional<ExternalUser> getById(UUID id);
 
