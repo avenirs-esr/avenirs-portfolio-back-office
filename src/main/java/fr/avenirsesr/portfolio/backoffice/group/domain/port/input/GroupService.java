@@ -33,7 +33,8 @@ public interface GroupService {
 
   List<Group> updateAll(List<GroupData> groups);
 
-  List<Group> findAll();
+  List<Group> findAll(
+      UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate);
 
   Group findById(UUID id);
 

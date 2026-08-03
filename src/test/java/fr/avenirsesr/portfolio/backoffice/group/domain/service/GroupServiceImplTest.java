@@ -639,13 +639,42 @@ class GroupServiceImplTest {
             endDate,
             EGroupType.PROGRAM,
             null);
-    when(groupRepository.findAll()).thenReturn(List.of(group));
+    when(groupRepository.findAll(null, null, null, null, null)).thenReturn(List.of(group));
 
     BddLogger.when("fetching all groups");
-    List<Group> result = service.findAll();
+    List<Group> result = service.findAll(null, null, null, null, null);
 
     BddLogger.then("it should return every group");
     assertEquals(List.of(group), result);
+  }
+
+  @Test
+  void shouldReturnFilteredGroups_whenFindingAllWithFilters() {
+    BddLogger.given("groups in the repository and a set of filter criteria");
+    UUID parentId = UUID.randomUUID();
+    Group group =
+        Group.create(
+            UUID.randomUUID(),
+            "Parcours IA",
+            "10000002",
+            institution,
+            "11000002",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM_OPTION,
+            null);
+    when(groupRepository.findAll(
+            institutionId, parentId, EGroupType.PROGRAM_OPTION, startDate, endDate))
+        .thenReturn(List.of(group));
+
+    BddLogger.when("fetching groups filtered by institution, parent, type and date range");
+    List<Group> result =
+        service.findAll(institutionId, parentId, EGroupType.PROGRAM_OPTION, startDate, endDate);
+
+    BddLogger.then("it should delegate the filters to the repository and return the match");
+    assertEquals(List.of(group), result);
+    verify(groupRepository)
+        .findAll(institutionId, parentId, EGroupType.PROGRAM_OPTION, startDate, endDate);
   }
 
   @Test

@@ -156,8 +156,9 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
-  public List<Group> findAll() {
-    return groupRepository.findAll();
+  public List<Group> findAll(
+      UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate) {
+    return groupRepository.findAll(institutionId, parentId, type, startDate, endDate);
   }
 
   @Override

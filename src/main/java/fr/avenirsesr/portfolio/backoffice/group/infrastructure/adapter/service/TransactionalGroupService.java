@@ -60,8 +60,9 @@ public class TransactionalGroupService implements GroupService {
   }
 
   @Override
-  public List<Group> findAll() {
-    return delegate.findAll();
+  public List<Group> findAll(
+      UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate) {
+    return delegate.findAll(institutionId, parentId, type, startDate, endDate);
   }
 
   @Override

@@ -5,7 +5,9 @@ import fr.avenirsesr.portfolio.backoffice.group.application.adapter.dto.GroupRes
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -36,13 +39,18 @@ public class GroupController {
 
   @GetMapping
   public ResponseEntity<List<GroupResponse>> findAll(
+      @RequestParam(required = false) UUID institutionId,
+      @RequestParam(required = false) UUID parentId,
+      @RequestParam(required = false) EGroupType type,
+      @RequestParam(required = false) LocalDate startDate,
+      @RequestParam(required = false) LocalDate endDate,
       @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
     HttpStatus rejection = checkAdminToken(token);
     if (rejection != null) {
       return ResponseEntity.status(rejection).build();
     }
 
-    List<Group> groups = groupService.findAll();
+    List<Group> groups = groupService.findAll(institutionId, parentId, type, startDate, endDate);
     return ResponseEntity.ok(groups.stream().map(GroupResponse::from).toList());
   }
 
