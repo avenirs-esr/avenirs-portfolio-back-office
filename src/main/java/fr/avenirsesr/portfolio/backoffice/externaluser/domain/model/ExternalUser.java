@@ -16,15 +16,15 @@ import lombok.Setter;
 public class ExternalUser extends AvenirsBaseModel {
 
   private final String eppn;
-  private final String externalId;
-  private final EExternalSource source;
-  private final EUserCategory category;
-  private final String email;
-  private final String firstName;
-  private final String lastName;
-  private final Institution institution;
-  private final Group group;
 
+  @Setter private String externalId;
+  @Setter private EExternalSource source;
+  @Setter private EUserCategory category;
+  @Setter private String email;
+  @Setter private String firstName;
+  @Setter private String lastName;
+  @Setter private Institution institution;
+  @Setter private Group group;
   @Setter private EUserStatus status;
 
   private ExternalUser(
