@@ -235,9 +235,9 @@ class ExternalUserServiceImplTest {
 
         externalUser = externalUser();
 
-        when(externalUserRepository.findAll()).thenReturn(List.of(externalUser));
+        when(externalUserRepository.findAll(null, null)).thenReturn(List.of(externalUser));
 
-        result = service.getAllExternalUsers();
+        result = service.getAllExternalUsers(null, null);
       }
 
       @Test
@@ -246,7 +246,7 @@ class ExternalUserServiceImplTest {
 
         assertEquals(List.of(externalUser), result);
 
-        verify(externalUserRepository).findAll();
+        verify(externalUserRepository).findAll(null, null);
         verifyNoMoreInteractions(externalUserRepository);
       }
     }

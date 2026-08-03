@@ -28,10 +28,13 @@ public class ExternalUserController {
   private String adminToken;
 
   @GetMapping
-  public ResponseEntity<List<ExternalUserDTO>> getExternalUsers() {
-    log.debug("Getting all external users");
+  public ResponseEntity<List<ExternalUserDTO>> getExternalUsers(
+      @RequestParam(required = false) UUID institutionId,
+      @RequestParam(required = false) UUID groupId) {
+    log.debug("Getting external users for institutionId: {}, groupId: {}", institutionId, groupId);
 
-    List<ExternalUser> externalUsers = externalUserService.getAllExternalUsers();
+    List<ExternalUser> externalUsers =
+        externalUserService.getAllExternalUsers(institutionId, groupId);
 
     return ResponseEntity.ok(
         externalUsers.stream().map(ExternalUserApplicationMapper::toExternalUserDTO).toList());
