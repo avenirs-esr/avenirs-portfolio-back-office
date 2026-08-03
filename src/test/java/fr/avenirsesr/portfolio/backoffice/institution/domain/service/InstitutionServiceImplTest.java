@@ -395,6 +395,76 @@ class InstitutionServiceImplTest {
   }
 
   @Test
+  void shouldReturnFilteredInstitutions_whenParentIdIsProvided() {
+    BddLogger.given("a secondary institution attached to a parent institution");
+    UUID parentId = UUID.randomUUID();
+    Institution institution =
+        Institution.create(
+            UUID.randomUUID(),
+            "Université de Rennes - IUT",
+            "0350002B",
+            "siret",
+            "siren",
+            EInstitutionType.SECONDARY,
+            null);
+    when(institutionRepository.findAll(parentId, null)).thenReturn(List.of(institution));
+
+    BddLogger.when("fetching institutions filtered by parentId");
+    List<Institution> result = service.findAll(parentId, null);
+
+    BddLogger.then("it should return only the institutions matching the parentId");
+    assertEquals(List.of(institution), result);
+    verify(institutionRepository).findAll(parentId, null);
+  }
+
+  @Test
+  void shouldReturnFilteredInstitutions_whenTypeIsProvided() {
+    BddLogger.given("a primary institution");
+    Institution institution =
+        Institution.create(
+            UUID.randomUUID(),
+            "Université de Rennes",
+            "0350001A",
+            "siret",
+            "siren",
+            EInstitutionType.PRIMARY,
+            null);
+    when(institutionRepository.findAll(null, EInstitutionType.PRIMARY))
+        .thenReturn(List.of(institution));
+
+    BddLogger.when("fetching institutions filtered by type");
+    List<Institution> result = service.findAll(null, EInstitutionType.PRIMARY);
+
+    BddLogger.then("it should return only the institutions matching the type");
+    assertEquals(List.of(institution), result);
+    verify(institutionRepository).findAll(null, EInstitutionType.PRIMARY);
+  }
+
+  @Test
+  void shouldReturnFilteredInstitutions_whenParentIdAndTypeAreProvided() {
+    BddLogger.given("a secondary institution attached to a parent institution");
+    UUID parentId = UUID.randomUUID();
+    Institution institution =
+        Institution.create(
+            UUID.randomUUID(),
+            "Université de Rennes - IUT",
+            "0350002B",
+            "siret",
+            "siren",
+            EInstitutionType.SECONDARY,
+            null);
+    when(institutionRepository.findAll(parentId, EInstitutionType.SECONDARY))
+        .thenReturn(List.of(institution));
+
+    BddLogger.when("fetching institutions filtered by parentId and type");
+    List<Institution> result = service.findAll(parentId, EInstitutionType.SECONDARY);
+
+    BddLogger.then("it should return only the institutions matching both filters");
+    assertEquals(List.of(institution), result);
+    verify(institutionRepository).findAll(parentId, EInstitutionType.SECONDARY);
+  }
+
+  @Test
   void shouldReturnInstitution_whenIdExists() {
     BddLogger.given("an existing institution");
     UUID id = UUID.randomUUID();
