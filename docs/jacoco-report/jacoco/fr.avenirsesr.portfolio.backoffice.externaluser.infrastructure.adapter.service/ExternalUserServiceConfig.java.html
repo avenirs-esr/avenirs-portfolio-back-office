@@ -18,9 +18,8 @@ public class ExternalUserServiceConfig {
 
   @Bean
   public ExternalUserService externalUserService() {
-<span class="fc" id="L21">    return new TransactionalExternalUserService(</span>
-        new ExternalUserServiceImpl(
-            externalUserRepository, institutionRepository, groupRepository));
+<span class="fc" id="L21">    return new ExternalUserServiceImpl(</span>
+        externalUserRepository, institutionRepository, groupRepository);
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

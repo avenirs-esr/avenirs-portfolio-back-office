@@ -4,12 +4,8 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.mapper.ExternalUserMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.model.ExternalUserEntity;
-import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.specification.ExternalUserSpecification;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,27 +16,19 @@ public class ExternalUserDatabaseRepository
   private final ExternalUserJpaRepository jpaRepository;
 
   public ExternalUserDatabaseRepository(ExternalUserJpaRepository jpaRepository) {
-<span class="fc" id="L23">    super(jpaRepository, jpaRepository, ExternalUserEntity.class, ExternalUserMapper.INSTANCE);</span>
-<span class="fc" id="L24">    this.jpaRepository = jpaRepository;</span>
-<span class="fc" id="L25">  }</span>
+<span class="fc" id="L19">    super(jpaRepository, jpaRepository, ExternalUserEntity.class, ExternalUserMapper.INSTANCE);</span>
+<span class="fc" id="L20">    this.jpaRepository = jpaRepository;</span>
+<span class="fc" id="L21">  }</span>
 
   @Override
   public Optional&lt;ExternalUser&gt; findByEppn(String eppn) {
-<span class="nc" id="L29">    return Optional.ofNullable(</span>
-<span class="nc" id="L30">        ExternalUserMapper.INSTANCE.toDomain(jpaRepository.findByEppn(eppn)));</span>
+<span class="nc" id="L25">    return Optional.ofNullable(</span>
+<span class="nc" id="L26">        ExternalUserMapper.INSTANCE.toDomain(jpaRepository.findByEppn(eppn)));</span>
   }
 
   @Override
   public int countAll() {
-<span class="nc" id="L35">    return jpaRepository.findAll().size();</span>
-  }
-
-  @Override
-  public List&lt;ExternalUser&gt; findAll(UUID institutionId, UUID groupId) {
-<span class="nc" id="L40">    Specification&lt;ExternalUserEntity&gt; specification =</span>
-<span class="nc" id="L41">        Specification.where(ExternalUserSpecification.withInstitutionId(institutionId))</span>
-<span class="nc" id="L42">            .and(ExternalUserSpecification.withGroupId(groupId));</span>
-<span class="nc" id="L43">    return findAll(specification);</span>
+<span class="nc" id="L31">    return jpaRepository.findAll().size();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

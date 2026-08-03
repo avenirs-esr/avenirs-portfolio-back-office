@@ -193,7 +193,7 @@ public abstract class GenericJpaRepositoryAdapter&lt;
   }
 
   protected List&lt;D&gt; findAll(Specification&lt;E&gt; specification) {
-<span class="fc" id="L196">    return jpaSpecificationExecutor.findAll(specification).stream().map(mapper::toDomain).toList();</span>
+<span class="nc" id="L196">    return jpaSpecificationExecutor.findAll(specification).stream().map(mapper::toDomain).toList();</span>
   }
 
   protected List&lt;D&gt; findAll(Specification&lt;E&gt; specification, FetchGraph fetchGraph) {

@@ -119,8 +119,8 @@ public class InstitutionServiceImpl implements InstitutionService {
   }
 
   @Override
-  public List&lt;Institution&gt; findAll() {
-<span class="fc" id="L123">    return institutionRepository.findAll();</span>
+  public List&lt;Institution&gt; findAll(UUID parentId, EInstitutionType type) {
+<span class="fc" id="L123">    return institutionRepository.findAll(parentId, type);</span>
   }
 
   @Override
