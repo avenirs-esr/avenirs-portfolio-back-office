@@ -18,7 +18,7 @@ public class ExternalUserServiceConfig {
 
   @Bean
   public ExternalUserService externalUserService() {
-    return new ExternalUserServiceImpl(
-        externalUserRepository, institutionRepository, groupRepository);
+    return new TransactionalExternalUserService(
+        new ExternalUserServiceImpl(externalUserRepository, institutionRepository, groupRepository));
   }
 }
