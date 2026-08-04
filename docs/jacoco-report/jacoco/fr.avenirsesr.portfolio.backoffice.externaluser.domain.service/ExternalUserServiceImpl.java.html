@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExternalUserServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.externaluser.domain.service</a> &gt; <span class="el_source">ExternalUserServiceImpl.java</span></div><h1>ExternalUserServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.externaluser.domain.service;
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserData;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportFailure;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.input.ExternalUserService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
@@ -11,15 +14,17 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.Instituti
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-<span class="fc" id="L22">@Slf4j</span>
+<span class="fc" id="L27">@Slf4j</span>
 @AllArgsConstructor
 public class ExternalUserServiceImpl implements ExternalUserService {
 
@@ -40,17 +45,17 @@ public class ExternalUserServiceImpl implements ExternalUserService {
       UUID groupId,
       EUserStatus status) {
 
-<span class="fc" id="L43">    Institution institution =</span>
+<span class="fc" id="L48">    Institution institution =</span>
         institutionRepository
-<span class="fc" id="L45">            .findById(institutionId)</span>
-<span class="fc" id="L46">            .orElseThrow(InstitutionNotFoundException::new);</span>
+<span class="fc" id="L50">            .findById(institutionId)</span>
+<span class="fc" id="L51">            .orElseThrow(InstitutionNotFoundException::new);</span>
     Group group =
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        groupId != null</span>
-<span class="fc" id="L49">            ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)</span>
-<span class="fc" id="L50">            : null;</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        groupId != null</span>
+<span class="fc" id="L54">            ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)</span>
+<span class="fc" id="L55">            : null;</span>
 
-<span class="fc" id="L52">    var externalUser =</span>
-<span class="fc" id="L53">        ExternalUser.create(</span>
+<span class="fc" id="L57">    var externalUser =</span>
+<span class="fc" id="L58">        ExternalUser.create(</span>
             eppn,
             externalId,
             source,
@@ -60,38 +65,159 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             lastName,
             institution,
             group,
-<span class="fc bfc" id="L63" title="All 2 branches covered.">            status != null ? status : EUserStatus.ACTIVE);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">            status != null ? status : EUserStatus.ACTIVE);</span>
 
-<span class="fc" id="L65">    externalUserRepository.save(externalUser);</span>
+<span class="fc" id="L70">    externalUserRepository.save(externalUser);</span>
 
-<span class="fc" id="L67">    return externalUser;</span>
+<span class="fc" id="L72">    return externalUser;</span>
   }
 
   @Override
-  public List&lt;ExternalUser&gt; getAllExternalUsers() {
-<span class="fc" id="L72">    return externalUserRepository.findAll();</span>
+  public ExternalUserImportSummary createAll(List&lt;ExternalUserData&gt; externalUsers) {
+<span class="nc" id="L77">    List&lt;ExternalUser&gt; created = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L78">    List&lt;ExternalUser&gt; updated = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L79">    List&lt;ExternalUserImportFailure&gt; failed = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L81" title="All 2 branches missed.">    for (ExternalUserData data : externalUsers) {</span>
+      try {
+<span class="nc" id="L83">        UpsertResult result = upsert(data);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (result.created()) {</span>
+<span class="nc" id="L85">          created.add(result.externalUser());</span>
+        } else {
+<span class="nc" id="L87">          updated.add(result.externalUser());</span>
+        }
+<span class="nc" id="L89">      } catch (BusinessException e) {</span>
+<span class="nc" id="L90">        log.warn(&quot;Failed to import external user with eppn {}: {}&quot;, data.eppn(), e.getMessage());</span>
+<span class="nc" id="L91">        failed.add(new ExternalUserImportFailure(data.eppn(), e.getMessage()));</span>
+<span class="nc" id="L92">      }</span>
+<span class="nc" id="L93">    }</span>
+
+<span class="nc" id="L95">    return new ExternalUserImportSummary(created, updated, failed);</span>
+  }
+
+  /** Creates the external user, or updates the existing one matching the given eppn. */
+  private UpsertResult upsert(ExternalUserData data) {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">    if (externalUserRepository.findByEppn(data.eppn()).isPresent()) {</span>
+<span class="nc" id="L101">      ExternalUser updated =</span>
+<span class="nc" id="L102">          update(</span>
+<span class="nc" id="L103">              data.eppn(),</span>
+<span class="nc" id="L104">              data.firstName(),</span>
+<span class="nc" id="L105">              data.lastName(),</span>
+<span class="nc" id="L106">              data.email(),</span>
+<span class="nc" id="L107">              data.category(),</span>
+<span class="nc" id="L108">              data.externalId(),</span>
+<span class="nc" id="L109">              data.source(),</span>
+<span class="nc" id="L110">              data.institutionId(),</span>
+<span class="nc" id="L111">              data.groupId(),</span>
+<span class="nc" id="L112">              data.status());</span>
+<span class="nc" id="L113">      return new UpsertResult(updated, false);</span>
+    }
+
+<span class="nc" id="L116">    ExternalUser created =</span>
+<span class="nc" id="L117">        importExternalUser(</span>
+<span class="nc" id="L118">            data.eppn(),</span>
+<span class="nc" id="L119">            data.firstName(),</span>
+<span class="nc" id="L120">            data.lastName(),</span>
+<span class="nc" id="L121">            data.email(),</span>
+<span class="nc" id="L122">            data.category(),</span>
+<span class="nc" id="L123">            data.externalId(),</span>
+<span class="nc" id="L124">            data.source(),</span>
+<span class="nc" id="L125">            data.institutionId(),</span>
+<span class="nc" id="L126">            data.groupId(),</span>
+<span class="nc" id="L127">            data.status());</span>
+<span class="nc" id="L128">    return new UpsertResult(created, true);</span>
+  }
+
+<span class="nc" id="L131">  private record UpsertResult(ExternalUser externalUser, boolean created) {}</span>
+
+  @Override
+  public ExternalUser update(
+      String eppn,
+      String firstName,
+      String lastName,
+      String email,
+      EUserCategory category,
+      String externalId,
+      EExternalSource source,
+      UUID institutionId,
+      UUID groupId,
+      EUserStatus status) {
+<span class="nc" id="L145">    ExternalUser externalUser =</span>
+<span class="nc" id="L146">        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);</span>
+
+<span class="nc" id="L148">    Institution institution =</span>
+        institutionRepository
+<span class="nc" id="L150">            .findById(institutionId)</span>
+<span class="nc" id="L151">            .orElseThrow(InstitutionNotFoundException::new);</span>
+    Group group =
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        groupId != null</span>
+<span class="nc" id="L154">            ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)</span>
+<span class="nc" id="L155">            : null;</span>
+
+<span class="nc" id="L157">    externalUser.setFirstName(firstName);</span>
+<span class="nc" id="L158">    externalUser.setLastName(lastName);</span>
+<span class="nc" id="L159">    externalUser.setEmail(email);</span>
+<span class="nc" id="L160">    externalUser.setCategory(category);</span>
+<span class="nc" id="L161">    externalUser.setExternalId(externalId);</span>
+<span class="nc" id="L162">    externalUser.setSource(source);</span>
+<span class="nc" id="L163">    externalUser.setInstitution(institution);</span>
+<span class="nc" id="L164">    externalUser.setGroup(group);</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">    externalUser.setStatus(status != null ? status : externalUser.getStatus());</span>
+
+<span class="nc" id="L167">    return externalUserRepository.save(externalUser);</span>
+  }
+
+  @Override
+  public List&lt;ExternalUser&gt; updateAll(List&lt;ExternalUserData&gt; externalUsers) {
+<span class="nc" id="L172">    return externalUsers.stream()</span>
+<span class="nc" id="L173">        .map(</span>
+            data -&gt;
+<span class="nc" id="L175">                update(</span>
+<span class="nc" id="L176">                    data.eppn(),</span>
+<span class="nc" id="L177">                    data.firstName(),</span>
+<span class="nc" id="L178">                    data.lastName(),</span>
+<span class="nc" id="L179">                    data.email(),</span>
+<span class="nc" id="L180">                    data.category(),</span>
+<span class="nc" id="L181">                    data.externalId(),</span>
+<span class="nc" id="L182">                    data.source(),</span>
+<span class="nc" id="L183">                    data.institutionId(),</span>
+<span class="nc" id="L184">                    data.groupId(),</span>
+<span class="nc" id="L185">                    data.status()))</span>
+<span class="nc" id="L186">        .toList();</span>
+  }
+
+  @Override
+  public List&lt;ExternalUser&gt; getAllExternalUsers(UUID institutionId, UUID groupId) {
+<span class="fc" id="L191">    return externalUserRepository.findAll(institutionId, groupId);</span>
   }
 
   @Override
   public Optional&lt;ExternalUser&gt; getById(UUID id) {
-<span class="fc" id="L77">    return externalUserRepository.findById(id);</span>
+<span class="fc" id="L196">    return externalUserRepository.findById(id);</span>
   }
 
   @Override
   public Optional&lt;ExternalUser&gt; getByEppn(String eppn) {
-<span class="fc" id="L82">    return externalUserRepository.findByEppn(eppn);</span>
+<span class="fc" id="L201">    return externalUserRepository.findByEppn(eppn);</span>
   }
 
   @Override
   public ExternalUser activateByEppn(String eppn) {
-<span class="nc" id="L87">    var externalUser =</span>
-<span class="nc" id="L88">        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="nc" id="L206">    var externalUser =</span>
+<span class="nc" id="L207">        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);</span>
 
-<span class="nc bnc" id="L90" title="All 2 branches missed.">    if (!externalUser.isActive()) {</span>
-<span class="nc" id="L91">      externalUser.setStatus(EUserStatus.ACTIVE);</span>
-<span class="nc" id="L92">      externalUserRepository.save(externalUser);</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">    if (!externalUser.isActive()) {</span>
+<span class="nc" id="L210">      externalUser.setStatus(EUserStatus.ACTIVE);</span>
+<span class="nc" id="L211">      externalUserRepository.save(externalUser);</span>
     }
-<span class="nc" id="L94">    return externalUser;</span>
+<span class="nc" id="L213">    return externalUser;</span>
   }
+
+  @Override
+  public void delete(UUID id) {
+<span class="nc" id="L218">    ExternalUser externalUser =</span>
+<span class="nc" id="L219">        externalUserRepository.findById(id).orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="nc" id="L220">    externalUserRepository.removeFromDatabase(externalUser);</span>
+<span class="nc" id="L221">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

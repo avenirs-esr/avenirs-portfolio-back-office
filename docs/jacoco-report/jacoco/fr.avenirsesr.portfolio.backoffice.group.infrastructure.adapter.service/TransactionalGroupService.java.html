@@ -60,18 +60,19 @@ public class TransactionalGroupService implements GroupService {
   }
 
   @Override
-  public List&lt;Group&gt; findAll() {
-<span class="nc" id="L64">    return delegate.findAll();</span>
+  public List&lt;Group&gt; findAll(
+      UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate) {
+<span class="fc" id="L65">    return delegate.findAll(institutionId, parentId, type, startDate, endDate);</span>
   }
 
   @Override
   public Group findById(UUID id) {
-<span class="nc" id="L69">    return delegate.findById(id);</span>
+<span class="nc" id="L70">    return delegate.findById(id);</span>
   }
 
   @Override
   public void delete(UUID id) {
-<span class="fc" id="L74">    delegate.delete(id);</span>
-<span class="fc" id="L75">  }</span>
+<span class="fc" id="L75">    delegate.delete(id);</span>
+<span class="fc" id="L76">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
