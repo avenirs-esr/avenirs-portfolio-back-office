@@ -1,0 +1,49 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="nathp" id="20260813170000-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="external_user_category"/>
+            </not>
+        </preConditions>
+        <createTable tableName="external_user_category">
+            <column name="id_external_user" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="nathp" id="20260813170000-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="external_user_category_pk" tableName="external_user_category"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint columnNames="id_external_user, category" constraintName="external_user_category_pk" tableName="external_user_category"/>
+    </changeSet>
+    <changeSet author="nathp" id="20260813170000-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="external_user_category" foreignKeyName="fk_external_user_category_external_user"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseColumnNames="id_external_user" baseTableName="external_user_category" constraintName="fk_external_user_category_external_user" referencedColumnNames="id" referencedTableName="external_user"/>
+    </changeSet>
+    <changeSet author="nathp" id="20260813170000-4">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_user" columnName="category"/>
+        </preConditions>
+        <sql>
+            INSERT INTO external_user_category (id_external_user, category)
+            SELECT id, category FROM external_user;
+        </sql>
+    </changeSet>
+    <changeSet author="nathp" id="20260813170000-5">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_user" columnName="category"/>
+        </preConditions>
+        <dropColumn tableName="external_user" columnName="category"/>
+    </changeSet>
+</databaseChangeLog>

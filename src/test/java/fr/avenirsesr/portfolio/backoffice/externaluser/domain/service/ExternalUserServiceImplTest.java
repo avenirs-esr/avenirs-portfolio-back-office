@@ -16,6 +16,7 @@ import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -37,7 +38,7 @@ class ExternalUserServiceImplTest {
   private static final String FIRST_NAME = "Lucas";
   private static final String LAST_NAME = "Tessier";
   private static final String EMAIL = "lucas.tessier@university.com";
-  private static final EUserCategory CATEGORY = EUserCategory.STUDENT;
+  private static final Set<EUserCategory> CATEGORIES = Set.of(EUserCategory.STUDENT);
   private static final String EXTERNAL_ID = "PEG-0001";
   private static final EExternalSource SOURCE = EExternalSource.PEGASE;
   private static final UUID INSTITUTION_ID =
@@ -90,7 +91,7 @@ class ExternalUserServiceImplTest {
                 FIRST_NAME,
                 LAST_NAME,
                 EMAIL,
-                CATEGORY,
+                CATEGORIES,
                 EXTERNAL_ID,
                 SOURCE,
                 INSTITUTION_ID,
@@ -111,7 +112,7 @@ class ExternalUserServiceImplTest {
         assertEquals(FIRST_NAME, result.getFirstName());
         assertEquals(LAST_NAME, result.getLastName());
         assertEquals(EMAIL, result.getEmail());
-        assertEquals(CATEGORY, result.getCategory());
+        assertEquals(CATEGORIES, result.getCategories());
         assertEquals(EXTERNAL_ID, result.getExternalId());
         assertEquals(SOURCE, result.getSource());
         assertEquals(INSTITUTION_ID, result.getInstitution().getId());
@@ -137,7 +138,7 @@ class ExternalUserServiceImplTest {
         assertEquals(FIRST_NAME, savedExternalUser.getFirstName());
         assertEquals(LAST_NAME, savedExternalUser.getLastName());
         assertEquals(EMAIL, savedExternalUser.getEmail());
-        assertEquals(CATEGORY, savedExternalUser.getCategory());
+        assertEquals(CATEGORIES, savedExternalUser.getCategories());
         assertEquals(EXTERNAL_ID, savedExternalUser.getExternalId());
         assertEquals(SOURCE, savedExternalUser.getSource());
         assertEquals(INSTITUTION_ID, savedExternalUser.getInstitution().getId());
@@ -161,7 +162,7 @@ class ExternalUserServiceImplTest {
                 FIRST_NAME,
                 LAST_NAME,
                 EMAIL,
-                CATEGORY,
+                CATEGORIES,
                 EXTERNAL_ID,
                 SOURCE,
                 INSTITUTION_ID,
@@ -200,7 +201,7 @@ class ExternalUserServiceImplTest {
                 FIRST_NAME,
                 LAST_NAME,
                 EMAIL,
-                CATEGORY,
+                CATEGORIES,
                 EXTERNAL_ID,
                 SOURCE,
                 INSTITUTION_ID,
@@ -399,7 +400,7 @@ class ExternalUserServiceImplTest {
                         FIRST_NAME,
                         LAST_NAME,
                         EMAIL,
-                        CATEGORY,
+                        CATEGORIES,
                         EXTERNAL_ID,
                         SOURCE,
                         INSTITUTION_ID,
@@ -422,7 +423,7 @@ class ExternalUserServiceImplTest {
         EPPN,
         EXTERNAL_ID,
         SOURCE,
-        CATEGORY,
+        CATEGORIES,
         EMAIL,
         FIRST_NAME,
         LAST_NAME,

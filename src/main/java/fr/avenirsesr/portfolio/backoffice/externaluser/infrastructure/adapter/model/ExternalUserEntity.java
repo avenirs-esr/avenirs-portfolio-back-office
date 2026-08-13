@@ -9,6 +9,8 @@ import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,9 +46,17 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
   @Enumerated(EnumType.STRING)
   private EExternalSource source;
 
-  @Column(nullable = false, length = 50)
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(
+      name = "external_user_category",
+      joinColumns = @JoinColumn(name = "id_external_user", nullable = false),
+      uniqueConstraints =
+          @UniqueConstraint(
+              name = "external_user_category_pk",
+              columnNames = {"id_external_user", "category"}))
+  @Column(name = "category", length = 50, nullable = false)
   @Enumerated(EnumType.STRING)
-  private EUserCategory category;
+  private Set<EUserCategory> categories = new HashSet<>();
 
   @Column(nullable = false, length = 255)
   @Email
@@ -75,7 +85,7 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
       String eppn,
       String externalId,
       EExternalSource source,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String email,
       String firstName,
       String lastName,
@@ -88,7 +98,7 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
     this.eppn = eppn;
     this.externalId = externalId;
     this.source = source;
-    this.category = category;
+    this.categories = categories != null ? categories : new HashSet<>();
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -104,7 +114,7 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
       String eppn,
       String externalId,
       EExternalSource source,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String email,
       String firstName,
       String lastName,
@@ -118,7 +128,7 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
         eppn,
         externalId,
         source,
-        category,
+        categories,
         email,
         firstName,
         lastName,

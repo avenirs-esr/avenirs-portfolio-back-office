@@ -20,6 +20,7 @@ import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
       String firstName,
       String lastName,
       String email,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String externalId,
       EExternalSource source,
       UUID institutionId,
@@ -59,7 +60,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             eppn,
             externalId,
             source,
-            category,
+            categories,
             email,
             firstName,
             lastName,
@@ -104,7 +105,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
               data.firstName(),
               data.lastName(),
               data.email(),
-              data.category(),
+              data.categories(),
               data.externalId(),
               data.source(),
               data.institutionId(),
@@ -119,7 +120,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             data.firstName(),
             data.lastName(),
             data.email(),
-            data.category(),
+            data.categories(),
             data.externalId(),
             data.source(),
             data.institutionId(),
@@ -136,7 +137,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
       String firstName,
       String lastName,
       String email,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String externalId,
       EExternalSource source,
       UUID institutionId,
@@ -157,7 +158,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
     externalUser.setFirstName(firstName);
     externalUser.setLastName(lastName);
     externalUser.setEmail(email);
-    externalUser.setCategory(category);
+    externalUser.setCategories(categories);
     externalUser.setExternalId(externalId);
     externalUser.setSource(source);
     externalUser.setInstitution(institution);
@@ -177,7 +178,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
                     data.firstName(),
                     data.lastName(),
                     data.email(),
-                    data.category(),
+                    data.categories(),
                     data.externalId(),
                     data.source(),
                     data.institutionId(),
