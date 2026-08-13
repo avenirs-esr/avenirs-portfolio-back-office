@@ -63,7 +63,7 @@ public class ExternalUserSeeder {
                   data.firstName(),
                   data.lastName(),
                   data.email(),
-                  data.category(),
+                  data.categories(),
                   data.externalId(),
                   data.source(),
                   institutionId,

@@ -13,7 +13,7 @@ public class ExternalUserApplicationMapper {
         externalUser.getFirstName(),
         externalUser.getLastName(),
         externalUser.getEmail(),
-        externalUser.getCategory(),
+        externalUser.getCategories(),
         externalUser.getExternalId(),
         externalUser.getSource().name(),
         externalUser.getInstitution().getId(),

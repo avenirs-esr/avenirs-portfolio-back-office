@@ -8,6 +8,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ExternalUserService {
@@ -17,7 +18,7 @@ public interface ExternalUserService {
       String firstName,
       String lastName,
       String email,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String externalId,
       EExternalSource source,
       UUID institutionId,
@@ -31,7 +32,7 @@ public interface ExternalUserService {
       String firstName,
       String lastName,
       String email,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String externalId,
       EExternalSource source,
       UUID institutionId,

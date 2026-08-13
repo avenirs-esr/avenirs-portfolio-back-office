@@ -8,6 +8,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,7 @@ public class ExternalUser extends AvenirsBaseModel {
 
   @Setter private String externalId;
   @Setter private EExternalSource source;
-  @Setter private EUserCategory category;
+  @Setter private Set<EUserCategory> categories;
   @Setter private String email;
   @Setter private String firstName;
   @Setter private String lastName;
@@ -34,7 +35,7 @@ public class ExternalUser extends AvenirsBaseModel {
       String eppn,
       String externalId,
       EExternalSource source,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String email,
       String firstName,
       String lastName,
@@ -45,7 +46,7 @@ public class ExternalUser extends AvenirsBaseModel {
     this.eppn = eppn;
     this.externalId = externalId;
     this.source = source;
-    this.category = category;
+    this.categories = categories == null ? Set.of() : Set.copyOf(categories);
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -58,7 +59,7 @@ public class ExternalUser extends AvenirsBaseModel {
       String eppn,
       String externalId,
       EExternalSource source,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String email,
       String firstName,
       String lastName,
@@ -74,7 +75,7 @@ public class ExternalUser extends AvenirsBaseModel {
         eppn,
         externalId,
         source,
-        category,
+        categories,
         email,
         firstName,
         lastName,
@@ -90,7 +91,7 @@ public class ExternalUser extends AvenirsBaseModel {
       String eppn,
       String externalId,
       EExternalSource source,
-      EUserCategory category,
+      Set<EUserCategory> categories,
       String email,
       String firstName,
       String lastName,
@@ -104,7 +105,7 @@ public class ExternalUser extends AvenirsBaseModel {
         eppn,
         externalId,
         source,
-        category,
+        categories,
         email,
         firstName,
         lastName,
