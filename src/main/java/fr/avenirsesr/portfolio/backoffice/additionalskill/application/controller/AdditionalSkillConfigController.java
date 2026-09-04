@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdditionalSkillConfigController {
   private final AdditionalSkillConfigurationService service;
 
+  @PreAuthorize("hasAuthority('additional-skill-config:read')")
   @GetMapping(path = "setup")
   public ResponseEntity<Map<ELanguage, AdditionalSkillConfigurationDTO>>
       getAdditionalSkillConfigWithAllTranslations() {
@@ -35,6 +37,7 @@ public class AdditionalSkillConfigController {
                     entry -> AdditionalSkillConfigurationDTO.fromModel(entry.getValue()))));
   }
 
+  @PreAuthorize("hasAuthority('additional-skill-config:update')")
   @PostMapping(path = "setup")
   public ResponseEntity<Void> postAdditionalSkillConfig(
       @RequestBody Map<ELanguage, AdditionalSkillConfigurationDTO> configurations) {
@@ -50,6 +53,7 @@ public class AdditionalSkillConfigController {
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 
+  @PreAuthorize("hasAuthority('additional-skill-config:read')")
   @GetMapping()
   public ResponseEntity<AdditionalSkillConfigurationDTO> getAdditionalSkillConfig() {
     log.debug("Received request to get additional-skills config");

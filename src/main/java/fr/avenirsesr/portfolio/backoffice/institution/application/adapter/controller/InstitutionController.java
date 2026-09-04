@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ public class InstitutionController {
   @Value("${admin.token:}")
   private String adminToken;
 
+  @PreAuthorize("hasAnyAuthority('primary-establishment:read','secondary-establishment:read')")
   @GetMapping
   public ResponseEntity<List<InstitutionResponse>> findAll(
       @RequestParam(required = false) UUID parentId,
@@ -50,6 +52,7 @@ public class InstitutionController {
     return ResponseEntity.ok(institutions.stream().map(InstitutionResponse::from).toList());
   }
 
+  @PreAuthorize("hasAnyAuthority('primary-establishment:read','secondary-establishment:read')")
   @GetMapping("/{id}")
   public ResponseEntity<InstitutionResponse> findById(
       @PathVariable UUID id, @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
@@ -62,6 +65,7 @@ public class InstitutionController {
     return ResponseEntity.ok(InstitutionResponse.from(institution));
   }
 
+  @PreAuthorize("hasAnyAuthority('primary-establishment:create','secondary-establishment:create')")
   @PostMapping
   public ResponseEntity<InstitutionImportSummaryResponse> createAll(
       @RequestBody List<InstitutionData> institutions,
@@ -81,6 +85,7 @@ public class InstitutionController {
     return ResponseEntity.ok(InstitutionImportSummaryResponse.from(summary));
   }
 
+  @PreAuthorize("hasAnyAuthority('primary-establishment:update','secondary-establishment:update')")
   @PutMapping
   public ResponseEntity<List<InstitutionResponse>> updateAll(
       @RequestBody List<InstitutionData> institutions,
@@ -95,6 +100,7 @@ public class InstitutionController {
     return ResponseEntity.ok(updated.stream().map(InstitutionResponse::from).toList());
   }
 
+  @PreAuthorize("hasAnyAuthority('primary-establishment:delete','secondary-establishment:delete')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(
       @PathVariable UUID id, @RequestHeader(name = "X-ADMIN-TOKEN") String token) {

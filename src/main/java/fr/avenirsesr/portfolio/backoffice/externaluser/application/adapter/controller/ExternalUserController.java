@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -27,6 +28,7 @@ public class ExternalUserController {
   @Value("${admin.token:}")
   private String adminToken;
 
+  @PreAuthorize("hasAuthority('external-user:read')")
   @GetMapping
   public ResponseEntity<List<ExternalUserDTO>> getExternalUsers(
       @RequestParam(required = false) UUID institutionId,
@@ -40,6 +42,7 @@ public class ExternalUserController {
         externalUsers.stream().map(ExternalUserApplicationMapper::toExternalUserDTO).toList());
   }
 
+  @PreAuthorize("hasAuthority('external-user:read')")
   @GetMapping(path = "/{id}")
   public ResponseEntity<ExternalUserDTO> getExternalUserById(@PathVariable UUID id) {
     log.debug("Getting external user for id: {}", id);
@@ -51,6 +54,7 @@ public class ExternalUserController {
         .orElse(ResponseEntity.notFound().build());
   }
 
+  @PreAuthorize("hasAuthority('external-user:read')")
   @GetMapping(path = "/eppn/{eppn}")
   public ResponseEntity<ExternalUserDTO> getExternalUserByEppn(@PathVariable String eppn) {
     log.debug("Getting external user for eppn: {}", eppn);
@@ -62,6 +66,7 @@ public class ExternalUserController {
         .orElse(ResponseEntity.notFound().build());
   }
 
+  @PreAuthorize("hasAuthority('external-user:update')")
   @PatchMapping(path = "/eppn/{eppn}/activate")
   public ResponseEntity<ExternalUserDTO> activateExternalUserByEppn(@PathVariable String eppn) {
     log.debug("Activating external user for eppn: {}", eppn);
@@ -71,6 +76,7 @@ public class ExternalUserController {
     return ResponseEntity.ok(ExternalUserApplicationMapper.toExternalUserDTO(externalUser));
   }
 
+  @PreAuthorize("hasAuthority('external-user:import')")
   @PostMapping
   public ResponseEntity<ExternalUserImportSummaryResponse> createAll(
       @RequestBody List<ExternalUserData> externalUsers,
@@ -90,6 +96,7 @@ public class ExternalUserController {
     return ResponseEntity.ok(ExternalUserImportSummaryResponse.from(summary));
   }
 
+  @PreAuthorize("hasAuthority('external-user:update')")
   @PutMapping
   public ResponseEntity<List<ExternalUserDTO>> updateAll(
       @RequestBody List<ExternalUserData> externalUsers,
@@ -105,6 +112,7 @@ public class ExternalUserController {
         updated.stream().map(ExternalUserApplicationMapper::toExternalUserDTO).toList());
   }
 
+  @PreAuthorize("hasAuthority('external-user:delete')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(
       @PathVariable UUID id, @RequestHeader(name = "X-ADMIN-TOKEN") String token) {

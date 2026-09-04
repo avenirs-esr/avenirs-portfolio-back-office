@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class WebsiteContentController {
   private final WebsiteContentConfigurationService websiteContentConfigurationService;
 
+  @PreAuthorize("hasAuthority('website-content-config:update')")
   @PostMapping(path = "/setup/build-life-project")
   public ResponseEntity<Void> postBuildLifeProjectConfig(
       @RequestBody Map<ELanguage, BuildLifeProjectConfigDTO> configurations) {
@@ -34,6 +36,7 @@ public class WebsiteContentController {
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 
+  @PreAuthorize("hasAuthority('website-content-config:read')")
   @GetMapping(path = "/setup/build-life-project")
   public ResponseEntity<Map<ELanguage, BuildLifeProjectConfigDTO>>
       getBuildLifeProjectConfigWithAllTranslations() {
@@ -50,6 +53,7 @@ public class WebsiteContentController {
                     entry -> new BuildLifeProjectConfigDTO(entry.getValue().html()))));
   }
 
+  @PreAuthorize("hasAuthority('website-content-config:read')")
   @GetMapping(path = "/build-life-project")
   public ResponseEntity<BuildLifeProjectConfigDTO> getBuildLifeProjectConfig() {
     log.debug("Received request to get build life project config");

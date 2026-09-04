@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class SeederController {
   @Value("${admin.token:}")
   private String adminToken;
 
+  @PreAuthorize("hasAuthority('seeder:reset')")
   @PostMapping("/reset")
   public ResponseEntity<Void> resetAndSeed(@RequestHeader(name = "X-ADMIN-TOKEN") String token) {
     HttpStatus rejection = checkAdminToken(token);
