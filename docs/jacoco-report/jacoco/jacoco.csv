@@ -27,9 +27,9 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.domain.se
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.domain.service,GroupServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.trace.infrastructure.service,TraceConfigurationServiceConfig,0,16,0,0,0,5,0,3,0,3
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DisabledAuthenticationFilter,45,0,8,0,10,0,8,0,4,0
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,ApiKeyAuthenticationFilter,71,106,18,14,15,28,15,7,0,6
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,ApiKeyAuthenticationFilter,71,116,18,14,15,31,15,8,0,7
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DevAuthenticationFilter,74,0,12,0,17,0,11,0,5,0
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,HmacAuthenticationFilter,220,20,24,2,52,8,17,3,4,3
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,HmacAuthenticationFilter,240,0,26,0,60,0,20,0,7,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification,DateFilterSpecificationBuilder,50,0,6,0,8,0,9,0,6,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification,FilterSpecificationBuilder,39,0,6,0,8,0,5,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill.domain.service,AdditionalSkillConfigurationServiceImpl,58,210,7,15,10,52,8,19,4,8

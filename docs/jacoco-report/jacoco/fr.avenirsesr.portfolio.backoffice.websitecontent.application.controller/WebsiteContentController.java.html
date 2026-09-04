@@ -10,54 +10,58 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-<span class="fc" id="L15">@Slf4j</span>
+<span class="fc" id="L16">@Slf4j</span>
 @AllArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/config/website-content&quot;)
 public class WebsiteContentController {
   private final WebsiteContentConfigurationService websiteContentConfigurationService;
 
+  @PreAuthorize(&quot;hasAuthority('website-content-config:update')&quot;)
   @PostMapping(path = &quot;/setup/build-life-project&quot;)
   public ResponseEntity&lt;Void&gt; postBuildLifeProjectConfig(
       @RequestBody Map&lt;ELanguage, BuildLifeProjectConfigDTO&gt; configurations) {
-<span class="nc" id="L25">    log.debug(&quot;Received request to post build life project config : {}&quot;, configurations);</span>
+<span class="nc" id="L27">    log.debug(&quot;Received request to post build life project config : {}&quot;, configurations);</span>
 
-<span class="nc" id="L27">    websiteContentConfigurationService.postLifeProjectConfiguration(</span>
-<span class="nc" id="L28">        configurations.entrySet().stream()</span>
-<span class="nc" id="L29">            .collect(</span>
-<span class="nc" id="L30">                Collectors.toMap(</span>
+<span class="nc" id="L29">    websiteContentConfigurationService.postLifeProjectConfiguration(</span>
+<span class="nc" id="L30">        configurations.entrySet().stream()</span>
+<span class="nc" id="L31">            .collect(</span>
+<span class="nc" id="L32">                Collectors.toMap(</span>
                     Map.Entry::getKey,
-<span class="nc" id="L32">                    entry -&gt; new BuildLifeProjectConfiguration(entry.getValue().html()))));</span>
+<span class="nc" id="L34">                    entry -&gt; new BuildLifeProjectConfiguration(entry.getValue().html()))));</span>
 
-<span class="nc" id="L34">    return ResponseEntity.status(HttpStatus.ACCEPTED).build();</span>
+<span class="nc" id="L36">    return ResponseEntity.status(HttpStatus.ACCEPTED).build();</span>
   }
 
+  @PreAuthorize(&quot;hasAuthority('website-content-config:read')&quot;)
   @GetMapping(path = &quot;/setup/build-life-project&quot;)
   public ResponseEntity&lt;Map&lt;ELanguage, BuildLifeProjectConfigDTO&gt;&gt;
       getBuildLifeProjectConfigWithAllTranslations() {
-<span class="nc" id="L40">    log.debug(&quot;Received request to get build life project config with all translations&quot;);</span>
+<span class="nc" id="L43">    log.debug(&quot;Received request to get build life project config with all translations&quot;);</span>
 
-<span class="nc" id="L42">    Map&lt;ELanguage, BuildLifeProjectConfiguration&gt; config =</span>
-<span class="nc" id="L43">        websiteContentConfigurationService.getLifeProjectConfigurationWithAllTranslations();</span>
+<span class="nc" id="L45">    Map&lt;ELanguage, BuildLifeProjectConfiguration&gt; config =</span>
+<span class="nc" id="L46">        websiteContentConfigurationService.getLifeProjectConfigurationWithAllTranslations();</span>
 
-<span class="nc" id="L45">    return ResponseEntity.ok(</span>
-<span class="nc" id="L46">        config.entrySet().stream()</span>
-<span class="nc" id="L47">            .collect(</span>
-<span class="nc" id="L48">                Collectors.toMap(</span>
+<span class="nc" id="L48">    return ResponseEntity.ok(</span>
+<span class="nc" id="L49">        config.entrySet().stream()</span>
+<span class="nc" id="L50">            .collect(</span>
+<span class="nc" id="L51">                Collectors.toMap(</span>
                     Map.Entry::getKey,
-<span class="nc" id="L50">                    entry -&gt; new BuildLifeProjectConfigDTO(entry.getValue().html()))));</span>
+<span class="nc" id="L53">                    entry -&gt; new BuildLifeProjectConfigDTO(entry.getValue().html()))));</span>
   }
 
+  @PreAuthorize(&quot;hasAuthority('website-content-config:read')&quot;)
   @GetMapping(path = &quot;/build-life-project&quot;)
   public ResponseEntity&lt;BuildLifeProjectConfigDTO&gt; getBuildLifeProjectConfig() {
-<span class="nc" id="L55">    log.debug(&quot;Received request to get build life project config&quot;);</span>
+<span class="nc" id="L59">    log.debug(&quot;Received request to get build life project config&quot;);</span>
 
-<span class="nc" id="L57">    BuildLifeProjectConfiguration config =</span>
-<span class="nc" id="L58">        websiteContentConfigurationService.getLifeProjectConfiguration();</span>
+<span class="nc" id="L61">    BuildLifeProjectConfiguration config =</span>
+<span class="nc" id="L62">        websiteContentConfigurationService.getLifeProjectConfiguration();</span>
 
-<span class="nc" id="L60">    return ResponseEntity.ok(new BuildLifeProjectConfigDTO(config.html()));</span>
+<span class="nc" id="L64">    return ResponseEntity.ok(new BuildLifeProjectConfigDTO(config.html()));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
