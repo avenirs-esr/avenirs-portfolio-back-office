@@ -7,38 +7,35 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-<span class="fc" id="L13">@Slf4j</span>
+<span class="fc" id="L12">@Slf4j</span>
 @AllArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/config/traces&quot;)
 public class TraceConfigurationController {
   private final TraceConfigurationService traceConfigurationService;
 
-  @PreAuthorize(&quot;hasAuthority('trace-config:read')&quot;)
   @GetMapping
   public ResponseEntity&lt;TraceConfigurationDTO&gt; getTraceConfig() {
-<span class="nc" id="L23">    log.debug(&quot;Received request to get trace config&quot;);</span>
+<span class="nc" id="L21">    log.debug(&quot;Received request to get trace config&quot;);</span>
 
-<span class="nc" id="L25">    var config = traceConfigurationService.getTraceConfiguration();</span>
+<span class="nc" id="L23">    var config = traceConfigurationService.getTraceConfiguration();</span>
 
-<span class="nc" id="L27">    return ResponseEntity.ok(TraceConfigurationDTO.of(config));</span>
+<span class="nc" id="L25">    return ResponseEntity.ok(TraceConfigurationDTO.of(config));</span>
   }
 
-  @PreAuthorize(&quot;hasAuthority('trace-config:update')&quot;)
   @PostMapping
   public ResponseEntity&lt;Void&gt; postTraceConfig(@RequestBody TraceConfigurationDTO config) {
-<span class="nc" id="L33">    log.debug(&quot;Received request to post trace config : {}&quot;, config);</span>
+<span class="nc" id="L30">    log.debug(&quot;Received request to post trace config : {}&quot;, config);</span>
 
-<span class="nc" id="L35">    traceConfigurationService.postTraceConfiguration(</span>
+<span class="nc" id="L32">    traceConfigurationService.postTraceConfiguration(</span>
         new TraceConfiguration(
-<span class="nc" id="L37">            config.maxRemainingDays(),</span>
-<span class="nc" id="L38">            config.maxRemainingDaysBeforeWarning(),</span>
-<span class="nc" id="L39">            config.maxRemainingDaysBeforeCritical()));</span>
+<span class="nc" id="L34">            config.maxRemainingDays(),</span>
+<span class="nc" id="L35">            config.maxRemainingDaysBeforeWarning(),</span>
+<span class="nc" id="L36">            config.maxRemainingDaysBeforeCritical()));</span>
 
-<span class="nc" id="L41">    return ResponseEntity.status(HttpStatus.ACCEPTED).build();</span>
+<span class="nc" id="L38">    return ResponseEntity.status(HttpStatus.ACCEPTED).build();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
