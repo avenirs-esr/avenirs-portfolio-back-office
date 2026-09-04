@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class TraceConfigurationController {
   private final TraceConfigurationService traceConfigurationService;
 
+  @PreAuthorize("hasAuthority('trace-config:read')")
   @GetMapping
   public ResponseEntity<TraceConfigurationDTO> getTraceConfig() {
     log.debug("Received request to get trace config");
@@ -25,6 +27,7 @@ public class TraceConfigurationController {
     return ResponseEntity.ok(TraceConfigurationDTO.of(config));
   }
 
+  @PreAuthorize("hasAuthority('trace-config:update')")
   @PostMapping
   public ResponseEntity<Void> postTraceConfig(@RequestBody TraceConfigurationDTO config) {
     log.debug("Received request to post trace config : {}", config);

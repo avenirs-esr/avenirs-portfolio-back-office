@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ public class GroupController {
   @Value("${admin.token:}")
   private String adminToken;
 
+  @PreAuthorize("hasAuthority('group:read')")
   @GetMapping
   public ResponseEntity<List<GroupResponse>> findAll(
       @RequestParam(required = false) UUID institutionId,
@@ -54,6 +56,7 @@ public class GroupController {
     return ResponseEntity.ok(groups.stream().map(GroupResponse::from).toList());
   }
 
+  @PreAuthorize("hasAuthority('group:read')")
   @GetMapping("/{id}")
   public ResponseEntity<GroupResponse> findById(
       @PathVariable UUID id, @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
@@ -66,6 +69,7 @@ public class GroupController {
     return ResponseEntity.ok(GroupResponse.from(group));
   }
 
+  @PreAuthorize("hasAuthority('group:import')")
   @PostMapping
   public ResponseEntity<GroupImportSummaryResponse> createAll(
       @RequestBody List<GroupData> groups, @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
@@ -84,6 +88,7 @@ public class GroupController {
     return ResponseEntity.ok(GroupImportSummaryResponse.from(summary));
   }
 
+  @PreAuthorize("hasAuthority('group:update')")
   @PutMapping
   public ResponseEntity<List<GroupResponse>> updateAll(
       @RequestBody List<GroupData> groups, @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
@@ -97,6 +102,7 @@ public class GroupController {
     return ResponseEntity.ok(updated.stream().map(GroupResponse::from).toList());
   }
 
+  @PreAuthorize("hasAuthority('group:delete')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(
       @PathVariable UUID id, @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
