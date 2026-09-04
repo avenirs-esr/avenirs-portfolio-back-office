@@ -2554,5 +2554,41 @@
     "status": "INACTIVE",
     "institutionHai": "0350001A",
     "groupIdSiSco": null
+  },
+  {
+    "eppn": "845348d9-fca9-4709-a73b-319aa002d2a3@qualif.recia.dev",
+    "firstName": "Jeanne",
+    "lastName": "Cher",
+    "email": "jeanne.cher@university.com",
+    "categories": ["STUDENT", "STAFF"],
+    "externalId": "JCHER-2026-001",
+    "source": "BACK_OFFICE",
+    "status": "ACTIVE",
+    "institutionHai": "0350001A",
+    "groupIdSiSco": "10000003"
+  },
+  {
+    "eppn": "f4aaebc1-ddca-48bf-b3b1-fa024247f4c2@qualif.recia.dev",
+    "firstName": "Marc",
+    "lastName": "Loire",
+    "email": "marc.loire@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "LLOIRE-2026-002",
+    "source": "BACK_OFFICE",
+    "status": "ACTIVE",
+    "institutionHai": "0350001A",
+    "groupIdSiSco": "10000003"
+  },
+  {
+    "eppn": "05a6b849-821e-4ca4-942e-f4f3bf38ac1b@qualif.recia.dev",
+    "firstName": "Florence",
+    "lastName": "Var",
+    "email": "florence.var@university.com",
+    "categories": ["STAFF"],
+    "externalId": "FVAR-2026-003",
+    "source": "BACK_OFFICE",
+    "status": "ACTIVE",
+    "institutionHai": "0350001A",
+    "groupIdSiSco": null
   }
 ]
