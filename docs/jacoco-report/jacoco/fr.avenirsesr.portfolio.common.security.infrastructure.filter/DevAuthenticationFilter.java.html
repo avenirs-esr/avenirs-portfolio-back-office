@@ -40,10 +40,9 @@ public class DevAuthenticationFilter extends OncePerRequestFilter {
 <span class="nc" id="L40">                  .map(permission -&gt; new SimpleGrantedAuthority(permission.authority()))</span>
 <span class="nc" id="L41">                  .toList());</span>
 <span class="nc" id="L42">      SecurityContextHolder.getContext().setAuthentication(auth);</span>
-<span class="nc" id="L43">      log.debug(</span>
-          &quot;Dev authentication enabled for user: {} with every permission granted&quot;, devUser);
+<span class="nc" id="L43">      log.debug(&quot;Dev authentication enabled for user: {} with every permission granted&quot;, devUser);</span>
     }
-<span class="nc" id="L46">    filterChain.doFilter(request, response);</span>
-<span class="nc" id="L47">  }</span>
+<span class="nc" id="L45">    filterChain.doFilter(request, response);</span>
+<span class="nc" id="L46">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

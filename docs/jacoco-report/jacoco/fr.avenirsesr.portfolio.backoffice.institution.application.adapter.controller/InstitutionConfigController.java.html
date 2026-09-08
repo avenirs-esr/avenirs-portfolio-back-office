@@ -8,24 +8,26 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-<span class="fc" id="L16">@Slf4j</span>
+<span class="fc" id="L17">@Slf4j</span>
 @AllArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/config/institution&quot;)
 public class InstitutionConfigController {
   private final InstitutionConfigService institutionConfigService;
 
+  @PreAuthorize(&quot;hasAuthority('institution-config:read')&quot;)
   @GetMapping(&quot;/{institutionId}&quot;)
   public ResponseEntity&lt;InstitutionConfigurationElements&gt; getInstitutionConfig(
       @PathVariable UUID institutionId) {
-<span class="fc" id="L26">    log.info(&quot;Fetching institution configuration&quot;);</span>
-<span class="fc" id="L27">    InstitutionConfig config = institutionConfigService.getInstitutionConfig(institutionId);</span>
-<span class="fc" id="L28">    return ResponseEntity.ok(InstitutionConfigMapper.toDTO(config));</span>
+<span class="fc" id="L28">    log.info(&quot;Fetching institution configuration&quot;);</span>
+<span class="fc" id="L29">    InstitutionConfig config = institutionConfigService.getInstitutionConfig(institutionId);</span>
+<span class="fc" id="L30">    return ResponseEntity.ok(InstitutionConfigMapper.toDTO(config));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
