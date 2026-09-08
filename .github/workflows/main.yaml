@@ -9,6 +9,7 @@ jobs:
     uses: avenirs-esr/avenirs-workflows/.github/workflows/common-backend-workflow.yaml@main
     with:
       run_integration_tests: true
+      java_version: "25"
 
   call-check-imports:
     uses: ./.github/workflows/check-domain-layer-imports.yaml
