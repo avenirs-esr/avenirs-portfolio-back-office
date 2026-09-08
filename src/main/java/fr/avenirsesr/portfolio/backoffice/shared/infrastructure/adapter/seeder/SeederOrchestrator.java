@@ -47,9 +47,9 @@ public class SeederOrchestrator {
       traceConfigSeeder.seed();
       websiteContentConfigurationSeeder.seed();
       List<UUID> savedInstitutionIds = institutionSeeder.seed();
-      institutionConfigSeeder.seed(List.of());
-      groupSeeder.seed(savedInstitutionIds);
-      externalUserSeeder.seed();
+      institutionConfigSeeder.seed(savedInstitutionIds);
+      List<UUID> savedGroupIds = groupSeeder.seed(savedInstitutionIds);
+      externalUserSeeder.seed(savedInstitutionIds, savedGroupIds);
 
       log.info("✔ Seeding successfully finished");
     } catch (Exception e) {
