@@ -6,13 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-<span class="fc" id="L15">@Slf4j</span>
+<span class="fc" id="L14">@Slf4j</span>
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/seeder&quot;)
@@ -23,30 +22,29 @@ public class SeederController {
   @Value(&quot;${admin.token:}&quot;)
   private String adminToken;
 
-  @PreAuthorize(&quot;hasAuthority('seeder:reset')&quot;)
   @PostMapping(&quot;/reset&quot;)
   public ResponseEntity&lt;Void&gt; resetAndSeed(@RequestHeader(name = &quot;X-ADMIN-TOKEN&quot;) String token) {
-<span class="nc" id="L29">    HttpStatus rejection = checkAdminToken(token);</span>
-<span class="nc bnc" id="L30" title="All 2 branches missed.">    if (rejection != null) {</span>
-<span class="nc" id="L31">      return ResponseEntity.status(rejection).build();</span>
+<span class="nc" id="L27">    HttpStatus rejection = checkAdminToken(token);</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">    if (rejection != null) {</span>
+<span class="nc" id="L29">      return ResponseEntity.status(rejection).build();</span>
     }
 
-<span class="nc" id="L34">    log.warn(&quot;Resetting and reseeding database via admin endpoint&quot;);</span>
-<span class="nc" id="L35">    seederOrchestrator.resetAll();</span>
-<span class="nc" id="L36">    seederOrchestrator.seedAll();</span>
-<span class="nc" id="L37">    log.info(&quot;✔ Database reset and reseeded successfully&quot;);</span>
+<span class="nc" id="L32">    log.warn(&quot;Resetting and reseeding database via admin endpoint&quot;);</span>
+<span class="nc" id="L33">    seederOrchestrator.resetAll();</span>
+<span class="nc" id="L34">    seederOrchestrator.seedAll();</span>
+<span class="nc" id="L35">    log.info(&quot;✔ Database reset and reseeded successfully&quot;);</span>
 
-<span class="nc" id="L39">    return ResponseEntity.noContent().build();</span>
+<span class="nc" id="L37">    return ResponseEntity.noContent().build();</span>
   }
 
   private HttpStatus checkAdminToken(String token) {
-<span class="nc bnc" id="L43" title="All 4 branches missed.">    if (adminToken == null || adminToken.isBlank()) {</span>
-<span class="nc" id="L44">      return HttpStatus.SERVICE_UNAVAILABLE;</span>
+<span class="nc bnc" id="L41" title="All 4 branches missed.">    if (adminToken == null || adminToken.isBlank()) {</span>
+<span class="nc" id="L42">      return HttpStatus.SERVICE_UNAVAILABLE;</span>
     }
-<span class="nc bnc" id="L46" title="All 2 branches missed.">    if (!adminToken.equals(token)) {</span>
-<span class="nc" id="L47">      return HttpStatus.FORBIDDEN;</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">    if (!adminToken.equals(token)) {</span>
+<span class="nc" id="L45">      return HttpStatus.FORBIDDEN;</span>
     }
-<span class="nc" id="L49">    return null;</span>
+<span class="nc" id="L47">    return null;</span>
   }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

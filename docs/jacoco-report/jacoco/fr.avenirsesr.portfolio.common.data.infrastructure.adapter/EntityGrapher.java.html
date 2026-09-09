@@ -101,7 +101,7 @@ public class EntityGrapher&lt;T&gt; {
 <span class="nc" id="L101">          case EntityGraph&lt;?&gt; entityGraph -&gt; entityGraph.addSubgraph(attribute);</span>
 <span class="nc" id="L102">          case Subgraph&lt;?&gt; subgraph -&gt; subgraph.addSubgraph(attribute);</span>
 <span class="nc" id="L103">          default -&gt; throw new IllegalStateException(&quot;Graph type not supported for &quot; + attribute);</span>
-        };
+<span class="nc" id="L104">        };</span>
 
 <span class="nc" id="L106">    subgraphs.put(attribute, (Subgraph&lt;?&gt;) newGraph);</span>
 <span class="nc" id="L107">    return this;</span>
@@ -141,7 +141,7 @@ public class EntityGrapher&lt;T&gt; {
 <span class="nc" id="L141">          case Subgraph&lt;?&gt; subgraph -&gt;</span>
 <span class="nc" id="L142">              subgraph.getAttributeNodes().stream().map(AttributeNode::getAttributeName).toList();</span>
 <span class="nc" id="L143">          default -&gt; throw new IllegalStateException(&quot;Graph type not supported&quot;);</span>
-        };
+<span class="nc" id="L144">        };</span>
 <span class="nc" id="L145">    root();</span>
 <span class="nc" id="L146">    return attributes;</span>
   }
@@ -179,4 +179,4 @@ public class EntityGrapher&lt;T&gt; {
 <span class="nc" id="L179">    }</span>
 <span class="nc" id="L180">  }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

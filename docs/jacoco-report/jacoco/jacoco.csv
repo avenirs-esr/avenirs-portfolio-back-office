@@ -4,8 +4,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.inf
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.openapi,SwaggerSchema,43,0,0,0,12,0,1,0,1,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.openapi,OpenApiUserEnumConfiguration,13,5,0,0,6,2,1,2,1,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContext,7,12,0,0,2,5,2,3,2,3
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContextInterceptor,10,3,0,0,6,1,3,1,3,1
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContextFilter,48,65,4,2,13,23,4,3,1,3
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestContextFilter,20,54,1,1,6,17,1,4,0,4
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.web.infrastructure.context,RequestData,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.language.infrastructure.adapter.filter,LanguageFilterAspect,10,0,0,0,3,0,1,0,1,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.language.infrastructure.adapter.filter,LanguageFilterSupplier,11,3,2,0,4,1,2,1,1,1
@@ -27,10 +26,10 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.in
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.domain.service,GroupServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.domain.service,GroupServiceImpl,0,319,0,21,0,83,0,24,0,13
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.trace.infrastructure.service,TraceConfigurationServiceConfig,0,16,0,0,0,5,0,3,0,3
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,ApiKeyAuthenticationFilter,69,130,17,13,14,34,14,8,0,7
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,HmacAuthenticationFilter,258,0,24,0,62,0,19,0,7,0
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,ApiKeyAuthenticationFilter,71,106,18,14,15,28,15,7,0,6
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,HmacAuthenticationFilter,220,20,24,2,52,8,17,3,4,3
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DisabledAuthenticationFilter,45,0,8,0,10,0,8,0,4,0
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DevAuthenticationFilter,89,0,12,0,21,0,11,0,5,0
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.security.infrastructure.filter,DevAuthenticationFilter,74,0,12,0,17,0,11,0,5,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification,DateFilterSpecificationBuilder,50,0,6,0,8,0,9,0,6,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter.specification,FilterSpecificationBuilder,39,0,6,0,8,0,5,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill.domain.service,AdditionalSkillConfigurationServiceImpl,58,210,7,15,10,52,8,19,4,8
@@ -41,10 +40,10 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.infrastru
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.application.adapter.controller,SeederController,43,4,8,0,13,1,6,1,2,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.trace.domain.service,TraceConfigurationServiceImpl,1,160,1,7,0,51,1,12,0,9
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.domain,FetchGraph,97,0,6,0,23,0,10,0,7,0
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter,EntityGrapher,259,0,19,0,53,0,21,0,10,0
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure.adapter,EntityGrapher,259,0,19,0,55,0,21,0,10,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionConfigController,0,16,0,0,0,4,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionController,46,114,8,8,11,26,8,7,1,6
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.repository,ExternalUserDatabaseRepository,28,10,0,0,7,3,3,1,3,1
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.repository,ExternalUserDatabaseRepository,24,10,0,0,7,3,3,1,3,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseOpenApiConfiguration,22,0,0,0,9,0,2,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseSwaggerSchema,91,0,0,0,25,0,3,0,3,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.service,InstitutionConfigServiceConfig,0,6,0,0,0,1,0,1,0,1

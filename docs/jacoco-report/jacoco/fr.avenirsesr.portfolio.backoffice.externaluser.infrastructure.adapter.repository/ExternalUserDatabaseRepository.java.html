@@ -26,8 +26,8 @@ public class ExternalUserDatabaseRepository
 
   @Override
   public Optional&lt;ExternalUser&gt; findByEppn(String eppn) {
-<span class="nc" id="L29">    return Optional.ofNullable(jpaRepository.findByEppn(eppn))</span>
-<span class="nc" id="L30">        .map(ExternalUserMapper.INSTANCE::toDomain);</span>
+<span class="nc" id="L29">    return Optional.ofNullable(</span>
+<span class="nc" id="L30">        ExternalUserMapper.INSTANCE.toDomain(jpaRepository.findByEppn(eppn)));</span>
   }
 
   @Override
@@ -43,4 +43,4 @@ public class ExternalUserDatabaseRepository
 <span class="nc" id="L43">    return findAll(specification);</span>
   }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
