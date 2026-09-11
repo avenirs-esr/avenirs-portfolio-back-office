@@ -80,11 +80,6 @@ public class InstitutionServiceImpl implements InstitutionService {
     return new UpsertResult(institutionRepository.save(institution), true);
   }
 
-  /**
-   * Derives the identifier from the hai, which is unique and stable, so that a reseeded back-office
-   * keeps the same institution identifiers and the other services can reference them in their own
-   * seed data.
-   */
   private static UUID idFromHai(String hai) {
     return UUID.nameUUIDFromBytes(("institution:" + hai).getBytes(StandardCharsets.UTF_8));
   }

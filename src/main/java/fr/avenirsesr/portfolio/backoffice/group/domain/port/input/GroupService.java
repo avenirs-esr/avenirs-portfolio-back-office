@@ -38,7 +38,6 @@ public interface GroupService {
 
   Group findById(UUID id);
 
-  /** Returns the program the given group belongs to, walking up the parent chain. */
   Group findProgramOf(UUID groupId);
 
   void delete(UUID id);

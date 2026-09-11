@@ -113,11 +113,6 @@ public class GroupServiceImpl implements GroupService {
     return new UpsertResult(groupRepository.save(group), true);
   }
 
-  /**
-   * Derives the identifier from the id_si_sco, which is unique and stable, so that a reseeded
-   * back-office keeps the same group identifiers and the other services can reference them in their
-   * own seed data.
-   */
   private static UUID idFromIdSiSco(String idSiSco) {
     return UUID.nameUUIDFromBytes(("group:" + idSiSco).getBytes(StandardCharsets.UTF_8));
   }
