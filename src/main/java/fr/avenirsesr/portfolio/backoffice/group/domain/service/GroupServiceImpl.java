@@ -10,17 +10,20 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportFailure;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,7 +101,7 @@ public class GroupServiceImpl implements GroupService {
     Group parent = resolveParent(type, parentIdSiSco);
     Group group =
         Group.create(
-            UUID.randomUUID(),
+            idFromIdSiSco(idSiSco),
             name,
             idSiSco,
             institution,
@@ -108,6 +111,15 @@ public class GroupServiceImpl implements GroupService {
             type,
             parent);
     return new UpsertResult(groupRepository.save(group), true);
+  }
+
+  /**
+   * Derives the identifier from the id_si_sco, which is unique and stable, so that a reseeded
+   * back-office keeps the same group identifiers and the other services can reference them in their
+   * own seed data.
+   */
+  private static UUID idFromIdSiSco(String idSiSco) {
+    return UUID.nameUUIDFromBytes(("group:" + idSiSco).getBytes(StandardCharsets.UTF_8));
   }
 
   private record UpsertResult(Group group, boolean created) {}
@@ -164,6 +176,29 @@ public class GroupServiceImpl implements GroupService {
   @Override
   public Group findById(UUID id) {
     return groupRepository.findById(id).orElseThrow(GroupNotFoundException::new);
+  }
+
+  @Override
+  public Group findProgramOf(UUID groupId) {
+    Group program = findById(groupId);
+    Set<UUID> visited = new HashSet<>();
+    visited.add(program.getId());
+
+    Optional<Group> parent = program.getParent();
+    while (parent.isPresent() && visited.add(parent.get().getId())) {
+      program = parent.get();
+      parent = program.getParent();
+    }
+
+    if (program.getType() != EGroupType.PROGRAM) {
+      log.warn(
+          "Group {} has no program ancestor, returning its topmost ancestor {} of type {}",
+          groupId,
+          program.getId(),
+          program.getType());
+    }
+
+    return program;
   }
 
   @Override

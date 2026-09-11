@@ -11,8 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionData;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.util.List;

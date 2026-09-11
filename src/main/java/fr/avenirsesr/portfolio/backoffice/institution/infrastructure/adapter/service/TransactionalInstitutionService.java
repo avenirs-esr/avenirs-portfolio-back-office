@@ -3,8 +3,8 @@ package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.se
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionData;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionImportSummary;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;

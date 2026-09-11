@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.dto;
 
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;

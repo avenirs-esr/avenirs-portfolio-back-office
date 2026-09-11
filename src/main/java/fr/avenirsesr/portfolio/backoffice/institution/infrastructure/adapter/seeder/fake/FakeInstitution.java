@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.fake;
 
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.seeder.data.InstitutionCreationData;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.seeder.domain.port.output.SharedDataGenerator;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.DataGeneratorProvider;
 import net.datafaker.Faker;

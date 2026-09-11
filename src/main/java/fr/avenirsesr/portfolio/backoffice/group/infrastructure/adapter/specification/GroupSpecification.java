@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.specification;
 
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model.GroupEntity;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;

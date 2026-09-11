@@ -3,7 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.group.domain.port.input;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +37,9 @@ public interface GroupService {
       UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate);
 
   Group findById(UUID id);
+
+  /** Returns the program the given group belongs to, walking up the parent chain. */
+  Group findProgramOf(UUID groupId);
 
   void delete(UUID id);
 }
