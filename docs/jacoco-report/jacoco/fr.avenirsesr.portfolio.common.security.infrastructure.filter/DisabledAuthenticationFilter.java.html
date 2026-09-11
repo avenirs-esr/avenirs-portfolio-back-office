@@ -1,32 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DisabledAuthenticationFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.security.infrastructure.filter</a> &gt; <span class="el_source">DisabledAuthenticationFilter.java</span></div><h1>DisabledAuthenticationFilter.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.security.infrastructure.filter;
 
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-<span class="nc" id="L12">@Slf4j</span>
+<span class="nc" id="L17">@Slf4j</span>
 public class DisabledAuthenticationFilter extends OncePerRequestFilter {
 
-<span class="nc" id="L15">  public DisabledAuthenticationFilter() {}</span>
+<span class="nc" id="L20">  public DisabledAuthenticationFilter() {}</span>
 
   @Override
-<span class="nc bnc" id="L18" title="All 2 branches missed.">  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {</span>
-<span class="nc" id="L19">    return false;</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {</span>
+<span class="nc" id="L24">    return false;</span>
   }
 
   @Override
   protected void doFilterInternal(
-<span class="nc bnc" id="L24" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
-<span class="nc bnc" id="L25" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
-<span class="nc bnc" id="L26" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
       throws ServletException, IOException {
-<span class="nc" id="L28">    log.warn(&quot;Authentication is completely disabled - no authentication performed&quot;);</span>
-<span class="nc" id="L29">    filterChain.doFilter(request, response);</span>
-<span class="nc" id="L30">  }</span>
+    // HttpSecurity authorization is permitAll() in this mode, but @PreAuthorize method security
+    // still runs, so every permission must be granted here or those checks deny anonymous calls.
+<span class="nc" id="L35">    var auth =</span>
+        new UsernamePasswordAuthenticationToken(
+            &quot;internal-service&quot;,
+            null,
+<span class="nc" id="L39">            Arrays.stream(EPermission.values())</span>
+<span class="nc" id="L40">                .map(permission -&gt; new SimpleGrantedAuthority(permission.authority()))</span>
+<span class="nc" id="L41">                .toList());</span>
+<span class="nc" id="L42">    SecurityContextHolder.getContext().setAuthentication(auth);</span>
+
+<span class="nc" id="L44">    log.warn(&quot;Authentication is completely disabled - every permission granted by default&quot;);</span>
+<span class="nc" id="L45">    filterChain.doFilter(request, response);</span>
+<span class="nc" id="L46">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
