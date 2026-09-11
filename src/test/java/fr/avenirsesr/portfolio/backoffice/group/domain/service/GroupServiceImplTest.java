@@ -12,12 +12,12 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupStudentGro
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.time.LocalDate;
 import java.util.List;
@@ -699,6 +699,121 @@ class GroupServiceImplTest {
 
     BddLogger.then("it should return the group");
     assertSame(group, result);
+  }
+
+  @Test
+  void shouldReturnProgram_whenWalkingUpFromAStudentGroup() {
+    BddLogger.given("a student group under a program option, itself under a program");
+    Group program =
+        Group.create(
+            UUID.randomUUID(),
+            "Licence Informatique",
+            "10000001",
+            institution,
+            "11000001",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    Group programOption =
+        Group.create(
+            UUID.randomUUID(),
+            "Parcours IA",
+            "10000002",
+            institution,
+            "11000002",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM_OPTION,
+            program);
+    Group studentGroup =
+        Group.create(
+            UUID.randomUUID(),
+            "Groupe A",
+            "10000003",
+            institution,
+            "11000003",
+            startDate,
+            endDate,
+            EGroupType.STUDENT_GROUP,
+            programOption);
+    when(groupRepository.findById(studentGroup.getId())).thenReturn(Optional.of(studentGroup));
+
+    BddLogger.when("asking for the program of that student group");
+    Group result = service.findProgramOf(studentGroup.getId());
+
+    BddLogger.then("it should return the topmost ancestor, which is the program");
+    assertEquals(program.getId(), result.getId());
+    assertEquals(EGroupType.PROGRAM, result.getType());
+  }
+
+  @Test
+  void shouldReturnTheGroupItself_whenAskingTheProgramOfAProgram() {
+    BddLogger.given("a program without parent");
+    Group program =
+        Group.create(
+            UUID.randomUUID(),
+            "Licence Informatique",
+            "10000001",
+            institution,
+            "11000001",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    when(groupRepository.findById(program.getId())).thenReturn(Optional.of(program));
+
+    BddLogger.when("asking for the program of that program");
+    Group result = service.findProgramOf(program.getId());
+
+    BddLogger.then("it should return the program itself");
+    assertEquals(program.getId(), result.getId());
+  }
+
+  @Test
+  void shouldReturnTopmostAncestor_whenTheChainDoesNotReachAProgram() {
+    BddLogger.given("a student group whose only ancestor is a program option without parent");
+    Group orphanOption =
+        Group.create(
+            UUID.randomUUID(),
+            "Parcours orphelin",
+            "10000002",
+            institution,
+            "11000002",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM_OPTION,
+            null);
+    Group studentGroup =
+        Group.create(
+            UUID.randomUUID(),
+            "Groupe A",
+            "10000003",
+            institution,
+            "11000003",
+            startDate,
+            endDate,
+            EGroupType.STUDENT_GROUP,
+            orphanOption);
+    when(groupRepository.findById(studentGroup.getId())).thenReturn(Optional.of(studentGroup));
+
+    BddLogger.when("asking for the program of that student group");
+    Group result = service.findProgramOf(studentGroup.getId());
+
+    BddLogger.then("it should return the topmost ancestor even though it is not a program");
+    assertEquals(orphanOption.getId(), result.getId());
+    assertEquals(EGroupType.PROGRAM_OPTION, result.getType());
+  }
+
+  @Test
+  void shouldThrowGroupNotFoundException_whenAskingTheProgramOfAnUnknownGroup() {
+    BddLogger.given("an unknown group id");
+    UUID id = UUID.randomUUID();
+    when(groupRepository.findById(id)).thenReturn(Optional.empty());
+
+    BddLogger.when("asking for the program of that group");
+    BddLogger.then("it should throw GroupNotFoundException");
+    assertThrows(GroupNotFoundException.class, () -> service.findProgramOf(id));
   }
 
   @Test

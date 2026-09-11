@@ -2,13 +2,13 @@ package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.data.GroupCreationData;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.data.GroupCsvCreationData;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.fake.FakeGroup;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.ESeederSource;
 import fr.avenirsesr.portfolio.common.utils.FileReader;
 import fr.avenirsesr.portfolio.common.validation.infrastructure.adapter.utils.ValidationUtils;

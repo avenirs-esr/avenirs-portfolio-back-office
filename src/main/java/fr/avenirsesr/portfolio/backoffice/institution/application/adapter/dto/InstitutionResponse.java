@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto;
 
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import java.time.Instant;
 import java.util.UUID;
 

@@ -1,8 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.group.domain.model;
 
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.common.data.domain.model.AvenirsBaseModel;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;

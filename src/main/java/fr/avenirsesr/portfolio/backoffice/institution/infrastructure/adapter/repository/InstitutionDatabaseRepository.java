@@ -1,12 +1,12 @@
 package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.repository;
 
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.mapper.InstitutionMapper;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.specification.InstitutionSpecification;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
