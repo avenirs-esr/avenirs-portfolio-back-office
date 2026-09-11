@@ -3,8 +3,8 @@
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -67,12 +67,17 @@ public class TransactionalGroupService implements GroupService {
 
   @Override
   public Group findById(UUID id) {
-<span class="nc" id="L70">    return delegate.findById(id);</span>
+<span class="fc" id="L70">    return delegate.findById(id);</span>
+  }
+
+  @Override
+  public Group findProgramOf(UUID groupId) {
+<span class="fc" id="L75">    return delegate.findProgramOf(groupId);</span>
   }
 
   @Override
   public void delete(UUID id) {
-<span class="fc" id="L75">    delegate.delete(id);</span>
-<span class="fc" id="L76">  }</span>
+<span class="fc" id="L80">    delegate.delete(id);</span>
+<span class="fc" id="L81">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

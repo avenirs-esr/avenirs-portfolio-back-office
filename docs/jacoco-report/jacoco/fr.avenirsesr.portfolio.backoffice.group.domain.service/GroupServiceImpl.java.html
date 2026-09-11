@@ -10,22 +10,25 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportFailure;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
+import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-<span class="fc" id="L28">@Slf4j</span>
+<span class="fc" id="L31">@Slf4j</span>
 @AllArgsConstructor
 public class GroupServiceImpl implements GroupService {
   private final GroupRepository groupRepository;
@@ -41,40 +44,40 @@ public class GroupServiceImpl implements GroupService {
       LocalDate endDate,
       EGroupType type,
       String parentIdSiSco) {
-<span class="fc" id="L44">    return upsert(name, idSiSco, institutionId, codeSise, startDate, endDate, type, parentIdSiSco)</span>
-<span class="fc" id="L45">        .group();</span>
+<span class="fc" id="L47">    return upsert(name, idSiSco, institutionId, codeSise, startDate, endDate, type, parentIdSiSco)</span>
+<span class="fc" id="L48">        .group();</span>
   }
 
   @Override
   public GroupImportSummary createAll(List&lt;GroupData&gt; groups) {
-<span class="fc" id="L50">    List&lt;Group&gt; created = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L51">    List&lt;Group&gt; updated = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L52">    List&lt;GroupImportFailure&gt; failed = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L53">    List&lt;Group&gt; created = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L54">    List&lt;Group&gt; updated = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L55">    List&lt;GroupImportFailure&gt; failed = new ArrayList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L54" title="All 2 branches covered.">    for (GroupData data : groups) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    for (GroupData data : groups) {</span>
       try {
-<span class="fc" id="L56">        UpsertResult result =</span>
-<span class="fc" id="L57">            upsert(</span>
-<span class="fc" id="L58">                data.name(),</span>
-<span class="fc" id="L59">                data.idSiSco(),</span>
-<span class="fc" id="L60">                data.institutionId(),</span>
-<span class="fc" id="L61">                data.codeSise(),</span>
-<span class="fc" id="L62">                data.startDate(),</span>
-<span class="fc" id="L63">                data.endDate(),</span>
-<span class="fc" id="L64">                data.type(),</span>
-<span class="fc" id="L65">                data.parentIdSiSco());</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (result.created()) {</span>
-<span class="fc" id="L67">          created.add(result.group());</span>
+<span class="fc" id="L59">        UpsertResult result =</span>
+<span class="fc" id="L60">            upsert(</span>
+<span class="fc" id="L61">                data.name(),</span>
+<span class="fc" id="L62">                data.idSiSco(),</span>
+<span class="fc" id="L63">                data.institutionId(),</span>
+<span class="fc" id="L64">                data.codeSise(),</span>
+<span class="fc" id="L65">                data.startDate(),</span>
+<span class="fc" id="L66">                data.endDate(),</span>
+<span class="fc" id="L67">                data.type(),</span>
+<span class="fc" id="L68">                data.parentIdSiSco());</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (result.created()) {</span>
+<span class="fc" id="L70">          created.add(result.group());</span>
         } else {
-<span class="fc" id="L69">          updated.add(result.group());</span>
+<span class="fc" id="L72">          updated.add(result.group());</span>
         }
-<span class="fc" id="L71">      } catch (BusinessException e) {</span>
-<span class="fc" id="L72">        log.warn(&quot;Failed to import group with id_si_sco {}: {}&quot;, data.idSiSco(), e.getMessage());</span>
-<span class="fc" id="L73">        failed.add(new GroupImportFailure(data.idSiSco(), e.getMessage()));</span>
-<span class="fc" id="L74">      }</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L74">      } catch (BusinessException e) {</span>
+<span class="fc" id="L75">        log.warn(&quot;Failed to import group with id_si_sco {}: {}&quot;, data.idSiSco(), e.getMessage());</span>
+<span class="fc" id="L76">        failed.add(new GroupImportFailure(data.idSiSco(), e.getMessage()));</span>
+<span class="fc" id="L77">      }</span>
+<span class="fc" id="L78">    }</span>
 
-<span class="fc" id="L77">    return new GroupImportSummary(created, updated, failed);</span>
+<span class="fc" id="L80">    return new GroupImportSummary(created, updated, failed);</span>
   }
 
   /** Creates the group, or updates the existing one matching the given id_si_sco. */
@@ -87,18 +90,18 @@ public class GroupServiceImpl implements GroupService {
       LocalDate endDate,
       EGroupType type,
       String parentIdSiSco) {
-<span class="fc" id="L90">    Optional&lt;Group&gt; existing = groupRepository.findByIdSiSco(idSiSco);</span>
-<span class="fc bfc" id="L91" title="All 2 branches covered.">    if (existing.isPresent()) {</span>
-<span class="fc" id="L92">      return new UpsertResult(</span>
-<span class="fc" id="L93">          update(idSiSco, name, institutionId, codeSise, startDate, endDate, type, parentIdSiSco),</span>
+<span class="fc" id="L93">    Optional&lt;Group&gt; existing = groupRepository.findByIdSiSco(idSiSco);</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">    if (existing.isPresent()) {</span>
+<span class="fc" id="L95">      return new UpsertResult(</span>
+<span class="fc" id="L96">          update(idSiSco, name, institutionId, codeSise, startDate, endDate, type, parentIdSiSco),</span>
           false);
     }
 
-<span class="fc" id="L97">    Institution institution = findInstitutionOrThrow(institutionId);</span>
-<span class="fc" id="L98">    Group parent = resolveParent(type, parentIdSiSco);</span>
-    Group group =
-<span class="fc" id="L100">        Group.create(</span>
-<span class="fc" id="L101">            UUID.randomUUID(),</span>
+<span class="fc" id="L100">    Institution institution = findInstitutionOrThrow(institutionId);</span>
+<span class="fc" id="L101">    Group parent = resolveParent(type, parentIdSiSco);</span>
+<span class="fc" id="L102">    Group group =</span>
+<span class="fc" id="L103">        Group.create(</span>
+<span class="fc" id="L104">            idFromIdSiSco(idSiSco),</span>
             name,
             idSiSco,
             institution,
@@ -107,10 +110,19 @@ public class GroupServiceImpl implements GroupService {
             endDate,
             type,
             parent);
-<span class="fc" id="L110">    return new UpsertResult(groupRepository.save(group), true);</span>
+<span class="fc" id="L113">    return new UpsertResult(groupRepository.save(group), true);</span>
   }
 
-<span class="fc" id="L113">  private record UpsertResult(Group group, boolean created) {}</span>
+  /**
+   * Derives the identifier from the id_si_sco, which is unique and stable, so that a reseeded
+   * back-office keeps the same group identifiers and the other services can reference them in their
+   * own seed data.
+   */
+  private static UUID idFromIdSiSco(String idSiSco) {
+<span class="fc" id="L122">    return UUID.nameUUIDFromBytes((&quot;group:&quot; + idSiSco).getBytes(StandardCharsets.UTF_8));</span>
+  }
+
+<span class="fc" id="L125">  private record UpsertResult(Group group, boolean created) {}</span>
 
   @Override
   public Group update(
@@ -122,95 +134,118 @@ public class GroupServiceImpl implements GroupService {
       LocalDate endDate,
       EGroupType type,
       String parentIdSiSco) {
-<span class="fc" id="L125">    Group group = groupRepository.findByIdSiSco(idSiSco).orElseThrow(GroupNotFoundException::new);</span>
+<span class="fc" id="L137">    Group group = groupRepository.findByIdSiSco(idSiSco).orElseThrow(GroupNotFoundException::new);</span>
 
-<span class="fc" id="L127">    Institution institution = findInstitutionOrThrow(institutionId);</span>
-<span class="fc" id="L128">    Group parent = resolveParent(type, parentIdSiSco);</span>
+<span class="fc" id="L139">    Institution institution = findInstitutionOrThrow(institutionId);</span>
+<span class="fc" id="L140">    Group parent = resolveParent(type, parentIdSiSco);</span>
 
-<span class="fc" id="L130">    group.setName(name);</span>
-<span class="fc" id="L131">    group.setInstitution(institution);</span>
-<span class="fc" id="L132">    group.setCodeSise(codeSise);</span>
-<span class="fc" id="L133">    group.setStartDate(startDate);</span>
-<span class="fc" id="L134">    group.setEndDate(endDate);</span>
-<span class="fc" id="L135">    group.setType(type);</span>
-<span class="fc" id="L136">    group.setParent(parent);</span>
+<span class="fc" id="L142">    group.setName(name);</span>
+<span class="fc" id="L143">    group.setInstitution(institution);</span>
+<span class="fc" id="L144">    group.setCodeSise(codeSise);</span>
+<span class="fc" id="L145">    group.setStartDate(startDate);</span>
+<span class="fc" id="L146">    group.setEndDate(endDate);</span>
+<span class="fc" id="L147">    group.setType(type);</span>
+<span class="fc" id="L148">    group.setParent(parent);</span>
 
-<span class="fc" id="L138">    return groupRepository.save(group);</span>
+<span class="fc" id="L150">    return groupRepository.save(group);</span>
   }
 
   @Override
   public List&lt;Group&gt; updateAll(List&lt;GroupData&gt; groups) {
-<span class="fc" id="L143">    return groups.stream()</span>
-<span class="fc" id="L144">        .map(</span>
+<span class="fc" id="L155">    return groups.stream()</span>
+<span class="fc" id="L156">        .map(</span>
             data -&gt;
-<span class="fc" id="L146">                update(</span>
-<span class="fc" id="L147">                    data.idSiSco(),</span>
-<span class="fc" id="L148">                    data.name(),</span>
-<span class="fc" id="L149">                    data.institutionId(),</span>
-<span class="fc" id="L150">                    data.codeSise(),</span>
-<span class="fc" id="L151">                    data.startDate(),</span>
-<span class="fc" id="L152">                    data.endDate(),</span>
-<span class="fc" id="L153">                    data.type(),</span>
-<span class="fc" id="L154">                    data.parentIdSiSco()))</span>
-<span class="fc" id="L155">        .toList();</span>
+<span class="fc" id="L158">                update(</span>
+<span class="fc" id="L159">                    data.idSiSco(),</span>
+<span class="fc" id="L160">                    data.name(),</span>
+<span class="fc" id="L161">                    data.institutionId(),</span>
+<span class="fc" id="L162">                    data.codeSise(),</span>
+<span class="fc" id="L163">                    data.startDate(),</span>
+<span class="fc" id="L164">                    data.endDate(),</span>
+<span class="fc" id="L165">                    data.type(),</span>
+<span class="fc" id="L166">                    data.parentIdSiSco()))</span>
+<span class="fc" id="L167">        .toList();</span>
   }
 
   @Override
   public List&lt;Group&gt; findAll(
       UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate) {
-<span class="fc" id="L161">    return groupRepository.findAll(institutionId, parentId, type, startDate, endDate);</span>
+<span class="fc" id="L173">    return groupRepository.findAll(institutionId, parentId, type, startDate, endDate);</span>
   }
 
   @Override
   public Group findById(UUID id) {
-<span class="fc" id="L166">    return groupRepository.findById(id).orElseThrow(GroupNotFoundException::new);</span>
+<span class="fc" id="L178">    return groupRepository.findById(id).orElseThrow(GroupNotFoundException::new);</span>
+  }
+
+  @Override
+  public Group findProgramOf(UUID groupId) {
+<span class="fc" id="L183">    Group program = findById(groupId);</span>
+<span class="fc" id="L184">    Set&lt;UUID&gt; visited = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L185">    visited.add(program.getId());</span>
+
+<span class="fc" id="L187">    Optional&lt;Group&gt; parent = program.getParent();</span>
+<span class="pc bpc" id="L188" title="1 of 4 branches missed.">    while (parent.isPresent() &amp;&amp; visited.add(parent.get().getId())) {</span>
+<span class="fc" id="L189">      program = parent.get();</span>
+<span class="fc" id="L190">      parent = program.getParent();</span>
+    }
+
+<span class="fc bfc" id="L193" title="All 2 branches covered.">    if (program.getType() != EGroupType.PROGRAM) {</span>
+<span class="fc" id="L194">      log.warn(</span>
+          &quot;Group {} has no program ancestor, returning its topmost ancestor {} of type {}&quot;,
+          groupId,
+<span class="fc" id="L197">          program.getId(),</span>
+<span class="fc" id="L198">          program.getType());</span>
+    }
+
+<span class="fc" id="L201">    return program;</span>
   }
 
   @Override
   public void delete(UUID id) {
-<span class="fc" id="L171">    groupRepository.removeFromDatabase(findById(id));</span>
-<span class="fc" id="L172">  }</span>
+<span class="fc" id="L206">    groupRepository.removeFromDatabase(findById(id));</span>
+<span class="fc" id="L207">  }</span>
 
   private Institution findInstitutionOrThrow(UUID institutionId) {
-<span class="fc" id="L175">    return institutionRepository</span>
-<span class="fc" id="L176">        .findById(institutionId)</span>
-<span class="fc" id="L177">        .orElseThrow(InstitutionNotFoundException::new);</span>
+<span class="fc" id="L210">    return institutionRepository</span>
+<span class="fc" id="L211">        .findById(institutionId)</span>
+<span class="fc" id="L212">        .orElseThrow(InstitutionNotFoundException::new);</span>
   }
 
   private Group resolveParent(EGroupType type, String parentIdSiSco) {
-<span class="fc bfc" id="L181" title="All 3 branches covered.">    return switch (type) {</span>
+<span class="fc bfc" id="L216" title="All 3 branches covered.">    return switch (type) {</span>
       case PROGRAM -&gt; {
-<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (parentIdSiSco != null) {</span>
-<span class="fc" id="L184">          throw new GroupProgramCannotHaveParentException();</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        if (parentIdSiSco != null) {</span>
+<span class="fc" id="L219">          throw new GroupProgramCannotHaveParentException();</span>
         }
-<span class="fc" id="L186">        yield null;</span>
+<span class="fc" id="L221">        yield null;</span>
       }
       case PROGRAM_OPTION -&gt; {
-<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
-<span class="fc" id="L190">          throw new GroupProgramOptionRequiresParentException();</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
+<span class="fc" id="L225">          throw new GroupProgramOptionRequiresParentException();</span>
         }
-<span class="fc" id="L192">        Group parent = findParentOrThrow(parentIdSiSco);</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM) {</span>
-<span class="fc" id="L194">          throw new GroupProgramOptionParentMustBeProgramException();</span>
+<span class="fc" id="L227">        Group parent = findParentOrThrow(parentIdSiSco);</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM) {</span>
+<span class="fc" id="L229">          throw new GroupProgramOptionParentMustBeProgramException();</span>
         }
-<span class="fc" id="L196">        yield parent;</span>
+<span class="fc" id="L231">        yield parent;</span>
       }
       case STUDENT_GROUP -&gt; {
-<span class="fc bfc" id="L199" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
-<span class="fc" id="L200">          throw new GroupStudentGroupRequiresParentException();</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
+<span class="fc" id="L235">          throw new GroupStudentGroupRequiresParentException();</span>
         }
-<span class="fc" id="L202">        Group parent = findParentOrThrow(parentIdSiSco);</span>
-<span class="fc bfc" id="L203" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM</span>
-<span class="fc bfc" id="L204" title="All 2 branches covered.">            &amp;&amp; parent.getType() != EGroupType.PROGRAM_OPTION) {</span>
-<span class="fc" id="L205">          throw new GroupStudentGroupParentMustBeProgramOrOptionException();</span>
+<span class="fc" id="L237">        Group parent = findParentOrThrow(parentIdSiSco);</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM</span>
+<span class="fc bfc" id="L239" title="All 2 branches covered.">            &amp;&amp; parent.getType() != EGroupType.PROGRAM_OPTION) {</span>
+<span class="fc" id="L240">          throw new GroupStudentGroupParentMustBeProgramOrOptionException();</span>
         }
-<span class="fc" id="L207">        yield parent;</span>
+<span class="fc" id="L242">        yield parent;</span>
       }
     };
   }
 
   private Group findParentOrThrow(String parentIdSiSco) {
-<span class="fc" id="L213">    return groupRepository.findByIdSiSco(parentIdSiSco).orElseThrow(GroupNotFoundException::new);</span>
+<span class="fc" id="L248">    return groupRepository.findByIdSiSco(parentIdSiSco).orElseThrow(GroupNotFoundException::new);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

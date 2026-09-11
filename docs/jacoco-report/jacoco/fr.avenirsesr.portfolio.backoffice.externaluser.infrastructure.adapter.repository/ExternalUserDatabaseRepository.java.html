@@ -26,8 +26,8 @@ public class ExternalUserDatabaseRepository
 
   @Override
   public Optional&lt;ExternalUser&gt; findByEppn(String eppn) {
-<span class="nc" id="L29">    return Optional.ofNullable(</span>
-<span class="nc" id="L30">        ExternalUserMapper.INSTANCE.toDomain(jpaRepository.findByEppn(eppn)));</span>
+<span class="nc" id="L29">    return Optional.ofNullable(jpaRepository.findByEppn(eppn))</span>
+<span class="nc" id="L30">        .map(ExternalUserMapper.INSTANCE::toDomain);</span>
   }
 
   @Override

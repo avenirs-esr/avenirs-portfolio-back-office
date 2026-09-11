@@ -3,8 +3,8 @@
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionData;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionImportSummary;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -59,7 +59,7 @@ public class TransactionalInstitutionService implements InstitutionService {
 
   @Override
   public Institution findById(UUID id) {
-<span class="nc" id="L62">    return delegate.findById(id);</span>
+<span class="fc" id="L62">    return delegate.findById(id);</span>
   }
 
   @Override
