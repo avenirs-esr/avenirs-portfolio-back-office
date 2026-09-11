@@ -1,7 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.specification;
 
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 

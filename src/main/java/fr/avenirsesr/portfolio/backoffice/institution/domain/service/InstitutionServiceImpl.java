@@ -8,10 +8,11 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionData;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionImportFailure;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionImportSummary;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,8 +76,12 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     Institution parent = resolveParent(type, parentHai);
     Institution institution =
-        Institution.create(UUID.randomUUID(), name, hai, siret, siren, type, parent);
+        Institution.create(idFromHai(hai), name, hai, siret, siren, type, parent);
     return new UpsertResult(institutionRepository.save(institution), true);
+  }
+
+  private static UUID idFromHai(String hai) {
+    return UUID.nameUUIDFromBytes(("institution:" + hai).getBytes(StandardCharsets.UTF_8));
   }
 
   private record UpsertResult(Institution institution, boolean created) {}
