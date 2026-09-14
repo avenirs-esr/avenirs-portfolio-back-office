@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DevAuthenticationFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.security.infrastructure.filter</a> &gt; <span class="el_source">DevAuthenticationFilter.java</span></div><h1>DevAuthenticationFilter.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.security.infrastructure.filter;
 
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -19,45 +22,46 @@ import org.springframework.security.web.context.RequestAttributeSecurityContextR
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-<span class="nc" id="L22">@Slf4j</span>
+<span class="nc" id="L25">@Slf4j</span>
 public class DevAuthenticationFilter extends OncePerRequestFilter {
   private final SecurityContextRepository securityContextRepository;
 
-<span class="nc" id="L26">  public DevAuthenticationFilter() {</span>
-<span class="nc" id="L27">    this.securityContextRepository = new RequestAttributeSecurityContextRepository();</span>
-<span class="nc" id="L28">  }</span>
+<span class="nc" id="L29">  public DevAuthenticationFilter() {</span>
+<span class="nc" id="L30">    this.securityContextRepository = new RequestAttributeSecurityContextRepository();</span>
+<span class="nc" id="L31">  }</span>
 
   @Override
-<span class="nc bnc" id="L31" title="All 2 branches missed.">  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {</span>
-<span class="nc" id="L32">    return false;</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">  protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {</span>
+<span class="nc" id="L35">    return false;</span>
   }
 
   @Override
   protected void doFilterInternal(
-<span class="nc bnc" id="L37" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
-<span class="nc bnc" id="L38" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">      @NonNull HttpServletRequest request,</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">      @NonNull HttpServletResponse response,</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">      @NonNull FilterChain filterChain)</span>
       throws ServletException, IOException {
-<span class="nc" id="L41">    String devUser = request.getHeader(&quot;eppn&quot;);</span>
+<span class="nc" id="L44">    String devUser = request.getHeader(&quot;eppn&quot;);</span>
 
-<span class="nc bnc" id="L43" title="All 4 branches missed.">    if (devUser != null &amp;&amp; !devUser.isBlank()) {</span>
+<span class="nc bnc" id="L46" title="All 4 branches missed.">    if (devUser != null &amp;&amp; !devUser.isBlank()) {</span>
       List&lt;SimpleGrantedAuthority&gt; authorities =
-<span class="nc" id="L45">          Arrays.stream(EPermission.values())</span>
-<span class="nc" id="L46">              .map(permission -&gt; new SimpleGrantedAuthority(permission.authority()))</span>
-<span class="nc" id="L47">              .toList();</span>
-<span class="nc" id="L48">      Authentication auth = new HmacAuthenticationToken(devUser, authorities);</span>
-<span class="nc" id="L49">      SecurityContext context = SecurityContextHolder.getContext();</span>
+<span class="nc" id="L48">          Arrays.stream(EPermission.values())</span>
+<span class="nc" id="L49">              .map(permission -&gt; new SimpleGrantedAuthority(permission.authority()))</span>
+<span class="nc" id="L50">              .toList();</span>
+<span class="nc" id="L51">      Set&lt;String&gt; roles = Arrays.stream(ERole.values()).map(Enum::name).collect(Collectors.toSet());</span>
+<span class="nc" id="L52">      Authentication auth = new HmacAuthenticationToken(devUser, authorities, roles);</span>
+<span class="nc" id="L53">      SecurityContext context = SecurityContextHolder.getContext();</span>
 
       // Persists the context as a request attribute so it survives the async thread hop used by
       // streamed responses. Removing it breaks nothing synchronously but silently reintroduces 401s
       // on any endpoint returning StreamingResponseBody.
-<span class="nc" id="L54">      context.setAuthentication(auth);</span>
-<span class="nc" id="L55">      securityContextRepository.saveContext(context, request, response);</span>
+<span class="nc" id="L58">      context.setAuthentication(auth);</span>
+<span class="nc" id="L59">      securityContextRepository.saveContext(context, request, response);</span>
 
-<span class="nc" id="L57">      log.debug(&quot;Dev authentication enabled for user: {} with every permission granted&quot;, devUser);</span>
+<span class="nc" id="L61">      log.debug(&quot;Dev authentication enabled for user: {} with every permission granted&quot;, devUser);</span>
     }
 
-<span class="nc" id="L60">    filterChain.doFilter(request, response);</span>
-<span class="nc" id="L61">  }</span>
+<span class="nc" id="L64">    filterChain.doFilter(request, response);</span>
+<span class="nc" id="L65">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
