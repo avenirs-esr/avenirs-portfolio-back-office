@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class ExternalUserSpecification {
   public static Specification<ExternalUserEntity> withInstitutionId(UUID institutionId) {
     if (institutionId == null) {
-      return null;
+      return Specification.unrestricted();
     }
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.equal(root.get("institution").get("id"), institutionId);
@@ -15,7 +15,7 @@ public class ExternalUserSpecification {
 
   public static Specification<ExternalUserEntity> withGroupId(UUID groupId) {
     if (groupId == null) {
-      return null;
+      return Specification.unrestricted();
     }
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.equal(root.get("group").get("id"), groupId);
