@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 <span class="nc" id="L7">public class ExternalUserSpecification {</span>
   public static Specification&lt;ExternalUserEntity&gt; withInstitutionId(UUID institutionId) {
 <span class="nc bnc" id="L9" title="All 2 branches missed.">    if (institutionId == null) {</span>
-<span class="nc" id="L10">      return null;</span>
+<span class="nc" id="L10">      return Specification.unrestricted();</span>
     }
 <span class="nc" id="L12">    return (root, query, criteriaBuilder) -&gt;</span>
 <span class="nc" id="L13">        criteriaBuilder.equal(root.get(&quot;institution&quot;).get(&quot;id&quot;), institutionId);</span>
@@ -15,7 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 
   public static Specification&lt;ExternalUserEntity&gt; withGroupId(UUID groupId) {
 <span class="nc bnc" id="L17" title="All 2 branches missed.">    if (groupId == null) {</span>
-<span class="nc" id="L18">      return null;</span>
+<span class="nc" id="L18">      return Specification.unrestricted();</span>
     }
 <span class="nc" id="L20">    return (root, query, criteriaBuilder) -&gt;</span>
 <span class="nc" id="L21">        criteriaBuilder.equal(root.get(&quot;group&quot;).get(&quot;id&quot;), groupId);</span>

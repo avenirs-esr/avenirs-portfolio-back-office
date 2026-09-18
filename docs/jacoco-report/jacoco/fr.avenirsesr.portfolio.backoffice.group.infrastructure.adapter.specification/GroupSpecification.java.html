@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 <span class="nc" id="L9">public class GroupSpecification {</span>
   public static Specification&lt;GroupEntity&gt; withInstitutionId(UUID institutionId) {
 <span class="fc bfc" id="L11" title="All 2 branches covered.">    if (institutionId == null) {</span>
-<span class="fc" id="L12">      return null;</span>
+<span class="fc" id="L12">      return Specification.unrestricted();</span>
     }
 <span class="fc" id="L14">    return (root, query, criteriaBuilder) -&gt;</span>
 <span class="fc" id="L15">        criteriaBuilder.equal(root.get(&quot;institution&quot;).get(&quot;id&quot;), institutionId);</span>
@@ -17,7 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 
   public static Specification&lt;GroupEntity&gt; withParentId(UUID parentId) {
 <span class="fc bfc" id="L19" title="All 2 branches covered.">    if (parentId == null) {</span>
-<span class="fc" id="L20">      return null;</span>
+<span class="fc" id="L20">      return Specification.unrestricted();</span>
     }
 <span class="fc" id="L22">    return (root, query, criteriaBuilder) -&gt;</span>
 <span class="fc" id="L23">        criteriaBuilder.equal(root.get(&quot;parent&quot;).get(&quot;id&quot;), parentId);</span>
@@ -25,14 +25,14 @@ import org.springframework.data.jpa.domain.Specification;
 
   public static Specification&lt;GroupEntity&gt; withType(EGroupType type) {
 <span class="fc bfc" id="L27" title="All 2 branches covered.">    if (type == null) {</span>
-<span class="fc" id="L28">      return null;</span>
+<span class="fc" id="L28">      return Specification.unrestricted();</span>
     }
 <span class="fc" id="L30">    return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;type&quot;), type);</span>
   }
 
   public static Specification&lt;GroupEntity&gt; withStartDate(LocalDate startDate) {
 <span class="fc bfc" id="L34" title="All 2 branches covered.">    if (startDate == null) {</span>
-<span class="fc" id="L35">      return null;</span>
+<span class="fc" id="L35">      return Specification.unrestricted();</span>
     }
 <span class="fc" id="L37">    return (root, query, criteriaBuilder) -&gt;</span>
 <span class="fc" id="L38">        criteriaBuilder.greaterThanOrEqualTo(root.get(&quot;startDate&quot;), startDate);</span>
@@ -40,7 +40,7 @@ import org.springframework.data.jpa.domain.Specification;
 
   public static Specification&lt;GroupEntity&gt; withEndDate(LocalDate endDate) {
 <span class="fc bfc" id="L42" title="All 2 branches covered.">    if (endDate == null) {</span>
-<span class="fc" id="L43">      return null;</span>
+<span class="fc" id="L43">      return Specification.unrestricted();</span>
     }
 <span class="fc" id="L45">    return (root, query, criteriaBuilder) -&gt;</span>
 <span class="fc" id="L46">        criteriaBuilder.lessThanOrEqualTo(root.get(&quot;endDate&quot;), endDate);</span>
