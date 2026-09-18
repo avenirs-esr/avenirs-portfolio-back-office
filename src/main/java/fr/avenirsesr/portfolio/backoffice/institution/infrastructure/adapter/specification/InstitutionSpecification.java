@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class InstitutionSpecification {
   public static Specification<InstitutionEntity> withParentId(UUID parentId) {
     if (parentId == null) {
-      return null;
+      return Specification.unrestricted();
     }
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.equal(root.get("parent").get("id"), parentId);
@@ -16,7 +16,7 @@ public class InstitutionSpecification {
 
   public static Specification<InstitutionEntity> withType(EInstitutionType type) {
     if (type == null) {
-      return null;
+      return Specification.unrestricted();
     }
     return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"), type);
   }
