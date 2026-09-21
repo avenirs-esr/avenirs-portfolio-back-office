@@ -13,6 +13,4 @@ public record ExternalUserCreationData(
     Set<EUserCategory> categories,
     String externalId,
     EExternalSource source,
-    String institutionHai,
-    String groupIdSiSco,
     EUserStatus status) {}

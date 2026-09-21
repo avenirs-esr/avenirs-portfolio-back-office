@@ -1,0 +1,1067 @@
+[
+  {
+    "eppn": "lucas.tessier@university.com",
+    "institutionHais": ["0350001A", "0330001C"],
+    "groupIdSiScos": ["10000003", "10000005"]
+  },
+  {
+    "eppn": "lucas.tessier.staff@university.com",
+    "institutionHais": ["0330001C", "0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "arthur.lambert@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "sophie.charpentier@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "ethan.perrin@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "camille.fournier@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "anais.marchand@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "valentin.favre@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "lina.boucher@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "jules.carpentier@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "eva.lamy@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "martin.fabre@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "zoe.cousin@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "noah.lefebvre@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "aya.paris@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "tom.renaud@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "sarah.baron@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "lea.richard@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "adam.hubert@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "emma.gaillard@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "hugo.mahe@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "chloe.lebrun@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "louis.arnaud@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "ines.blanc@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "nathan.rolland@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "manon.hoareau@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "alex.poirier@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "julie.teixeira@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "maxime.grondin@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "paul.lemoine@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "clara.renault@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "baptiste.royer@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "ines.barre@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "alexandre.perret@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "marine.carlier@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "yaniss.rodier@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "maya.peltier@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "olivier.bodin@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "salome.thierry@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "timeo.bertin@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "giulia.laporte@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "malo.riviere@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "elisa.monnier@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "mathis.descamps@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "camille.delorme@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "thelma.normand@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "noah.maury@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "louna.barreau@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "leo.ledoux@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "ambre.becker@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "oscar.mary@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "agathe.peron@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "sami.barbier@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "elodie.chretien@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "evan.raynaud@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "helena.weber@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "simon.roy@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "nina.philippe@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "ilian.gilbert@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "axel.poulain@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "jade.caillet@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "david.camus@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "lise.bonneau@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "yanis.prevost@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "lola.brunet@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "ismael.aubert@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "eline.guillot@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "leo.blot@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "nour.denis@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "alicia.navarro@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "mael.masson@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "louise.lacombe@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "victor.schmitt@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "anael.hardy@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "sofia.godard@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "nolan.guichard@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "mila.bruneau@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "ilyes.lapeyre@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "romy.launay@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "iris.barre@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "maelys.descartes@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "elias.langlois@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "mya.jacquet@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "owen.parent@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "nora.thiery@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "idriss.pineau@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "lila.daniel@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "eden.perrault@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "talia.hoquet@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "marin.legendre@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "nils.chauvet@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "ava.perrot@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "titouan.savary@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "dorian.poulain@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "jenna.marchal@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "ali.meunier@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "selena.pineau@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "ilan.picard@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "maud.bonnard@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "kenzo.roche@university.com",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "aya.germain@university.com",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Etu1L1.AMU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu2L1.AMU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu3L1.AMU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu4L2.AMU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu5L3.AMU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu6M1.AMU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu7M1.AMU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu8M1.AMU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu9M2.AMU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu10FMUL.AMU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Staff1SUIO.AMU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff2SUIO.AMU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff3SUIO.AMU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens1.AMU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens2.AMU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens3.AMU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Etu1L1.UBO",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu2L1.UBO",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu3L1.UBO",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu4L2.UBO",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu5L3.UBO",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu6M1.UBO",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu7M1.UBO",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu8M1.UBO",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu9M2.UBO",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu10FMUL.UBO",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Staff1SUIO.UBO",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff2SUIO.UBO",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff3SUIO.UBO",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens1.UBO",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens2.UBO",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens3.UBO",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Etu1L1.USMB",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu2L1.USMB",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu3L1.USMB",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu4L2.USMB",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu5L3.USMB",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu6M1.USMB",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu7M1.USMB",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu8M1.USMB",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu9M2.USMB",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu10FMUL.USMB",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Staff1SUIO.USMB",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff2SUIO.USMB",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff3SUIO.USMB",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens1.USMB",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens2.USMB",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens3.USMB",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Etu1L1.ULILLE",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu2L1.ULILLE",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu3L1.ULILLE",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu4L2.ULILLE",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu5L3.ULILLE",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu6M1.ULILLE",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu7M1.ULILLE",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu8M1.ULILLE",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu9M2.ULILLE",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu10FMUL.ULILLE",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Staff1SUIO.ULILLE",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff2SUIO.ULILLE",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff3SUIO.ULILLE",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens1.ULILLE",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens2.ULILLE",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens3.ULILLE",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Etu1L1.RPLTK",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu2L1.RPLTK",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu3L1.RPLTK",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu4L2.RPLTK",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu5L3.RPLTK",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu6M1.RPLTK",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu7M1.RPLTK",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu8M1.RPLTK",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu9M2.RPLTK",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu10FMUL.RPLTK",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Staff1SUIO.RPLTK",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff2SUIO.RPLTK",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff3SUIO.RPLTK",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens1.RPLTK",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens2.RPLTK",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens3.RPLTK",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Etu1L1.UTLN",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu2L1.UTLN",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu3L1.UTLN",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu4L2.UTLN",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu5L3.UTLN",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu6M1.UTLN",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu7M1.UTLN",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu8M1.UTLN",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu9M2.UTLN",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu10FMUL.UTLN",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Staff1SUIO.UTLN",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff2SUIO.UTLN",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff3SUIO.UTLN",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens1.UTLN",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens2.UTLN",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens3.UTLN",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Etu1L1.NU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu2L1.NU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu3L1.NU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu4L2.NU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu5L3.NU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu6M1.NU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu7M1.NU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu8M1.NU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Etu9M2.NU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": ["10000005"]
+  },
+  {
+    "eppn": "Etu10FMUL.NU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "Staff1SUIO.NU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff2SUIO.NU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Staff3SUIO.NU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens1.NU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens2.NU",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
+  },
+  {
+    "eppn": "Ens3.NU",
+    "institutionHais": ["0350001A"],
+    "groupIdSiScos": []
+  }
+]

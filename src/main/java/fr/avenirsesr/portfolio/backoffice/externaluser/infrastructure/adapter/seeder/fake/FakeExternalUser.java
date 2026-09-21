@@ -8,7 +8,6 @@ import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.DataGen
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.EnumSet;
 import java.util.Set;
-import java.util.UUID;
 import net.datafaker.Faker;
 
 public record FakeExternalUser(
@@ -19,8 +18,6 @@ public record FakeExternalUser(
     Set<EUserCategory> categories,
     String externalId,
     EExternalSource source,
-    UUID institutionId,
-    UUID groupId,
     EUserStatus status) {
 
   private static final DataGeneratorProvider<SharedDataGenerator> dataGenerator =
@@ -29,12 +26,12 @@ public record FakeExternalUser(
 
   private static final Faker faker = new Faker();
 
-  public static FakeExternalUser random(UUID institutionId, UUID groupId) {
+  public static FakeExternalUser random() {
     String firstName = faker.name().firstName();
     String lastName = faker.name().lastName();
     String eppn = faker.internet().emailAddress();
 
-    boolean isStudent = groupId != null && dataGenerator.with("isStudent").bool();
+    boolean isStudent = dataGenerator.with("isStudent").bool();
     Set<EUserCategory> categories =
         isStudent ? EnumSet.of(EUserCategory.STUDENT) : EnumSet.of(EUserCategory.STAFF);
 
@@ -46,8 +43,6 @@ public record FakeExternalUser(
         categories,
         FakeExternalSource.generateExternalSourceId(),
         EExternalSource.BACK_OFFICE,
-        institutionId,
-        isStudent ? groupId : null,
         EUserStatus.ACTIVE);
   }
 }
