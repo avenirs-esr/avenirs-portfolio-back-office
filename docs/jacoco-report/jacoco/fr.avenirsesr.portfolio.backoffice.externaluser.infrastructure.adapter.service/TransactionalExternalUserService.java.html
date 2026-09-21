@@ -31,26 +31,15 @@ public class TransactionalExternalUserService implements ExternalUserService {
       Set&lt;EUserCategory&gt; categories,
       String externalId,
       EExternalSource source,
-      UUID institutionId,
-      UUID groupId,
       EUserStatus status) {
-<span class="fc" id="L37">    return delegate.importExternalUser(</span>
-        eppn,
-        firstName,
-        lastName,
-        email,
-        categories,
-        externalId,
-        source,
-        institutionId,
-        groupId,
-        status);
+<span class="fc" id="L35">    return delegate.importExternalUser(</span>
+        eppn, firstName, lastName, email, categories, externalId, source, status);
   }
 
   @Override
   @Transactional
   public ExternalUserImportSummary createAll(List&lt;ExternalUserData&gt; externalUsers) {
-<span class="nc" id="L53">    return delegate.createAll(externalUsers);</span>
+<span class="nc" id="L42">    return delegate.createAll(externalUsers);</span>
   }
 
   @Override
@@ -62,51 +51,40 @@ public class TransactionalExternalUserService implements ExternalUserService {
       Set&lt;EUserCategory&gt; categories,
       String externalId,
       EExternalSource source,
-      UUID institutionId,
-      UUID groupId,
       EUserStatus status) {
-<span class="nc" id="L68">    return delegate.update(</span>
-        eppn,
-        firstName,
-        lastName,
-        email,
-        categories,
-        externalId,
-        source,
-        institutionId,
-        groupId,
-        status);
+<span class="nc" id="L55">    return delegate.update(</span>
+        eppn, firstName, lastName, email, categories, externalId, source, status);
   }
 
   @Override
   @Transactional
   public List&lt;ExternalUser&gt; updateAll(List&lt;ExternalUserData&gt; externalUsers) {
-<span class="nc" id="L84">    return delegate.updateAll(externalUsers);</span>
+<span class="nc" id="L62">    return delegate.updateAll(externalUsers);</span>
   }
 
   @Override
   public List&lt;ExternalUser&gt; getAllExternalUsers(UUID institutionId, UUID groupId) {
-<span class="nc" id="L89">    return delegate.getAllExternalUsers(institutionId, groupId);</span>
+<span class="nc" id="L67">    return delegate.getAllExternalUsers(institutionId, groupId);</span>
   }
 
   @Override
   public Optional&lt;ExternalUser&gt; getById(UUID id) {
-<span class="nc" id="L94">    return delegate.getById(id);</span>
+<span class="nc" id="L72">    return delegate.getById(id);</span>
   }
 
   @Override
   public Optional&lt;ExternalUser&gt; getByEppn(String eppn) {
-<span class="nc" id="L99">    return delegate.getByEppn(eppn);</span>
+<span class="nc" id="L77">    return delegate.getByEppn(eppn);</span>
   }
 
   @Override
   public ExternalUser activateByEppn(String eppn) {
-<span class="nc" id="L104">    return delegate.activateByEppn(eppn);</span>
+<span class="nc" id="L82">    return delegate.activateByEppn(eppn);</span>
   }
 
   @Override
   public void delete(UUID id) {
-<span class="nc" id="L109">    delegate.delete(id);</span>
-<span class="nc" id="L110">  }</span>
+<span class="nc" id="L87">    delegate.delete(id);</span>
+<span class="nc" id="L88">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

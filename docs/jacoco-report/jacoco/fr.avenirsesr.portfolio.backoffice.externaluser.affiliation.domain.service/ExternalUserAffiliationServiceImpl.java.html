@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExternalUserAffiliationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service</a> &gt; <span class="el_source">ExternalUserAffiliationServiceImpl.java</span></div><h1>ExternalUserAffiliationServiceImpl.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service;
+
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationNotFoundException;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
+import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupNotFoundException;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
+import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
+import java.util.List;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliationService {
+
+  private final ExternalUserAffiliationRepository externalUserAffiliationRepository;
+  private final ExternalUserRepository externalUserRepository;
+  private final InstitutionRepository institutionRepository;
+  private final GroupRepository groupRepository;
+
+  @Override
+  public ExternalUserAffiliation addAffiliation(
+      UUID externalUserId, UUID institutionId, UUID groupId) {
+<span class="fc" id="L31">    ExternalUser externalUser =</span>
+        externalUserRepository
+<span class="fc" id="L33">            .findById(externalUserId)</span>
+<span class="fc" id="L34">            .orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="fc" id="L35">    Institution institution =</span>
+        institutionRepository
+<span class="fc" id="L37">            .findById(institutionId)</span>
+<span class="fc" id="L38">            .orElseThrow(InstitutionNotFoundException::new);</span>
+    Group group =
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        groupId != null</span>
+<span class="fc" id="L41">            ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)</span>
+<span class="fc" id="L42">            : null;</span>
+
+<span class="fc" id="L44">    return externalUserAffiliationRepository</span>
+<span class="fc" id="L45">        .findByExternalUserIdAndInstitutionIdAndGroupId(externalUserId, institutionId, groupId)</span>
+<span class="fc" id="L46">        .orElseGet(</span>
+            () -&gt;
+<span class="fc" id="L48">                externalUserAffiliationRepository.save(</span>
+<span class="fc" id="L49">                    ExternalUserAffiliation.create(externalUser, institution, group)));</span>
+  }
+
+  @Override
+  public void removeAffiliation(UUID externalUserId, UUID affiliationId) {
+<span class="nc" id="L54">    ExternalUserAffiliation affiliation =</span>
+        externalUserAffiliationRepository
+<span class="nc" id="L56">            .findById(affiliationId)</span>
+<span class="nc" id="L57">            .filter(a -&gt; a.getExternalUser().getId().equals(externalUserId))</span>
+<span class="nc" id="L58">            .orElseThrow(ExternalUserAffiliationNotFoundException::new);</span>
+
+<span class="nc" id="L60">    externalUserAffiliationRepository.removeFromDatabase(affiliation);</span>
+<span class="nc" id="L61">  }</span>
+
+  @Override
+  public List&lt;ExternalUserAffiliation&gt; getAffiliations(UUID externalUserId) {
+<span class="nc" id="L65">    externalUserRepository.findById(externalUserId).orElseThrow(ExternalUserNotFoundException::new);</span>
+
+<span class="nc" id="L67">    return externalUserAffiliationRepository.findAllByExternalUserId(externalUserId);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
