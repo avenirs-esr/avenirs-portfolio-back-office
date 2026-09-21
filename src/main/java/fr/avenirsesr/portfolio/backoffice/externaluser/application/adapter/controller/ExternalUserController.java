@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.controller;
 
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.dto.ExternalUserImportSummaryResponse;
 import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.mapper.ExternalUserApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class ExternalUserController {
 
   private final ExternalUserService externalUserService;
+  private final ExternalUserAffiliationService externalUserAffiliationService;
 
   @Value("${admin.token:}")
   private String adminToken;
@@ -38,8 +40,7 @@ public class ExternalUserController {
     List<ExternalUser> externalUsers =
         externalUserService.getAllExternalUsers(institutionId, groupId);
 
-    return ResponseEntity.ok(
-        externalUsers.stream().map(ExternalUserApplicationMapper::toExternalUserDTO).toList());
+    return ResponseEntity.ok(externalUsers.stream().map(this::toExternalUserDTO).toList());
   }
 
   @PreAuthorize("hasAuthority('external-user:read')")
@@ -49,7 +50,7 @@ public class ExternalUserController {
 
     return externalUserService
         .getById(id)
-        .map(ExternalUserApplicationMapper::toExternalUserDTO)
+        .map(this::toExternalUserDTO)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
@@ -61,7 +62,7 @@ public class ExternalUserController {
 
     return externalUserService
         .getByEppn(eppn)
-        .map(ExternalUserApplicationMapper::toExternalUserDTO)
+        .map(this::toExternalUserDTO)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
@@ -73,7 +74,7 @@ public class ExternalUserController {
 
     ExternalUser externalUser = externalUserService.activateByEppn(eppn);
 
-    return ResponseEntity.ok(ExternalUserApplicationMapper.toExternalUserDTO(externalUser));
+    return ResponseEntity.ok(toExternalUserDTO(externalUser));
   }
 
   @PreAuthorize("hasAuthority('external-user:import')")
@@ -93,7 +94,8 @@ public class ExternalUserController {
         summary.created().size(),
         summary.updated().size(),
         summary.failed().size());
-    return ResponseEntity.ok(ExternalUserImportSummaryResponse.from(summary));
+    return ResponseEntity.ok(
+        ExternalUserImportSummaryResponse.from(summary, externalUserAffiliationService));
   }
 
   @PreAuthorize("hasAuthority('external-user:update')")
@@ -108,8 +110,7 @@ public class ExternalUserController {
 
     log.info("Updating {} external user(s) via admin endpoint", externalUsers.size());
     List<ExternalUser> updated = externalUserService.updateAll(externalUsers);
-    return ResponseEntity.ok(
-        updated.stream().map(ExternalUserApplicationMapper::toExternalUserDTO).toList());
+    return ResponseEntity.ok(updated.stream().map(this::toExternalUserDTO).toList());
   }
 
   @PreAuthorize("hasAuthority('external-user:delete')")
@@ -123,6 +124,11 @@ public class ExternalUserController {
 
     externalUserService.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  private ExternalUserDTO toExternalUserDTO(ExternalUser externalUser) {
+    return ExternalUserApplicationMapper.toExternalUserDTO(
+        externalUser, externalUserAffiliationService.getAffiliations(externalUser.getId()));
   }
 
   private HttpStatus checkAdminToken(String token) {

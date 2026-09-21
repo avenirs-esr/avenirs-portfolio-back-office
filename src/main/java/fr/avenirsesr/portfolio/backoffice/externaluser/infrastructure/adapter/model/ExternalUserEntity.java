@@ -1,8 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.model;
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
-import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model.GroupEntity;
-import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
@@ -68,14 +66,6 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
   @Column(nullable = false, name = "last_name", length = 255)
   private String lastName;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "institution_id", nullable = false)
-  private InstitutionEntity institution;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "group_id")
-  private GroupEntity group;
-
   @Column(nullable = false, length = 50)
   @Enumerated(EnumType.STRING)
   private EUserStatus status;
@@ -89,8 +79,6 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
       String email,
       String firstName,
       String lastName,
-      InstitutionEntity institution,
-      GroupEntity group,
       EUserStatus status,
       Instant createdAt,
       Instant updatedAt) {
@@ -102,8 +90,6 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
     this.email = email;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.institution = institution;
-    this.group = group;
     this.status = status;
     this.setCreatedAt(createdAt);
     this.setUpdatedAt(updatedAt);
@@ -118,8 +104,6 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
       String email,
       String firstName,
       String lastName,
-      InstitutionEntity institution,
-      GroupEntity group,
       EUserStatus status,
       Instant createdAt,
       Instant updatedAt) {
@@ -132,8 +116,6 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
         email,
         firstName,
         lastName,
-        institution,
-        group,
         status,
         createdAt,
         updatedAt);

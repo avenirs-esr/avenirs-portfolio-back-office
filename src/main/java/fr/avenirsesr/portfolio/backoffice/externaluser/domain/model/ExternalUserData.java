@@ -4,7 +4,6 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExter
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.Set;
-import java.util.UUID;
 
 public record ExternalUserData(
     String eppn,
@@ -14,6 +13,4 @@ public record ExternalUserData(
     Set<EUserCategory> categories,
     String externalId,
     EExternalSource source,
-    UUID institutionId,
-    UUID groupId,
     EUserStatus status) {}

@@ -21,8 +21,6 @@ public interface ExternalUserService {
       Set<EUserCategory> categories,
       String externalId,
       EExternalSource source,
-      UUID institutionId,
-      UUID groupId,
       EUserStatus status);
 
   ExternalUserImportSummary createAll(List<ExternalUserData> externalUsers);
@@ -35,8 +33,6 @@ public interface ExternalUserService {
       Set<EUserCategory> categories,
       String externalId,
       EExternalSource source,
-      UUID institutionId,
-      UUID groupId,
       EUserStatus status);
 
   List<ExternalUser> updateAll(List<ExternalUserData> externalUsers);

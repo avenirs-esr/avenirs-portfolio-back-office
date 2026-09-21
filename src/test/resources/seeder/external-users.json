@@ -7,9 +7,7 @@
     "categories": ["STUDENT"],
     "externalId": "PEG-0001",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "lucas.tessier.staff@university.com",
@@ -19,9 +17,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-AG-83",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "arthur.lambert@university.com",
@@ -31,9 +27,7 @@
     "categories": ["STUDENT"],
     "externalId": "AL-2024-8834",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "sophie.charpentier@university.com",
@@ -43,9 +37,7 @@
     "categories": ["STUDENT"],
     "externalId": "SC-PEG-4521",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ethan.perrin@university.com",
@@ -55,9 +47,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-EP-09",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "camille.fournier@university.com",
@@ -67,9 +57,7 @@
     "categories": ["STAFF"],
     "externalId": "PEG-STD-1010",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "anais.marchand@university.com",
@@ -79,9 +67,7 @@
     "categories": ["STUDENT"],
     "externalId": "AM-9912-EXT",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "valentin.favre@university.com",
@@ -91,9 +77,7 @@
     "categories": ["STUDENT"],
     "externalId": "VF-STU-6677",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "lina.boucher@university.com",
@@ -103,9 +87,7 @@
     "categories": ["STUDENT"],
     "externalId": "LB-PEG-3304",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "jules.carpentier@university.com",
@@ -115,9 +97,7 @@
     "categories": ["STUDENT"],
     "externalId": "JC-2025-145",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "eva.lamy@university.com",
@@ -127,9 +107,7 @@
     "categories": ["STUDENT"],
     "externalId": "ELAM-8821",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "martin.fabre@university.com",
@@ -139,9 +117,7 @@
     "categories": ["STUDENT"],
     "externalId": "MF-EXT-5509",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "zoe.cousin@university.com",
@@ -151,9 +127,7 @@
     "categories": ["STAFF"],
     "externalId": "TCHR-ZC-23",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "noah.lefebvre@university.com",
@@ -163,9 +137,7 @@
     "categories": ["STUDENT"],
     "externalId": "NL-PEG-7744",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "aya.paris@university.com",
@@ -175,9 +147,7 @@
     "categories": ["STUDENT"],
     "externalId": "AP-STU-9012",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "tom.renaud@university.com",
@@ -187,9 +157,7 @@
     "categories": ["STUDENT"],
     "externalId": "TR-2024-667",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "sarah.baron@university.com",
@@ -199,9 +167,7 @@
     "categories": ["STUDENT"],
     "externalId": "SB-PEG-3398",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "lea.richard@university.com",
@@ -211,9 +177,7 @@
     "categories": ["STUDENT"],
     "externalId": "4f9d2c7e-acde-41ab-b3a2-998877665544",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "adam.hubert@university.com",
@@ -223,9 +187,7 @@
     "categories": ["STUDENT"],
     "externalId": "AH-EXT-5501",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "emma.gaillard@university.com",
@@ -235,9 +197,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-EG-14",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "hugo.mahe@university.com",
@@ -247,9 +207,7 @@
     "categories": ["STUDENT"],
     "externalId": "HM-PEG-2211",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "chloe.lebrun@university.com",
@@ -259,9 +217,7 @@
     "categories": ["STUDENT"],
     "externalId": "CL-STU-8843",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "louis.arnaud@university.com",
@@ -271,9 +227,7 @@
     "categories": ["STUDENT"],
     "externalId": "LA-2025-992",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ines.blanc@university.com",
@@ -283,9 +237,7 @@
     "categories": ["STUDENT"],
     "externalId": "IB-PEG-4456",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "nathan.rolland@university.com",
@@ -295,9 +247,7 @@
     "categories": ["STUDENT"],
     "externalId": "NR-EXT-7723",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "manon.hoareau@university.com",
@@ -307,9 +257,7 @@
     "categories": ["STAFF"],
     "externalId": "TCHR-MH-88",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "alex.poirier@university.com",
@@ -319,9 +267,7 @@
     "categories": ["STUDENT"],
     "externalId": "AP-STU-6634",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "julie.teixeira@university.com",
@@ -331,9 +277,7 @@
     "categories": ["STUDENT"],
     "externalId": "JT-PEG-1190",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "maxime.grondin@university.com",
@@ -343,9 +287,7 @@
     "categories": ["STUDENT"],
     "externalId": "MG-2024-558",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "paul.lemoine@university.com",
@@ -355,9 +297,7 @@
     "categories": ["STUDENT"],
     "externalId": "PL-EXT-9921",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "clara.renault@university.com",
@@ -367,9 +307,7 @@
     "categories": ["STUDENT"],
     "externalId": "CR-PEG-3387",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "baptiste.royer@university.com",
@@ -379,9 +317,7 @@
     "categories": ["STUDENT"],
     "externalId": "BR-STU-7756",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ines.barre@university.com",
@@ -391,9 +327,7 @@
     "categories": ["STUDENT"],
     "externalId": "IB-2025-441",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "alexandre.perret@university.com",
@@ -403,9 +337,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-AP-55",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "marine.carlier@university.com",
@@ -415,9 +347,7 @@
     "categories": ["STUDENT"],
     "externalId": "MC-PEG-8812",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "yaniss.rodier@university.com",
@@ -427,9 +357,7 @@
     "categories": ["STUDENT"],
     "externalId": "YR-EXT-2234",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "maya.peltier@university.com",
@@ -439,9 +367,7 @@
     "categories": ["STUDENT"],
     "externalId": "MP-STU-6698",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "olivier.bodin@university.com",
@@ -451,9 +377,7 @@
     "categories": ["STUDENT"],
     "externalId": "OB-PEG-1145",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "salome.thierry@university.com",
@@ -463,9 +387,7 @@
     "categories": ["STUDENT"],
     "externalId": "ST-2024-903",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "timeo.bertin@university.com",
@@ -475,9 +397,7 @@
     "categories": ["STAFF"],
     "externalId": "TCHR-TB-31",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "giulia.laporte@university.com",
@@ -487,9 +407,7 @@
     "categories": ["STUDENT"],
     "externalId": "GL-EXT-5567",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "malo.riviere@university.com",
@@ -499,9 +417,7 @@
     "categories": ["STUDENT"],
     "externalId": "MR-PEG-8834",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "elisa.monnier@university.com",
@@ -511,9 +427,7 @@
     "categories": ["STUDENT"],
     "externalId": "EM-STU-2209",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "mathis.descamps@university.com",
@@ -523,9 +437,7 @@
     "categories": ["STUDENT"],
     "externalId": "MD-PEG-7712",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "camille.delorme@university.com",
@@ -535,9 +447,7 @@
     "categories": ["STUDENT"],
     "externalId": "CD-2025-334",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "thelma.normand@university.com",
@@ -547,9 +457,7 @@
     "categories": ["STUDENT"],
     "externalId": "TN-EXT-9956",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "noah.maury@university.com",
@@ -559,9 +467,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-NM-72",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "louna.barreau@university.com",
@@ -571,9 +477,7 @@
     "categories": ["STUDENT"],
     "externalId": "LB-PEG-4423",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "leo.ledoux@university.com",
@@ -583,9 +487,7 @@
     "categories": ["STUDENT"],
     "externalId": "LL-STU-6681",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ambre.becker@university.com",
@@ -595,9 +497,7 @@
     "categories": ["STUDENT"],
     "externalId": "AB-PEG-1198",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "oscar.mary@university.com",
@@ -607,9 +507,7 @@
     "categories": ["STUDENT"],
     "externalId": "OM-2024-775",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "agathe.peron@university.com",
@@ -619,9 +517,7 @@
     "categories": ["STUDENT"],
     "externalId": "AP-EXT-3312",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "sami.barbier@university.com",
@@ -631,9 +527,7 @@
     "categories": ["STUDENT"],
     "externalId": "SB-PEG-9945",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "elodie.chretien@university.com",
@@ -643,9 +537,7 @@
     "categories": ["STAFF"],
     "externalId": "TCHR-EC-19",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "evan.raynaud@university.com",
@@ -655,9 +547,7 @@
     "categories": ["STUDENT"],
     "externalId": "ER-STU-5534",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "helena.weber@university.com",
@@ -667,9 +557,7 @@
     "categories": ["STUDENT"],
     "externalId": "HW-PEG-7789",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "simon.roy@university.com",
@@ -679,9 +567,7 @@
     "categories": ["STUDENT"],
     "externalId": "SR-2025-221",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "nina.philippe@university.com",
@@ -691,9 +577,7 @@
     "categories": ["STUDENT"],
     "externalId": "NP-EXT-8867",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ilian.gilbert@university.com",
@@ -703,9 +587,7 @@
     "categories": ["STUDENT"],
     "externalId": "IG-PEG-4456",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "axel.poulain@university.com",
@@ -715,9 +597,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-AP-43",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "jade.caillet@university.com",
@@ -727,9 +607,7 @@
     "categories": ["STUDENT"],
     "externalId": "JC-STU-1123",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "david.camus@university.com",
@@ -739,9 +617,7 @@
     "categories": ["STUDENT"],
     "externalId": "DC-PEG-6690",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "lise.bonneau@university.com",
@@ -751,9 +627,7 @@
     "categories": ["STUDENT"],
     "externalId": "LB-2024-887",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "yanis.prevost@university.com",
@@ -763,9 +637,7 @@
     "categories": ["STUDENT"],
     "externalId": "YP-EXT-3345",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "lola.brunet@university.com",
@@ -775,9 +647,7 @@
     "categories": ["STUDENT"],
     "externalId": "LB-PEG-9978",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ismael.aubert@university.com",
@@ -787,9 +657,7 @@
     "categories": ["STUDENT"],
     "externalId": "IA-STU-5512",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "eline.guillot@university.com",
@@ -799,9 +667,7 @@
     "categories": ["STAFF"],
     "externalId": "TCHR-EG-66",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "leo.blot@university.com",
@@ -811,9 +677,7 @@
     "categories": ["STUDENT"],
     "externalId": "LB-PEG-7734",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "nour.denis@university.com",
@@ -823,9 +687,7 @@
     "categories": ["STUDENT"],
     "externalId": "ND-2025-445",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "alicia.navarro@university.com",
@@ -835,9 +697,7 @@
     "categories": ["STUDENT"],
     "externalId": "AN-EXT-8823",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "mael.masson@university.com",
@@ -847,9 +707,7 @@
     "categories": ["STUDENT"],
     "externalId": "MM-PEG-1167",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "louise.lacombe@university.com",
@@ -859,9 +717,7 @@
     "categories": ["STUDENT"],
     "externalId": "LL-STU-6656",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "victor.schmitt@university.com",
@@ -871,9 +727,7 @@
     "categories": ["STUDENT"],
     "externalId": "VS-PEG-3390",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "anael.hardy@university.com",
@@ -883,9 +737,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-AH-91",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "sofia.godard@university.com",
@@ -895,9 +747,7 @@
     "categories": ["STUDENT"],
     "externalId": "SG-2024-112",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "nolan.guichard@university.com",
@@ -907,9 +757,7 @@
     "categories": ["STUDENT"],
     "externalId": "NG-EXT-5578",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "mila.bruneau@university.com",
@@ -919,9 +767,7 @@
     "categories": ["STUDENT"],
     "externalId": "MB-PEG-9934",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ilyes.lapeyre@university.com",
@@ -931,9 +777,7 @@
     "categories": ["STUDENT"],
     "externalId": "IL-STU-2267",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "romy.launay@university.com",
@@ -943,9 +787,7 @@
     "categories": ["STUDENT"],
     "externalId": "RL-PEG-7701",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "iris.barre@university.com",
@@ -955,9 +797,7 @@
     "categories": ["STAFF"],
     "externalId": "TCHR-IB-37",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "maelys.descartes@university.com",
@@ -967,9 +807,7 @@
     "categories": ["STUDENT"],
     "externalId": "MD-2025-889",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "elias.langlois@university.com",
@@ -979,9 +817,7 @@
     "categories": ["STUDENT"],
     "externalId": "EL-EXT-4423",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "mya.jacquet@university.com",
@@ -991,9 +827,7 @@
     "categories": ["STUDENT"],
     "externalId": "MJ-PEG-6678",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "owen.parent@university.com",
@@ -1003,9 +837,7 @@
     "categories": ["STUDENT"],
     "externalId": "OP-STU-1145",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "nora.thiery@university.com",
@@ -1015,9 +847,7 @@
     "categories": ["STUDENT"],
     "externalId": "NT-PEG-9912",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "idriss.pineau@university.com",
@@ -1027,9 +857,7 @@
     "categories": ["STUDENT"],
     "externalId": "IP-2024-556",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "lila.daniel@university.com",
@@ -1039,9 +867,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-LD-28",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "eden.perrault@university.com",
@@ -1051,9 +877,7 @@
     "categories": ["STUDENT"],
     "externalId": "EP-EXT-3334",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "talia.hoquet@university.com",
@@ -1063,9 +887,7 @@
     "categories": ["STUDENT"],
     "externalId": "TH-PEG-7789",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "marin.legendre@university.com",
@@ -1075,9 +897,7 @@
     "categories": ["STUDENT"],
     "externalId": "ML-STU-2201",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "nils.chauvet@university.com",
@@ -1087,9 +907,7 @@
     "categories": ["STUDENT"],
     "externalId": "NC-PEG-5567",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ava.perrot@university.com",
@@ -1099,9 +917,7 @@
     "categories": ["STUDENT"],
     "externalId": "AP-2025-990",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "titouan.savary@university.com",
@@ -1111,9 +927,7 @@
     "categories": ["STUDENT"],
     "externalId": "TS-EXT-8845",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "dorian.poulain@university.com",
@@ -1123,9 +937,7 @@
     "categories": ["STAFF"],
     "externalId": "TCHR-DP-54",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "jenna.marchal@university.com",
@@ -1135,9 +947,7 @@
     "categories": ["STUDENT"],
     "externalId": "JM-PEG-4412",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ali.meunier@university.com",
@@ -1147,9 +957,7 @@
     "categories": ["STUDENT"],
     "externalId": "AM-STU-6623",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "selena.pineau@university.com",
@@ -1159,9 +967,7 @@
     "categories": ["STUDENT"],
     "externalId": "SP-PEG-1190",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "ilan.picard@university.com",
@@ -1171,9 +977,7 @@
     "categories": ["STUDENT"],
     "externalId": "IP-2024-778",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "maud.bonnard@university.com",
@@ -1183,9 +987,7 @@
     "categories": ["STUDENT"],
     "externalId": "MB-EXT-3356",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "ACTIVE"
   },
   {
     "eppn": "kenzo.roche@university.com",
@@ -1195,9 +997,7 @@
     "categories": ["STUDENT"],
     "externalId": "KR-PEG-9967",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "ACTIVE"
   },
   {
     "eppn": "aya.germain@university.com",
@@ -1207,9 +1007,7 @@
     "categories": ["STAFF"],
     "externalId": "TEACH-AG-82",
     "source": "PEGASE",
-    "status": "ACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "ACTIVE"
   },
   {
     "eppn": "Etu1L1.AMU",
@@ -1219,9 +1017,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L1-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu2L1.AMU",
@@ -1231,9 +1027,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L1-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu3L1.AMU",
@@ -1243,9 +1037,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L1-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu4L2.AMU",
@@ -1255,9 +1047,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L2-004",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu5L3.AMU",
@@ -1267,9 +1057,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L3-005",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu6M1.AMU",
@@ -1279,9 +1067,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-M1-006",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu7M1.AMU",
@@ -1291,9 +1077,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-M1-007",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu8M1.AMU",
@@ -1303,9 +1087,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-M1-008",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu9M2.AMU",
@@ -1315,9 +1097,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-M2-009",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu10FMUL.AMU",
@@ -1327,9 +1107,7 @@
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-FMUL-010",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff1SUIO.AMU",
@@ -1339,9 +1117,7 @@
     "categories": ["STAFF"],
     "externalId": "AMU-SUIO-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff2SUIO.AMU",
@@ -1351,9 +1127,7 @@
     "categories": ["STAFF"],
     "externalId": "AMU-SUIO-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff3SUIO.AMU",
@@ -1363,9 +1137,7 @@
     "categories": ["STAFF"],
     "externalId": "AMU-SUIO-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens1.AMU",
@@ -1375,9 +1147,7 @@
     "categories": ["STAFF"],
     "externalId": "AMU-ENS-LIC-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens2.AMU",
@@ -1387,9 +1157,7 @@
     "categories": ["STAFF"],
     "externalId": "AMU-ENS-MAS-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens3.AMU",
@@ -1399,9 +1167,7 @@
     "categories": ["STAFF"],
     "externalId": "AMU-ENS-LM-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu1L1.UBO",
@@ -1411,9 +1177,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L1-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu2L1.UBO",
@@ -1423,9 +1187,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L1-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu3L1.UBO",
@@ -1435,9 +1197,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L1-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu4L2.UBO",
@@ -1447,9 +1207,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L2-004",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu5L3.UBO",
@@ -1459,9 +1217,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L3-005",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu6M1.UBO",
@@ -1471,9 +1227,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-M1-006",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu7M1.UBO",
@@ -1483,9 +1237,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-M1-007",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu8M1.UBO",
@@ -1495,9 +1247,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-M1-008",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu9M2.UBO",
@@ -1507,9 +1257,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-M2-009",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu10FMUL.UBO",
@@ -1519,9 +1267,7 @@
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-FMUL-010",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff1SUIO.UBO",
@@ -1531,9 +1277,7 @@
     "categories": ["STAFF"],
     "externalId": "UBO-SUIO-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff2SUIO.UBO",
@@ -1543,9 +1287,7 @@
     "categories": ["STAFF"],
     "externalId": "UBO-SUIO-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff3SUIO.UBO",
@@ -1555,9 +1297,7 @@
     "categories": ["STAFF"],
     "externalId": "UBO-SUIO-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens1.UBO",
@@ -1567,9 +1307,7 @@
     "categories": ["STAFF"],
     "externalId": "UBO-ENS-LIC-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens2.UBO",
@@ -1579,9 +1317,7 @@
     "categories": ["STAFF"],
     "externalId": "UBO-ENS-MAS-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens3.UBO",
@@ -1591,9 +1327,7 @@
     "categories": ["STAFF"],
     "externalId": "UBO-ENS-LM-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu1L1.USMB",
@@ -1603,9 +1337,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L1-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu2L1.USMB",
@@ -1615,9 +1347,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L1-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu3L1.USMB",
@@ -1627,9 +1357,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L1-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu4L2.USMB",
@@ -1639,9 +1367,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L2-004",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu5L3.USMB",
@@ -1651,9 +1377,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L3-005",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu6M1.USMB",
@@ -1663,9 +1387,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-M1-006",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu7M1.USMB",
@@ -1675,9 +1397,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-M1-007",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu8M1.USMB",
@@ -1687,9 +1407,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-M1-008",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu9M2.USMB",
@@ -1699,9 +1417,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-M2-009",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu10FMUL.USMB",
@@ -1711,9 +1427,7 @@
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-FMUL-010",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff1SUIO.USMB",
@@ -1723,9 +1437,7 @@
     "categories": ["STAFF"],
     "externalId": "USMB-SUIO-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff2SUIO.USMB",
@@ -1735,9 +1447,7 @@
     "categories": ["STAFF"],
     "externalId": "USMB-SUIO-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff3SUIO.USMB",
@@ -1747,9 +1457,7 @@
     "categories": ["STAFF"],
     "externalId": "USMB-SUIO-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens1.USMB",
@@ -1759,9 +1467,7 @@
     "categories": ["STAFF"],
     "externalId": "USMB-ENS-LIC-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens2.USMB",
@@ -1771,9 +1477,7 @@
     "categories": ["STAFF"],
     "externalId": "USMB-ENS-MAS-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens3.USMB",
@@ -1783,9 +1487,7 @@
     "categories": ["STAFF"],
     "externalId": "USMB-ENS-LM-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu1L1.ULILLE",
@@ -1795,9 +1497,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L1-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu2L1.ULILLE",
@@ -1807,9 +1507,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L1-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu3L1.ULILLE",
@@ -1819,9 +1517,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L1-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu4L2.ULILLE",
@@ -1831,9 +1527,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L2-004",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu5L3.ULILLE",
@@ -1843,9 +1537,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L3-005",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu6M1.ULILLE",
@@ -1855,9 +1547,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-M1-006",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu7M1.ULILLE",
@@ -1867,9 +1557,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-M1-007",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu8M1.ULILLE",
@@ -1879,9 +1567,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-M1-008",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu9M2.ULILLE",
@@ -1891,9 +1577,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-M2-009",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu10FMUL.ULILLE",
@@ -1903,9 +1587,7 @@
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-FMUL-010",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff1SUIO.ULILLE",
@@ -1915,9 +1597,7 @@
     "categories": ["STAFF"],
     "externalId": "ULILLE-SUIO-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff2SUIO.ULILLE",
@@ -1927,9 +1607,7 @@
     "categories": ["STAFF"],
     "externalId": "ULILLE-SUIO-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff3SUIO.ULILLE",
@@ -1939,9 +1617,7 @@
     "categories": ["STAFF"],
     "externalId": "ULILLE-SUIO-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens1.ULILLE",
@@ -1951,9 +1627,7 @@
     "categories": ["STAFF"],
     "externalId": "ULILLE-ENS-LIC-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens2.ULILLE",
@@ -1963,9 +1637,7 @@
     "categories": ["STAFF"],
     "externalId": "ULILLE-ENS-MAS-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens3.ULILLE",
@@ -1975,9 +1647,7 @@
     "categories": ["STAFF"],
     "externalId": "ULILLE-ENS-LM-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu1L1.RPLTK",
@@ -1987,9 +1657,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L1-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu2L1.RPLTK",
@@ -1999,9 +1667,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L1-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu3L1.RPLTK",
@@ -2011,9 +1677,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L1-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu4L2.RPLTK",
@@ -2023,9 +1687,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L2-004",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu5L3.RPLTK",
@@ -2035,9 +1697,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L3-005",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu6M1.RPLTK",
@@ -2047,9 +1707,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-M1-006",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu7M1.RPLTK",
@@ -2059,9 +1717,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-M1-007",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu8M1.RPLTK",
@@ -2071,9 +1727,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-M1-008",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu9M2.RPLTK",
@@ -2083,9 +1737,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-M2-009",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu10FMUL.RPLTK",
@@ -2095,9 +1747,7 @@
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-FMUL-010",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff1SUIO.RPLTK",
@@ -2107,9 +1757,7 @@
     "categories": ["STAFF"],
     "externalId": "RPLTK-SUIO-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff2SUIO.RPLTK",
@@ -2119,9 +1767,7 @@
     "categories": ["STAFF"],
     "externalId": "RPLTK-SUIO-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff3SUIO.RPLTK",
@@ -2131,9 +1777,7 @@
     "categories": ["STAFF"],
     "externalId": "RPLTK-SUIO-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens1.RPLTK",
@@ -2143,9 +1787,7 @@
     "categories": ["STAFF"],
     "externalId": "RPLTK-ENS-LIC-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens2.RPLTK",
@@ -2155,9 +1797,7 @@
     "categories": ["STAFF"],
     "externalId": "RPLTK-ENS-MAS-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens3.RPLTK",
@@ -2167,9 +1807,7 @@
     "categories": ["STAFF"],
     "externalId": "RPLTK-ENS-LM-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu1L1.UTLN",
@@ -2179,9 +1817,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L1-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu2L1.UTLN",
@@ -2191,9 +1827,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L1-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu3L1.UTLN",
@@ -2203,9 +1837,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L1-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu4L2.UTLN",
@@ -2215,9 +1847,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L2-004",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu5L3.UTLN",
@@ -2227,9 +1857,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L3-005",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu6M1.UTLN",
@@ -2239,9 +1867,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-M1-006",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu7M1.UTLN",
@@ -2251,9 +1877,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-M1-007",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu8M1.UTLN",
@@ -2263,9 +1887,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-M1-008",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu9M2.UTLN",
@@ -2275,9 +1897,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-M2-009",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu10FMUL.UTLN",
@@ -2287,9 +1907,7 @@
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-FMUL-010",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff1SUIO.UTLN",
@@ -2299,9 +1917,7 @@
     "categories": ["STAFF"],
     "externalId": "UTLN-SUIO-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff2SUIO.UTLN",
@@ -2311,9 +1927,7 @@
     "categories": ["STAFF"],
     "externalId": "UTLN-SUIO-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff3SUIO.UTLN",
@@ -2323,9 +1937,7 @@
     "categories": ["STAFF"],
     "externalId": "UTLN-SUIO-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens1.UTLN",
@@ -2335,9 +1947,7 @@
     "categories": ["STAFF"],
     "externalId": "UTLN-ENS-LIC-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens2.UTLN",
@@ -2347,9 +1957,7 @@
     "categories": ["STAFF"],
     "externalId": "UTLN-ENS-MAS-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens3.UTLN",
@@ -2359,9 +1967,7 @@
     "categories": ["STAFF"],
     "externalId": "UTLN-ENS-LM-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu1L1.NU",
@@ -2371,9 +1977,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L1-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu2L1.NU",
@@ -2383,9 +1987,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L1-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu3L1.NU",
@@ -2395,9 +1997,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L1-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu4L2.NU",
@@ -2407,9 +2007,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L2-004",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu5L3.NU",
@@ -2419,9 +2017,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L3-005",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu6M1.NU",
@@ -2431,9 +2027,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-M1-006",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu7M1.NU",
@@ -2443,9 +2037,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-M1-007",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu8M1.NU",
@@ -2455,9 +2047,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-M1-008",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu9M2.NU",
@@ -2467,9 +2057,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-M2-009",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": "10000005"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Etu10FMUL.NU",
@@ -2479,9 +2067,7 @@
     "categories": ["STUDENT"],
     "externalId": "NU-STU-FMUL-010",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": "10000003"
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff1SUIO.NU",
@@ -2491,9 +2077,7 @@
     "categories": ["STAFF"],
     "externalId": "NU-SUIO-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff2SUIO.NU",
@@ -2503,9 +2087,7 @@
     "categories": ["STAFF"],
     "externalId": "NU-SUIO-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Staff3SUIO.NU",
@@ -2515,9 +2097,7 @@
     "categories": ["STAFF"],
     "externalId": "NU-SUIO-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens1.NU",
@@ -2527,9 +2107,7 @@
     "categories": ["STAFF"],
     "externalId": "NU-ENS-LIC-001",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens2.NU",
@@ -2539,9 +2117,7 @@
     "categories": ["STAFF"],
     "externalId": "NU-ENS-MAS-002",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0330001C",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   },
   {
     "eppn": "Ens3.NU",
@@ -2551,8 +2127,6 @@
     "categories": ["STAFF"],
     "externalId": "NU-ENS-LM-003",
     "source": "PEGASE",
-    "status": "INACTIVE",
-    "institutionHai": "0350001A",
-    "groupIdSiSco": null
+    "status": "INACTIVE"
   }
 ]

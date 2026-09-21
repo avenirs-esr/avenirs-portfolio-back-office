@@ -6,10 +6,6 @@ import static org.mockito.Mockito.*;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
-import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
@@ -41,31 +37,16 @@ class ExternalUserServiceImplTest {
   private static final Set<EUserCategory> CATEGORIES = Set.of(EUserCategory.STUDENT);
   private static final String EXTERNAL_ID = "PEG-0001";
   private static final EExternalSource SOURCE = EExternalSource.PEGASE;
-  private static final UUID INSTITUTION_ID =
-      UUID.fromString("00000000-0000-0000-0000-000000000002");
-  private static final UUID GROUP_ID = UUID.fromString("00000000-0000-0000-0000-000000000003");
 
   @Mock private ExternalUserRepository externalUserRepository;
-  @Mock private InstitutionRepository institutionRepository;
-  @Mock private GroupRepository groupRepository;
 
   @InjectMocks private ExternalUserServiceImpl service;
 
-  private Institution institution;
-  private Group group;
-
   @BeforeEach
   void setupCommonStubs() {
-    institution = mock(Institution.class);
-    lenient().when(institution.getId()).thenReturn(INSTITUTION_ID);
-
-    group = mock(Group.class);
-    lenient().when(group.getId()).thenReturn(GROUP_ID);
-
     lenient()
-        .when(institutionRepository.findById(INSTITUTION_ID))
-        .thenReturn(Optional.of(institution));
-    lenient().when(groupRepository.findById(GROUP_ID)).thenReturn(Optional.of(group));
+        .when(externalUserRepository.save(any(ExternalUser.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
   }
 
   @Nested
@@ -94,8 +75,6 @@ class ExternalUserServiceImplTest {
                 CATEGORIES,
                 EXTERNAL_ID,
                 SOURCE,
-                INSTITUTION_ID,
-                GROUP_ID,
                 EUserStatus.ACTIVE);
       }
 
@@ -115,8 +94,6 @@ class ExternalUserServiceImplTest {
         assertEquals(CATEGORIES, result.getCategories());
         assertEquals(EXTERNAL_ID, result.getExternalId());
         assertEquals(SOURCE, result.getSource());
-        assertEquals(INSTITUTION_ID, result.getInstitution().getId());
-        assertEquals(GROUP_ID, result.getGroup().getId());
         assertEquals(EUserStatus.ACTIVE, result.getStatus());
       }
 
@@ -126,10 +103,8 @@ class ExternalUserServiceImplTest {
 
         ArgumentCaptor<ExternalUser> captor = ArgumentCaptor.forClass(ExternalUser.class);
 
-        verify(institutionRepository).findById(INSTITUTION_ID);
-        verify(groupRepository).findById(GROUP_ID);
         verify(externalUserRepository).save(captor.capture());
-        verifyNoMoreInteractions(externalUserRepository, institutionRepository, groupRepository);
+        verifyNoMoreInteractions(externalUserRepository);
 
         ExternalUser savedExternalUser = captor.getValue();
 
@@ -141,8 +116,6 @@ class ExternalUserServiceImplTest {
         assertEquals(CATEGORIES, savedExternalUser.getCategories());
         assertEquals(EXTERNAL_ID, savedExternalUser.getExternalId());
         assertEquals(SOURCE, savedExternalUser.getSource());
-        assertEquals(INSTITUTION_ID, savedExternalUser.getInstitution().getId());
-        assertEquals(GROUP_ID, savedExternalUser.getGroup().getId());
         assertEquals(EUserStatus.ACTIVE, savedExternalUser.getStatus());
       }
     }
@@ -158,16 +131,7 @@ class ExternalUserServiceImplTest {
 
         result =
             service.importExternalUser(
-                EPPN,
-                FIRST_NAME,
-                LAST_NAME,
-                EMAIL,
-                CATEGORIES,
-                EXTERNAL_ID,
-                SOURCE,
-                INSTITUTION_ID,
-                GROUP_ID,
-                null);
+                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, SOURCE, null);
       }
 
       @Test
@@ -204,8 +168,6 @@ class ExternalUserServiceImplTest {
                 CATEGORIES,
                 EXTERNAL_ID,
                 SOURCE,
-                INSTITUTION_ID,
-                GROUP_ID,
                 EUserStatus.INACTIVE);
       }
 
@@ -403,8 +365,6 @@ class ExternalUserServiceImplTest {
                         CATEGORIES,
                         EXTERNAL_ID,
                         SOURCE,
-                        INSTITUTION_ID,
-                        GROUP_ID,
                         EUserStatus.ACTIVE));
 
         assertEquals(exception, result);
@@ -427,8 +387,6 @@ class ExternalUserServiceImplTest {
         EMAIL,
         FIRST_NAME,
         LAST_NAME,
-        mock(Institution.class),
-        mock(Group.class),
         EUserStatus.ACTIVE);
   }
 }

@@ -1,6 +1,9 @@
 package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder;
 
 import fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.seeder.AdditionalSkillConfigSeeder;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.repository.ExternalUserAffiliationJpaRepository;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.seeder.ExternalUserAffiliationSeeder;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.repository.ExternalUserJpaRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.seeder.ExternalUserSeeder;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.repository.GroupJpaRepository;
@@ -31,8 +34,10 @@ public class SeederOrchestrator {
   private final InstitutionConfigSeeder institutionConfigSeeder;
   private final GroupSeeder groupSeeder;
   private final ExternalUserSeeder externalUserSeeder;
+  private final ExternalUserAffiliationSeeder externalUserAffiliationSeeder;
   private final SeedingState seedingState;
   private final ExternalUserJpaRepository externalUserJpaRepository;
+  private final ExternalUserAffiliationJpaRepository externalUserAffiliationJpaRepository;
   private final InstitutionConfigJpaRepository institutionConfigJpaRepository;
   private final GroupJpaRepository groupJpaRepository;
   private final InstitutionJpaRepository institutionJpaRepository;
@@ -49,7 +54,8 @@ public class SeederOrchestrator {
       List<UUID> savedInstitutionIds = institutionSeeder.seed();
       institutionConfigSeeder.seed(savedInstitutionIds);
       List<UUID> savedGroupIds = groupSeeder.seed(savedInstitutionIds);
-      externalUserSeeder.seed(savedInstitutionIds, savedGroupIds);
+      List<ExternalUser> savedExternalUsers = externalUserSeeder.seed();
+      externalUserAffiliationSeeder.seed(savedExternalUsers, savedInstitutionIds, savedGroupIds);
 
       log.info("✔ Seeding successfully finished");
     } catch (Exception e) {
@@ -62,6 +68,7 @@ public class SeederOrchestrator {
   @Transactional
   public void resetAll() {
     log.warn("Resetting all seeded tables...");
+    externalUserAffiliationJpaRepository.deleteAllInBatch();
     externalUserJpaRepository.deleteAllInBatch();
     institutionConfigJpaRepository.deleteAllInBatch();
     groupJpaRepository.deleteAllInBatch();

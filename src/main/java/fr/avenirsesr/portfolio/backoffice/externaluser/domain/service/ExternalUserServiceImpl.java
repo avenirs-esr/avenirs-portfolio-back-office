@@ -7,12 +7,6 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.input.ExternalUserService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
-import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupNotFoundException;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
-import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
@@ -30,8 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ExternalUserServiceImpl implements ExternalUserService {
 
   private final ExternalUserRepository externalUserRepository;
-  private final InstitutionRepository institutionRepository;
-  private final GroupRepository groupRepository;
 
   @Override
   public ExternalUser importExternalUser(
@@ -42,18 +34,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
       Set<EUserCategory> categories,
       String externalId,
       EExternalSource source,
-      UUID institutionId,
-      UUID groupId,
       EUserStatus status) {
-
-    Institution institution =
-        institutionRepository
-            .findById(institutionId)
-            .orElseThrow(InstitutionNotFoundException::new);
-    Group group =
-        groupId != null
-            ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)
-            : null;
 
     var externalUser =
         ExternalUser.create(
@@ -64,13 +45,9 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             email,
             firstName,
             lastName,
-            institution,
-            group,
             status != null ? status : EUserStatus.ACTIVE);
 
-    externalUserRepository.save(externalUser);
-
-    return externalUser;
+    return externalUserRepository.save(externalUser);
   }
 
   @Override
@@ -108,8 +85,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
               data.categories(),
               data.externalId(),
               data.source(),
-              data.institutionId(),
-              data.groupId(),
               data.status());
       return new UpsertResult(updated, false);
     }
@@ -123,8 +98,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             data.categories(),
             data.externalId(),
             data.source(),
-            data.institutionId(),
-            data.groupId(),
             data.status());
     return new UpsertResult(created, true);
   }
@@ -140,20 +113,9 @@ public class ExternalUserServiceImpl implements ExternalUserService {
       Set<EUserCategory> categories,
       String externalId,
       EExternalSource source,
-      UUID institutionId,
-      UUID groupId,
       EUserStatus status) {
     ExternalUser externalUser =
         externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);
-
-    Institution institution =
-        institutionRepository
-            .findById(institutionId)
-            .orElseThrow(InstitutionNotFoundException::new);
-    Group group =
-        groupId != null
-            ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)
-            : null;
 
     externalUser.setFirstName(firstName);
     externalUser.setLastName(lastName);
@@ -161,8 +123,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
     externalUser.setCategories(categories);
     externalUser.setExternalId(externalId);
     externalUser.setSource(source);
-    externalUser.setInstitution(institution);
-    externalUser.setGroup(group);
     externalUser.setStatus(status != null ? status : externalUser.getStatus());
 
     return externalUserRepository.save(externalUser);
@@ -181,8 +141,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
                     data.categories(),
                     data.externalId(),
                     data.source(),
-                    data.institutionId(),
-                    data.groupId(),
                     data.status()))
         .toList();
   }
