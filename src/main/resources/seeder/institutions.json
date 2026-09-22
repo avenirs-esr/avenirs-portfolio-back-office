@@ -30,5 +30,13 @@
     "siren": "130005512",
     "type": "SECONDARY",
     "parentHai": "0330001C"
+  },
+  {
+    "name": "ANR",
+    "hai": "0750001A",
+    "siret": "13000560000010",
+    "siren": "130005600",
+    "type": "PRIMARY",
+    "parentHai": null
   }
 ]
