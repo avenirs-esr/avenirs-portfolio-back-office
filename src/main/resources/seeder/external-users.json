@@ -2158,5 +2158,165 @@
     "externalId": "FVAR-2026-003",
     "source": "BACK_OFFICE",
     "status": "ACTIVE"
+  },
+  {
+    "eppn": "Etu1L1.ANR",
+    "firstName": "Etu1",
+    "lastName": "L1",
+    "email": "etu1l1.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-L1-001",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu2L1.ANR",
+    "firstName": "Etu2",
+    "lastName": "L1",
+    "email": "etu2l1.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-L1-002",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu3L1.ANR",
+    "firstName": "Etu3",
+    "lastName": "L1",
+    "email": "etu3l1.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-L1-003",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu4L2.ANR",
+    "firstName": "Etu4",
+    "lastName": "L2",
+    "email": "etu4l2.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-L2-004",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu5L3.ANR",
+    "firstName": "Etu5",
+    "lastName": "L3",
+    "email": "etu5l3.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-L3-005",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu6M1.ANR",
+    "firstName": "Etu6",
+    "lastName": "M1",
+    "email": "etu6m1.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-M1-006",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu7M1.ANR",
+    "firstName": "Etu7",
+    "lastName": "M1",
+    "email": "etu7m1.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-M1-007",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu8M1.ANR",
+    "firstName": "Etu8",
+    "lastName": "M1",
+    "email": "etu8m1.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-M1-008",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu9M2.ANR",
+    "firstName": "Etu9",
+    "lastName": "M2",
+    "email": "etu9m2.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-M2-009",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Etu10FMUL.ANR",
+    "firstName": "Etu10",
+    "lastName": "FMUL",
+    "email": "etu10fmul.anr@university.com",
+    "categories": ["STUDENT"],
+    "externalId": "ANR-STU-FMUL-010",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Staff1SUIO.ANR",
+    "firstName": "Staff1",
+    "lastName": "SUIO",
+    "email": "staff1suio.anr@university.com",
+    "categories": ["STAFF"],
+    "externalId": "ANR-SUIO-001",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Staff2SUIO.ANR",
+    "firstName": "Staff2",
+    "lastName": "SUIO",
+    "email": "staff2suio.anr@university.com",
+    "categories": ["STAFF"],
+    "externalId": "ANR-SUIO-002",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Staff3SUIO.ANR",
+    "firstName": "Staff3",
+    "lastName": "SUIO",
+    "email": "staff3suio.anr@university.com",
+    "categories": ["STAFF"],
+    "externalId": "ANR-SUIO-003",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Ens1.ANR",
+    "firstName": "Ens1",
+    "lastName": "ANR",
+    "email": "ens1.anr@university.com",
+    "categories": ["STAFF"],
+    "externalId": "ANR-ENS-LIC-001",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Ens2.ANR",
+    "firstName": "Ens2",
+    "lastName": "ANR",
+    "email": "ens2.anr@university.com",
+    "categories": ["STAFF"],
+    "externalId": "ANR-ENS-MAS-002",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
+  },
+  {
+    "eppn": "Ens3.ANR",
+    "firstName": "Ens3",
+    "lastName": "ANR",
+    "email": "ens3.anr@university.com",
+    "categories": ["STAFF"],
+    "externalId": "ANR-ENS-LM-003",
+    "source": "BACK_OFFICE",
+    "status": "INACTIVE"
   }
 ]

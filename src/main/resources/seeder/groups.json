@@ -48,5 +48,25 @@
     "endDate": "2025-06-30",
     "type": "STUDENT_GROUP",
     "parentIdSiSco": "10000004"
+  },
+  {
+    "name": "Programme ANR",
+    "idSiSco": "10000006",
+    "institutionHai": "0750001A",
+    "codeSise": "11000006",
+    "startDate": "2023-09-01",
+    "endDate": "2026-08-31",
+    "type": "PROGRAM",
+    "parentIdSiSco": null
+  },
+  {
+    "name": "Groupe ANR",
+    "idSiSco": "10000007",
+    "institutionHai": "0750001A",
+    "codeSise": "11000007",
+    "startDate": "2024-09-01",
+    "endDate": "2025-06-30",
+    "type": "STUDENT_GROUP",
+    "parentIdSiSco": "10000006"
   }
 ]
