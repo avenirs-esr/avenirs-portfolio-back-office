@@ -2,6 +2,9 @@
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportFailure;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
@@ -12,11 +15,15 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.Gr
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+<span class="fc" id="L26">@Slf4j</span>
 @AllArgsConstructor
 public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliationService {
 
@@ -28,43 +35,110 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   @Override
   public ExternalUserAffiliation addAffiliation(
       UUID externalUserId, UUID institutionId, UUID groupId) {
-<span class="fc" id="L31">    ExternalUser externalUser =</span>
+<span class="fc" id="L38">    ExternalUser externalUser =</span>
         externalUserRepository
-<span class="fc" id="L33">            .findById(externalUserId)</span>
-<span class="fc" id="L34">            .orElseThrow(ExternalUserNotFoundException::new);</span>
-<span class="fc" id="L35">    Institution institution =</span>
+<span class="fc" id="L40">            .findById(externalUserId)</span>
+<span class="fc" id="L41">            .orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="fc" id="L42">    Institution institution =</span>
         institutionRepository
-<span class="fc" id="L37">            .findById(institutionId)</span>
-<span class="fc" id="L38">            .orElseThrow(InstitutionNotFoundException::new);</span>
+<span class="fc" id="L44">            .findById(institutionId)</span>
+<span class="fc" id="L45">            .orElseThrow(InstitutionNotFoundException::new);</span>
     Group group =
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        groupId != null</span>
-<span class="fc" id="L41">            ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)</span>
-<span class="fc" id="L42">            : null;</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        groupId != null</span>
+<span class="fc" id="L48">            ? groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new)</span>
+<span class="fc" id="L49">            : null;</span>
 
-<span class="fc" id="L44">    return externalUserAffiliationRepository</span>
-<span class="fc" id="L45">        .findByExternalUserIdAndInstitutionIdAndGroupId(externalUserId, institutionId, groupId)</span>
-<span class="fc" id="L46">        .orElseGet(</span>
-            () -&gt;
-<span class="fc" id="L48">                externalUserAffiliationRepository.save(</span>
-<span class="fc" id="L49">                    ExternalUserAffiliation.create(externalUser, institution, group)));</span>
+<span class="fc" id="L51">    return findOrCreate(externalUser, institution, group).affiliation();</span>
   }
 
   @Override
   public void removeAffiliation(UUID externalUserId, UUID affiliationId) {
-<span class="nc" id="L54">    ExternalUserAffiliation affiliation =</span>
+<span class="nc" id="L56">    ExternalUserAffiliation affiliation =</span>
         externalUserAffiliationRepository
-<span class="nc" id="L56">            .findById(affiliationId)</span>
-<span class="nc" id="L57">            .filter(a -&gt; a.getExternalUser().getId().equals(externalUserId))</span>
-<span class="nc" id="L58">            .orElseThrow(ExternalUserAffiliationNotFoundException::new);</span>
+<span class="nc" id="L58">            .findById(affiliationId)</span>
+<span class="nc" id="L59">            .filter(a -&gt; a.getExternalUser().getId().equals(externalUserId))</span>
+<span class="nc" id="L60">            .orElseThrow(ExternalUserAffiliationNotFoundException::new);</span>
 
-<span class="nc" id="L60">    externalUserAffiliationRepository.removeFromDatabase(affiliation);</span>
-<span class="nc" id="L61">  }</span>
+<span class="nc" id="L62">    externalUserAffiliationRepository.removeFromDatabase(affiliation);</span>
+<span class="nc" id="L63">  }</span>
 
   @Override
   public List&lt;ExternalUserAffiliation&gt; getAffiliations(UUID externalUserId) {
-<span class="nc" id="L65">    externalUserRepository.findById(externalUserId).orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="nc" id="L67">    externalUserRepository.findById(externalUserId).orElseThrow(ExternalUserNotFoundException::new);</span>
 
-<span class="nc" id="L67">    return externalUserAffiliationRepository.findAllByExternalUserId(externalUserId);</span>
+<span class="nc" id="L69">    return externalUserAffiliationRepository.findAllByExternalUserId(externalUserId);</span>
   }
+
+  @Override
+  public ExternalUserAffiliationImportSummary createAll(
+      List&lt;ExternalUserAffiliationData&gt; affiliations) {
+<span class="nc" id="L75">    List&lt;ExternalUserAffiliation&gt; created = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L76">    List&lt;ExternalUserAffiliation&gt; existing = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L77">    List&lt;ExternalUserAffiliationImportFailure&gt; failed = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L79" title="All 2 branches missed.">    for (ExternalUserAffiliationData data : affiliations) {</span>
+      try {
+<span class="nc" id="L81">        UpsertResult result = upsertByNaturalKeys(data);</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (result.created()) {</span>
+<span class="nc" id="L83">          created.add(result.affiliation());</span>
+        } else {
+<span class="nc" id="L85">          existing.add(result.affiliation());</span>
+        }
+<span class="nc" id="L87">      } catch (BusinessException e) {</span>
+<span class="nc" id="L88">        log.warn(</span>
+            &quot;Failed to import affiliation for eppn {} / institution {} / group {}: {}&quot;,
+<span class="nc" id="L90">            data.eppn(),</span>
+<span class="nc" id="L91">            data.institutionHai(),</span>
+<span class="nc" id="L92">            data.groupIdSiSco(),</span>
+<span class="nc" id="L93">            e.getMessage());</span>
+<span class="nc" id="L94">        failed.add(</span>
+            new ExternalUserAffiliationImportFailure(
+<span class="nc" id="L96">                data.eppn(), data.institutionHai(), data.groupIdSiSco(), e.getMessage()));</span>
+<span class="nc" id="L97">      }</span>
+<span class="nc" id="L98">    }</span>
+
+<span class="nc" id="L100">    return new ExternalUserAffiliationImportSummary(created, existing, failed);</span>
+  }
+
+  /**
+   * Resolves the external user, institution and group from their natural keys, then finds or
+   * creates the affiliation.
+   */
+  private UpsertResult upsertByNaturalKeys(ExternalUserAffiliationData data) {
+<span class="nc" id="L108">    ExternalUser externalUser =</span>
+        externalUserRepository
+<span class="nc" id="L110">            .findByEppn(data.eppn())</span>
+<span class="nc" id="L111">            .orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="nc" id="L112">    Institution institution =</span>
+        institutionRepository
+<span class="nc" id="L114">            .findByHai(data.institutionHai())</span>
+<span class="nc" id="L115">            .orElseThrow(InstitutionNotFoundException::new);</span>
+    Group group =
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        data.groupIdSiSco() != null</span>
+            ? groupRepository
+<span class="nc" id="L119">                .findByIdSiSco(data.groupIdSiSco())</span>
+<span class="nc" id="L120">                .orElseThrow(GroupNotFoundException::new)</span>
+<span class="nc" id="L121">            : null;</span>
+
+<span class="nc" id="L123">    return findOrCreate(externalUser, institution, group);</span>
+  }
+
+  private UpsertResult findOrCreate(
+      ExternalUser externalUser, Institution institution, Group group) {
+<span class="fc bfc" id="L128" title="All 2 branches covered.">    UUID groupId = group != null ? group.getId() : null;</span>
+
+<span class="fc" id="L130">    return externalUserAffiliationRepository</span>
+<span class="fc" id="L131">        .findByExternalUserIdAndInstitutionIdAndGroupId(</span>
+<span class="fc" id="L132">            externalUser.getId(), institution.getId(), groupId)</span>
+<span class="pc" id="L133">        .map(affiliation -&gt; new UpsertResult(affiliation, false))</span>
+<span class="fc" id="L134">        .orElseGet(</span>
+            () -&gt;
+<span class="fc" id="L136">                new UpsertResult(</span>
+<span class="fc" id="L137">                    externalUserAffiliationRepository.save(</span>
+<span class="fc" id="L138">                        ExternalUserAffiliation.create(externalUser, institution, group)),</span>
+                    true));
+  }
+
+<span class="fc" id="L142">  private record UpsertResult(ExternalUserAffiliation affiliation, boolean created) {}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
