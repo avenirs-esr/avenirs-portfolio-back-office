@@ -137,24 +137,24 @@ public class InstitutionServiceImpl implements InstitutionService {
 
   @Override
   public boolean hasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
-<span class="fc" id="L140">    Set&lt;UUID&gt; affiliatedIdSet = new HashSet&lt;&gt;(affiliatedIds);</span>
-<span class="fc" id="L141">    return targetIds.stream()</span>
-<span class="fc" id="L142">        .allMatch(targetId -&gt; isCoveredByAffiliation(targetId, affiliatedIdSet));</span>
+<span class="fc" id="L140">    List&lt;UUID&gt; distinctTargetIds = targetIds.stream().distinct().toList();</span>
+<span class="fc" id="L141">    List&lt;Institution&gt; targets = institutionRepository.findAllById(distinctTargetIds);</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">    if (targets.size() != distinctTargetIds.size()) {</span>
+<span class="fc" id="L143">      throw new InstitutionNotFoundException();</span>
+    }
+
+<span class="fc" id="L146">    Set&lt;UUID&gt; affiliatedIdSet = new HashSet&lt;&gt;(affiliatedIds);</span>
+<span class="fc" id="L147">    return targets.stream().allMatch(target -&gt; isCoveredByAffiliation(target, affiliatedIdSet));</span>
   }
 
-  private boolean isCoveredByAffiliation(UUID targetId, Set&lt;UUID&gt; affiliatedIds) {
-<span class="fc" id="L146">    Institution institution = findById(targetId);</span>
-<span class="fc" id="L147">    Set&lt;UUID&gt; visited = new HashSet&lt;&gt;();</span>
-<span class="fc" id="L148">    visited.add(institution.getId());</span>
-
-<span class="fc" id="L150">    Optional&lt;Institution&gt; current = Optional.of(institution);</span>
-<span class="fc bfc" id="L151" title="All 2 branches covered.">    while (current.isPresent()) {</span>
-<span class="fc bfc" id="L152" title="All 2 branches covered.">      if (affiliatedIds.contains(current.get().getId())) {</span>
-<span class="fc" id="L153">        return true;</span>
+  private boolean isCoveredByAffiliation(Institution institution, Set&lt;UUID&gt; affiliatedIds) {
+<span class="fc" id="L151">    Optional&lt;Institution&gt; current = Optional.of(institution);</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">    while (current.isPresent()) {</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">      if (affiliatedIds.contains(current.get().getId())) {</span>
+<span class="fc" id="L154">        return true;</span>
       }
-<span class="fc" id="L155">      Optional&lt;Institution&gt; parent = current.get().getParent();</span>
-<span class="fc" id="L156">      current = parent.filter(p -&gt; visited.add(p.getId()));</span>
-<span class="fc" id="L157">    }</span>
+<span class="fc" id="L156">      current = current.get().getParent();</span>
+    }
 
 <span class="fc" id="L159">    return false;</span>
   }
