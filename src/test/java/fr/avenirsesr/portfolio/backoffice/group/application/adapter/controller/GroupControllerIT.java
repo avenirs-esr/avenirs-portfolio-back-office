@@ -3,14 +3,18 @@ package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
+import fr.avenirsesr.portfolio.backoffice.group.application.adapter.dto.GroupAccessCheckRequest;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,6 +31,7 @@ class GroupControllerIT extends ContainerConfigurationTest {
   private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
 
   @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
   @Autowired private GroupRepository groupRepository;
 
   @Value("${security.authentication.api-key}")
@@ -184,6 +189,110 @@ class GroupControllerIT extends ContainerConfigurationTest {
     BddLogger.when("calling GET /back-office/groups/{id}");
     mockMvc
         .perform(get(BASE_PATH + "/" + programId).accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized());
+
+    BddLogger.then("it should return 401");
+  }
+
+  @Test
+  void shouldGrantAccess_whenTargetIdIsDirectlyAffiliated() throws Exception {
+    BddLogger.given("a seeded program matching an affiliated id");
+    UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+    GroupAccessCheckRequest request =
+        new GroupAccessCheckRequest(List.of(programId), List.of(programId));
+
+    BddLogger.when("calling POST /back-office/groups/staff/access-check");
+    mockMvc
+        .perform(
+            post(BASE_PATH + "/staff/access-check")
+                .principal(uuidPrincipal())
+                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", is(true)));
+
+    BddLogger.then("it should grant access");
+  }
+
+  @Test
+  void shouldGrantAccess_whenTargetIsGrandchildOfAnAffiliatedGroup() throws Exception {
+    BddLogger.given("a seeded student group whose grand-parent is an affiliated program");
+    UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+    UUID studentGroupId = groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO);
+    GroupAccessCheckRequest request =
+        new GroupAccessCheckRequest(List.of(programId), List.of(studentGroupId));
+
+    BddLogger.when("calling POST /back-office/groups/staff/access-check");
+    mockMvc
+        .perform(
+            post(BASE_PATH + "/staff/access-check")
+                .principal(uuidPrincipal())
+                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", is(true)));
+
+    BddLogger.then("it should grant access through the ancestor chain");
+  }
+
+  @Test
+  void shouldDenyAccess_whenTargetIsUnrelatedToAffiliations() throws Exception {
+    BddLogger.given("a seeded student group unrelated to the affiliated id");
+    UUID studentGroupId = groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO);
+    UUID unrelatedAffiliatedId = UUID.randomUUID();
+    GroupAccessCheckRequest request =
+        new GroupAccessCheckRequest(List.of(unrelatedAffiliatedId), List.of(studentGroupId));
+
+    BddLogger.when("calling POST /back-office/groups/staff/access-check");
+    mockMvc
+        .perform(
+            post(BASE_PATH + "/staff/access-check")
+                .principal(uuidPrincipal())
+                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", is(false)));
+
+    BddLogger.then("it should deny access");
+  }
+
+  @Test
+  void shouldReturnNotFound_whenCheckingAccess_withUnknownTargetId() throws Exception {
+    BddLogger.given("a random target group id that does not exist");
+    UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+    UUID unknownId = UUID.randomUUID();
+    GroupAccessCheckRequest request =
+        new GroupAccessCheckRequest(List.of(programId), List.of(unknownId));
+
+    BddLogger.when("calling POST /back-office/groups/staff/access-check");
+    mockMvc
+        .perform(
+            post(BASE_PATH + "/staff/access-check")
+                .principal(uuidPrincipal())
+                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isNotFound());
+
+    BddLogger.then("it should return 404");
+  }
+
+  @Test
+  void shouldReturnUnauthorized_whenCheckingAccess_withoutApiKey() throws Exception {
+    BddLogger.given("a request without api key");
+    UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+    GroupAccessCheckRequest request =
+        new GroupAccessCheckRequest(List.of(programId), List.of(programId));
+
+    BddLogger.when("calling POST /back-office/groups/staff/access-check");
+    mockMvc
+        .perform(
+            post(BASE_PATH + "/staff/access-check")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isUnauthorized());
 
     BddLogger.then("it should return 401");

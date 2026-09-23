@@ -22,5 +22,7 @@ public interface InstitutionService {
 
   Institution findById(UUID id);
 
+  boolean staffHasAccess(List<UUID> affiliatedIds, List<UUID> targetIds);
+
   void delete(UUID id);
 }

@@ -519,4 +519,96 @@ class InstitutionServiceImplTest {
     BddLogger.then("it should remove the institution from the database");
     verify(institutionRepository).removeFromDatabase(institution);
   }
+
+  @Test
+  void shouldGrantAccess_whenTargetIdIsDirectlyAffiliated() {
+    BddLogger.given("an institution matching an affiliated id");
+    UUID institutionId = UUID.randomUUID();
+    Institution target =
+        Institution.create(
+            institutionId,
+            "Université de Rennes",
+            "0350001A",
+            "siret",
+            "siren",
+            EInstitutionType.PRIMARY,
+            null);
+    when(institutionRepository.findAllById(List.of(institutionId))).thenReturn(List.of(target));
+
+    BddLogger.when("checking access with that id in both the affiliated and target lists");
+    boolean result = service.staffHasAccess(List.of(institutionId), List.of(institutionId));
+
+    BddLogger.then("it should grant access");
+    assertTrue(result);
+  }
+
+  @Test
+  void shouldGrantAccess_whenTargetIsChildOfAnAffiliatedInstitution() {
+    BddLogger.given("a secondary institution whose parent is affiliated");
+    UUID parentId = UUID.randomUUID();
+    Institution parent =
+        Institution.create(
+            parentId,
+            "Université de Rennes",
+            "0350001A",
+            "siret",
+            "siren",
+            EInstitutionType.PRIMARY,
+            null);
+    UUID childId = UUID.randomUUID();
+    Institution child =
+        Institution.create(
+            childId,
+            "Université de Rennes - IUT",
+            "0350002B",
+            "siret",
+            "siren",
+            EInstitutionType.SECONDARY,
+            parent);
+    when(institutionRepository.findAllById(List.of(childId))).thenReturn(List.of(child));
+
+    BddLogger.when("checking access to the child institution using the parent affiliation");
+    boolean result = service.staffHasAccess(List.of(parentId), List.of(childId));
+
+    BddLogger.then("it should grant access through the parent affiliation");
+    assertTrue(result);
+  }
+
+  @Test
+  void shouldDenyAccess_whenTargetIsUnrelatedToAffiliations() {
+    BddLogger.given("an institution unrelated to the affiliated ids");
+    UUID affiliatedId = UUID.randomUUID();
+    UUID targetId = UUID.randomUUID();
+    Institution target =
+        Institution.create(
+            targetId,
+            "Université de Bordeaux",
+            "0330001C",
+            "siret",
+            "siren",
+            EInstitutionType.PRIMARY,
+            null);
+    when(institutionRepository.findAllById(List.of(targetId))).thenReturn(List.of(target));
+
+    BddLogger.when("checking access to that unrelated institution");
+    boolean result = service.staffHasAccess(List.of(affiliatedId), List.of(targetId));
+
+    BddLogger.then("it should deny access");
+    assertFalse(result);
+  }
+
+  @Test
+  void shouldThrowInstitutionNotFoundException_whenCheckingAccess_withUnknownTargetId() {
+    BddLogger.given("a target id that does not match any institution");
+    UUID affiliatedId = UUID.randomUUID();
+    UUID unknownTargetId = UUID.randomUUID();
+    when(institutionRepository.findAllById(List.of(unknownTargetId))).thenReturn(List.of());
+
+    BddLogger.when("checking access to that unknown institution");
+    assertThrows(
+        InstitutionNotFoundException.class,
+        () -> service.staffHasAccess(List.of(affiliatedId), List.of(unknownTargetId)));
+
+    BddLogger.then("it should throw InstitutionNotFoundException");
+  }
 }

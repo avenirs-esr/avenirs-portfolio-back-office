@@ -851,4 +851,115 @@ class GroupServiceImplTest {
     BddLogger.then("it should remove the group from the database");
     verify(groupRepository).removeFromDatabase(group);
   }
+
+  @Test
+  void shouldGrantAccess_whenTargetIdIsDirectlyAffiliated() {
+    BddLogger.given("a group matching an affiliated id");
+    UUID groupId = UUID.randomUUID();
+    Group target =
+        Group.create(
+            groupId,
+            "Licence Informatique",
+            "10000001",
+            institution,
+            "11000001",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    when(groupRepository.findAllById(List.of(groupId))).thenReturn(List.of(target));
+
+    BddLogger.when("checking access with that id in both the affiliated and target lists");
+    boolean result = service.staffHasAccess(List.of(groupId), List.of(groupId));
+
+    BddLogger.then("it should grant access");
+    assertTrue(result);
+  }
+
+  @Test
+  void shouldGrantAccess_whenTargetIsGrandchildOfAnAffiliatedGroup() {
+    BddLogger.given("a student group under an option under an affiliated program");
+    UUID programId = UUID.randomUUID();
+    Group program =
+        Group.create(
+            programId,
+            "Licence Informatique",
+            "10000001",
+            institution,
+            "11000001",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    Group option =
+        Group.create(
+            UUID.randomUUID(),
+            "Parcours IA",
+            "10000002",
+            institution,
+            "11000002",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM_OPTION,
+            program);
+    UUID studentGroupId = UUID.randomUUID();
+    Group studentGroup =
+        Group.create(
+            studentGroupId,
+            "Groupe A",
+            "10000003",
+            institution,
+            "11000003",
+            startDate,
+            endDate,
+            EGroupType.STUDENT_GROUP,
+            option);
+    when(groupRepository.findAllById(List.of(studentGroupId))).thenReturn(List.of(studentGroup));
+
+    BddLogger.when("checking access to the student group using the program affiliation");
+    boolean result = service.staffHasAccess(List.of(programId), List.of(studentGroupId));
+
+    BddLogger.then("it should grant access through the ancestor chain");
+    assertTrue(result);
+  }
+
+  @Test
+  void shouldDenyAccess_whenTargetIsUnrelatedToAffiliations() {
+    BddLogger.given("a group unrelated to the affiliated ids");
+    UUID affiliatedId = UUID.randomUUID();
+    UUID targetId = UUID.randomUUID();
+    Group target =
+        Group.create(
+            targetId,
+            "Licence Droit",
+            "10000004",
+            institution,
+            "11000004",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    when(groupRepository.findAllById(List.of(targetId))).thenReturn(List.of(target));
+
+    BddLogger.when("checking access to that unrelated group");
+    boolean result = service.staffHasAccess(List.of(affiliatedId), List.of(targetId));
+
+    BddLogger.then("it should deny access");
+    assertFalse(result);
+  }
+
+  @Test
+  void shouldThrowGroupNotFoundException_whenCheckingAccess_withUnknownTargetId() {
+    BddLogger.given("a target id that does not match any group");
+    UUID affiliatedId = UUID.randomUUID();
+    UUID unknownTargetId = UUID.randomUUID();
+    when(groupRepository.findAllById(List.of(unknownTargetId))).thenReturn(List.of());
+
+    BddLogger.when("checking access to that unknown group");
+    assertThrows(
+        GroupNotFoundException.class,
+        () -> service.staffHasAccess(List.of(affiliatedId), List.of(unknownTargetId)));
+
+    BddLogger.then("it should throw GroupNotFoundException");
+  }
 }

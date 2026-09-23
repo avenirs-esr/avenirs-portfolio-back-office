@@ -40,5 +40,7 @@ public interface GroupService {
 
   Group findProgramOf(UUID groupId);
 
+  boolean staffHasAccess(List<UUID> affiliatedIds, List<UUID> targetIds);
+
   void delete(UUID id);
 }
