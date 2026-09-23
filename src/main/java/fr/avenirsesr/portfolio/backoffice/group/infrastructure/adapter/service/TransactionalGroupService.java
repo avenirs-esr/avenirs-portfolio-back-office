@@ -76,6 +76,11 @@ public class TransactionalGroupService implements GroupService {
   }
 
   @Override
+  public boolean staffHasAccess(List<UUID> affiliatedIds, List<UUID> targetIds) {
+    return delegate.staffHasAccess(affiliatedIds, targetIds);
+  }
+
+  @Override
   public void delete(UUID id) {
     delegate.delete(id);
   }

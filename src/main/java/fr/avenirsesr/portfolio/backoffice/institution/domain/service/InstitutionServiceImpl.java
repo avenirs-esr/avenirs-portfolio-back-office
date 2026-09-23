@@ -14,8 +14,10 @@ import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -131,6 +133,30 @@ public class InstitutionServiceImpl implements InstitutionService {
   @Override
   public Institution findById(UUID id) {
     return institutionRepository.findById(id).orElseThrow(InstitutionNotFoundException::new);
+  }
+
+  @Override
+  public boolean staffHasAccess(List<UUID> affiliatedIds, List<UUID> targetIds) {
+    List<UUID> distinctTargetIds = targetIds.stream().distinct().toList();
+    List<Institution> targets = institutionRepository.findAllById(distinctTargetIds);
+    if (targets.size() != distinctTargetIds.size()) {
+      throw new InstitutionNotFoundException();
+    }
+
+    Set<UUID> affiliatedIdSet = new HashSet<>(affiliatedIds);
+    return targets.stream().allMatch(target -> isCoveredByAffiliation(target, affiliatedIdSet));
+  }
+
+  private boolean isCoveredByAffiliation(Institution institution, Set<UUID> affiliatedIds) {
+    Optional<Institution> current = Optional.of(institution);
+    while (current.isPresent()) {
+      if (affiliatedIds.contains(current.get().getId())) {
+        return true;
+      }
+      current = current.get().getParent();
+    }
+
+    return false;
   }
 
   @Override

@@ -197,6 +197,30 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
+  public boolean staffHasAccess(List<UUID> affiliatedIds, List<UUID> targetIds) {
+    List<UUID> distinctTargetIds = targetIds.stream().distinct().toList();
+    List<Group> targets = groupRepository.findAllById(distinctTargetIds);
+    if (targets.size() != distinctTargetIds.size()) {
+      throw new GroupNotFoundException();
+    }
+
+    Set<UUID> affiliatedIdSet = new HashSet<>(affiliatedIds);
+    return targets.stream().allMatch(target -> isCoveredByAffiliation(target, affiliatedIdSet));
+  }
+
+  private boolean isCoveredByAffiliation(Group group, Set<UUID> affiliatedIds) {
+    Optional<Group> current = Optional.of(group);
+    while (current.isPresent()) {
+      if (affiliatedIds.contains(current.get().getId())) {
+        return true;
+      }
+      current = current.get().getParent();
+    }
+
+    return false;
+  }
+
+  @Override
   public void delete(UUID id) {
     groupRepository.removeFromDatabase(findById(id));
   }
