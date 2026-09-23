@@ -197,50 +197,74 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
+  public boolean hasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
+<span class="fc" id="L201">    Set&lt;UUID&gt; affiliatedIdSet = new HashSet&lt;&gt;(affiliatedIds);</span>
+<span class="fc" id="L202">    return targetIds.stream()</span>
+<span class="fc" id="L203">        .allMatch(targetId -&gt; isCoveredByAffiliation(targetId, affiliatedIdSet));</span>
+  }
+
+  private boolean isCoveredByAffiliation(UUID targetId, Set&lt;UUID&gt; affiliatedIds) {
+<span class="fc" id="L207">    Group group = findById(targetId);</span>
+<span class="fc" id="L208">    Set&lt;UUID&gt; visited = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L209">    visited.add(group.getId());</span>
+
+<span class="fc" id="L211">    Optional&lt;Group&gt; current = Optional.of(group);</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">    while (current.isPresent()) {</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">      if (affiliatedIds.contains(current.get().getId())) {</span>
+<span class="fc" id="L214">        return true;</span>
+      }
+<span class="fc" id="L216">      Optional&lt;Group&gt; parent = current.get().getParent();</span>
+<span class="fc" id="L217">      current = parent.filter(p -&gt; visited.add(p.getId()));</span>
+<span class="fc" id="L218">    }</span>
+
+<span class="fc" id="L220">    return false;</span>
+  }
+
+  @Override
   public void delete(UUID id) {
-<span class="fc" id="L201">    groupRepository.removeFromDatabase(findById(id));</span>
-<span class="fc" id="L202">  }</span>
+<span class="fc" id="L225">    groupRepository.removeFromDatabase(findById(id));</span>
+<span class="fc" id="L226">  }</span>
 
   private Institution findInstitutionOrThrow(UUID institutionId) {
-<span class="fc" id="L205">    return institutionRepository</span>
-<span class="fc" id="L206">        .findById(institutionId)</span>
-<span class="fc" id="L207">        .orElseThrow(InstitutionNotFoundException::new);</span>
+<span class="fc" id="L229">    return institutionRepository</span>
+<span class="fc" id="L230">        .findById(institutionId)</span>
+<span class="fc" id="L231">        .orElseThrow(InstitutionNotFoundException::new);</span>
   }
 
   private Group resolveParent(EGroupType type, String parentIdSiSco) {
-<span class="fc bfc" id="L211" title="All 3 branches covered.">    return switch (type) {</span>
+<span class="fc bfc" id="L235" title="All 3 branches covered.">    return switch (type) {</span>
       case PROGRAM -&gt; {
-<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (parentIdSiSco != null) {</span>
-<span class="fc" id="L214">          throw new GroupProgramCannotHaveParentException();</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">        if (parentIdSiSco != null) {</span>
+<span class="fc" id="L238">          throw new GroupProgramCannotHaveParentException();</span>
         }
-<span class="fc" id="L216">        yield null;</span>
+<span class="fc" id="L240">        yield null;</span>
       }
       case PROGRAM_OPTION -&gt; {
-<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
-<span class="fc" id="L220">          throw new GroupProgramOptionRequiresParentException();</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
+<span class="fc" id="L244">          throw new GroupProgramOptionRequiresParentException();</span>
         }
-<span class="fc" id="L222">        Group parent = findParentOrThrow(parentIdSiSco);</span>
-<span class="fc bfc" id="L223" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM) {</span>
-<span class="fc" id="L224">          throw new GroupProgramOptionParentMustBeProgramException();</span>
+<span class="fc" id="L246">        Group parent = findParentOrThrow(parentIdSiSco);</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM) {</span>
+<span class="fc" id="L248">          throw new GroupProgramOptionParentMustBeProgramException();</span>
         }
-<span class="fc" id="L226">        yield parent;</span>
+<span class="fc" id="L250">        yield parent;</span>
       }
       case STUDENT_GROUP -&gt; {
-<span class="fc bfc" id="L229" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
-<span class="fc" id="L230">          throw new GroupStudentGroupRequiresParentException();</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        if (parentIdSiSco == null) {</span>
+<span class="fc" id="L254">          throw new GroupStudentGroupRequiresParentException();</span>
         }
-<span class="fc" id="L232">        Group parent = findParentOrThrow(parentIdSiSco);</span>
-<span class="fc bfc" id="L233" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">            &amp;&amp; parent.getType() != EGroupType.PROGRAM_OPTION) {</span>
-<span class="fc" id="L235">          throw new GroupStudentGroupParentMustBeProgramOrOptionException();</span>
+<span class="fc" id="L256">        Group parent = findParentOrThrow(parentIdSiSco);</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        if (parent.getType() != EGroupType.PROGRAM</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">            &amp;&amp; parent.getType() != EGroupType.PROGRAM_OPTION) {</span>
+<span class="fc" id="L259">          throw new GroupStudentGroupParentMustBeProgramOrOptionException();</span>
         }
-<span class="fc" id="L237">        yield parent;</span>
+<span class="fc" id="L261">        yield parent;</span>
       }
     };
   }
 
   private Group findParentOrThrow(String parentIdSiSco) {
-<span class="fc" id="L243">    return groupRepository.findByIdSiSco(parentIdSiSco).orElseThrow(GroupNotFoundException::new);</span>
+<span class="fc" id="L267">    return groupRepository.findByIdSiSco(parentIdSiSco).orElseThrow(GroupNotFoundException::new);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
