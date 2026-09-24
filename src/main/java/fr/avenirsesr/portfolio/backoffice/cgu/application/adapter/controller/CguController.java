@@ -1,10 +1,10 @@
 package fr.avenirsesr.portfolio.backoffice.cgu.application.adapter.controller;
 
-import fr.avenirsesr.portfolio.backoffice.cgu.domain.exception.CguUploadException;
+import static fr.avenirsesr.portfolio.common.file.application.adapter.MultipartFileReader.readBytes;
+
 import fr.avenirsesr.portfolio.backoffice.cgu.domain.port.input.CguService;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
-import java.io.IOException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,13 +35,5 @@ public class CguController {
                 file.getOriginalFilename(), file.getContentType(), readBytes(file), false));
 
     return ResponseEntity.status(HttpStatus.CREATED).body(published);
-  }
-
-  private byte[] readBytes(MultipartFile file) {
-    try {
-      return file.getBytes();
-    } catch (IOException e) {
-      throw new CguUploadException("Failed to read the uploaded terms of use file");
-    }
   }
 }
