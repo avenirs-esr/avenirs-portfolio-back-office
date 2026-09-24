@@ -1,6 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.cgu.domain.service;
 
+import fr.avenirsesr.portfolio.backoffice.cgu.domain.model.Cgu;
 import fr.avenirsesr.portfolio.backoffice.cgu.domain.port.input.CguService;
+import fr.avenirsesr.portfolio.backoffice.cgu.domain.port.output.repository.CguRepository;
 import fr.avenirsesr.portfolio.common.file.application.adapter.client.FileClient;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class CguServiceImpl implements CguService {
   private final FileClient fileClient;
+  private final CguRepository cguRepository;
 
   @Override
   public FileDTO publish(FileUploadRequest request) {
@@ -21,8 +24,13 @@ public class CguServiceImpl implements CguService {
     }
 
     FileDTO published = fileClient.upload(request);
-    log.info("New terms of use version published as file {}", published.id());
+    Cgu cgu = cguRepository.save(Cgu.create(published.id(), nextVersion()));
+    log.info("Terms of use version {} published as file {}", cgu.getVersion(), cgu.getFileId());
 
     return published;
+  }
+
+  private int nextVersion() {
+    return cguRepository.findLatest().map(Cgu::getVersion).orElse(0) + 1;
   }
 }
