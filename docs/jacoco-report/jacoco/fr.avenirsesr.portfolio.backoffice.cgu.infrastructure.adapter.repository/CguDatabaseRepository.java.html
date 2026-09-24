@@ -21,7 +21,7 @@ public class CguDatabaseRepository extends GenericJpaRepositoryAdapter&lt;Cgu, C
 
   @Override
   public Optional&lt;Cgu&gt; findLatest() {
-<span class="nc" id="L24">    return cguJpaRepository.findFirstByOrderByVersionDesc().map(CguMapper.INSTANCE::toDomain);</span>
+<span class="fc" id="L24">    return cguJpaRepository.findFirstByOrderByVersionDesc().map(CguMapper.INSTANCE::toDomain);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
