@@ -37,8 +37,8 @@ public class GroupController {
 <span class="fc" id="L37">    return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findProgramOf(id)));</span>
   }
 
-  @PostMapping(&quot;/access-check&quot;)
-  public ResponseEntity&lt;Boolean&gt; checkAccess(@RequestBody GroupAccessCheckRequest request) {
+  @PostMapping(&quot;/staff/access-check&quot;)
+  public ResponseEntity&lt;Boolean&gt; staffAccessCheck(@RequestBody GroupAccessCheckRequest request) {
 <span class="fc" id="L42">    log.debug(</span>
         &quot;Checking access to groups {} for affiliations {}&quot;,
 <span class="fc" id="L44">        request.targetGroupIds(),</span>

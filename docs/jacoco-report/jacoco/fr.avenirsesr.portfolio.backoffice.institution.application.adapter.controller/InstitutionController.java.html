@@ -31,18 +31,19 @@ public class InstitutionController {
 <span class="fc" id="L31">        InstitutionApplicationMapper.toInstitutionDTO(institutionService.findById(id)));</span>
   }
 
-  @PostMapping(&quot;/access-check&quot;)
-  public ResponseEntity&lt;Boolean&gt; checkAccess(@RequestBody InstitutionAccessCheckRequest request) {
-<span class="fc" id="L36">    log.debug(</span>
+  @PostMapping(&quot;/staff/access-check&quot;)
+  public ResponseEntity&lt;Boolean&gt; staffAccessCheck(
+      @RequestBody InstitutionAccessCheckRequest request) {
+<span class="fc" id="L37">    log.debug(</span>
         &quot;Checking access to institutions {} for affiliations {}&quot;,
-<span class="fc" id="L38">        request.targetInstitutionIds(),</span>
-<span class="fc" id="L39">        request.affiliatedInstitutionIds());</span>
+<span class="fc" id="L39">        request.targetInstitutionIds(),</span>
+<span class="fc" id="L40">        request.affiliatedInstitutionIds());</span>
 
-<span class="fc" id="L41">    boolean hasAccess =</span>
-<span class="fc" id="L42">        institutionService.hasAccess(</span>
-<span class="fc" id="L43">            request.affiliatedInstitutionIds(), request.targetInstitutionIds());</span>
+<span class="fc" id="L42">    boolean hasAccess =</span>
+<span class="fc" id="L43">        institutionService.hasAccess(</span>
+<span class="fc" id="L44">            request.affiliatedInstitutionIds(), request.targetInstitutionIds());</span>
 
-<span class="fc" id="L45">    return ResponseEntity.ok(hasAccess);</span>
+<span class="fc" id="L46">    return ResponseEntity.ok(hasAccess);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
