@@ -20,7 +20,7 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
     - New table `cgu`, holding the id of the file created by the api, an incremental version and the upload date. The
       version carries a unique constraint, so two concurrent publications cannot land on the same one.
     - New properties `avenirs.api.base-url` (default `http://localhost:10000`) and `avenirs.api.file.endpoint`
-      (default `${avenirs.api.base-url}/storage`). They must point at the portfolio api of the environment.
+      (default `${avenirs.api.base-url}/files`). They must point at the portfolio api of the environment.
 
 ## [v1.0.6] - 2026-09-11
 
