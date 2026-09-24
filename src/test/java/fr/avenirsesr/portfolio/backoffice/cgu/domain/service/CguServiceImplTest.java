@@ -2,10 +2,13 @@ package fr.avenirsesr.portfolio.backoffice.cgu.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import fr.avenirsesr.portfolio.backoffice.cgu.domain.model.Cgu;
+import fr.avenirsesr.portfolio.backoffice.cgu.domain.port.output.repository.CguRepository;
 import fr.avenirsesr.portfolio.common.file.application.adapter.client.FileClient;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
@@ -14,9 +17,11 @@ import fr.avenirsesr.portfolio.common.file.domain.model.enums.EFileType;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CguServiceImplTest {
 
   @Mock private FileClient fileClient;
+  @Mock private CguRepository cguRepository;
 
   @InjectMocks private CguServiceImpl service;
 
@@ -33,21 +39,50 @@ class CguServiceImplTest {
         "cgu.html", mimeType, "<html></html>".getBytes(StandardCharsets.UTF_8), false);
   }
 
+  private static FileDTO uploadedFile() {
+    return new FileDTO(
+        UUID.randomUUID(), "cgu.html", EFileType.HTML, 13L, "/storage/cgu", Instant.now());
+  }
+
+  private ArgumentCaptor<Cgu> captureSavedCgu() {
+    ArgumentCaptor<Cgu> captor = ArgumentCaptor.forClass(Cgu.class);
+    verify(cguRepository).save(captor.capture());
+    return captor;
+  }
+
   @Test
-  void shouldPublishTheUploadedHtmlThroughTheFileClient() {
-    BddLogger.given("an html terms of use file");
+  void shouldPublishTheUploadedHtmlAndSaveItsFirstVersion() {
+    BddLogger.given("an html terms of use file and no version published yet");
     FileUploadRequest request = requestWithMimeType("text/html");
-    FileDTO uploaded =
-        new FileDTO(
-            UUID.randomUUID(), "cgu.html", EFileType.HTML, 13L, "/storage/cgu", Instant.now());
+    FileDTO uploaded = uploadedFile();
     when(fileClient.upload(request)).thenReturn(uploaded);
+    when(cguRepository.findLatest()).thenReturn(Optional.empty());
+    when(cguRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     BddLogger.when("publishing it");
     FileDTO result = service.publish(request);
 
-    BddLogger.then("the file client stores it and the published file is returned");
-    verify(fileClient).upload(request);
+    BddLogger.then("the uploaded file is saved as the first version");
+    Cgu saved = captureSavedCgu().getValue();
+    assertThat(saved.getFileId()).isEqualTo(uploaded.id());
+    assertThat(saved.getVersion()).isEqualTo(1);
+    assertThat(saved.getUploadedAt()).isNotNull();
     assertThat(result).isEqualTo(uploaded);
+  }
+
+  @Test
+  void shouldIncrementTheVersionOfTheLastPublishedTermsOfUse() {
+    BddLogger.given("an html terms of use file and a fourth version already published");
+    FileUploadRequest request = requestWithMimeType("text/html");
+    when(fileClient.upload(request)).thenReturn(uploadedFile());
+    when(cguRepository.findLatest()).thenReturn(Optional.of(Cgu.create(UUID.randomUUID(), 4)));
+    when(cguRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+    BddLogger.when("publishing it");
+    service.publish(request);
+
+    BddLogger.then("it is saved as the fifth version");
+    assertThat(captureSavedCgu().getValue().getVersion()).isEqualTo(5);
   }
 
   @Test
@@ -56,10 +91,10 @@ class CguServiceImplTest {
     FileUploadRequest request = requestWithMimeType("application/pdf");
 
     BddLogger.when("publishing it");
-    BddLogger.then("it should be rejected without reaching the file client");
+    BddLogger.then("it should be rejected without reaching the file client nor the database");
     assertThrows(FileTypeNotSupportedException.class, () -> service.publish(request));
 
-    verifyNoInteractions(fileClient);
+    verifyNoInteractions(fileClient, cguRepository);
   }
 
   @Test
@@ -68,9 +103,9 @@ class CguServiceImplTest {
     FileUploadRequest request = requestWithMimeType("application/x-unknown");
 
     BddLogger.when("publishing it");
-    BddLogger.then("it should be rejected without reaching the file client");
+    BddLogger.then("it should be rejected without reaching the file client nor the database");
     assertThrows(FileTypeNotSupportedException.class, () -> service.publish(request));
 
-    verifyNoInteractions(fileClient);
+    verifyNoInteractions(fileClient, cguRepository);
   }
 }
