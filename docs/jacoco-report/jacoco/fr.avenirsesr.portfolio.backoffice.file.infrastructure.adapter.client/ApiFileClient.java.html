@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiFileClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.file.infrastructure.adapter.client</a> &gt; <span class="el_source">ApiFileClient.java</span></div><h1>ApiFileClient.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.file.infrastructure.adapter.client;
+
+import fr.avenirsesr.portfolio.common.file.application.adapter.client.FileClient;
+import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
+import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
+import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+
+<span class="fc" id="L19">@Slf4j</span>
+@Component
+public class ApiFileClient implements FileClient {
+
+  private final WebClient webClient;
+  private final HttpServletRequest currentRequest;
+
+  @Value(&quot;${avenirs.api.file.endpoint}&quot;)
+  private String fileEndpoint;
+
+<span class="fc" id="L29">  public ApiFileClient(WebClient webClient, HttpServletRequest currentRequest) {</span>
+<span class="fc" id="L30">    this.webClient = webClient;</span>
+<span class="fc" id="L31">    this.currentRequest = currentRequest;</span>
+<span class="fc" id="L32">  }</span>
+
+  @Override
+  public FileDTO upload(FileUploadRequest request) {
+<span class="nc" id="L36">    log.debug(&quot;Uploading file {} to the portfolio api&quot;, request.fileName());</span>
+
+<span class="nc" id="L38">    MultipartBodyBuilder body = new MultipartBodyBuilder();</span>
+<span class="nc" id="L39">    body.part(&quot;file&quot;, new ByteArrayResource(request.content()))</span>
+<span class="nc" id="L40">        .filename(request.fileName())</span>
+<span class="nc" id="L41">        .contentType(MediaType.parseMediaType(request.mimeType()));</span>
+<span class="nc" id="L42">    body.part(&quot;isRestricted&quot;, String.valueOf(request.isRestricted()));</span>
+
+<span class="nc" id="L44">    return webClient</span>
+<span class="nc" id="L45">        .post()</span>
+<span class="nc" id="L46">        .uri(fileEndpoint)</span>
+<span class="nc" id="L47">        .headers(this::forwardLoggedInUser)</span>
+<span class="nc" id="L48">        .contentType(MediaType.MULTIPART_FORM_DATA)</span>
+<span class="nc" id="L49">        .body(BodyInserters.fromMultipartData(body.build()))</span>
+<span class="nc" id="L50">        .retrieve()</span>
+<span class="nc" id="L51">        .bodyToMono(FileDTO.class)</span>
+<span class="nc" id="L52">        .block();</span>
+  }
+
+  @Override
+  public FileDTO get(UUID fileId) {
+<span class="nc" id="L57">    log.debug(&quot;Fetching file {} from the portfolio api&quot;, fileId);</span>
+
+<span class="nc" id="L59">    return webClient</span>
+<span class="nc" id="L60">        .get()</span>
+<span class="nc" id="L61">        .uri(fileEndpoint + &quot;/&quot; + fileId)</span>
+<span class="nc" id="L62">        .headers(this::forwardLoggedInUser)</span>
+<span class="nc" id="L63">        .retrieve()</span>
+<span class="nc" id="L64">        .bodyToMono(FileDTO.class)</span>
+<span class="nc" id="L65">        .block();</span>
+  }
+
+  @Override
+  public void delete(UUID fileId) {
+<span class="nc" id="L70">    log.debug(&quot;Deleting file {} through the portfolio api&quot;, fileId);</span>
+
+<span class="nc" id="L72">    webClient</span>
+<span class="nc" id="L73">        .delete()</span>
+<span class="nc" id="L74">        .uri(fileEndpoint + &quot;/&quot; + fileId)</span>
+<span class="nc" id="L75">        .headers(this::forwardLoggedInUser)</span>
+<span class="nc" id="L76">        .retrieve()</span>
+<span class="nc" id="L77">        .toBodilessEntity()</span>
+<span class="nc" id="L78">        .block();</span>
+<span class="nc" id="L79">  }</span>
+
+  private void forwardLoggedInUser(HttpHeaders headers) {
+<span class="nc" id="L82">    copyHeader(headers, AvenirsSecurityHeaders.SIGNED_CONTEXT);</span>
+<span class="nc" id="L83">    copyHeader(headers, AvenirsSecurityHeaders.CONTEXT_SIGNATURE);</span>
+<span class="nc" id="L84">  }</span>
+
+  private void copyHeader(HttpHeaders headers, String name) {
+<span class="nc" id="L87">    String value = currentRequest.getHeader(name);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">    if (value != null) {</span>
+<span class="nc" id="L89">      headers.set(name, value);</span>
+    }
+<span class="nc" id="L91">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
