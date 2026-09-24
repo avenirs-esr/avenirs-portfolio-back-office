@@ -7,6 +7,21 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
 ---
 
 
+## [v1.0.7] - 2026-09-24
+
+- **Terms of use upload**
+    - New endpoint `POST back-office/cgu`, which takes a multipart `file` part and requires the `cgu:update` authority.
+      It accepts an html file, hands it to the file feature of the api through the `FileClient` contract of
+      `avenirs-portfolio-common` and returns the created `FileDTO`. Anything that is not `text/html` is rejected
+      (#2683).
+    - The call to the api relays the signed context of the logged-in user, so the api authenticates the same user and
+      records it as the uploader of the file.
+- **Update process**
+    - New table `cgu`, holding the id of the file created by the api, an incremental version and the upload date. The
+      version carries a unique constraint, so two concurrent publications cannot land on the same one.
+    - New properties `avenirs.api.base-url` (default `http://localhost:10000`) and `avenirs.api.file.endpoint`
+      (default `${avenirs.api.base-url}/storage`). They must point at the portfolio api of the environment.
+
 ## [v1.0.6] - 2026-09-11
 
 - **Institution, group and program exposed to the other services**
