@@ -68,6 +68,11 @@ public class TransactionalInstitutionService implements InstitutionService {
   }
 
   @Override
+  public List<UUID> studentAccessibleIds(List<UUID> affiliatedIds) {
+    return delegate.studentAccessibleIds(affiliatedIds);
+  }
+
+  @Override
   public void delete(UUID id) {
     delegate.delete(id);
   }

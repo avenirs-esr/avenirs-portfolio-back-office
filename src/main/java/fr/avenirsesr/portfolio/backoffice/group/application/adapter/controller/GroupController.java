@@ -1,9 +1,11 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 
 import fr.avenirsesr.portfolio.backoffice.group.application.adapter.dto.GroupAccessCheckRequest;
+import fr.avenirsesr.portfolio.backoffice.group.application.adapter.dto.GroupAccessibleIdsRequest;
 import fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper.GroupApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupDTO;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,5 +50,13 @@ public class GroupController {
         groupService.staffHasAccess(request.affiliatedGroupIds(), request.targetGroupIds());
 
     return ResponseEntity.ok(staffHasAccess);
+  }
+
+  @PostMapping("/student/accessible-ids")
+  public ResponseEntity<List<UUID>> studentAccessibleIds(
+      @RequestBody GroupAccessibleIdsRequest request) {
+    log.debug("Resolving accessible group ids for affiliations {}", request.affiliatedGroupIds());
+
+    return ResponseEntity.ok(groupService.studentAccessibleIds(request.affiliatedGroupIds()));
   }
 }

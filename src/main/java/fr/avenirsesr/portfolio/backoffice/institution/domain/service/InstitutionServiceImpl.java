@@ -15,6 +15,7 @@ import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutio
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -157,6 +158,25 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     return false;
+  }
+
+  @Override
+  public List<UUID> studentAccessibleIds(List<UUID> affiliatedIds) {
+    List<UUID> distinctAffiliatedIds = affiliatedIds.stream().distinct().toList();
+    List<Institution> affiliated = institutionRepository.findAllById(distinctAffiliatedIds);
+    if (affiliated.size() != distinctAffiliatedIds.size()) {
+      throw new InstitutionNotFoundException();
+    }
+
+    Set<UUID> accessibleIds = new LinkedHashSet<>();
+    for (Institution institution : affiliated) {
+      Optional<Institution> current = Optional.of(institution);
+      while (current.isPresent() && accessibleIds.add(current.get().getId())) {
+        current = current.get().getParent();
+      }
+    }
+
+    return new ArrayList<>(accessibleIds);
   }
 
   @Override

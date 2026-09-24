@@ -962,4 +962,151 @@ class GroupServiceImplTest {
 
     BddLogger.then("it should throw GroupNotFoundException");
   }
+
+  @Test
+  void shouldReturnOwnId_whenAffiliatedGroupHasNoParent() {
+    BddLogger.given("an affiliated group with no parent");
+    UUID programId = UUID.randomUUID();
+    Group program =
+        Group.create(
+            programId,
+            "Licence Informatique",
+            "10000001",
+            institution,
+            "11000001",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    when(groupRepository.findAllById(List.of(programId))).thenReturn(List.of(program));
+
+    BddLogger.when("resolving accessible ids for that affiliation");
+    List<UUID> result = service.studentAccessibleIds(List.of(programId));
+
+    BddLogger.then("it should return only its own id");
+    assertEquals(List.of(programId), result);
+  }
+
+  @Test
+  void shouldReturnIdAndAncestors_whenAffiliatedGroupHasParents() {
+    BddLogger.given("a student group under an option under a program");
+    UUID programId = UUID.randomUUID();
+    Group program =
+        Group.create(
+            programId,
+            "Licence Informatique",
+            "10000001",
+            institution,
+            "11000001",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    UUID optionId = UUID.randomUUID();
+    Group option =
+        Group.create(
+            optionId,
+            "Parcours IA",
+            "10000002",
+            institution,
+            "11000002",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM_OPTION,
+            program);
+    UUID studentGroupId = UUID.randomUUID();
+    Group studentGroup =
+        Group.create(
+            studentGroupId,
+            "Groupe A",
+            "10000003",
+            institution,
+            "11000003",
+            startDate,
+            endDate,
+            EGroupType.STUDENT_GROUP,
+            option);
+    when(groupRepository.findAllById(List.of(studentGroupId))).thenReturn(List.of(studentGroup));
+
+    BddLogger.when("resolving accessible ids for that affiliation");
+    List<UUID> result = service.studentAccessibleIds(List.of(studentGroupId));
+
+    BddLogger.then("it should return the group id and every ancestor up to the program");
+    assertEquals(List.of(studentGroupId, optionId, programId), result);
+  }
+
+  @Test
+  void shouldDeduplicateIds_whenAffiliatedGroupsShareAnAncestor() {
+    BddLogger.given("two affiliated student groups under the same option");
+    UUID programId = UUID.randomUUID();
+    Group program =
+        Group.create(
+            programId,
+            "Licence Informatique",
+            "10000001",
+            institution,
+            "11000001",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    UUID optionId = UUID.randomUUID();
+    Group option =
+        Group.create(
+            optionId,
+            "Parcours IA",
+            "10000002",
+            institution,
+            "11000002",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM_OPTION,
+            program);
+    UUID firstStudentGroupId = UUID.randomUUID();
+    Group firstStudentGroup =
+        Group.create(
+            firstStudentGroupId,
+            "Groupe A",
+            "10000003",
+            institution,
+            "11000003",
+            startDate,
+            endDate,
+            EGroupType.STUDENT_GROUP,
+            option);
+    UUID secondStudentGroupId = UUID.randomUUID();
+    Group secondStudentGroup =
+        Group.create(
+            secondStudentGroupId,
+            "Groupe B",
+            "10000004",
+            institution,
+            "11000004",
+            startDate,
+            endDate,
+            EGroupType.STUDENT_GROUP,
+            option);
+    when(groupRepository.findAllById(List.of(firstStudentGroupId, secondStudentGroupId)))
+        .thenReturn(List.of(firstStudentGroup, secondStudentGroup));
+
+    BddLogger.when("resolving accessible ids for both affiliations");
+    List<UUID> result =
+        service.studentAccessibleIds(List.of(firstStudentGroupId, secondStudentGroupId));
+
+    BddLogger.then("it should return each id once, including the shared ancestors");
+    assertEquals(List.of(firstStudentGroupId, optionId, programId, secondStudentGroupId), result);
+  }
+
+  @Test
+  void shouldThrowGroupNotFoundException_whenResolvingAccessibleIds_withUnknownAffiliatedId() {
+    BddLogger.given("an affiliated id that does not match any group");
+    UUID unknownId = UUID.randomUUID();
+    when(groupRepository.findAllById(List.of(unknownId))).thenReturn(List.of());
+
+    BddLogger.when("resolving accessible ids for that unknown affiliation");
+    assertThrows(
+        GroupNotFoundException.class, () -> service.studentAccessibleIds(List.of(unknownId)));
+
+    BddLogger.then("it should throw GroupNotFoundException");
+  }
 }

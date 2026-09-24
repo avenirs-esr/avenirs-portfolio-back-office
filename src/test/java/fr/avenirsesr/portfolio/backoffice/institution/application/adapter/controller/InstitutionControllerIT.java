@@ -1,5 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
 import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.InstitutionAccessCheckRequest;
+import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.InstitutionAccessibleIdsRequest;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
@@ -17,11 +20,14 @@ import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 class InstitutionControllerIT extends ContainerConfigurationTest {
 
@@ -45,178 +51,409 @@ class InstitutionControllerIT extends ContainerConfigurationTest {
     return institutionRepository.findByHai(hai).orElseThrow().getId();
   }
 
-  @Test
-  void shouldReturnInstitutionWithItsParentId_whenInstitutionIsSecondary() throws Exception {
-    BddLogger.given("a seeded secondary institution attached to a primary one");
-    UUID secondaryId = institutionIdOf(SEEDED_SECONDARY_HAI);
-    UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+  @Nested
+  class WhenGettingInstitutionById {
 
-    BddLogger.when("calling GET /back-office/institutions/{id} with the api key only");
-    mockMvc
-        .perform(
-            get(BASE_PATH + "/" + secondaryId)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(secondaryId.toString())))
-        .andExpect(jsonPath("$.name", is("Université de Rennes - IUT")))
-        .andExpect(jsonPath("$.type", is("SECONDARY")))
-        .andExpect(jsonPath("$.parentId", is(primaryId.toString())));
+    @Nested
+    class AndInstitutionIsSecondary {
 
-    BddLogger.then("it should return the institution name, type and parent id");
+      private UUID secondaryId;
+      private UUID primaryId;
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded secondary institution attached to a primary one");
+        secondaryId = institutionIdOf(SEEDED_SECONDARY_HAI);
+        primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+
+        BddLogger.when("calling GET /back-office/institutions/{id} with the api key only");
+        response =
+            mockMvc.perform(
+                get(BASE_PATH + "/" + secondaryId)
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnInstitutionNameTypeAndParentId() throws Exception {
+        BddLogger.then("it should return the institution name, type and parent id");
+
+        response
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(secondaryId.toString())))
+            .andExpect(jsonPath("$.name", is("Université de Rennes - IUT")))
+            .andExpect(jsonPath("$.type", is("SECONDARY")))
+            .andExpect(jsonPath("$.parentId", is(primaryId.toString())));
+      }
+    }
+
+    @Nested
+    class AndInstitutionIsPrimary {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded primary institution without parent");
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+
+        BddLogger.when("calling GET /back-office/institutions/{id}");
+        response =
+            mockMvc.perform(
+                get(BASE_PATH + "/" + primaryId)
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnInstitutionWithoutParentId() throws Exception {
+        BddLogger.then("it should return the institution with a null parent id");
+
+        response
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.type", is("PRIMARY")))
+            .andExpect(jsonPath("$.parentId", is(nullValue())));
+      }
+    }
+
+    @Nested
+    class AndInstitutionDoesNotExist {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a random institution id that does not exist");
+        UUID unknownId = UUID.randomUUID();
+
+        BddLogger.when("calling GET /back-office/institutions/{id}");
+        response =
+            mockMvc.perform(
+                get(BASE_PATH + "/" + unknownId)
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnNotFound() throws Exception {
+        BddLogger.then("it should return 404");
+
+        response.andExpect(status().isNotFound());
+      }
+    }
+
+    @Nested
+    class AndApiKeyIsMissing {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a request without api key");
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+
+        BddLogger.when("calling GET /back-office/institutions/{id}");
+        response =
+            mockMvc.perform(get(BASE_PATH + "/" + primaryId).accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnUnauthorized() throws Exception {
+        BddLogger.then("it should return 401");
+
+        response.andExpect(status().isUnauthorized());
+      }
+    }
   }
 
-  @Test
-  void shouldReturnInstitutionWithoutParentId_whenInstitutionIsPrimary() throws Exception {
-    BddLogger.given("a seeded primary institution without parent");
-    UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+  @Nested
+  class WhenCheckingStaffAccess {
 
-    BddLogger.when("calling GET /back-office/institutions/{id}");
-    mockMvc
-        .perform(
-            get(BASE_PATH + "/" + primaryId)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.type", is("PRIMARY")))
-        .andExpect(jsonPath("$.parentId", is(nullValue())));
+    @Nested
+    class AndTargetIdIsDirectlyAffiliated {
 
-    BddLogger.then("it should return the institution with a null parent id");
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded primary institution matching an affiliated id");
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        InstitutionAccessCheckRequest request =
+            new InstitutionAccessCheckRequest(List.of(primaryId), List.of(primaryId));
+
+        BddLogger.when("calling POST /back-office/institutions/staff/access-check");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/staff/access-check")
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
+
+      @Test
+      void thenItShouldGrantAccess() throws Exception {
+        BddLogger.then("it should grant access");
+
+        response.andExpect(status().isOk()).andExpect(jsonPath("$", is(true)));
+      }
+    }
+
+    @Nested
+    class AndTargetIsChildOfAnAffiliatedInstitution {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded secondary institution attached to an affiliated primary one");
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        UUID secondaryId = institutionIdOf(SEEDED_SECONDARY_HAI);
+        InstitutionAccessCheckRequest request =
+            new InstitutionAccessCheckRequest(List.of(primaryId), List.of(secondaryId));
+
+        BddLogger.when("calling POST /back-office/institutions/staff/access-check");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/staff/access-check")
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
+
+      @Test
+      void thenItShouldGrantAccessThroughTheParentAffiliation() throws Exception {
+        BddLogger.then("it should grant access through the parent affiliation");
+
+        response.andExpect(status().isOk()).andExpect(jsonPath("$", is(true)));
+      }
+    }
+
+    @Nested
+    class AndTargetIsUnrelatedToAffiliations {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded secondary institution unrelated to the affiliated id");
+        UUID secondaryId = institutionIdOf(SEEDED_SECONDARY_HAI);
+        UUID unrelatedAffiliatedId = UUID.randomUUID();
+        InstitutionAccessCheckRequest request =
+            new InstitutionAccessCheckRequest(List.of(unrelatedAffiliatedId), List.of(secondaryId));
+
+        BddLogger.when("calling POST /back-office/institutions/staff/access-check");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/staff/access-check")
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
+
+      @Test
+      void thenItShouldDenyAccess() throws Exception {
+        BddLogger.then("it should deny access");
+
+        response.andExpect(status().isOk()).andExpect(jsonPath("$", is(false)));
+      }
+    }
+
+    @Nested
+    class AndTargetDoesNotExist {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a random target institution id that does not exist");
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        UUID unknownId = UUID.randomUUID();
+        InstitutionAccessCheckRequest request =
+            new InstitutionAccessCheckRequest(List.of(primaryId), List.of(unknownId));
+
+        BddLogger.when("calling POST /back-office/institutions/staff/access-check");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/staff/access-check")
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
+
+      @Test
+      void thenItShouldReturnNotFound() throws Exception {
+        BddLogger.then("it should return 404");
+
+        response.andExpect(status().isNotFound());
+      }
+    }
+
+    @Nested
+    class AndApiKeyIsMissing {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a request without api key");
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        InstitutionAccessCheckRequest request =
+            new InstitutionAccessCheckRequest(List.of(primaryId), List.of(primaryId));
+
+        BddLogger.when("calling POST /back-office/institutions/staff/access-check");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/staff/access-check")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
+
+      @Test
+      void thenItShouldReturnUnauthorized() throws Exception {
+        BddLogger.then("it should return 401");
+
+        response.andExpect(status().isUnauthorized());
+      }
+    }
   }
 
-  @Test
-  void shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
-    BddLogger.given("a random institution id that does not exist");
-    UUID unknownId = UUID.randomUUID();
+  @Nested
+  class WhenResolvingStudentAccessibleIds {
 
-    BddLogger.when("calling GET /back-office/institutions/{id}");
-    mockMvc
-        .perform(
-            get(BASE_PATH + "/" + unknownId)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNotFound());
+    @Nested
+    class AndAffiliatedInstitutionHasNoParent {
 
-    BddLogger.then("it should return 404");
-  }
+      private UUID primaryId;
+      private ResultActions response;
 
-  @Test
-  void shouldReturnUnauthorized_whenApiKeyIsMissing() throws Exception {
-    BddLogger.given("a request without api key");
-    UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded primary institution without parent");
+        primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        InstitutionAccessibleIdsRequest request =
+            new InstitutionAccessibleIdsRequest(List.of(primaryId));
 
-    BddLogger.when("calling GET /back-office/institutions/{id}");
-    mockMvc
-        .perform(get(BASE_PATH + "/" + primaryId).accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isUnauthorized());
+        BddLogger.when("calling POST /back-office/institutions/student/accessible-ids");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/student/accessible-ids")
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
 
-    BddLogger.then("it should return 401");
-  }
+      @Test
+      void thenItShouldReturnOnlyItsOwnId() throws Exception {
+        BddLogger.then("it should return only its own id");
 
-  @Test
-  void shouldGrantAccess_whenTargetIdIsDirectlyAffiliated() throws Exception {
-    BddLogger.given("a seeded primary institution matching an affiliated id");
-    UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
-    InstitutionAccessCheckRequest request =
-        new InstitutionAccessCheckRequest(List.of(primaryId), List.of(primaryId));
+        response
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$", contains(primaryId.toString())));
+      }
+    }
 
-    BddLogger.when("calling POST /back-office/institutions/staff/access-check");
-    mockMvc
-        .perform(
-            post(BASE_PATH + "/staff/access-check")
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", is(true)));
+    @Nested
+    class AndAffiliatedInstitutionHasAParent {
 
-    BddLogger.then("it should grant access");
-  }
+      private UUID secondaryId;
+      private UUID primaryId;
+      private ResultActions response;
 
-  @Test
-  void shouldGrantAccess_whenTargetIsChildOfAnAffiliatedInstitution() throws Exception {
-    BddLogger.given("a seeded secondary institution attached to an affiliated primary one");
-    UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
-    UUID secondaryId = institutionIdOf(SEEDED_SECONDARY_HAI);
-    InstitutionAccessCheckRequest request =
-        new InstitutionAccessCheckRequest(List.of(primaryId), List.of(secondaryId));
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded secondary institution attached to a primary one");
+        secondaryId = institutionIdOf(SEEDED_SECONDARY_HAI);
+        primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        InstitutionAccessibleIdsRequest request =
+            new InstitutionAccessibleIdsRequest(List.of(secondaryId));
 
-    BddLogger.when("calling POST /back-office/institutions/staff/access-check");
-    mockMvc
-        .perform(
-            post(BASE_PATH + "/staff/access-check")
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", is(true)));
+        BddLogger.when("calling POST /back-office/institutions/student/accessible-ids");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/student/accessible-ids")
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
 
-    BddLogger.then("it should grant access through the parent affiliation");
-  }
+      @Test
+      void thenItShouldReturnBothTheSecondaryAndItsPrimaryInstitution() throws Exception {
+        BddLogger.then("it should return both the secondary and its primary institution");
 
-  @Test
-  void shouldDenyAccess_whenTargetIsUnrelatedToAffiliations() throws Exception {
-    BddLogger.given("a seeded secondary institution unrelated to the affiliated id");
-    UUID secondaryId = institutionIdOf(SEEDED_SECONDARY_HAI);
-    UUID unrelatedAffiliatedId = UUID.randomUUID();
-    InstitutionAccessCheckRequest request =
-        new InstitutionAccessCheckRequest(List.of(unrelatedAffiliatedId), List.of(secondaryId));
+        response
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$", contains(secondaryId.toString(), primaryId.toString())));
+      }
+    }
 
-    BddLogger.when("calling POST /back-office/institutions/staff/access-check");
-    mockMvc
-        .perform(
-            post(BASE_PATH + "/staff/access-check")
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", is(false)));
+    @Nested
+    class AndAffiliatedInstitutionDoesNotExist {
 
-    BddLogger.then("it should deny access");
-  }
+      private ResultActions response;
 
-  @Test
-  void shouldReturnNotFound_whenCheckingAccess_withUnknownTargetId() throws Exception {
-    BddLogger.given("a random target institution id that does not exist");
-    UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
-    UUID unknownId = UUID.randomUUID();
-    InstitutionAccessCheckRequest request =
-        new InstitutionAccessCheckRequest(List.of(primaryId), List.of(unknownId));
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a random affiliated institution id that does not exist");
+        UUID unknownId = UUID.randomUUID();
+        InstitutionAccessibleIdsRequest request =
+            new InstitutionAccessibleIdsRequest(List.of(unknownId));
 
-    BddLogger.when("calling POST /back-office/institutions/staff/access-check");
-    mockMvc
-        .perform(
-            post(BASE_PATH + "/staff/access-check")
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isNotFound());
+        BddLogger.when("calling POST /back-office/institutions/student/accessible-ids");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/student/accessible-ids")
+                    .principal(uuidPrincipal())
+                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
 
-    BddLogger.then("it should return 404");
-  }
+      @Test
+      void thenItShouldReturnNotFound() throws Exception {
+        BddLogger.then("it should return 404");
 
-  @Test
-  void shouldReturnUnauthorized_whenCheckingAccess_withoutApiKey() throws Exception {
-    BddLogger.given("a request without api key");
-    UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
-    InstitutionAccessCheckRequest request =
-        new InstitutionAccessCheckRequest(List.of(primaryId), List.of(primaryId));
+        response.andExpect(status().isNotFound());
+      }
+    }
 
-    BddLogger.when("calling POST /back-office/institutions/staff/access-check");
-    mockMvc
-        .perform(
-            post(BASE_PATH + "/staff/access-check")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isUnauthorized());
+    @Nested
+    class AndApiKeyIsMissing {
 
-    BddLogger.then("it should return 401");
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a request without api key");
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        InstitutionAccessibleIdsRequest request =
+            new InstitutionAccessibleIdsRequest(List.of(primaryId));
+
+        BddLogger.when("calling POST /back-office/institutions/student/accessible-ids");
+        response =
+            mockMvc.perform(
+                post(BASE_PATH + "/student/accessible-ids")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+      }
+
+      @Test
+      void thenItShouldReturnUnauthorized() throws Exception {
+        BddLogger.then("it should return 401");
+
+        response.andExpect(status().isUnauthorized());
+      }
+    }
   }
 }
