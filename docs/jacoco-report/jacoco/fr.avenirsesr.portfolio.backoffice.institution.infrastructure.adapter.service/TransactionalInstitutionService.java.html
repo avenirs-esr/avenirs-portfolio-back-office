@@ -68,8 +68,13 @@ public class TransactionalInstitutionService implements InstitutionService {
   }
 
   @Override
+  public List&lt;UUID&gt; studentAccessibleIds(List&lt;UUID&gt; affiliatedIds) {
+<span class="fc" id="L72">    return delegate.studentAccessibleIds(affiliatedIds);</span>
+  }
+
+  @Override
   public void delete(UUID id) {
-<span class="fc" id="L72">    delegate.delete(id);</span>
-<span class="fc" id="L73">  }</span>
+<span class="fc" id="L77">    delegate.delete(id);</span>
+<span class="fc" id="L78">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
