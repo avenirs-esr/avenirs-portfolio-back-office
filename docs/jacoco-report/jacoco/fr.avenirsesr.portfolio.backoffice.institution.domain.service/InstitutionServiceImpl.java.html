@@ -136,7 +136,7 @@ public class InstitutionServiceImpl implements InstitutionService {
   }
 
   @Override
-  public boolean hasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
+  public boolean staffHasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
 <span class="fc" id="L140">    List&lt;UUID&gt; distinctTargetIds = targetIds.stream().distinct().toList();</span>
 <span class="fc" id="L141">    List&lt;Institution&gt; targets = institutionRepository.findAllById(distinctTargetIds);</span>
 <span class="fc bfc" id="L142" title="All 2 branches covered.">    if (targets.size() != distinctTargetIds.size()) {</span>

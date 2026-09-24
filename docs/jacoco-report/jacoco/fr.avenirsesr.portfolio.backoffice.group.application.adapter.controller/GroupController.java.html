@@ -40,14 +40,14 @@ public class GroupController {
   @PostMapping(&quot;/staff/access-check&quot;)
   public ResponseEntity&lt;Boolean&gt; staffAccessCheck(@RequestBody GroupAccessCheckRequest request) {
 <span class="fc" id="L42">    log.debug(</span>
-        &quot;Checking access to groups {} for affiliations {}&quot;,
+        &quot;Checking if staff has access to groups {} for affiliations {}&quot;,
 <span class="fc" id="L44">        request.targetGroupIds(),</span>
 <span class="fc" id="L45">        request.affiliatedGroupIds());</span>
 
-<span class="fc" id="L47">    boolean hasAccess =</span>
-<span class="fc" id="L48">        groupService.hasAccess(request.affiliatedGroupIds(), request.targetGroupIds());</span>
+<span class="fc" id="L47">    boolean staffHasAccess =</span>
+<span class="fc" id="L48">        groupService.staffHasAccess(request.affiliatedGroupIds(), request.targetGroupIds());</span>
 
-<span class="fc" id="L50">    return ResponseEntity.ok(hasAccess);</span>
+<span class="fc" id="L50">    return ResponseEntity.ok(staffHasAccess);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

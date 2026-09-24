@@ -76,8 +76,8 @@ public class TransactionalGroupService implements GroupService {
   }
 
   @Override
-  public boolean hasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
-<span class="fc" id="L80">    return delegate.hasAccess(affiliatedIds, targetIds);</span>
+  public boolean staffHasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
+<span class="fc" id="L80">    return delegate.staffHasAccess(affiliatedIds, targetIds);</span>
   }
 
   @Override
