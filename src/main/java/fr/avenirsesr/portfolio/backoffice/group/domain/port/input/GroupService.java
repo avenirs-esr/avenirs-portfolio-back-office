@@ -42,5 +42,7 @@ public interface GroupService {
 
   boolean staffHasAccess(List<UUID> affiliatedIds, List<UUID> targetIds);
 
+  List<UUID> studentAccessibleIds(List<UUID> affiliatedIds);
+
   void delete(UUID id);
 }

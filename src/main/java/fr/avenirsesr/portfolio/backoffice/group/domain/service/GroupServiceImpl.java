@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -218,6 +219,25 @@ public class GroupServiceImpl implements GroupService {
     }
 
     return false;
+  }
+
+  @Override
+  public List<UUID> studentAccessibleIds(List<UUID> affiliatedIds) {
+    List<UUID> distinctAffiliatedIds = affiliatedIds.stream().distinct().toList();
+    List<Group> affiliated = groupRepository.findAllById(distinctAffiliatedIds);
+    if (affiliated.size() != distinctAffiliatedIds.size()) {
+      throw new GroupNotFoundException();
+    }
+
+    Set<UUID> accessibleIds = new LinkedHashSet<>();
+    for (Group group : affiliated) {
+      Optional<Group> current = Optional.of(group);
+      while (current.isPresent() && accessibleIds.add(current.get().getId())) {
+        current = current.get().getParent();
+      }
+    }
+
+    return new ArrayList<>(accessibleIds);
   }
 
   @Override

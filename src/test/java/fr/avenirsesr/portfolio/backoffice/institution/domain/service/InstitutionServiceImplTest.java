@@ -611,4 +611,116 @@ class InstitutionServiceImplTest {
 
     BddLogger.then("it should throw InstitutionNotFoundException");
   }
+
+  @Test
+  void shouldReturnOwnId_whenAffiliatedInstitutionHasNoParent() {
+    BddLogger.given("an affiliated institution with no parent");
+    UUID institutionId = UUID.randomUUID();
+    Institution institution =
+        Institution.create(
+            institutionId,
+            "Université de Rennes",
+            "0350001A",
+            "siret",
+            "siren",
+            EInstitutionType.PRIMARY,
+            null);
+    when(institutionRepository.findAllById(List.of(institutionId)))
+        .thenReturn(List.of(institution));
+
+    BddLogger.when("resolving accessible ids for that affiliation");
+    List<UUID> result = service.studentAccessibleIds(List.of(institutionId));
+
+    BddLogger.then("it should return only its own id");
+    assertEquals(List.of(institutionId), result);
+  }
+
+  @Test
+  void shouldReturnIdAndParent_whenAffiliatedInstitutionHasAParent() {
+    BddLogger.given("a secondary institution affiliated to a student, with a primary parent");
+    UUID parentId = UUID.randomUUID();
+    Institution parent =
+        Institution.create(
+            parentId,
+            "Université de Rennes",
+            "0350001A",
+            "siret",
+            "siren",
+            EInstitutionType.PRIMARY,
+            null);
+    UUID childId = UUID.randomUUID();
+    Institution child =
+        Institution.create(
+            childId,
+            "Université de Rennes - IUT",
+            "0350002B",
+            "siret",
+            "siren",
+            EInstitutionType.SECONDARY,
+            parent);
+    when(institutionRepository.findAllById(List.of(childId))).thenReturn(List.of(child));
+
+    BddLogger.when("resolving accessible ids for that affiliation");
+    List<UUID> result = service.studentAccessibleIds(List.of(childId));
+
+    BddLogger.then("it should return both the secondary and its primary institution");
+    assertEquals(List.of(childId, parentId), result);
+  }
+
+  @Test
+  void shouldDeduplicateIds_whenAffiliatedInstitutionsShareAParent() {
+    BddLogger.given("two affiliated secondary institutions sharing the same primary parent");
+    UUID parentId = UUID.randomUUID();
+    Institution parent =
+        Institution.create(
+            parentId,
+            "Université de Rennes",
+            "0350001A",
+            "siret",
+            "siren",
+            EInstitutionType.PRIMARY,
+            null);
+    UUID firstChildId = UUID.randomUUID();
+    Institution firstChild =
+        Institution.create(
+            firstChildId,
+            "Université de Rennes - IUT",
+            "0350002B",
+            "siret",
+            "siren",
+            EInstitutionType.SECONDARY,
+            parent);
+    UUID secondChildId = UUID.randomUUID();
+    Institution secondChild =
+        Institution.create(
+            secondChildId,
+            "Université de Rennes - UFR",
+            "0350003C",
+            "siret",
+            "siren",
+            EInstitutionType.SECONDARY,
+            parent);
+    when(institutionRepository.findAllById(List.of(firstChildId, secondChildId)))
+        .thenReturn(List.of(firstChild, secondChild));
+
+    BddLogger.when("resolving accessible ids for both affiliations");
+    List<UUID> result = service.studentAccessibleIds(List.of(firstChildId, secondChildId));
+
+    BddLogger.then("it should return each id once, including the shared parent");
+    assertEquals(List.of(firstChildId, parentId, secondChildId), result);
+  }
+
+  @Test
+  void
+      shouldThrowInstitutionNotFoundException_whenResolvingAccessibleIds_withUnknownAffiliatedId() {
+    BddLogger.given("an affiliated id that does not match any institution");
+    UUID unknownId = UUID.randomUUID();
+    when(institutionRepository.findAllById(List.of(unknownId))).thenReturn(List.of());
+
+    BddLogger.when("resolving accessible ids for that unknown affiliation");
+    assertThrows(
+        InstitutionNotFoundException.class, () -> service.studentAccessibleIds(List.of(unknownId)));
+
+    BddLogger.then("it should throw InstitutionNotFoundException");
+  }
 }
