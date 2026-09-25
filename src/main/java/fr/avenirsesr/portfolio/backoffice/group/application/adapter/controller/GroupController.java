@@ -1,19 +1,14 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 
-import fr.avenirsesr.portfolio.backoffice.group.application.adapter.dto.GroupAccessCheckRequest;
-import fr.avenirsesr.portfolio.backoffice.group.application.adapter.dto.GroupAccessibleIdsRequest;
 import fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper.GroupApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupDTO;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,26 +32,5 @@ public class GroupController {
     log.debug("Getting program of group for id: {}", id);
 
     return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findProgramOf(id)));
-  }
-
-  @PostMapping("/staff/access-check")
-  public ResponseEntity<Boolean> staffAccessCheck(@RequestBody GroupAccessCheckRequest request) {
-    log.debug(
-        "Checking if staff has access to groups {} for affiliations {}",
-        request.targetGroupIds(),
-        request.affiliatedGroupIds());
-
-    boolean staffHasAccess =
-        groupService.staffHasAccess(request.affiliatedGroupIds(), request.targetGroupIds());
-
-    return ResponseEntity.ok(staffHasAccess);
-  }
-
-  @PostMapping("/student/accessible-ids")
-  public ResponseEntity<List<UUID>> studentAccessibleIds(
-      @RequestBody GroupAccessibleIdsRequest request) {
-    log.debug("Resolving accessible group ids for affiliations {}", request.affiliatedGroupIds());
-
-    return ResponseEntity.ok(groupService.studentAccessibleIds(request.affiliatedGroupIds()));
   }
 }

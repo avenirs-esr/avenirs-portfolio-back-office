@@ -14,6 +14,7 @@ public class ExternalUserAffiliationApplicationMapper {
         affiliation.getExternalUser().getId(),
         affiliation.getInstitution().getId(),
         affiliation.getGroup() != null ? affiliation.getGroup().getId() : null,
+        affiliation.getCategory(),
         affiliation.getCreatedAt());
   }
 }

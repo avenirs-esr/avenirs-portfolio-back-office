@@ -1,0 +1,70 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="nathp" id="20260925121609-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="external_user_affiliation" columnName="category"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="external_user_affiliation">
+            <column name="category" type="VARCHAR(50)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="nathp" id="20260925121609-2">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_user_affiliation" columnName="category"/>
+        </preConditions>
+        <sql>
+            UPDATE external_user_affiliation eua
+            SET category = euc.category
+            FROM external_user_category euc
+            WHERE eua.id_external_user = euc.id_external_user
+              AND eua.category IS NULL
+              AND (SELECT COUNT(*) FROM external_user_category c2 WHERE c2.id_external_user = eua.id_external_user) = 1;
+        </sql>
+    </changeSet>
+    <changeSet author="nathp" id="20260925121609-3">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_user_affiliation" columnName="category"/>
+        </preConditions>
+        <sql>
+            UPDATE external_user_affiliation eua
+            SET category = (
+                SELECT MIN(euc.category) FROM external_user_category euc WHERE euc.id_external_user = eua.id_external_user
+            )
+            WHERE eua.category IS NULL;
+        </sql>
+    </changeSet>
+    <changeSet author="nathp" id="20260925121609-4">
+        <preConditions onFail="MARK_RAN">
+            <uniqueConstraintExists constraintName="external_user_affiliation_uk" tableName="external_user_affiliation"/>
+        </preConditions>
+        <dropUniqueConstraint constraintName="external_user_affiliation_uk" tableName="external_user_affiliation"/>
+    </changeSet>
+    <changeSet author="nathp" id="20260925121609-5">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_user_affiliation" columnName="category"/>
+        </preConditions>
+        <sql>
+            INSERT INTO external_user_affiliation (id, created_at, updated_at, id_external_user, institution_id, group_id, category)
+            SELECT gen_random_uuid(), eua.created_at, eua.updated_at, eua.id_external_user, eua.institution_id, eua.group_id, euc.category
+            FROM external_user_affiliation eua
+            JOIN external_user_category euc ON euc.id_external_user = eua.id_external_user
+            WHERE euc.category &lt;&gt; eua.category;
+        </sql>
+    </changeSet>
+    <changeSet author="nathp" id="20260925121609-6">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_user_affiliation" columnName="category"/>
+        </preConditions>
+        <addNotNullConstraint tableName="external_user_affiliation" columnName="category" columnDataType="VARCHAR(50)"/>
+    </changeSet>
+    <changeSet author="nathp" id="20260925121609-7">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="external_user_affiliation_uk" tableName="external_user_affiliation"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint columnNames="id_external_user, institution_id, group_id, category" constraintName="external_user_affiliation_uk" tableName="external_user_affiliation"/>
+    </changeSet>
+</databaseChangeLog>
