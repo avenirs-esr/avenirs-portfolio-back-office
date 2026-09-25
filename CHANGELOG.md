@@ -21,6 +21,9 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
       version carries a unique constraint, so two concurrent publications cannot land on the same one.
     - New properties `avenirs.api.base-url` (default `http://localhost:10000`) and `avenirs.api.file.endpoint`
       (default `${avenirs.api.base-url}/files`). They must point at the portfolio api of the environment.
+    - The external user referential seeds one more account, `super.admin@university.com`, declared as
+      `ROLE_SUPER_ADMIN` by `seeder.rbac.super-admin-logins` in the security service. Reseed to get it. The already
+      seeded `aya.germain@university.com` carries that role too.
 
 ## [v1.0.6] - 2026-09-11
 
