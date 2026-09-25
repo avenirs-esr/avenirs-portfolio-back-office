@@ -4,7 +4,9 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.i
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service.ExternalUserAffiliationServiceImpl;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
+import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,15 +19,19 @@ public class ExternalUserAffiliationServiceConfig {
   private final ExternalUserRepository externalUserRepository;
   private final InstitutionRepository institutionRepository;
   private final GroupRepository groupRepository;
+  private final InstitutionService institutionService;
+  private final GroupService groupService;
 
   @Bean
   public ExternalUserAffiliationService externalUserAffiliationService() {
-<span class="fc" id="L23">    return new TransactionalExternalUserAffiliationService(</span>
+<span class="fc" id="L27">    return new TransactionalExternalUserAffiliationService(</span>
         new ExternalUserAffiliationServiceImpl(
             externalUserAffiliationRepository,
             externalUserRepository,
             institutionRepository,
-            groupRepository));
+            groupRepository,
+            institutionService,
+            groupService));
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
