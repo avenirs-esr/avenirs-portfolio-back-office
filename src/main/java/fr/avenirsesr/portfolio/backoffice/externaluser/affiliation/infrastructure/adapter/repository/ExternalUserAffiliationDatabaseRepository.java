@@ -5,6 +5,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.o
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.mapper.ExternalUserAffiliationMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.model.ExternalUserAffiliationEntity;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.specification.ExternalUserAffiliationSpecification;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import java.util.List;
 import java.util.Optional;
@@ -32,12 +33,24 @@ public class ExternalUserAffiliationDatabaseRepository
   }
 
   @Override
-  public Optional<ExternalUserAffiliation> findByExternalUserIdAndInstitutionIdAndGroupId(
-      UUID externalUserId, UUID institutionId, UUID groupId) {
+  public List<ExternalUserAffiliation> findAllByExternalUserIdAndCategory(
+      UUID externalUserId, EUserCategory category) {
+    Specification<ExternalUserAffiliationEntity> specification =
+        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))
+            .and(ExternalUserAffiliationSpecification.withCategory(category));
+
+    return findAll(specification);
+  }
+
+  @Override
+  public Optional<ExternalUserAffiliation>
+      findByExternalUserIdAndInstitutionIdAndGroupIdAndCategory(
+          UUID externalUserId, UUID institutionId, UUID groupId, EUserCategory category) {
     Specification<ExternalUserAffiliationEntity> specification =
         Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))
             .and(ExternalUserAffiliationSpecification.withInstitutionId(institutionId))
-            .and(ExternalUserAffiliationSpecification.withGroupId(groupId));
+            .and(ExternalUserAffiliationSpecification.withGroupId(groupId))
+            .and(ExternalUserAffiliationSpecification.withCategory(category));
 
     return findAll(specification).stream().findFirst();
   }

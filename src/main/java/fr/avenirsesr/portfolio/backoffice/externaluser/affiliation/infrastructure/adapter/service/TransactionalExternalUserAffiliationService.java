@@ -3,7 +3,9 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructu
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -20,8 +22,8 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Override
   @Transactional
   public ExternalUserAffiliation addAffiliation(
-      UUID externalUserId, UUID institutionId, UUID groupId) {
-    return delegate.addAffiliation(externalUserId, institutionId, groupId);
+      UUID externalUserId, UUID institutionId, UUID groupId, EUserCategory category) {
+    return delegate.addAffiliation(externalUserId, institutionId, groupId, category);
   }
 
   @Override
@@ -40,5 +42,16 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   public ExternalUserAffiliationImportSummary createAll(
       List<ExternalUserAffiliationData> affiliations) {
     return delegate.createAll(affiliations);
+  }
+
+  @Override
+  public boolean staffHasAccess(
+      String eppn, List<UUID> targetInstitutionIds, List<UUID> targetGroupIds) {
+    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);
+  }
+
+  @Override
+  public ExternalUserAffiliationScope studentScope(String eppn) {
+    return delegate.studentScope(eppn);
   }
 }

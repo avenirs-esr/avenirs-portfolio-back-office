@@ -1,1166 +1,1411 @@
 [
   {
     "eppn": "lucas.tessier@university.com",
-    "institutionHais": ["0350001A", "0330001C"],
-    "groupIdSiScos": ["10000003", "10000005"]
+    "category": "STUDENT",
+    "institutionHais": ["0330001C", "0350001A"],
+    "groupIdSiScos": ["10000003"]
+  },
+  {
+    "eppn": "lucas.tessier@university.com",
+    "category": "STAFF",
+    "institutionHais": ["0330001C"],
+    "groupIdSiScos": []
   },
   {
     "eppn": "lucas.tessier.staff@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C", "0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "arthur.lambert@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "sophie.charpentier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "ethan.perrin@university.com",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "camille.fournier@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "anais.marchand@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "valentin.favre@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "lina.boucher@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "jules.carpentier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "eva.lamy@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "martin.fabre@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "zoe.cousin@university.com",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "noah.lefebvre@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "aya.paris@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "tom.renaud@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "sarah.baron@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "lea.richard@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "adam.hubert@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "emma.gaillard@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "hugo.mahe@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "chloe.lebrun@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "louis.arnaud@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "ines.blanc@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "nathan.rolland@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "manon.hoareau@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "alex.poirier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "julie.teixeira@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "maxime.grondin@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "paul.lemoine@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "clara.renault@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "baptiste.royer@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "ines.barre@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "alexandre.perret@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "marine.carlier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "yaniss.rodier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "maya.peltier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "olivier.bodin@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "salome.thierry@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "timeo.bertin@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "giulia.laporte@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "malo.riviere@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "elisa.monnier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "mathis.descamps@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "camille.delorme@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "thelma.normand@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "noah.maury@university.com",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "louna.barreau@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "leo.ledoux@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "ambre.becker@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "oscar.mary@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "agathe.peron@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "sami.barbier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "elodie.chretien@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "evan.raynaud@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "helena.weber@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "simon.roy@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "nina.philippe@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "ilian.gilbert@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "axel.poulain@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "jade.caillet@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "david.camus@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "lise.bonneau@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "yanis.prevost@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "lola.brunet@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "ismael.aubert@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "eline.guillot@university.com",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "leo.blot@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "nour.denis@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "alicia.navarro@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "mael.masson@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "louise.lacombe@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "victor.schmitt@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "anael.hardy@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "sofia.godard@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "nolan.guichard@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "mila.bruneau@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "ilyes.lapeyre@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "romy.launay@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "iris.barre@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "maelys.descartes@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "elias.langlois@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "mya.jacquet@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "owen.parent@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "nora.thiery@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "idriss.pineau@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "lila.daniel@university.com",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "eden.perrault@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "talia.hoquet@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "marin.legendre@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "nils.chauvet@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "ava.perrot@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "titouan.savary@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "dorian.poulain@university.com",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "jenna.marchal@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "ali.meunier@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "selena.pineau@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "ilan.picard@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "maud.bonnard@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "kenzo.roche@university.com",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "aya.germain@university.com",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Etu1L1.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu2L1.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu3L1.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu4L2.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu5L3.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu6M1.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu7M1.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu8M1.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu9M2.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu10FMUL.AMU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Staff1SUIO.AMU",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff2SUIO.AMU",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff3SUIO.AMU",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens1.AMU",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens2.AMU",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens3.AMU",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Etu1L1.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu2L1.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu3L1.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu4L2.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu5L3.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu6M1.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu7M1.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu8M1.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu9M2.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu10FMUL.UBO",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Staff1SUIO.UBO",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff2SUIO.UBO",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff3SUIO.UBO",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens1.UBO",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens2.UBO",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens3.UBO",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Etu1L1.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu2L1.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu3L1.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu4L2.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu5L3.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu6M1.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu7M1.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu8M1.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu9M2.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu10FMUL.USMB",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Staff1SUIO.USMB",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff2SUIO.USMB",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff3SUIO.USMB",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens1.USMB",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens2.USMB",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens3.USMB",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Etu1L1.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu2L1.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu3L1.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu4L2.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu5L3.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu6M1.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu7M1.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu8M1.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu9M2.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu10FMUL.ULILLE",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Staff1SUIO.ULILLE",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff2SUIO.ULILLE",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff3SUIO.ULILLE",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens1.ULILLE",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens2.ULILLE",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens3.ULILLE",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Etu1L1.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu2L1.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu3L1.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu4L2.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu5L3.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu6M1.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu7M1.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu8M1.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu9M2.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu10FMUL.RPLTK",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Staff1SUIO.RPLTK",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff2SUIO.RPLTK",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff3SUIO.RPLTK",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens1.RPLTK",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens2.RPLTK",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens3.RPLTK",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Etu1L1.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu2L1.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu3L1.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu4L2.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu5L3.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu6M1.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu7M1.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu8M1.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu9M2.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu10FMUL.UTLN",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Staff1SUIO.UTLN",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff2SUIO.UTLN",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff3SUIO.UTLN",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens1.UTLN",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens2.UTLN",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens3.UTLN",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Etu1L1.NU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu2L1.NU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu3L1.NU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu4L2.NU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu5L3.NU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu6M1.NU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu7M1.NU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu8M1.NU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Etu9M2.NU",
+    "category": "STUDENT",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": ["10000005"]
   },
   {
     "eppn": "Etu10FMUL.NU",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "Staff1SUIO.NU",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff2SUIO.NU",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff3SUIO.NU",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens1.NU",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens2.NU",
+    "category": "STAFF",
     "institutionHais": ["0330001C"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens3.NU",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "845348d9-fca9-4709-a73b-319aa002d2a3@qualif.recia.dev",
-    "institutionHais": ["0350001A"],
+    "category": "STUDENT",
+    "institutionHais": [],
     "groupIdSiScos": ["10000003"]
   },
   {
+    "eppn": "845348d9-fca9-4709-a73b-319aa002d2a3@qualif.recia.dev",
+    "category": "STAFF",
+    "institutionHais": ["0750001A"],
+    "groupIdSiScos": []
+  },
+  {
     "eppn": "f4aaebc1-ddca-48bf-b3b1-fa024247f4c2@qualif.recia.dev",
+    "category": "STUDENT",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": ["10000003"]
   },
   {
     "eppn": "05a6b849-821e-4ca4-942e-f4f3bf38ac1b@qualif.recia.dev",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Etu1L1.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu2L1.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu3L1.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu4L2.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu5L3.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu6M1.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu7M1.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu8M1.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu9M2.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Etu10FMUL.ANR",
+    "category": "STUDENT",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": ["10000007"]
   },
   {
     "eppn": "Staff1SUIO.ANR",
+    "category": "STAFF",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff2SUIO.ANR",
+    "category": "STAFF",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Staff3SUIO.ANR",
+    "category": "STAFF",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens1.ANR",
+    "category": "STAFF",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens2.ANR",
+    "category": "STAFF",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "Ens3.ANR",
+    "category": "STAFF",
     "institutionHais": ["0750001A"],
     "groupIdSiScos": []
   },
   {
     "eppn": "super.admin@university.com",
+    "category": "STAFF",
     "institutionHais": ["0350001A"],
     "groupIdSiScos": []
   }

@@ -72,14 +72,14 @@ public class ExternalUserAffiliationSeeder {
 
       for (String institutionHai : data.institutionHais()) {
         externalUserAffiliationService.addAffiliation(
-            externalUserId, resolveInstitutionId(institutionHai), null);
+            externalUserId, resolveInstitutionId(institutionHai), null, data.category());
         count++;
       }
 
       for (String groupIdSiSco : data.groupIdSiScos()) {
         Group group = resolveGroup(groupIdSiSco);
         externalUserAffiliationService.addAffiliation(
-            externalUserId, group.getInstitution().getId(), group.getId());
+            externalUserId, group.getInstitution().getId(), group.getId(), data.category());
         count++;
       }
     }
@@ -95,30 +95,48 @@ public class ExternalUserAffiliationSeeder {
 
     int count = 0;
     for (ExternalUser externalUser : savedExternalUsers) {
-      boolean isStaff = externalUser.getCategories().contains(EUserCategory.STAFF);
-
-      if (!savedGroupIds.isEmpty() && !isStaff) {
-        UUID groupId = dataGenerator.with("group").pickIn(savedGroupIds);
-        Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
-        externalUserAffiliationService.addAffiliation(
-            externalUser.getId(), group.getInstitution().getId(), groupId);
-        count++;
-        continue;
+      if (externalUser.getCategories().contains(EUserCategory.STUDENT)) {
+        count += seedFakeStudentAffiliation(externalUser, savedGroupIds, savedInstitutionIds);
       }
+      if (externalUser.getCategories().contains(EUserCategory.STAFF)) {
+        count += seedFakeStaffAffiliations(externalUser, savedInstitutionIds);
+      }
+    }
 
+    return count;
+  }
+
+  private int seedFakeStudentAffiliation(
+      ExternalUser externalUser, List<UUID> savedGroupIds, List<UUID> savedInstitutionIds) {
+    if (savedGroupIds.isEmpty()) {
       UUID institutionId = dataGenerator.with("institution").pickIn(savedInstitutionIds);
-      externalUserAffiliationService.addAffiliation(externalUser.getId(), institutionId, null);
-      count++;
+      externalUserAffiliationService.addAffiliation(
+          externalUser.getId(), institutionId, null, EUserCategory.STUDENT);
+      return 1;
+    }
 
-      List<UUID> otherInstitutionIds =
-          savedInstitutionIds.stream().filter(id -> !id.equals(institutionId)).toList();
-      if (!otherInstitutionIds.isEmpty() && dataGenerator.with("multiAffiliation").bool()) {
-        UUID secondInstitutionId =
-            dataGenerator.with("secondInstitution").pickIn(otherInstitutionIds);
-        externalUserAffiliationService.addAffiliation(
-            externalUser.getId(), secondInstitutionId, null);
-        count++;
-      }
+    UUID groupId = dataGenerator.with("group").pickIn(savedGroupIds);
+    Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
+    externalUserAffiliationService.addAffiliation(
+        externalUser.getId(), group.getInstitution().getId(), groupId, EUserCategory.STUDENT);
+    return 1;
+  }
+
+  private int seedFakeStaffAffiliations(ExternalUser externalUser, List<UUID> savedInstitutionIds) {
+    int count = 0;
+    UUID institutionId = dataGenerator.with("institution").pickIn(savedInstitutionIds);
+    externalUserAffiliationService.addAffiliation(
+        externalUser.getId(), institutionId, null, EUserCategory.STAFF);
+    count++;
+
+    List<UUID> otherInstitutionIds =
+        savedInstitutionIds.stream().filter(id -> !id.equals(institutionId)).toList();
+    if (!otherInstitutionIds.isEmpty() && dataGenerator.with("multiAffiliation").bool()) {
+      UUID secondInstitutionId =
+          dataGenerator.with("secondInstitution").pickIn(otherInstitutionIds);
+      externalUserAffiliationService.addAffiliation(
+          externalUser.getId(), secondInstitutionId, null, EUserCategory.STAFF);
+      count++;
     }
 
     return count;

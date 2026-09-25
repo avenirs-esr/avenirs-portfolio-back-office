@@ -4,7 +4,9 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.i
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service.ExternalUserAffiliationServiceImpl;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
+import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,8 @@ public class ExternalUserAffiliationServiceConfig {
   private final ExternalUserRepository externalUserRepository;
   private final InstitutionRepository institutionRepository;
   private final GroupRepository groupRepository;
+  private final InstitutionService institutionService;
+  private final GroupService groupService;
 
   @Bean
   public ExternalUserAffiliationService externalUserAffiliationService() {
@@ -25,6 +29,8 @@ public class ExternalUserAffiliationServiceConfig {
             externalUserAffiliationRepository,
             externalUserRepository,
             institutionRepository,
-            groupRepository));
+            groupRepository,
+            institutionService,
+            groupService));
   }
 }
