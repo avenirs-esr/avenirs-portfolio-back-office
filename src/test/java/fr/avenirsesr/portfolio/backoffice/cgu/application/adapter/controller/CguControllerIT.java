@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -122,6 +123,38 @@ class CguControllerIT extends ContainerConfigurationTest {
         .andExpect(status().isUnauthorized());
 
     BddLogger.and("nothing is uploaded");
+    verifyNoInteractions(fileClient);
+  }
+
+  @Test
+  void shouldReturnTheLastPublishedTermsOfUseWithoutAuthentication() throws Exception {
+    BddLogger.given("two published terms of use versions");
+    UUID outdatedFileId = UUID.randomUUID();
+    UUID latestFileId = UUID.randomUUID();
+    cguRepository.save(Cgu.create(outdatedFileId, lastPublishedVersion() + 1));
+    Cgu latest = cguRepository.save(Cgu.create(latestFileId, lastPublishedVersion() + 1));
+    when(fileClient.fetchContent(latestFileId)).thenReturn(CONTENT);
+
+    BddLogger.when("reading " + BASE_PATH + "/latest without any credentials");
+    BddLogger.then("200 OK is returned with the highest version and its content");
+    mockMvc
+        .perform(get(BASE_PATH + "/latest"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(latest.getId().toString())))
+        .andExpect(jsonPath("$.version", is(latest.getVersion())))
+        .andExpect(jsonPath("$.uploadedAt").exists())
+        .andExpect(jsonPath("$.content", is(new String(CONTENT, StandardCharsets.UTF_8))));
+  }
+
+  @Test
+  void shouldReturnNotFoundWhenNoTermsOfUseWasPublishedYet() throws Exception {
+    BddLogger.given("no published terms of use version");
+
+    BddLogger.when("reading " + BASE_PATH + "/latest");
+    BddLogger.then("404 NOT FOUND is returned");
+    mockMvc.perform(get(BASE_PATH + "/latest")).andExpect(status().isNotFound());
+
+    BddLogger.and("no content is fetched");
     verifyNoInteractions(fileClient);
   }
 }
