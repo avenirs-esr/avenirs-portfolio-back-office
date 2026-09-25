@@ -26,6 +26,9 @@ public class ApiFileClient implements FileClient {
   @Value("${avenirs.api.file.endpoint}")
   private String fileEndpoint;
 
+  @Value("${avenirs.api.storage.endpoint}")
+  private String storageEndpoint;
+
   public ApiFileClient(WebClient webClient, HttpServletRequest currentRequest) {
     this.webClient = webClient;
     this.currentRequest = currentRequest;
@@ -62,6 +65,18 @@ public class ApiFileClient implements FileClient {
         .headers(this::forwardLoggedInUser)
         .retrieve()
         .bodyToMono(FileDTO.class)
+        .block();
+  }
+
+  @Override
+  public byte[] fetchContent(UUID fileId) {
+    log.debug("Fetching the content of file {} from the portfolio api", fileId);
+
+    return webClient
+        .get()
+        .uri(storageEndpoint + "/" + fileId)
+        .retrieve()
+        .bodyToMono(byte[].class)
         .block();
   }
 

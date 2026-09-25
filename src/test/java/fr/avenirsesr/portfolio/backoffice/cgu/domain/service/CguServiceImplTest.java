@@ -7,8 +7,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import fr.avenirsesr.portfolio.backoffice.cgu.domain.exception.CguNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.cgu.domain.model.Cgu;
 import fr.avenirsesr.portfolio.backoffice.cgu.domain.port.output.repository.CguRepository;
+import fr.avenirsesr.portfolio.common.cgu.application.adapter.dto.CguDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.client.FileClient;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
@@ -107,5 +109,36 @@ class CguServiceImplTest {
     assertThrows(FileTypeNotSupportedException.class, () -> service.publish(request));
 
     verifyNoInteractions(fileClient, cguRepository);
+  }
+
+  @Test
+  void shouldReturnTheLastPublishedTermsOfUseWithItsContent() {
+    BddLogger.given("a published terms of use version");
+    UUID fileId = UUID.randomUUID();
+    Cgu published = Cgu.create(fileId, 3);
+    when(cguRepository.findLatest()).thenReturn(Optional.of(published));
+    when(fileClient.fetchContent(fileId))
+        .thenReturn("<html>cgu</html>".getBytes(StandardCharsets.UTF_8));
+
+    BddLogger.when("reading the latest version");
+    CguDTO result = service.getLatest();
+
+    BddLogger.then("its identifier, version, upload date and content are returned");
+    assertThat(result.id()).isEqualTo(published.getId());
+    assertThat(result.version()).isEqualTo(3);
+    assertThat(result.uploadedAt()).isEqualTo(published.getUploadedAt());
+    assertThat(result.content()).isEqualTo("<html>cgu</html>");
+  }
+
+  @Test
+  void shouldFailWhenNoTermsOfUseWasPublishedYet() {
+    BddLogger.given("no published terms of use version");
+    when(cguRepository.findLatest()).thenReturn(Optional.empty());
+
+    BddLogger.when("reading the latest version");
+    BddLogger.then("it should fail without reaching the file client");
+    assertThrows(CguNotFoundException.class, () -> service.getLatest());
+
+    verifyNoInteractions(fileClient);
   }
 }
