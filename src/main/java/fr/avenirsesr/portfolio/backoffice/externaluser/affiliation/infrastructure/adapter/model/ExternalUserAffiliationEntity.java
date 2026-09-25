@@ -3,8 +3,12 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructu
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.model.ExternalUserEntity;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model.GroupEntity;
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.model.AvenirsBaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -24,7 +28,7 @@ import org.hibernate.annotations.OnDeleteAction;
     uniqueConstraints = {
       @UniqueConstraint(
           name = "external_user_affiliation_uk",
-          columnNames = {"id_external_user", "institution_id", "group_id"})
+          columnNames = {"id_external_user", "institution_id", "group_id", "category"})
     })
 @NoArgsConstructor
 @Getter
@@ -44,17 +48,23 @@ public class ExternalUserAffiliationEntity extends AvenirsBaseEntity {
   @JoinColumn(name = "group_id")
   private GroupEntity group;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "category", nullable = false)
+  private EUserCategory category;
+
   private ExternalUserAffiliationEntity(
       UUID id,
       ExternalUserEntity externalUser,
       InstitutionEntity institution,
       GroupEntity group,
+      EUserCategory category,
       Instant createdAt,
       Instant updatedAt) {
     this.setId(id);
     this.externalUser = externalUser;
     this.institution = institution;
     this.group = group;
+    this.category = category;
     this.setCreatedAt(createdAt);
     this.setUpdatedAt(updatedAt);
   }
@@ -64,9 +74,10 @@ public class ExternalUserAffiliationEntity extends AvenirsBaseEntity {
       ExternalUserEntity externalUser,
       InstitutionEntity institution,
       GroupEntity group,
+      EUserCategory category,
       Instant createdAt,
       Instant updatedAt) {
     return new ExternalUserAffiliationEntity(
-        id, externalUser, institution, group, createdAt, updatedAt);
+        id, externalUser, institution, group, category, createdAt, updatedAt);
   }
 }

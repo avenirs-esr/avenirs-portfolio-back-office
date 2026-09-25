@@ -1,19 +1,14 @@
 package fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller;
 
-import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.InstitutionAccessCheckRequest;
-import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.InstitutionAccessibleIdsRequest;
 import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.mapper.InstitutionApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.common.institution.application.adapter.dto.InstitutionDTO;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,31 +26,5 @@ public class InstitutionController {
 
     return ResponseEntity.ok(
         InstitutionApplicationMapper.toInstitutionDTO(institutionService.findById(id)));
-  }
-
-  @PostMapping("/staff/access-check")
-  public ResponseEntity<Boolean> staffAccessCheck(
-      @RequestBody InstitutionAccessCheckRequest request) {
-    log.debug(
-        "Checking if staff has access to institutions {} for affiliations {}",
-        request.targetInstitutionIds(),
-        request.affiliatedInstitutionIds());
-
-    boolean staffHasAccess =
-        institutionService.staffHasAccess(
-            request.affiliatedInstitutionIds(), request.targetInstitutionIds());
-
-    return ResponseEntity.ok(staffHasAccess);
-  }
-
-  @PostMapping("/student/accessible-ids")
-  public ResponseEntity<List<UUID>> studentAccessibleIds(
-      @RequestBody InstitutionAccessibleIdsRequest request) {
-    log.debug(
-        "Resolving accessible institution ids for affiliations {}",
-        request.affiliatedInstitutionIds());
-
-    return ResponseEntity.ok(
-        institutionService.studentAccessibleIds(request.affiliatedInstitutionIds()));
   }
 }

@@ -26,6 +26,7 @@ public class ExternalUserAffiliationMapper
         ExternalUserMapper.INSTANCE.fromDomain(affiliation.getExternalUser()),
         InstitutionMapper.INSTANCE.fromDomain(affiliation.getInstitution()),
         groupEntity,
+        affiliation.getCategory(),
         affiliation.getCreatedAt(),
         affiliation.getUpdatedAt());
   }
@@ -41,6 +42,7 @@ public class ExternalUserAffiliationMapper
         entity.getUpdatedAt(),
         ExternalUserMapper.INSTANCE.toDomain(entity.getExternalUser()),
         InstitutionMapper.INSTANCE.toDomain(entity.getInstitution()),
-        group);
+        group,
+        entity.getCategory());
   }
 }

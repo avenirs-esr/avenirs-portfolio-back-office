@@ -53,7 +53,7 @@ public class ExternalUserAffiliationController {
 
     var affiliation =
         externalUserAffiliationService.addAffiliation(
-            externalUserId, request.institutionId(), request.groupId());
+            externalUserId, request.institutionId(), request.groupId(), request.category());
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(ExternalUserAffiliationApplicationMapper.toExternalUserAffiliationDTO(affiliation));

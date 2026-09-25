@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.specification;
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.model.ExternalUserAffiliationEntity;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -22,5 +23,9 @@ public class ExternalUserAffiliationSpecification {
         groupId == null
             ? criteriaBuilder.isNull(root.get("group"))
             : criteriaBuilder.equal(root.get("group").get("id"), groupId);
+  }
+
+  public static Specification<ExternalUserAffiliationEntity> withCategory(EUserCategory category) {
+    return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("category"), category);
   }
 }
