@@ -90,7 +90,7 @@ public abstract class GenericJpaRepositoryAdapter&lt;
 
   @Override
   public List&lt;D&gt; findAllById(List&lt;UUID&gt; ids) {
-<span class="nc" id="L93">    return jpaRepository.findAllById(ids).stream().map(mapper::toDomain).toList();</span>
+<span class="fc" id="L93">    return jpaRepository.findAllById(ids).stream().map(mapper::toDomain).toList();</span>
   }
 
   protected List&lt;D&gt; findAllById(List&lt;UUID&gt; ids, FetchGraph fetchGraph) {
