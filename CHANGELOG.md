@@ -7,6 +7,22 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
 ---
 
 
+## [v1.0.8] - 2026-09-25
+
+- **Terms of use consultation**
+    - New endpoint `GET back-office/cgu/latest`, open without authentication, which returns the highest published
+      version of the terms of use: its identifier, its version, its upload date and the html content itself, read from
+      the api through the `FileClient` contract of `avenirs-portfolio-common` (#2691).
+    - It answers `404 CGU_NOT_FOUND` as long as no version has been published.
+    - The endpoint carries its own path segment rather than answering on `back-office/cgu`, because
+      `security.permit-all-paths` opens a path prefix for every method: opening `back-office/cgu` would have opened the
+      upload with it.
+- **Update process**
+    - New property `avenirs.api.storage.endpoint` (default `${avenirs.api.base-url}/storage`), the public path the api
+      serves file contents on.
+    - `security.permit-all-paths` gained `/back-office/cgu/latest`. Environments overriding that property have to add
+      it, otherwise the front gets a 401 on the terms of use.
+
 ## [v1.0.7] - 2026-09-24
 
 - **Terms of use upload**

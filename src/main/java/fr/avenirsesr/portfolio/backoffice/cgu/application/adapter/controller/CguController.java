@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.cgu.application.adapter.controller;
 import static fr.avenirsesr.portfolio.common.file.application.adapter.MultipartFileReader.readBytes;
 
 import fr.avenirsesr.portfolio.backoffice.cgu.domain.port.input.CguService;
+import fr.avenirsesr.portfolio.common.cgu.application.adapter.dto.CguDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,5 +37,12 @@ public class CguController {
                 file.getOriginalFilename(), file.getContentType(), readBytes(file), false));
 
     return ResponseEntity.status(HttpStatus.CREATED).body(published);
+  }
+
+  @GetMapping("/latest")
+  public ResponseEntity<CguDTO> getLatestCgu() {
+    log.debug("Received request to get the latest terms of use version");
+
+    return ResponseEntity.ok(cguService.getLatest());
   }
 }
