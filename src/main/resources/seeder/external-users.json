@@ -2318,5 +2318,15 @@
     "externalId": "ANR-ENS-LM-003",
     "source": "BACK_OFFICE",
     "status": "INACTIVE"
+  },
+  {
+    "eppn": "super.admin@university.com",
+    "firstName": "Super",
+    "lastName": "Admin",
+    "email": "super.admin@university.com",
+    "categories": ["STAFF"],
+    "externalId": "ADMIN-0001",
+    "source": "BACK_OFFICE",
+    "status": "ACTIVE"
   }
 ]
