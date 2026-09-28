@@ -26,68 +26,83 @@ public class ApiFileClient implements FileClient {
   @Value(&quot;${avenirs.api.file.endpoint}&quot;)
   private String fileEndpoint;
 
-<span class="fc" id="L29">  public ApiFileClient(WebClient webClient, HttpServletRequest currentRequest) {</span>
-<span class="fc" id="L30">    this.webClient = webClient;</span>
-<span class="fc" id="L31">    this.currentRequest = currentRequest;</span>
-<span class="fc" id="L32">  }</span>
+  @Value(&quot;${avenirs.api.storage.endpoint}&quot;)
+  private String storageEndpoint;
+
+<span class="fc" id="L32">  public ApiFileClient(WebClient webClient, HttpServletRequest currentRequest) {</span>
+<span class="fc" id="L33">    this.webClient = webClient;</span>
+<span class="fc" id="L34">    this.currentRequest = currentRequest;</span>
+<span class="fc" id="L35">  }</span>
 
   @Override
   public FileDTO upload(FileUploadRequest request) {
-<span class="nc" id="L36">    log.debug(&quot;Uploading file {} to the portfolio api&quot;, request.fileName());</span>
+<span class="nc" id="L39">    log.debug(&quot;Uploading file {} to the portfolio api&quot;, request.fileName());</span>
 
-<span class="nc" id="L38">    MultipartBodyBuilder body = new MultipartBodyBuilder();</span>
-<span class="nc" id="L39">    body.part(&quot;file&quot;, new ByteArrayResource(request.content()))</span>
-<span class="nc" id="L40">        .filename(request.fileName())</span>
-<span class="nc" id="L41">        .contentType(MediaType.parseMediaType(request.mimeType()));</span>
-<span class="nc" id="L42">    body.part(&quot;isRestricted&quot;, String.valueOf(request.isRestricted()));</span>
+<span class="nc" id="L41">    MultipartBodyBuilder body = new MultipartBodyBuilder();</span>
+<span class="nc" id="L42">    body.part(&quot;file&quot;, new ByteArrayResource(request.content()))</span>
+<span class="nc" id="L43">        .filename(request.fileName())</span>
+<span class="nc" id="L44">        .contentType(MediaType.parseMediaType(request.mimeType()));</span>
+<span class="nc" id="L45">    body.part(&quot;isRestricted&quot;, String.valueOf(request.isRestricted()));</span>
 
-<span class="nc" id="L44">    return webClient</span>
-<span class="nc" id="L45">        .post()</span>
-<span class="nc" id="L46">        .uri(fileEndpoint)</span>
-<span class="nc" id="L47">        .headers(this::forwardLoggedInUser)</span>
-<span class="nc" id="L48">        .contentType(MediaType.MULTIPART_FORM_DATA)</span>
-<span class="nc" id="L49">        .body(BodyInserters.fromMultipartData(body.build()))</span>
-<span class="nc" id="L50">        .retrieve()</span>
-<span class="nc" id="L51">        .bodyToMono(FileDTO.class)</span>
-<span class="nc" id="L52">        .block();</span>
+<span class="nc" id="L47">    return webClient</span>
+<span class="nc" id="L48">        .post()</span>
+<span class="nc" id="L49">        .uri(fileEndpoint)</span>
+<span class="nc" id="L50">        .headers(this::forwardLoggedInUser)</span>
+<span class="nc" id="L51">        .contentType(MediaType.MULTIPART_FORM_DATA)</span>
+<span class="nc" id="L52">        .body(BodyInserters.fromMultipartData(body.build()))</span>
+<span class="nc" id="L53">        .retrieve()</span>
+<span class="nc" id="L54">        .bodyToMono(FileDTO.class)</span>
+<span class="nc" id="L55">        .block();</span>
   }
 
   @Override
   public FileDTO get(UUID fileId) {
-<span class="nc" id="L57">    log.debug(&quot;Fetching file {} from the portfolio api&quot;, fileId);</span>
+<span class="nc" id="L60">    log.debug(&quot;Fetching file {} from the portfolio api&quot;, fileId);</span>
 
-<span class="nc" id="L59">    return webClient</span>
-<span class="nc" id="L60">        .get()</span>
-<span class="nc" id="L61">        .uri(fileEndpoint + &quot;/&quot; + fileId)</span>
-<span class="nc" id="L62">        .headers(this::forwardLoggedInUser)</span>
-<span class="nc" id="L63">        .retrieve()</span>
-<span class="nc" id="L64">        .bodyToMono(FileDTO.class)</span>
-<span class="nc" id="L65">        .block();</span>
+<span class="nc" id="L62">    return webClient</span>
+<span class="nc" id="L63">        .get()</span>
+<span class="nc" id="L64">        .uri(fileEndpoint + &quot;/&quot; + fileId)</span>
+<span class="nc" id="L65">        .headers(this::forwardLoggedInUser)</span>
+<span class="nc" id="L66">        .retrieve()</span>
+<span class="nc" id="L67">        .bodyToMono(FileDTO.class)</span>
+<span class="nc" id="L68">        .block();</span>
+  }
+
+  @Override
+  public byte[] fetchContent(UUID fileId) {
+<span class="nc" id="L73">    log.debug(&quot;Fetching the content of file {} from the portfolio api&quot;, fileId);</span>
+
+<span class="nc" id="L75">    return webClient</span>
+<span class="nc" id="L76">        .get()</span>
+<span class="nc" id="L77">        .uri(storageEndpoint + &quot;/&quot; + fileId)</span>
+<span class="nc" id="L78">        .retrieve()</span>
+<span class="nc" id="L79">        .bodyToMono(byte[].class)</span>
+<span class="nc" id="L80">        .block();</span>
   }
 
   @Override
   public void delete(UUID fileId) {
-<span class="nc" id="L70">    log.debug(&quot;Deleting file {} through the portfolio api&quot;, fileId);</span>
+<span class="nc" id="L85">    log.debug(&quot;Deleting file {} through the portfolio api&quot;, fileId);</span>
 
-<span class="nc" id="L72">    webClient</span>
-<span class="nc" id="L73">        .delete()</span>
-<span class="nc" id="L74">        .uri(fileEndpoint + &quot;/&quot; + fileId)</span>
-<span class="nc" id="L75">        .headers(this::forwardLoggedInUser)</span>
-<span class="nc" id="L76">        .retrieve()</span>
-<span class="nc" id="L77">        .toBodilessEntity()</span>
-<span class="nc" id="L78">        .block();</span>
-<span class="nc" id="L79">  }</span>
+<span class="nc" id="L87">    webClient</span>
+<span class="nc" id="L88">        .delete()</span>
+<span class="nc" id="L89">        .uri(fileEndpoint + &quot;/&quot; + fileId)</span>
+<span class="nc" id="L90">        .headers(this::forwardLoggedInUser)</span>
+<span class="nc" id="L91">        .retrieve()</span>
+<span class="nc" id="L92">        .toBodilessEntity()</span>
+<span class="nc" id="L93">        .block();</span>
+<span class="nc" id="L94">  }</span>
 
   private void forwardLoggedInUser(HttpHeaders headers) {
-<span class="nc" id="L82">    copyHeader(headers, AvenirsSecurityHeaders.SIGNED_CONTEXT);</span>
-<span class="nc" id="L83">    copyHeader(headers, AvenirsSecurityHeaders.CONTEXT_SIGNATURE);</span>
-<span class="nc" id="L84">  }</span>
+<span class="nc" id="L97">    copyHeader(headers, AvenirsSecurityHeaders.SIGNED_CONTEXT);</span>
+<span class="nc" id="L98">    copyHeader(headers, AvenirsSecurityHeaders.CONTEXT_SIGNATURE);</span>
+<span class="nc" id="L99">  }</span>
 
   private void copyHeader(HttpHeaders headers, String name) {
-<span class="nc" id="L87">    String value = currentRequest.getHeader(name);</span>
-<span class="nc bnc" id="L88" title="All 2 branches missed.">    if (value != null) {</span>
-<span class="nc" id="L89">      headers.set(name, value);</span>
+<span class="nc" id="L102">    String value = currentRequest.getHeader(name);</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">    if (value != null) {</span>
+<span class="nc" id="L104">      headers.set(name, value);</span>
     }
-<span class="nc" id="L91">  }</span>
+<span class="nc" id="L106">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
