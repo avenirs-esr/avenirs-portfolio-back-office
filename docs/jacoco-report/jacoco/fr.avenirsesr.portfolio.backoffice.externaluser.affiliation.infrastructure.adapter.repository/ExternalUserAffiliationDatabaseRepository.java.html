@@ -35,11 +35,11 @@ public class ExternalUserAffiliationDatabaseRepository
   @Override
   public List&lt;ExternalUserAffiliation&gt; findAllByExternalUserIdAndCategory(
       UUID externalUserId, EUserCategory category) {
-<span class="nc" id="L38">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
-<span class="nc" id="L39">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
-<span class="nc" id="L40">            .and(ExternalUserAffiliationSpecification.withCategory(category));</span>
+<span class="fc" id="L38">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
+<span class="fc" id="L39">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
+<span class="fc" id="L40">            .and(ExternalUserAffiliationSpecification.withCategory(category));</span>
 
-<span class="nc" id="L42">    return findAll(specification);</span>
+<span class="fc" id="L42">    return findAll(specification);</span>
   }
 
   @Override

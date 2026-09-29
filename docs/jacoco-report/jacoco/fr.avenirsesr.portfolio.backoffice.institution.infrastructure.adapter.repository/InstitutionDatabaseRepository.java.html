@@ -36,10 +36,10 @@ public class InstitutionDatabaseRepository
 
   @Override
   public List&lt;Institution&gt; findAll(UUID parentId, EInstitutionType type) {
-<span class="nc" id="L39">    Specification&lt;InstitutionEntity&gt; specification =</span>
-<span class="nc" id="L40">        Specification.where(InstitutionSpecification.withParentId(parentId))</span>
-<span class="nc" id="L41">            .and(InstitutionSpecification.withType(type));</span>
-<span class="nc" id="L42">    return findAll(specification);</span>
+<span class="fc" id="L39">    Specification&lt;InstitutionEntity&gt; specification =</span>
+<span class="fc" id="L40">        Specification.where(InstitutionSpecification.withParentId(parentId))</span>
+<span class="fc" id="L41">            .and(InstitutionSpecification.withType(type));</span>
+<span class="fc" id="L42">    return findAll(specification);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
