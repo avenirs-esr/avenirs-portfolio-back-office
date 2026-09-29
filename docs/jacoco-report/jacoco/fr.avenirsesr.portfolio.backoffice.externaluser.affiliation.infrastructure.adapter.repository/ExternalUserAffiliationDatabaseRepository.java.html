@@ -17,42 +17,54 @@ import org.springframework.stereotype.Component;
 public class ExternalUserAffiliationDatabaseRepository
     extends GenericJpaRepositoryAdapter&lt;ExternalUserAffiliation, ExternalUserAffiliationEntity&gt;
     implements ExternalUserAffiliationRepository {
+  private final ExternalUserAffiliationJpaRepository jpaRepository;
 
   public ExternalUserAffiliationDatabaseRepository(
       ExternalUserAffiliationJpaRepository jpaRepository) {
-<span class="fc" id="L23">    super(</span>
+<span class="fc" id="L24">    super(</span>
         jpaRepository,
         jpaRepository,
         ExternalUserAffiliationEntity.class,
         ExternalUserAffiliationMapper.INSTANCE);
-<span class="fc" id="L28">  }</span>
+<span class="fc" id="L29">    this.jpaRepository = jpaRepository;</span>
+<span class="fc" id="L30">  }</span>
+
+  @Override
+  public List&lt;UUID&gt; findDistinctInstitutionIds(UUID externalUserId, EUserCategory category) {
+<span class="fc" id="L34">    return jpaRepository.findDistinctInstitutionIds(externalUserId, category);</span>
+  }
+
+  @Override
+  public List&lt;UUID&gt; findDistinctGroupIds(UUID externalUserId, EUserCategory category) {
+<span class="fc" id="L39">    return jpaRepository.findDistinctGroupIds(externalUserId, category);</span>
+  }
 
   @Override
   public List&lt;ExternalUserAffiliation&gt; findAllByExternalUserId(UUID externalUserId) {
-<span class="nc" id="L32">    return findAll(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId));</span>
+<span class="nc" id="L44">    return findAll(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId));</span>
   }
 
   @Override
   public List&lt;ExternalUserAffiliation&gt; findAllByExternalUserIdAndCategory(
       UUID externalUserId, EUserCategory category) {
-<span class="fc" id="L38">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
-<span class="fc" id="L39">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
-<span class="fc" id="L40">            .and(ExternalUserAffiliationSpecification.withCategory(category));</span>
+<span class="nc" id="L50">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
+<span class="nc" id="L51">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
+<span class="nc" id="L52">            .and(ExternalUserAffiliationSpecification.withCategory(category));</span>
 
-<span class="fc" id="L42">    return findAll(specification);</span>
+<span class="nc" id="L54">    return findAll(specification);</span>
   }
 
   @Override
   public Optional&lt;ExternalUserAffiliation&gt;
       findByExternalUserIdAndInstitutionIdAndGroupIdAndCategory(
           UUID externalUserId, UUID institutionId, UUID groupId, EUserCategory category) {
-<span class="fc" id="L49">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
-<span class="fc" id="L50">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
-<span class="fc" id="L51">            .and(ExternalUserAffiliationSpecification.withInstitutionId(institutionId))</span>
-<span class="fc" id="L52">            .and(ExternalUserAffiliationSpecification.withGroupId(groupId))</span>
-<span class="fc" id="L53">            .and(ExternalUserAffiliationSpecification.withCategory(category));</span>
+<span class="fc" id="L61">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
+<span class="fc" id="L62">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
+<span class="fc" id="L63">            .and(ExternalUserAffiliationSpecification.withInstitutionId(institutionId))</span>
+<span class="fc" id="L64">            .and(ExternalUserAffiliationSpecification.withGroupId(groupId))</span>
+<span class="fc" id="L65">            .and(ExternalUserAffiliationSpecification.withCategory(category));</span>
 
-<span class="fc" id="L55">    return findAll(specification).stream().findFirst();</span>
+<span class="fc" id="L67">    return findAll(specification).stream().findFirst();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
