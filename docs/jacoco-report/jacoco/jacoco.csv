@@ -77,6 +77,8 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.validation.infrastr
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.openapi,SwaggerSchema,15,0,0,0,4,0,1,0,1,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.openapi,OpenApiInstitutionEnumConfiguration,7,5,0,0,1,2,1,2,1,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.cgu.infrastructure.adapter.repository,CguDatabaseRepository,0,20,0,0,0,4,0,2,0,2
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.file.infrastructure.adapter.openapi,SwaggerSchema,15,0,0,0,4,0,1,0,1,0
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.file.infrastructure.adapter.openapi,OpenApiFileEnumConfiguration,7,5,0,0,0,2,1,2,1,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.service,AdditionalSkillConfigurationServiceConfig,0,21,0,0,0,6,0,3,0,3
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.dependency.domain.service,DependencyCheckerImpl,293,0,20,0,63,0,16,0,6,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.service,ExternalUserServiceConfig,0,9,0,0,0,1,0,1,0,1
