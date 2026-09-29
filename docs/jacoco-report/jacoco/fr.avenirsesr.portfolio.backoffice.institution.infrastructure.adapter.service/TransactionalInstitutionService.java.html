@@ -64,12 +64,12 @@ public class TransactionalInstitutionService implements InstitutionService {
 
   @Override
   public boolean staffHasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
-<span class="fc" id="L67">    return delegate.staffHasAccess(affiliatedIds, targetIds);</span>
+<span class="nc" id="L67">    return delegate.staffHasAccess(affiliatedIds, targetIds);</span>
   }
 
   @Override
   public List&lt;UUID&gt; studentAccessibleIds(List&lt;UUID&gt; affiliatedIds) {
-<span class="fc" id="L72">    return delegate.studentAccessibleIds(affiliatedIds);</span>
+<span class="nc" id="L72">    return delegate.studentAccessibleIds(affiliatedIds);</span>
   }
 
   @Override

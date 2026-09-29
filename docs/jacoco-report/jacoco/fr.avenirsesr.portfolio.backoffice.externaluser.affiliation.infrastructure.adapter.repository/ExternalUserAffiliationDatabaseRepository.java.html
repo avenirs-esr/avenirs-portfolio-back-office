@@ -5,6 +5,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.o
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.mapper.ExternalUserAffiliationMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.model.ExternalUserAffiliationEntity;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.specification.ExternalUserAffiliationSpecification;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import java.util.List;
 import java.util.Optional;
@@ -19,27 +20,39 @@ public class ExternalUserAffiliationDatabaseRepository
 
   public ExternalUserAffiliationDatabaseRepository(
       ExternalUserAffiliationJpaRepository jpaRepository) {
-<span class="fc" id="L22">    super(</span>
+<span class="fc" id="L23">    super(</span>
         jpaRepository,
         jpaRepository,
         ExternalUserAffiliationEntity.class,
         ExternalUserAffiliationMapper.INSTANCE);
-<span class="fc" id="L27">  }</span>
+<span class="fc" id="L28">  }</span>
 
   @Override
   public List&lt;ExternalUserAffiliation&gt; findAllByExternalUserId(UUID externalUserId) {
-<span class="nc" id="L31">    return findAll(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId));</span>
+<span class="nc" id="L32">    return findAll(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId));</span>
   }
 
   @Override
-  public Optional&lt;ExternalUserAffiliation&gt; findByExternalUserIdAndInstitutionIdAndGroupId(
-      UUID externalUserId, UUID institutionId, UUID groupId) {
-<span class="fc" id="L37">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
-<span class="fc" id="L38">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
-<span class="fc" id="L39">            .and(ExternalUserAffiliationSpecification.withInstitutionId(institutionId))</span>
-<span class="fc" id="L40">            .and(ExternalUserAffiliationSpecification.withGroupId(groupId));</span>
+  public List&lt;ExternalUserAffiliation&gt; findAllByExternalUserIdAndCategory(
+      UUID externalUserId, EUserCategory category) {
+<span class="nc" id="L38">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
+<span class="nc" id="L39">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
+<span class="nc" id="L40">            .and(ExternalUserAffiliationSpecification.withCategory(category));</span>
 
-<span class="fc" id="L42">    return findAll(specification).stream().findFirst();</span>
+<span class="nc" id="L42">    return findAll(specification);</span>
+  }
+
+  @Override
+  public Optional&lt;ExternalUserAffiliation&gt;
+      findByExternalUserIdAndInstitutionIdAndGroupIdAndCategory(
+          UUID externalUserId, UUID institutionId, UUID groupId, EUserCategory category) {
+<span class="fc" id="L49">    Specification&lt;ExternalUserAffiliationEntity&gt; specification =</span>
+<span class="fc" id="L50">        Specification.where(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId))</span>
+<span class="fc" id="L51">            .and(ExternalUserAffiliationSpecification.withInstitutionId(institutionId))</span>
+<span class="fc" id="L52">            .and(ExternalUserAffiliationSpecification.withGroupId(groupId))</span>
+<span class="fc" id="L53">            .and(ExternalUserAffiliationSpecification.withCategory(category));</span>
+
+<span class="fc" id="L55">    return findAll(specification).stream().findFirst();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
