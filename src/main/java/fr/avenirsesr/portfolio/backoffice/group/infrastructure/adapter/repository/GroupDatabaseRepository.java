@@ -8,6 +8,7 @@ import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.specifica
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,5 +45,10 @@ public class GroupDatabaseRepository extends GenericJpaRepositoryAdapter<Group, 
             .and(GroupSpecification.withStartDate(startDate))
             .and(GroupSpecification.withEndDate(endDate));
     return findAll(specification);
+  }
+
+  @Override
+  public List<Group> findAllByParentIds(Collection<UUID> parentIds) {
+    return findAll(GroupSpecification.withParentIds(parentIds));
   }
 }

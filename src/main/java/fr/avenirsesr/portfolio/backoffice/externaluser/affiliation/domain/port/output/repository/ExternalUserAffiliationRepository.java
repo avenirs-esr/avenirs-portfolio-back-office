@@ -14,6 +14,10 @@ public interface ExternalUserAffiliationRepository
   List<ExternalUserAffiliation> findAllByExternalUserIdAndCategory(
       UUID externalUserId, EUserCategory category);
 
+  List<UUID> findDistinctInstitutionIds(UUID externalUserId, EUserCategory category);
+
+  List<UUID> findDistinctGroupIds(UUID externalUserId, EUserCategory category);
+
   Optional<ExternalUserAffiliation> findByExternalUserIdAndInstitutionIdAndGroupIdAndCategory(
       UUID externalUserId, UUID institutionId, UUID groupId, EUserCategory category);
 }

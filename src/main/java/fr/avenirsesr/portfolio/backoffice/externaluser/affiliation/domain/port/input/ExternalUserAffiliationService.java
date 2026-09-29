@@ -4,6 +4,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.List;
 import java.util.UUID;
@@ -22,4 +23,6 @@ public interface ExternalUserAffiliationService {
   boolean staffHasAccess(String eppn, List<UUID> targetInstitutionIds, List<UUID> targetGroupIds);
 
   ExternalUserAffiliationScope studentScope(String eppn);
+
+  StaffAffiliationScope staffScope();
 }
