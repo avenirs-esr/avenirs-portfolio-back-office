@@ -21,10 +21,10 @@ public class AdditionalSkillConfigSeeder {
     log.info("Seeding additional skills configuration...");
     var frenchConfig =
         new AdditionalSkillConfiguration(
-            new AdditionalSkillLevel("Débutant", "pas beaucoup d'experience"),
-            new AdditionalSkillLevel("Intermediaire", "un peu d'experience"),
+            new AdditionalSkillLevel("Débutant", "pas beaucoup d'expérience"),
+            new AdditionalSkillLevel("Intermédiaire", "un peu d'expérience"),
             new AdditionalSkillLevel("Compétent", "bonne connaissance"),
-            new AdditionalSkillLevel("Avancé", "pas mal d'experience"),
+            new AdditionalSkillLevel("Avancé", "pas mal d'expérience"),
             new AdditionalSkillLevel("Expert", "parfaite maîtrise"));
 
     var englishConfig =
