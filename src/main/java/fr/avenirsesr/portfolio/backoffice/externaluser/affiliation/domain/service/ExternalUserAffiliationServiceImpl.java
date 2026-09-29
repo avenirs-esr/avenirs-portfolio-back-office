@@ -2,11 +2,13 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.servi
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationCategoryNotAllowedException;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationNotFoundException;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliationScopeNode;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportFailure;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
@@ -19,13 +21,19 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.Instituti
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +47,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   private final GroupRepository groupRepository;
   private final InstitutionService institutionService;
   private final GroupService groupService;
+  private final LoggedInExternalUserService loggedInExternalUserService;
 
   @Override
   public ExternalUserAffiliation addAffiliation(
@@ -146,24 +155,87 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
         groupService.studentAccessibleIds(affiliatedGroupIds));
   }
 
-  private List<UUID> institutionIdsOf(UUID externalUserId, EUserCategory category) {
-    return externalUserAffiliationRepository
-        .findAllByExternalUserIdAndCategory(externalUserId, category)
-        .stream()
-        .map(a -> a.getInstitution().getId())
-        .distinct()
+  @Override
+  public StaffAffiliationScope staffScope() {
+    ExternalUser externalUser = loggedInExternalUserService.getLoggedInExternalUser();
+
+    List<UUID> affiliatedInstitutionIds =
+        institutionIdsOf(externalUser.getId(), EUserCategory.STAFF);
+    List<UUID> affiliatedGroupIds = groupIdsOf(externalUser.getId(), EUserCategory.STAFF);
+
+    return new StaffAffiliationScope(
+        institutionRepository.findAllById(affiliatedInstitutionIds).stream()
+            .map(this::toInstitutionItem)
+            .map(root -> toScopeTree(root, this::findInstitutionChildren))
+            .toList(),
+        groupRepository.findAllById(affiliatedGroupIds).stream()
+            .map(this::toGroupItem)
+            .map(root -> toScopeTree(root, this::findGroupChildren))
+            .toList());
+  }
+
+  private ScopeItem toInstitutionItem(Institution institution) {
+    return new ScopeItem(
+        institution.getId(),
+        institution.getName(),
+        institution.getParent().map(Institution::getId).orElse(null));
+  }
+
+  private ScopeItem toGroupItem(Group group) {
+    return new ScopeItem(
+        group.getId(), group.getName(), group.getParent().map(Group::getId).orElse(null));
+  }
+
+  private List<ScopeItem> findInstitutionChildren(Collection<UUID> parentIds) {
+    return institutionRepository.findAllByParentIds(parentIds).stream()
+        .map(this::toInstitutionItem)
         .toList();
   }
 
+  private List<ScopeItem> findGroupChildren(Collection<UUID> parentIds) {
+    return groupRepository.findAllByParentIds(parentIds).stream().map(this::toGroupItem).toList();
+  }
+
+  private AffiliationScopeNode toScopeTree(
+      ScopeItem root, Function<Collection<UUID>, List<ScopeItem>> childrenLoader) {
+    Map<UUID, List<ScopeItem>> childrenByParentId = new HashMap<>();
+    Set<UUID> visited = new HashSet<>(Set.of(root.id()));
+    List<UUID> currentLevelIds = List.of(root.id());
+
+    while (!currentLevelIds.isEmpty()) {
+      List<ScopeItem> children =
+          childrenLoader.apply(currentLevelIds).stream()
+              .filter(child -> visited.add(child.id()))
+              .toList();
+      children.forEach(
+          child ->
+              childrenByParentId
+                  .computeIfAbsent(child.parentId(), k -> new ArrayList<>())
+                  .add(child));
+      currentLevelIds = children.stream().map(ScopeItem::id).toList();
+    }
+
+    return toScopeNode(root, childrenByParentId);
+  }
+
+  private AffiliationScopeNode toScopeNode(
+      ScopeItem item, Map<UUID, List<ScopeItem>> childrenByParentId) {
+    List<AffiliationScopeNode> children =
+        childrenByParentId.getOrDefault(item.id(), List.of()).stream()
+            .map(child -> toScopeNode(child, childrenByParentId))
+            .toList();
+
+    return new AffiliationScopeNode(item.id(), item.name(), children);
+  }
+
+  private record ScopeItem(UUID id, String name, UUID parentId) {}
+
+  private List<UUID> institutionIdsOf(UUID externalUserId, EUserCategory category) {
+    return externalUserAffiliationRepository.findDistinctInstitutionIds(externalUserId, category);
+  }
+
   private List<UUID> groupIdsOf(UUID externalUserId, EUserCategory category) {
-    return externalUserAffiliationRepository
-        .findAllByExternalUserIdAndCategory(externalUserId, category)
-        .stream()
-        .map(ExternalUserAffiliation::getGroup)
-        .filter(Objects::nonNull)
-        .map(Group::getId)
-        .distinct()
-        .toList();
+    return externalUserAffiliationRepository.findDistinctGroupIds(externalUserId, category);
   }
 
   private static boolean isEmpty(List<UUID> ids) {

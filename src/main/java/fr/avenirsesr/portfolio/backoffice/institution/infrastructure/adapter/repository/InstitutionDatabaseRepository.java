@@ -7,6 +7,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.mod
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.specification.InstitutionSpecification;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,5 +41,10 @@ public class InstitutionDatabaseRepository
         Specification.where(InstitutionSpecification.withParentId(parentId))
             .and(InstitutionSpecification.withType(type));
     return findAll(specification);
+  }
+
+  @Override
+  public List<Institution> findAllByParentIds(Collection<UUID> parentIds) {
+    return findAll(InstitutionSpecification.withParentIds(parentIds));
   }
 }

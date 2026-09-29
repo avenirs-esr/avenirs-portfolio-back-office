@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class ExternalUserAffiliationDatabaseRepository
     extends GenericJpaRepositoryAdapter<ExternalUserAffiliation, ExternalUserAffiliationEntity>
     implements ExternalUserAffiliationRepository {
+  private final ExternalUserAffiliationJpaRepository jpaRepository;
 
   public ExternalUserAffiliationDatabaseRepository(
       ExternalUserAffiliationJpaRepository jpaRepository) {
@@ -25,6 +26,17 @@ public class ExternalUserAffiliationDatabaseRepository
         jpaRepository,
         ExternalUserAffiliationEntity.class,
         ExternalUserAffiliationMapper.INSTANCE);
+    this.jpaRepository = jpaRepository;
+  }
+
+  @Override
+  public List<UUID> findDistinctInstitutionIds(UUID externalUserId, EUserCategory category) {
+    return jpaRepository.findDistinctInstitutionIds(externalUserId, category);
+  }
+
+  @Override
+  public List<UUID> findDistinctGroupIds(UUID externalUserId, EUserCategory category) {
+    return jpaRepository.findDistinctGroupIds(externalUserId, category);
   }
 
   @Override

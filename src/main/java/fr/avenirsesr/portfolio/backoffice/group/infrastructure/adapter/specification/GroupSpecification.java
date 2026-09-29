@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.specific
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model.GroupEntity;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -21,6 +22,13 @@ public class GroupSpecification {
     }
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.equal(root.get("parent").get("id"), parentId);
+  }
+
+  public static Specification<GroupEntity> withParentIds(Collection<UUID> parentIds) {
+    return (root, query, criteriaBuilder) ->
+        parentIds == null || parentIds.isEmpty()
+            ? criteriaBuilder.disjunction()
+            : root.get("parent").get("id").in(parentIds);
   }
 
   public static Specification<GroupEntity> withType(EGroupType type) {
