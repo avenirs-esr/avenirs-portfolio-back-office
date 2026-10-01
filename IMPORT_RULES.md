@@ -481,18 +481,17 @@ curl -X POST http://localhost:8080/back-office/external-user-affiliations \
 ## Annexe — Jeux de données du seeder
 
 Le seeder (`POST /back-office/seeder/reset`, également protégé par `X-ADMIN-TOKEN`) purge puis
-recharge la base à partir des fichiers `src/main/resources/seeder/*.json`. **Leur schéma diffère
-de celui des endpoints d'import** : comme les UUID sont regénérés à chaque exécution, les
-fixtures référencent les entités par leur clé métier.
+recharge la base à partir des fichiers `src/main/resources/seeder/*.json`. Ces fixtures suivent
+le même schéma que les endpoints d'import, à deux exceptions près :
 
-| Fichier | Différences avec le schéma d'import |
+| Fichier | Écart avec le schéma d'import |
 |---|---|
 | `institutions.json` | Identique à `InstitutionData` |
 | `groups.json` | Identique à `GroupData` |
-| `external-users.json` | Identique à `ExternalUserData`, plus un `status` facultatif (la fixture peut créer des comptes inactifs) |
-| `external-user-affiliations.json` | **Une entrée par `eppn`**, avec deux listes de clés métier (schéma propre au seeder) |
+| `external-users.json` | `ExternalUserData` + un `status` facultatif (la fixture peut créer des comptes inactifs) |
+| `external-user-affiliations.json` | **Une entrée par couple (`eppn`, `category`)**, avec deux listes de clés métier |
 
-Le seeder résout ces clés métier en UUID, puis applique exactement les mêmes règles métier que
+Le seeder résout les clés métier en UUID, puis applique exactement les mêmes règles métier que
 les endpoints d'import (dont l'ordre `PROGRAM` → `PROGRAM_OPTION` → `STUDENT_GROUP`). L'ordre
 d'exécution est : établissements → configs → groupes → utilisateurs externes → affiliations ; la
 purge se fait dans l'ordre inverse (les affiliations d'abord).
@@ -515,6 +514,7 @@ purge se fait dans l'ordre inverse (les affiliations d'abord).
 // seeder/external-user-affiliations.json
 {
   "eppn": "lucas.tessier@university.com",
+  "category": "STUDENT",
   "institutionUAIs": ["0350001A", "0330001C"],
   "groupIdSIScos": ["10000003", "10000005"]
 }
@@ -526,10 +526,12 @@ Règles de résolution propres à cette fixture :
 - chaque `idSISco` de `groupIdSIScos` produit une affiliation vers ce groupe **et vers
   l'établissement porteur du groupe**, déduit automatiquement (inutile de le répéter dans
   `institutionUAIs`) ;
+- toutes les affiliations de l'entrée portent sa `category` ; un utilisateur à la fois
+  `STUDENT` et `STAFF` a donc **deux entrées** dans la fixture ;
 - les doublons sont absorbés par le « find or create » : l'exemple ci-dessus crée 4
   affiliations (2 établissements seuls + 2 groupes).
 
-En mode `FAKER` (`seeder.source=FAKER`), les affiliations sont générées : les profils non
-`STAFF` reçoivent une affiliation vers un groupe tiré au sort, les autres une affiliation
-établissement, doublée aléatoirement d'une **seconde** affiliation vers un autre établissement —
-de quoi exercer les cas multi-établissements.
+En mode `FAKER` (`seeder.source=FAKER`), les affiliations sont générées : chaque profil
+`STUDENT` reçoit une affiliation vers un groupe tiré au sort, chaque profil `STAFF` une
+affiliation établissement, doublée aléatoirement d'une **seconde** affiliation vers un autre
+établissement — de quoi exercer les cas multi-établissements.
