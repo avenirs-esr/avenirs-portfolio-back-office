@@ -15,7 +15,6 @@ public class Institution extends AvenirsBaseModel {
   private String name;
   private String uai;
   private String siret;
-  private String siren;
   private EInstitutionType type;
 
   @Getter(AccessLevel.NONE)
@@ -26,7 +25,6 @@ public class Institution extends AvenirsBaseModel {
       String name,
       String uai,
       String siret,
-      String siren,
       EInstitutionType type,
       Institution parent,
       Instant createdAt,
@@ -35,7 +33,6 @@ public class Institution extends AvenirsBaseModel {
     this.name = name;
     this.uai = uai;
     this.siret = siret;
-    this.siren = siren;
     this.type = type;
     this.parent = parent;
   }
@@ -45,11 +42,10 @@ public class Institution extends AvenirsBaseModel {
       String name,
       String uai,
       String siret,
-      String siren,
       EInstitutionType type,
       Institution parent) {
     Instant now = Instant.now();
-    return new Institution(id, name, uai, siret, siren, type, parent, now, now);
+    return new Institution(id, name, uai, siret, type, parent, now, now);
   }
 
   public static Institution toDomain(
@@ -57,12 +53,11 @@ public class Institution extends AvenirsBaseModel {
       String name,
       String uai,
       String siret,
-      String siren,
       EInstitutionType type,
       Institution parent,
       Instant createdAt,
       Instant updatedAt) {
-    return new Institution(id, name, uai, siret, siren, type, parent, createdAt, updatedAt);
+    return new Institution(id, name, uai, siret, type, parent, createdAt, updatedAt);
   }
 
   public Optional<Institution> getParent() {

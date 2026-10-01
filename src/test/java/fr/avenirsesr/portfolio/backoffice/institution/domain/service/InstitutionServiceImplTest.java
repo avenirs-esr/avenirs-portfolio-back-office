@@ -39,7 +39,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             uai,
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findByUai(uai)).thenReturn(Optional.of(existing));
@@ -52,7 +51,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes - Renamed",
             uai,
             "new-siret",
-            "new-siren",
             EInstitutionType.PRIMARY,
             null);
 
@@ -74,7 +72,7 @@ class InstitutionServiceImplTest {
     BddLogger.when("creating a primary institution without a parent");
     Institution result =
         service.create(
-            "Université de Rennes", uai, "siret", "siren", EInstitutionType.PRIMARY, null);
+            "Université de Rennes", uai, "siret", EInstitutionType.PRIMARY, null);
 
     BddLogger.then("it should save the institution without a parent");
     assertNotNull(result);
@@ -96,7 +94,6 @@ class InstitutionServiceImplTest {
                 "Université de Rennes",
                 uai,
                 "siret",
-                "siren",
                 EInstitutionType.PRIMARY,
                 "0330001C"));
 
@@ -119,7 +116,6 @@ class InstitutionServiceImplTest {
                 "Université de Rennes - IUT",
                 uai,
                 "siret",
-                "siren",
                 EInstitutionType.SECONDARY,
                 null));
 
@@ -143,7 +139,6 @@ class InstitutionServiceImplTest {
                 "Université de Rennes - IUT",
                 uai,
                 "siret",
-                "siren",
                 EInstitutionType.SECONDARY,
                 parentUAI));
 
@@ -163,7 +158,6 @@ class InstitutionServiceImplTest {
             "Autre IUT",
             parentUAI,
             "siret",
-            "siren",
             EInstitutionType.SECONDARY,
             null);
     when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
@@ -177,7 +171,6 @@ class InstitutionServiceImplTest {
                 "Université de Rennes - IUT",
                 uai,
                 "siret",
-                "siren",
                 EInstitutionType.SECONDARY,
                 parentUAI));
 
@@ -196,7 +189,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             parentUAI,
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
@@ -210,7 +202,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes - IUT",
             uai,
             "siret",
-            "siren",
             EInstitutionType.SECONDARY,
             parentUAI);
 
@@ -235,14 +226,12 @@ class InstitutionServiceImplTest {
                     "Université de Rennes",
                     "0350001A",
                     "siret",
-                    "siren",
                     EInstitutionType.PRIMARY,
                     null),
                 new InstitutionData(
                     "Université de Bordeaux",
                     "0330001C",
                     "siret",
-                    "siren",
                     EInstitutionType.PRIMARY,
                     null)));
 
@@ -263,7 +252,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             uai,
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findByUai(uai)).thenReturn(Optional.of(existing));
@@ -278,7 +266,6 @@ class InstitutionServiceImplTest {
                     "Université de Rennes - Renamed",
                     uai,
                     "new-siret",
-                    "new-siren",
                     EInstitutionType.PRIMARY,
                     null)));
 
@@ -305,14 +292,12 @@ class InstitutionServiceImplTest {
                     "Université de Rennes",
                     "0350001A",
                     "siret",
-                    "siren",
                     EInstitutionType.PRIMARY,
                     null),
                 new InstitutionData(
                     "Université de Rennes - IUT",
                     "0350002B",
                     "siret",
-                    "siren",
                     EInstitutionType.SECONDARY,
                     null)));
 
@@ -334,7 +319,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             uai,
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findByUai(uai)).thenReturn(Optional.of(existing));
@@ -347,14 +331,12 @@ class InstitutionServiceImplTest {
             uai,
             "Université de Rennes - Renamed",
             "new-siret",
-            "new-siren",
             EInstitutionType.PRIMARY,
             null);
 
     BddLogger.then("it should update and save the institution");
     assertEquals("Université de Rennes - Renamed", result.getName());
     assertEquals("new-siret", result.getSiret());
-    assertEquals("new-siren", result.getSiren());
     verify(institutionRepository).save(existing);
   }
 
@@ -367,7 +349,7 @@ class InstitutionServiceImplTest {
     BddLogger.when("updating an institution with an unknown uai");
     assertThrows(
         InstitutionNotFoundException.class,
-        () -> service.update(uai, "name", "siret", "siren", EInstitutionType.PRIMARY, null));
+        () -> service.update(uai, "name", "siret", EInstitutionType.PRIMARY, null));
 
     BddLogger.then("it should not save anything");
     verify(institutionRepository, never()).save(any());
@@ -382,7 +364,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findAll(null, null)).thenReturn(List.of(institution));
@@ -404,7 +385,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes - IUT",
             "0350002B",
             "siret",
-            "siren",
             EInstitutionType.SECONDARY,
             null);
     when(institutionRepository.findAll(parentId, null)).thenReturn(List.of(institution));
@@ -426,7 +406,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findAll(null, EInstitutionType.PRIMARY))
@@ -450,7 +429,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes - IUT",
             "0350002B",
             "siret",
-            "siren",
             EInstitutionType.SECONDARY,
             null);
     when(institutionRepository.findAll(parentId, EInstitutionType.SECONDARY))
@@ -474,7 +452,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findById(id)).thenReturn(Optional.of(institution));
@@ -508,7 +485,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findById(id)).thenReturn(Optional.of(institution));
@@ -530,7 +506,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findAllById(List.of(institutionId))).thenReturn(List.of(target));
@@ -552,7 +527,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     UUID childId = UUID.randomUUID();
@@ -562,7 +536,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes - IUT",
             "0350002B",
             "siret",
-            "siren",
             EInstitutionType.SECONDARY,
             parent);
     when(institutionRepository.findAllById(List.of(childId))).thenReturn(List.of(child));
@@ -585,7 +558,6 @@ class InstitutionServiceImplTest {
             "Université de Bordeaux",
             "0330001C",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findAllById(List.of(targetId))).thenReturn(List.of(target));
@@ -622,7 +594,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     when(institutionRepository.findAllById(List.of(institutionId)))
@@ -645,7 +616,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     UUID childId = UUID.randomUUID();
@@ -655,7 +625,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes - IUT",
             "0350002B",
             "siret",
-            "siren",
             EInstitutionType.SECONDARY,
             parent);
     when(institutionRepository.findAllById(List.of(childId))).thenReturn(List.of(child));
@@ -677,7 +646,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes",
             "0350001A",
             "siret",
-            "siren",
             EInstitutionType.PRIMARY,
             null);
     UUID firstChildId = UUID.randomUUID();
@@ -687,7 +655,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes - IUT",
             "0350002B",
             "siret",
-            "siren",
             EInstitutionType.SECONDARY,
             parent);
     UUID secondChildId = UUID.randomUUID();
@@ -697,7 +664,6 @@ class InstitutionServiceImplTest {
             "Université de Rennes - UFR",
             "0350003C",
             "siret",
-            "siren",
             EInstitutionType.SECONDARY,
             parent);
     when(institutionRepository.findAllById(List.of(firstChildId, secondChildId)))

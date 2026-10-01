@@ -38,8 +38,6 @@ public class InstitutionEntity extends AvenirsBaseEntity {
 
   private String siret;
 
-  private String siren;
-
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private EInstitutionType type;
@@ -53,7 +51,6 @@ public class InstitutionEntity extends AvenirsBaseEntity {
       String name,
       String uai,
       String siret,
-      String siren,
       EInstitutionType type,
       InstitutionEntity parent,
       Instant createdAt,
@@ -62,7 +59,6 @@ public class InstitutionEntity extends AvenirsBaseEntity {
     this.name = name;
     this.uai = uai;
     this.siret = siret;
-    this.siren = siren;
     this.type = type;
     this.parent = parent;
     this.setCreatedAt(createdAt);
@@ -74,11 +70,10 @@ public class InstitutionEntity extends AvenirsBaseEntity {
       String name,
       String uai,
       String siret,
-      String siren,
       EInstitutionType type,
       InstitutionEntity parent,
       Instant createdAt,
       Instant updatedAt) {
-    return new InstitutionEntity(id, name, uai, siret, siren, type, parent, createdAt, updatedAt);
+    return new InstitutionEntity(id, name, uai, siret, type, parent, createdAt, updatedAt);
   }
 }

@@ -3,7 +3,6 @@
     "name": "Université de Rennes",
     "uai": "0350001A",
     "siret": "13000550100015",
-    "siren": "130005501",
     "type": "PRIMARY",
     "parentUAI": null
   },
@@ -11,7 +10,6 @@
     "name": "Université de Rennes - IUT",
     "uai": "0350002B",
     "siret": "13000550100023",
-    "siren": "130005501",
     "type": "SECONDARY",
     "parentUAI": "0350001A"
   },
@@ -19,7 +17,6 @@
     "name": "Université de Bordeaux",
     "uai": "0330001C",
     "siret": "13000551200011",
-    "siren": "130005512",
     "type": "PRIMARY",
     "parentUAI": null
   },
@@ -27,7 +24,6 @@
     "name": "Université de Bordeaux - IUT",
     "uai": "0330002D",
     "siret": "13000551200029",
-    "siren": "130005512",
     "type": "SECONDARY",
     "parentUAI": "0330001C"
   }

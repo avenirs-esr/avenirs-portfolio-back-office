@@ -45,7 +45,6 @@ class GroupServiceImplTest {
           "Universite de Rennes",
           "0350001A",
           "siret",
-          "siren",
           EInstitutionType.PRIMARY,
           null);
   private final LocalDate startDate = LocalDate.of(2023, 9, 1);

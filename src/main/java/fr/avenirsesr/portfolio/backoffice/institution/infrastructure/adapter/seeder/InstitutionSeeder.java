@@ -52,7 +52,7 @@ public class InstitutionSeeder {
             data -> {
               Institution institution =
                   institutionService.create(
-                      data.name(), data.uai(), data.siret(), data.siren(), data.type(), null);
+                      data.name(), data.uai(), data.siret(), data.type(), null);
               savedInstitutionIds.add(institution.getId());
             });
 
@@ -65,7 +65,6 @@ public class InstitutionSeeder {
                       data.name(),
                       data.uai(),
                       data.siret(),
-                      data.siren(),
                       data.type(),
                       data.parentUAI());
               savedInstitutionIds.add(institution.getId());
