@@ -29,8 +29,7 @@ public interface ExternalUserService {
       String lastName,
       String email,
       Set<EUserCategory> categories,
-      String externalId,
-      EUserStatus status);
+      String externalId);
 
   List<ExternalUser> updateAll(List<ExternalUserData> externalUsers);
 

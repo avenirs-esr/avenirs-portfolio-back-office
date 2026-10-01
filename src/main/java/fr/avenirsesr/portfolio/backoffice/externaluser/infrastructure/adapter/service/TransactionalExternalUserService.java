@@ -47,10 +47,8 @@ public class TransactionalExternalUserService implements ExternalUserService {
       String lastName,
       String email,
       Set<EUserCategory> categories,
-      String externalId,
-      EUserStatus status) {
-    return delegate.update(
-        eppn, firstName, lastName, email, categories, externalId, status);
+      String externalId) {
+    return delegate.update(eppn, firstName, lastName, email, categories, externalId);
   }
 
   @Override
