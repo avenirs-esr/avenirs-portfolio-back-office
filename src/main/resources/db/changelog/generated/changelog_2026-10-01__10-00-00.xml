@@ -31,4 +31,14 @@
         </preConditions>
         <dropColumn tableName="institution" columnName="siren"/>
     </changeSet>
+    <changeSet author="iamgreendev" id="20261001100000-5">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="institution" columnName="sigle"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="institution">
+            <column name="sigle" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

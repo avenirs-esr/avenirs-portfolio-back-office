@@ -3,4 +3,4 @@ package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.se
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 
 public record InstitutionCreationData(
-    String name, String uai, String siret, EInstitutionType type, String parentUAI) {}
+    String name, String sigle, String uai, String siret, EInstitutionType type, String parentUAI) {}

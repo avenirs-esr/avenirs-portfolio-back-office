@@ -33,6 +33,8 @@ public class InstitutionEntity extends AvenirsBaseEntity {
   @Column(nullable = false)
   private String name;
 
+  private String sigle;
+
   @Column(nullable = false)
   private String uai;
 
@@ -49,6 +51,7 @@ public class InstitutionEntity extends AvenirsBaseEntity {
   private InstitutionEntity(
       UUID id,
       String name,
+      String sigle,
       String uai,
       String siret,
       EInstitutionType type,
@@ -57,6 +60,7 @@ public class InstitutionEntity extends AvenirsBaseEntity {
       Instant updatedAt) {
     this.setId(id);
     this.name = name;
+    this.sigle = sigle;
     this.uai = uai;
     this.siret = siret;
     this.type = type;
@@ -68,12 +72,13 @@ public class InstitutionEntity extends AvenirsBaseEntity {
   public static InstitutionEntity of(
       UUID id,
       String name,
+      String sigle,
       String uai,
       String siret,
       EInstitutionType type,
       InstitutionEntity parent,
       Instant createdAt,
       Instant updatedAt) {
-    return new InstitutionEntity(id, name, uai, siret, type, parent, createdAt, updatedAt);
+    return new InstitutionEntity(id, name, sigle, uai, siret, type, parent, createdAt, updatedAt);
   }
 }

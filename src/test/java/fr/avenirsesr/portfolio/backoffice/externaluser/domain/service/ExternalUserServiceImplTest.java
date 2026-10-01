@@ -68,13 +68,7 @@ class ExternalUserServiceImplTest {
 
         result =
             service.importExternalUser(
-                EPPN,
-                FIRST_NAME,
-                LAST_NAME,
-                EMAIL,
-                CATEGORIES,
-                EXTERNAL_ID,
-                EUserStatus.ACTIVE);
+                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, EUserStatus.ACTIVE);
       }
 
       @Test
@@ -160,13 +154,7 @@ class ExternalUserServiceImplTest {
 
         result =
             service.importExternalUser(
-                EPPN,
-                FIRST_NAME,
-                LAST_NAME,
-                EMAIL,
-                CATEGORIES,
-                EXTERNAL_ID,
-                EUserStatus.INACTIVE);
+                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, EUserStatus.INACTIVE);
       }
 
       @Test

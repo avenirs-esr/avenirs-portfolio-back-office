@@ -23,6 +23,7 @@ public class FakeInstitution {
     return new FakeInstitution(
         new InstitutionCreationData(
             faker.university().name(),
+            faker.lorem().characters(4, false, false).toUpperCase(),
             dataGenerator.with("uai").regexify("[0-9]{7}[A-Z]"),
             faker.numerify("#############"),
             EInstitutionType.PRIMARY,
@@ -33,6 +34,7 @@ public class FakeInstitution {
     return new FakeInstitution(
         new InstitutionCreationData(
             faker.university().name(),
+            faker.lorem().characters(4, false, false).toUpperCase(),
             dataGenerator.with("uai").regexify("[0-9]{7}[A-Z]"),
             faker.numerify("#############"),
             EInstitutionType.SECONDARY,

@@ -66,7 +66,7 @@ class ExternalUserAffiliationServiceImplTest {
 
   private static Institution institution(UUID id, Institution parent) {
     return Institution.create(
-        id, "Université de Rennes", "0350001A", null, EInstitutionType.PRIMARY, parent);
+        id, "Université de Rennes", null, "0350001A", null, EInstitutionType.PRIMARY, parent);
   }
 
   @Test
