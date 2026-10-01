@@ -82,8 +82,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
               data.lastName(),
               data.email(),
               data.categories(),
-              data.externalId(),
-              data.status());
+              data.externalId());
       return new UpsertResult(updated, false);
     }
 
@@ -95,7 +94,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             data.email(),
             data.categories(),
             data.externalId(),
-            data.status());
+            EUserStatus.ACTIVE);
     return new UpsertResult(created, true);
   }
 
@@ -108,8 +107,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
       String lastName,
       String email,
       Set<EUserCategory> categories,
-      String externalId,
-      EUserStatus status) {
+      String externalId) {
     ExternalUser externalUser =
         externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);
 
@@ -119,7 +117,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
     externalUser.setCategories(categories);
     externalUser.setExternalId(externalId);
     externalUser.setSource(EExternalSource.BACK_OFFICE);
-    externalUser.setStatus(status != null ? status : externalUser.getStatus());
 
     return externalUserRepository.save(externalUser);
   }
@@ -135,8 +132,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
                     data.lastName(),
                     data.email(),
                     data.categories(),
-                    data.externalId(),
-                    data.status()))
+                    data.externalId()))
         .toList();
   }
 

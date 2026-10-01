@@ -1,7 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.domain.model;
 
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
-import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.Set;
 
 public record ExternalUserData(
@@ -10,5 +9,4 @@ public record ExternalUserData(
     String lastName,
     String email,
     Set<EUserCategory> categories,
-    String externalId,
-    EUserStatus status) {}
+    String externalId) {}

@@ -208,16 +208,14 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
 | `email` | string (≤255) | **Oui** | Adresse e-mail valide |
 | `categories` | array d'enums | **Oui** | `["STUDENT"]`, `["STAFF"]` ou `["STUDENT", "STAFF"]` |
 | `externalId` | string (≤255) | **Oui** | Identifiant dans le SI d'origine, **unique** |
-| `status` | enum \| null | Non | `ACTIVE` \| `INACTIVE` \| `REMOVED` \| `BLOCKED` |
 
 ### Règles métier
 
 - **`categories` est un tableau** (multi-catégories) et non une valeur unique. Les doublons sont
   ignorés (ensemble). S'il est absent ou `null`, l'utilisateur est créé **sans aucune
   catégorie** : renseignez-le toujours explicitement.
-- `status` :
-  - à la **création**, `null` ou absent ⇒ valeur par défaut `ACTIVE` ;
-  - à la **mise à jour**, `null` ou absent ⇒ le statut courant est **conservé**.
+- Un utilisateur importé est créé **actif** (`status = ACTIVE`). L'import ne touche jamais au
+  statut d'un utilisateur déjà existant : il reste celui en base.
 - `externalId` est unique en base : le réutiliser pour deux `eppn` différents provoque une
   erreur d'intégrité.
 - **Aucune affiliation n'est créée** par cet import : un utilisateur importé ici n'est rattaché
@@ -237,8 +235,7 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
     "lastName": "Tessier",
     "email": "lucas.tessier@university.com",
     "categories": ["STUDENT"],
-    "externalId": "PEG-0001",
-    "status": "ACTIVE"
+    "externalId": "PEG-0001"
   },
   {
     "eppn": "marie.dupont.staff@university.com",
@@ -246,8 +243,7 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
     "lastName": "Dupont",
     "email": "marie.dupont@university.com",
     "categories": ["STAFF", "STUDENT"],
-    "externalId": "TEACH-AG-83",
-    "status": null
+    "externalId": "TEACH-AG-83"
   }
 ]
 ```
@@ -482,7 +478,7 @@ fixtures référencent les entités par leur clé métier.
 |---|---|
 | `institutions.json` | Identique à `InstitutionData` |
 | `groups.json` | `institutionUAI` (UAI) **au lieu de** `institutionId` (UUID) |
-| `external-users.json` | Identité seule : **plus aucune** référence à un établissement ou à un groupe |
+| `external-users.json` | Identité seule, plus un `status` facultatif (la fixture peut créer des comptes inactifs) |
 | `external-user-affiliations.json` | **Une entrée par `eppn`**, avec deux listes de clés métier (schéma propre au seeder) |
 
 Le seeder résout ces clés métier en UUID, puis applique exactement les mêmes règles métier que
