@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Bulk import of affiliations by natural keys (eppn / institution uai / group idSiSco), for
+ * Bulk import of affiliations by natural keys (eppn / institution uai / group idSISco), for
  * institutions importing their affiliations in batch (e.g. from a CSV export) without knowing the
  * internal external-user identifiers upfront.
  */

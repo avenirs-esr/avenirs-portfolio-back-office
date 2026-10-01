@@ -38,7 +38,7 @@ public class GroupEntity extends AvenirsBaseEntity {
   private String name;
 
   @Column(name = "id_si_sco", nullable = false)
-  private String idSiSco;
+  private String idSISco;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "institution_id", nullable = false)
@@ -64,7 +64,7 @@ public class GroupEntity extends AvenirsBaseEntity {
   private GroupEntity(
       UUID id,
       String name,
-      String idSiSco,
+      String idSISco,
       InstitutionEntity institution,
       String codeSise,
       LocalDate startDate,
@@ -75,7 +75,7 @@ public class GroupEntity extends AvenirsBaseEntity {
       Instant updatedAt) {
     this.setId(id);
     this.name = name;
-    this.idSiSco = idSiSco;
+    this.idSISco = idSISco;
     this.institution = institution;
     this.codeSise = codeSise;
     this.startDate = startDate;
@@ -89,7 +89,7 @@ public class GroupEntity extends AvenirsBaseEntity {
   public static GroupEntity of(
       UUID id,
       String name,
-      String idSiSco,
+      String idSISco,
       InstitutionEntity institution,
       String codeSise,
       LocalDate startDate,
@@ -101,7 +101,7 @@ public class GroupEntity extends AvenirsBaseEntity {
     return new GroupEntity(
         id,
         name,
-        idSiSco,
+        idSISco,
         institution,
         codeSise,
         startDate,

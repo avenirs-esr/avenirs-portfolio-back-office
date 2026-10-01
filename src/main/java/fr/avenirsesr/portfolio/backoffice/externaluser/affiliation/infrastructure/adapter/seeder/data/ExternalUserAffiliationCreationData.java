@@ -7,4 +7,4 @@ public record ExternalUserAffiliationCreationData(
     String eppn,
     EUserCategory category,
     List<String> institutionUAIs,
-    List<String> groupIdSiScos) {}
+    List<String> groupIdSIScos) {}

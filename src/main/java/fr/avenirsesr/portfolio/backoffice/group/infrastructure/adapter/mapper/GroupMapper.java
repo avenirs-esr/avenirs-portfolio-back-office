@@ -15,7 +15,7 @@ public class GroupMapper implements Mapper<GroupEntity, Group> {
     return GroupEntity.of(
         group.getId(),
         group.getName(),
-        group.getIdSiSco(),
+        group.getIdSISco(),
         InstitutionMapper.INSTANCE.fromDomain(group.getInstitution()),
         group.getCodeSise(),
         group.getStartDate(),
@@ -33,7 +33,7 @@ public class GroupMapper implements Mapper<GroupEntity, Group> {
     return Group.toDomain(
         entity.getId(),
         entity.getName(),
-        entity.getIdSiSco(),
+        entity.getIdSISco(),
         InstitutionMapper.INSTANCE.toDomain(entity.getInstitution()),
         entity.getCodeSise(),
         entity.getStartDate(),

@@ -111,9 +111,9 @@ class AccessControllerIT extends ContainerConfigurationTest {
                 + " and a student group");
         UUID externalUserId = externalUserRepository.findByEppn(STAFF_EPPN).orElseThrow().getId();
         UUID institutionId = institutionRepository.findByUai("0350001A").orElseThrow().getId();
-        programId = groupRepository.findByIdSiSco("10000001").orElseThrow().getId();
-        programOptionId = groupRepository.findByIdSiSco("10000002").orElseThrow().getId();
-        studentGroupId = groupRepository.findByIdSiSco("10000003").orElseThrow().getId();
+        programId = groupRepository.findByIdSISco("10000001").orElseThrow().getId();
+        programOptionId = groupRepository.findByIdSISco("10000002").orElseThrow().getId();
+        studentGroupId = groupRepository.findByIdSISco("10000003").orElseThrow().getId();
         externalUserAffiliationService.addAffiliation(
             externalUserId, institutionId, programId, EUserCategory.STAFF);
 

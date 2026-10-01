@@ -42,7 +42,7 @@ permissions `external-user:read` / `external-user:update` **sans** `X-ADMIN-TOKE
 ### Sémantique POST vs PUT
 
 **POST = upsert tolérant.** Chaque élément est créé, ou mis à jour s'il existe déjà (recherche
-sur la clé métier : `uai`, `idSiSco`, `eppn`). Les éléments en erreur métier n'interrompent pas
+sur la clé métier : `uai`, `idSISco`, `eppn`). Les éléments en erreur métier n'interrompent pas
 le traitement : ils sont retournés dans `failed[]`. Réponse :
 
 ```json
@@ -56,9 +56,9 @@ le traitement : ils sont retournés dans `failed[]`. Réponse :
 }
 ```
 
-La clé identifiant l'élément en échec est `uai` pour les établissements, `idSiSco` pour les
+La clé identifiant l'élément en échec est `uai` pour les établissements, `idSISco` pour les
 groupes et `eppn` pour les utilisateurs externes. Pour les affiliations, l'échec est identifié
-par le **triplet** (`eppn`, `institutionUAI`, `groupIdSiSco`) et le résumé expose
+par le **triplet** (`eppn`, `institutionUAI`, `groupIdSISco`) et le résumé expose
 `existingCount` / `existing[]` au lieu de `updatedCount` / `updated[]` (§ 5.2).
 
 **PUT = mise à jour stricte.** L'élément doit déjà exister (sinon `404`). **Aucune tolérance aux
@@ -127,20 +127,20 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 | Champ | Type JSON | Obligatoire | Description |
 |---|---|---|---|
 | `name` | string | **Oui** | Libellé du groupe |
-| `idSiSco` | string | **Oui** | Identifiant SI Scolarité, **unique** — clé d'upsert / mise à jour |
+| `idSISco` | string | **Oui** | Identifiant SI Scolarité, **unique** — clé d'upsert / mise à jour |
 | `institutionId` | string (UUID) | **Oui** | **UUID** de l'établissement de rattachement (pas le `uai`) |
 | `codeSise` | string \| null | Non | Code SISE |
 | `startDate` | string (`yyyy-MM-dd`) \| null | Non | Date de début |
 | `endDate` | string (`yyyy-MM-dd`) \| null | Non | Date de fin |
 | `type` | enum | **Oui** | `PROGRAM` \| `PROGRAM_OPTION` \| `STUDENT_GROUP` |
-| `parentIdSiSco` | string \| null | Conditionnel | `idSiSco` du groupe parent |
+| `parentIdSISco` | string \| null | Conditionnel | `idSISco` du groupe parent |
 
 > `institutionId` attend l'**UUID** renvoyé par `GET /back-office/admin/institutions`
-> (champ `id`), et non le `uai`. À l'inverse, le parent est référencé par son `idSiSco`.
+> (champ `id`), et non le `uai`. À l'inverse, le parent est référencé par son `idSISco`.
 
 ### Règles métier (hiérarchie par `type`)
 
-| `type` | `parentIdSiSco` | Type du parent exigé |
+| `type` | `parentIdSISco` | Type du parent exigé |
 |---|---|---|
 | `PROGRAM` | **doit être `null`** | — |
 | `PROGRAM_OPTION` | **obligatoire** | `PROGRAM` |
@@ -151,7 +151,7 @@ Codes d'erreur associés (`400`) : `GROUP_PROGRAM_CANNOT_HAVE_PARENT`,
 `GROUP_STUDENT_GROUP_REQUIRES_PARENT`, `GROUP_STUDENT_GROUP_PARENT_MUST_BE_PROGRAM_OR_OPTION`.
 
 - L'établissement (`institutionId`) doit exister → sinon `INSTITUTION_NOT_FOUND` (`404`).
-- Le groupe parent (`parentIdSiSco`) doit exister → sinon `GROUP_NOT_FOUND` (`404`).
+- Le groupe parent (`parentIdSISco`) doit exister → sinon `GROUP_NOT_FOUND` (`404`).
 - Ordre d'import : `PROGRAM`, puis `PROGRAM_OPTION`, puis `STUDENT_GROUP`.
 
 ### Exemple
@@ -160,33 +160,33 @@ Codes d'erreur associés (`400`) : `GROUP_PROGRAM_CANNOT_HAVE_PARENT`,
 [
   {
     "name": "Licence Informatique",
-    "idSiSco": "10000001",
+    "idSISco": "10000001",
     "institutionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "codeSise": "11000001",
     "startDate": "2023-09-01",
     "endDate": "2026-08-31",
     "type": "PROGRAM",
-    "parentIdSiSco": null
+    "parentIdSISco": null
   },
   {
     "name": "Licence Informatique - Parcours IA",
-    "idSiSco": "10000002",
+    "idSISco": "10000002",
     "institutionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "codeSise": "11000002",
     "startDate": "2023-09-01",
     "endDate": "2025-08-31",
     "type": "PROGRAM_OPTION",
-    "parentIdSiSco": "10000001"
+    "parentIdSISco": "10000001"
   },
   {
     "name": "Groupe A",
-    "idSiSco": "10000003",
+    "idSISco": "10000003",
     "institutionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "codeSise": "11000003",
     "startDate": "2024-09-01",
     "endDate": "2025-06-30",
     "type": "STUDENT_GROUP",
-    "parentIdSiSco": "10000002"
+    "parentIdSISco": "10000002"
   }
 ]
 ```
@@ -321,12 +321,12 @@ En-têtes : `X-ADMIN-TOKEN` + permission `external-user-affiliation:import`.
 |---|---|---|---|
 | `eppn` | string | **Oui** | `eppn` de l'utilisateur externe (doit déjà être importé) |
 | `institutionUAI` | string | **Oui** | `uai` de l'établissement |
-| `groupIdSiSco` | string \| null | Non | `idSiSco` du groupe ; `null` / absent ⇒ affiliation établissement seul |
+| `groupIdSISco` | string \| null | Non | `idSISco` du groupe ; `null` / absent ⇒ affiliation établissement seul |
 
 ```json
 [
-  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0350001A", "groupIdSiSco": "10000003" },
-  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0330001C", "groupIdSiSco": null },
+  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0350001A", "groupIdSISco": "10000003" },
+  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0330001C", "groupIdSISco": null },
   { "eppn": "marie.dupont.staff@university.com", "institutionUAI": "0350001A" }
 ]
 ```
@@ -362,7 +362,7 @@ En-têtes : `X-ADMIN-TOKEN` + permission `external-user-affiliation:import`.
     {
       "eppn": "inconnu@university.com",
       "institutionUAI": "0350001A",
-      "groupIdSiSco": null,
+      "groupIdSISco": null,
       "message": "External user not found"
     }
   ]
@@ -404,7 +404,7 @@ Corps du `POST` (UUID, pas de clés métier) :
 |---|---|---|
 | `EXTERNAL_USER_NOT_FOUND` | `404` | `eppn` / `externalUserId` inconnu |
 | `INSTITUTION_NOT_FOUND` | `404` | `institutionUAI` / `institutionId` inconnu |
-| `GROUP_NOT_FOUND` | `404` | `groupIdSiSco` / `groupId` inconnu |
+| `GROUP_NOT_FOUND` | `404` | `groupIdSISco` / `groupId` inconnu |
 | `EXTERNAL_USER_AFFILIATION_NOT_FOUND` | `404` | Affiliation inconnue, ou n'appartenant pas à l'utilisateur ciblé |
 
 Sur l'import en masse, ces erreurs ne remontent pas en HTTP : elles sont **capturées ligne à
@@ -437,7 +437,7 @@ ligne** et reportées dans `failed[]` avec leur message.
 2. **Groupes** : `PROGRAM`, puis `PROGRAM_OPTION`, puis `STUDENT_GROUP`
    (récupérer au préalable les UUID via `GET /back-office/admin/institutions`)
 3. **Utilisateurs externes** (identité seule — aucun UUID nécessaire)
-4. **Affiliations** — par clés métier (`eppn`, `uai`, `idSiSco`) : aucune récupération d'UUID
+4. **Affiliations** — par clés métier (`eppn`, `uai`, `idSISco`) : aucune récupération d'UUID
    n'est nécessaire à cette étape
 
 ### Exemple d'appel
@@ -511,14 +511,14 @@ purge se fait dans l'ordre inverse (les affiliations d'abord).
 {
   "eppn": "lucas.tessier@university.com",
   "institutionUAIs": ["0350001A", "0330001C"],
-  "groupIdSiScos": ["10000003", "10000005"]
+  "groupIdSIScos": ["10000003", "10000005"]
 }
 ```
 
 Règles de résolution propres à cette fixture :
 
 - chaque `uai` de `institutionUAIs` produit une affiliation **sans groupe** ;
-- chaque `idSiSco` de `groupIdSiScos` produit une affiliation vers ce groupe **et vers
+- chaque `idSISco` de `groupIdSIScos` produit une affiliation vers ce groupe **et vers
   l'établissement porteur du groupe**, déduit automatiquement (inutile de le répéter dans
   `institutionUAIs`) ;
 - les doublons sont absorbés par le « find or create » : l'exemple ci-dessus crée 4

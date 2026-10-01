@@ -107,14 +107,14 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
                 + " {}",
             data.eppn(),
             data.institutionUAI(),
-            data.groupIdSiSco(),
+            data.groupIdSISco(),
             data.category(),
             e.getMessage());
         failed.add(
             new ExternalUserAffiliationImportFailure(
                 data.eppn(),
                 data.institutionUAI(),
-                data.groupIdSiSco(),
+                data.groupIdSISco(),
                 data.category(),
                 e.getMessage()));
       }
@@ -256,9 +256,9 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             .findByUai(data.institutionUAI())
             .orElseThrow(InstitutionNotFoundException::new);
     Group group =
-        data.groupIdSiSco() != null
+        data.groupIdSISco() != null
             ? groupRepository
-                .findByIdSiSco(data.groupIdSiSco())
+                .findByIdSISco(data.groupIdSISco())
                 .orElseThrow(GroupNotFoundException::new)
             : null;
 

@@ -65,13 +65,13 @@ public class GroupSeeder {
                 Group group =
                     groupService.create(
                         data.name(),
-                        data.idSiSco(),
+                        data.idSISco(),
                         data.institutionId(),
                         data.codeSise(),
                         data.startDate(),
                         data.endDate(),
                         data.type(),
-                        data.parentIdSiSco());
+                        data.parentIdSISco());
                 savedGroupIds.add(group.getId());
               });
     }
@@ -93,13 +93,13 @@ public class GroupSeeder {
             data ->
                 new GroupCreationData(
                     data.name(),
-                    data.idSiSco(),
+                    data.idSISco(),
                     resolveInstitutionId(data.institutionUAI()),
                     data.codeSise(),
                     data.startDate(),
                     data.endDate(),
                     data.type(),
-                    data.parentIdSiSco()))
+                    data.parentIdSISco()))
         .toList();
   }
 
@@ -121,18 +121,18 @@ public class GroupSeeder {
                       GroupCreationData program = FakeGroup.program(institutionId).toCreationData();
                       creationDataList.add(program);
                       creationDataList.add(
-                          FakeGroup.studentGroup(institutionId, program.idSiSco())
+                          FakeGroup.studentGroup(institutionId, program.idSISco())
                               .toCreationData());
 
                       IntStream.range(0, OPTIONS_PER_PROGRAM_NB)
                           .forEach(
                               j -> {
                                 GroupCreationData option =
-                                    FakeGroup.programOption(institutionId, program.idSiSco())
+                                    FakeGroup.programOption(institutionId, program.idSISco())
                                         .toCreationData();
                                 creationDataList.add(option);
                                 creationDataList.add(
-                                    FakeGroup.studentGroup(institutionId, option.idSiSco())
+                                    FakeGroup.studentGroup(institutionId, option.idSISco())
                                         .toCreationData());
                               });
                     }));

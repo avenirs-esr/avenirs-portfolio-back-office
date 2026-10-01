@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class Group extends AvenirsBaseModel {
   private String name;
-  private String idSiSco;
+  private String idSISco;
   private Institution institution;
   private String codeSise;
   private LocalDate startDate;
@@ -28,7 +28,7 @@ public class Group extends AvenirsBaseModel {
   private Group(
       UUID id,
       String name,
-      String idSiSco,
+      String idSISco,
       Institution institution,
       String codeSise,
       LocalDate startDate,
@@ -39,7 +39,7 @@ public class Group extends AvenirsBaseModel {
       Instant updatedAt) {
     super(id, createdAt, updatedAt);
     this.name = name;
-    this.idSiSco = idSiSco;
+    this.idSISco = idSISco;
     this.institution = institution;
     this.codeSise = codeSise;
     this.startDate = startDate;
@@ -51,7 +51,7 @@ public class Group extends AvenirsBaseModel {
   public static Group create(
       UUID id,
       String name,
-      String idSiSco,
+      String idSISco,
       Institution institution,
       String codeSise,
       LocalDate startDate,
@@ -60,13 +60,13 @@ public class Group extends AvenirsBaseModel {
       Group parent) {
     Instant now = Instant.now();
     return new Group(
-        id, name, idSiSco, institution, codeSise, startDate, endDate, type, parent, now, now);
+        id, name, idSISco, institution, codeSise, startDate, endDate, type, parent, now, now);
   }
 
   public static Group toDomain(
       UUID id,
       String name,
-      String idSiSco,
+      String idSISco,
       Institution institution,
       String codeSise,
       LocalDate startDate,
@@ -78,7 +78,7 @@ public class Group extends AvenirsBaseModel {
     return new Group(
         id,
         name,
-        idSiSco,
+        idSISco,
         institution,
         codeSise,
         startDate,

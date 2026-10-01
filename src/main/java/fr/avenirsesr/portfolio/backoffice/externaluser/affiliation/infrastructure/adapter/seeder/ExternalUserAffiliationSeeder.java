@@ -76,8 +76,8 @@ public class ExternalUserAffiliationSeeder {
         count++;
       }
 
-      for (String groupIdSiSco : data.groupIdSiScos()) {
-        Group group = resolveGroup(groupIdSiSco);
+      for (String groupIdSISco : data.groupIdSIScos()) {
+        Group group = resolveGroup(groupIdSISco);
         externalUserAffiliationService.addAffiliation(
             externalUserId, group.getInstitution().getId(), group.getId(), data.category());
         count++;
@@ -156,7 +156,7 @@ public class ExternalUserAffiliationSeeder {
         .getId();
   }
 
-  private Group resolveGroup(String groupIdSiSco) {
-    return groupRepository.findByIdSiSco(groupIdSiSco).orElseThrow(GroupNotFoundException::new);
+  private Group resolveGroup(String groupIdSISco) {
+    return groupRepository.findByIdSISco(groupIdSISco).orElseThrow(GroupNotFoundException::new);
   }
 }
