@@ -8,6 +8,7 @@ import java.util.UUID;
 public record InstitutionResponse(
     UUID id,
     String name,
+    String sigle,
     String uai,
     String siret,
     EInstitutionType type,
@@ -19,6 +20,7 @@ public record InstitutionResponse(
     return new InstitutionResponse(
         institution.getId(),
         institution.getName(),
+        institution.getSigle(),
         institution.getUai(),
         institution.getSiret(),
         institution.getType(),

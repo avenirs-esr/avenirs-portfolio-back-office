@@ -37,6 +37,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
+            null,
             uai,
             "siret",
             EInstitutionType.PRIMARY,
@@ -49,6 +50,7 @@ class InstitutionServiceImplTest {
     Institution result =
         service.create(
             "Université de Rennes - Renamed",
+            null,
             uai,
             "new-siret",
             EInstitutionType.PRIMARY,
@@ -62,6 +64,48 @@ class InstitutionServiceImplTest {
   }
 
   @Test
+  void shouldKeepSigle_whenCreatingInstitution() {
+    BddLogger.given("an InstitutionServiceImpl service");
+    String uai = "0350001A";
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
+    when(institutionRepository.save(any(Institution.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    BddLogger.when("creating an institution with a sigle");
+    Institution result =
+        service.create("Université de Rennes", "UR", uai, "siret", EInstitutionType.PRIMARY, null);
+
+    BddLogger.then("it should keep the sigle on the saved institution");
+    assertEquals("UR", result.getSigle());
+  }
+
+  @Test
+  void shouldUpdateSigle_whenUpdatingInstitution() {
+    BddLogger.given("an existing institution carrying a sigle");
+    String uai = "0350001A";
+    Institution existing =
+        Institution.create(
+            UUID.randomUUID(),
+            "Université de Rennes",
+            "UR",
+            uai,
+            "siret",
+            EInstitutionType.PRIMARY,
+            null);
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.of(existing));
+    when(institutionRepository.save(any(Institution.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    BddLogger.when("updating the institution with another sigle");
+    Institution result =
+        service.update(
+            uai, "Université de Rennes", "UNIV-R", "siret", EInstitutionType.PRIMARY, null);
+
+    BddLogger.then("it should store the new sigle");
+    assertEquals("UNIV-R", result.getSigle());
+  }
+
+  @Test
   void shouldCreatePrimaryInstitution_whenParentUAIIsNull() {
     BddLogger.given("an InstitutionServiceImpl service");
     String uai = "0350001A";
@@ -71,8 +115,7 @@ class InstitutionServiceImplTest {
 
     BddLogger.when("creating a primary institution without a parent");
     Institution result =
-        service.create(
-            "Université de Rennes", uai, "siret", EInstitutionType.PRIMARY, null);
+        service.create("Université de Rennes", null, uai, "siret", EInstitutionType.PRIMARY, null);
 
     BddLogger.then("it should save the institution without a parent");
     assertNotNull(result);
@@ -91,11 +134,7 @@ class InstitutionServiceImplTest {
         InstitutionPrimaryCannotHaveParentException.class,
         () ->
             service.create(
-                "Université de Rennes",
-                uai,
-                "siret",
-                EInstitutionType.PRIMARY,
-                "0330001C"));
+                "Université de Rennes", null, uai, "siret", EInstitutionType.PRIMARY, "0330001C"));
 
     BddLogger.then("it should not save anything");
     verify(institutionRepository, never()).save(any());
@@ -114,6 +153,7 @@ class InstitutionServiceImplTest {
         () ->
             service.create(
                 "Université de Rennes - IUT",
+                null,
                 uai,
                 "siret",
                 EInstitutionType.SECONDARY,
@@ -137,6 +177,7 @@ class InstitutionServiceImplTest {
         () ->
             service.create(
                 "Université de Rennes - IUT",
+                null,
                 uai,
                 "siret",
                 EInstitutionType.SECONDARY,
@@ -156,6 +197,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Autre IUT",
+            null,
             parentUAI,
             "siret",
             EInstitutionType.SECONDARY,
@@ -169,6 +211,7 @@ class InstitutionServiceImplTest {
         () ->
             service.create(
                 "Université de Rennes - IUT",
+                null,
                 uai,
                 "siret",
                 EInstitutionType.SECONDARY,
@@ -187,6 +230,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
+            null,
             parentUAI,
             "siret",
             EInstitutionType.PRIMARY,
@@ -200,6 +244,7 @@ class InstitutionServiceImplTest {
     Institution result =
         service.create(
             "Université de Rennes - IUT",
+            null,
             uai,
             "siret",
             EInstitutionType.SECONDARY,
@@ -224,12 +269,14 @@ class InstitutionServiceImplTest {
             List.of(
                 new InstitutionData(
                     "Université de Rennes",
+                    null,
                     "0350001A",
                     "siret",
                     EInstitutionType.PRIMARY,
                     null),
                 new InstitutionData(
                     "Université de Bordeaux",
+                    null,
                     "0330001C",
                     "siret",
                     EInstitutionType.PRIMARY,
@@ -250,6 +297,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
+            null,
             uai,
             "siret",
             EInstitutionType.PRIMARY,
@@ -264,6 +312,7 @@ class InstitutionServiceImplTest {
             List.of(
                 new InstitutionData(
                     "Université de Rennes - Renamed",
+                    null,
                     uai,
                     "new-siret",
                     EInstitutionType.PRIMARY,
@@ -290,12 +339,14 @@ class InstitutionServiceImplTest {
             List.of(
                 new InstitutionData(
                     "Université de Rennes",
+                    null,
                     "0350001A",
                     "siret",
                     EInstitutionType.PRIMARY,
                     null),
                 new InstitutionData(
                     "Université de Rennes - IUT",
+                    null,
                     "0350002B",
                     "siret",
                     EInstitutionType.SECONDARY,
@@ -317,6 +368,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
+            null,
             uai,
             "siret",
             EInstitutionType.PRIMARY,
@@ -330,6 +382,7 @@ class InstitutionServiceImplTest {
         service.update(
             uai,
             "Université de Rennes - Renamed",
+            null,
             "new-siret",
             EInstitutionType.PRIMARY,
             null);
@@ -349,7 +402,7 @@ class InstitutionServiceImplTest {
     BddLogger.when("updating an institution with an unknown uai");
     assertThrows(
         InstitutionNotFoundException.class,
-        () -> service.update(uai, "name", "siret", EInstitutionType.PRIMARY, null));
+        () -> service.update(uai, "name", null, "siret", EInstitutionType.PRIMARY, null));
 
     BddLogger.then("it should not save anything");
     verify(institutionRepository, never()).save(any());
@@ -362,6 +415,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
+            null,
             "0350001A",
             "siret",
             EInstitutionType.PRIMARY,
@@ -383,6 +437,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes - IUT",
+            null,
             "0350002B",
             "siret",
             EInstitutionType.SECONDARY,
@@ -404,6 +459,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
+            null,
             "0350001A",
             "siret",
             EInstitutionType.PRIMARY,
@@ -427,6 +483,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes - IUT",
+            null,
             "0350002B",
             "siret",
             EInstitutionType.SECONDARY,
@@ -448,12 +505,7 @@ class InstitutionServiceImplTest {
     UUID id = UUID.randomUUID();
     Institution institution =
         Institution.create(
-            id,
-            "Université de Rennes",
-            "0350001A",
-            "siret",
-            EInstitutionType.PRIMARY,
-            null);
+            id, "Université de Rennes", null, "0350001A", "siret", EInstitutionType.PRIMARY, null);
     when(institutionRepository.findById(id)).thenReturn(Optional.of(institution));
 
     BddLogger.when("fetching the institution by id");
@@ -481,12 +533,7 @@ class InstitutionServiceImplTest {
     UUID id = UUID.randomUUID();
     Institution institution =
         Institution.create(
-            id,
-            "Université de Rennes",
-            "0350001A",
-            "siret",
-            EInstitutionType.PRIMARY,
-            null);
+            id, "Université de Rennes", null, "0350001A", "siret", EInstitutionType.PRIMARY, null);
     when(institutionRepository.findById(id)).thenReturn(Optional.of(institution));
 
     BddLogger.when("deleting the institution");
@@ -504,6 +551,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             institutionId,
             "Université de Rennes",
+            null,
             "0350001A",
             "siret",
             EInstitutionType.PRIMARY,
@@ -525,6 +573,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             parentId,
             "Université de Rennes",
+            null,
             "0350001A",
             "siret",
             EInstitutionType.PRIMARY,
@@ -534,6 +583,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             childId,
             "Université de Rennes - IUT",
+            null,
             "0350002B",
             "siret",
             EInstitutionType.SECONDARY,
@@ -556,6 +606,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             targetId,
             "Université de Bordeaux",
+            null,
             "0330001C",
             "siret",
             EInstitutionType.PRIMARY,
@@ -592,6 +643,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             institutionId,
             "Université de Rennes",
+            null,
             "0350001A",
             "siret",
             EInstitutionType.PRIMARY,
@@ -614,6 +666,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             parentId,
             "Université de Rennes",
+            null,
             "0350001A",
             "siret",
             EInstitutionType.PRIMARY,
@@ -623,6 +676,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             childId,
             "Université de Rennes - IUT",
+            null,
             "0350002B",
             "siret",
             EInstitutionType.SECONDARY,
@@ -644,6 +698,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             parentId,
             "Université de Rennes",
+            null,
             "0350001A",
             "siret",
             EInstitutionType.PRIMARY,
@@ -653,6 +708,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             firstChildId,
             "Université de Rennes - IUT",
+            null,
             "0350002B",
             "siret",
             EInstitutionType.SECONDARY,
@@ -662,6 +718,7 @@ class InstitutionServiceImplTest {
         Institution.create(
             secondChildId,
             "Université de Rennes - UFR",
+            null,
             "0350003C",
             "siret",
             EInstitutionType.SECONDARY,

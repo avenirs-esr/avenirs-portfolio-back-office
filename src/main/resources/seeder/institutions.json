@@ -1,6 +1,7 @@
 [
   {
     "name": "Université de Rennes",
+    "sigle": "UR",
     "uai": "0350001A",
     "siret": "13000550100015",
     "type": "PRIMARY",
@@ -8,6 +9,7 @@
   },
   {
     "name": "Université de Rennes - IUT",
+    "sigle": "IUT-R",
     "uai": "0350002B",
     "siret": "13000550100023",
     "type": "SECONDARY",
@@ -15,6 +17,7 @@
   },
   {
     "name": "Université de Bordeaux",
+    "sigle": "UB",
     "uai": "0330001C",
     "siret": "13000551200011",
     "type": "PRIMARY",
@@ -22,6 +25,7 @@
   },
   {
     "name": "Université de Bordeaux - IUT",
+    "sigle": "IUT-B",
     "uai": "0330002D",
     "siret": "13000551200029",
     "type": "SECONDARY",
@@ -29,6 +33,7 @@
   },
   {
     "name": "ANR",
+    "sigle": "ANR",
     "uai": "0750001A",
     "siret": "13000560000010",
     "type": "PRIMARY",

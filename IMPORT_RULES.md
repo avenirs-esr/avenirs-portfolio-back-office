@@ -78,6 +78,7 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 | Champ | Type JSON | Obligatoire | Description |
 |---|---|---|---|
 | `name` | string | **Oui** | Nom de l'établissement |
+| `sigle` | string \| null | Non | Sigle / nom court de l'établissement (ex. `UR`) |
 | `uai` | string | **Oui** | Identifiant UAI, **unique** — sert de clé d'upsert / mise à jour |
 | `siret` | string \| null | Non | Numéro SIRET (14 chiffres) |
 | `type` | enum | **Oui** | `PRIMARY` \| `SECONDARY` |
@@ -100,6 +101,7 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 [
   {
     "name": "Université de Rennes",
+    "sigle": "UR",
     "uai": "0350001A",
     "siret": "13000550100015",
     "type": "PRIMARY",
@@ -107,6 +109,7 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
   },
   {
     "name": "Université de Rennes - IUT",
+    "sigle": "IUT-R",
     "uai": "0350002B",
     "siret": "13000550100023",
     "type": "SECONDARY",

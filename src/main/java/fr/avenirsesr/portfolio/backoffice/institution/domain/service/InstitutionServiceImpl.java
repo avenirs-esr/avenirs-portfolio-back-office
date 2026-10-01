@@ -31,11 +31,12 @@ public class InstitutionServiceImpl implements InstitutionService {
   @Override
   public Institution create(
       String name,
+      String sigle,
       String uai,
       String siret,
       EInstitutionType type,
       String parentUAI) {
-    return upsert(name, uai, siret, type, parentUAI).institution();
+    return upsert(name, sigle, uai, siret, type, parentUAI).institution();
   }
 
   @Override
@@ -48,7 +49,7 @@ public class InstitutionServiceImpl implements InstitutionService {
       try {
         UpsertResult result =
             upsert(
-                data.name(), data.uai(), data.siret(), data.type(), data.parentUAI());
+                data.name(), data.sigle(), data.uai(), data.siret(), data.type(), data.parentUAI());
         if (result.created()) {
           created.add(result.institution());
         } else {
@@ -66,18 +67,19 @@ public class InstitutionServiceImpl implements InstitutionService {
   /** Creates the institution, or updates the existing one matching the given uai. */
   private UpsertResult upsert(
       String name,
+      String sigle,
       String uai,
       String siret,
       EInstitutionType type,
       String parentUAI) {
     Optional<Institution> existing = institutionRepository.findByUai(uai);
     if (existing.isPresent()) {
-      return new UpsertResult(update(uai, name, siret, type, parentUAI), false);
+      return new UpsertResult(update(uai, name, sigle, siret, type, parentUAI), false);
     }
 
     Institution parent = resolveParent(type, parentUAI);
     Institution institution =
-        Institution.create(idFromUai(uai), name, uai, siret, type, parent);
+        Institution.create(idFromUai(uai), name, sigle, uai, siret, type, parent);
     return new UpsertResult(institutionRepository.save(institution), true);
   }
 
@@ -91,6 +93,7 @@ public class InstitutionServiceImpl implements InstitutionService {
   public Institution update(
       String uai,
       String name,
+      String sigle,
       String siret,
       EInstitutionType type,
       String parentUAI) {
@@ -100,6 +103,7 @@ public class InstitutionServiceImpl implements InstitutionService {
     Institution parent = resolveParent(type, parentUAI);
 
     institution.setName(name);
+    institution.setSigle(sigle);
     institution.setSiret(siret);
     institution.setType(type);
     institution.setParent(parent);
@@ -115,6 +119,7 @@ public class InstitutionServiceImpl implements InstitutionService {
                 update(
                     data.uai(),
                     data.name(),
+                    data.sigle(),
                     data.siret(),
                     data.type(),
                     data.parentUAI()))

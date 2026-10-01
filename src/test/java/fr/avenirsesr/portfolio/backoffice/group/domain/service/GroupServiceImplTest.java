@@ -43,6 +43,7 @@ class GroupServiceImplTest {
       Institution.create(
           institutionId,
           "Universite de Rennes",
+          null,
           "0350001A",
           "siret",
           EInstitutionType.PRIMARY,

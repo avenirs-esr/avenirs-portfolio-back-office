@@ -68,12 +68,14 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
         List.of(
             new InstitutionData(
                 "Université de Nantes",
+                null,
                 "0440001A",
                 "13000552300010",
                 EInstitutionType.PRIMARY,
                 null),
             new InstitutionData(
                 "Université de Lyon",
+                null,
                 "0690001A",
                 "13000552400018",
                 EInstitutionType.PRIMARY,
@@ -106,6 +108,7 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
         List.of(
             new InstitutionData(
                 "Université de Rennes - Renamed via import",
+                null,
                 SEEDED_PRIMARY_UAI,
                 "13000550100015",
                 EInstitutionType.PRIMARY,
@@ -137,12 +140,14 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
         List.of(
             new InstitutionData(
                 "Université de Toulouse",
+                null,
                 "0310001A",
                 "13000552600014",
                 EInstitutionType.PRIMARY,
                 null),
             new InstitutionData(
                 "IUT sans parent",
+                null,
                 "0310002B",
                 "13000552700012",
                 EInstitutionType.SECONDARY,
@@ -174,6 +179,7 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
         List.of(
             new InstitutionData(
                 "Université de Rennes - Renamed",
+                null,
                 SEEDED_PRIMARY_UAI,
                 "13000550100015",
                 EInstitutionType.PRIMARY,
@@ -220,6 +226,7 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
         List.of(
             new InstitutionData(
                 "Université à supprimer",
+                null,
                 "0990001A",
                 "13000552500017",
                 EInstitutionType.PRIMARY,
