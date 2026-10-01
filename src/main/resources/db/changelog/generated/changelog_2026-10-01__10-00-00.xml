@@ -41,4 +41,39 @@
             <column name="sigle" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
+    <changeSet author="iamgreendev" id="20261001100000-6">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="external_user" columnName="institution_uai"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="external_user">
+            <column name="institution_uai" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="iamgreendev" id="20261001100000-7">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_user" columnName="institution_uai"/>
+        </preConditions>
+        <comment>Backfills the uai from the institution of the oldest affiliation of each user.</comment>
+        <sql>
+            UPDATE external_user eu
+            SET institution_uai = (
+                SELECT i.uai
+                FROM external_user_affiliation eua
+                JOIN institution i ON i.id = eua.institution_id
+                WHERE eua.id_external_user = eu.id
+                ORDER BY eua.created_at, i.uai
+                LIMIT 1
+            )
+            WHERE eu.institution_uai IS NULL;
+        </sql>
+    </changeSet>
+    <changeSet author="iamgreendev" id="20261001100000-8">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="external_user" columnName="institution_uai"/>
+        </preConditions>
+        <comment>Users with no affiliation at all keep the UNKNOWN sentinel, to be fixed by a reimport.</comment>
+        <addNotNullConstraint tableName="external_user" columnName="institution_uai" columnDataType="VARCHAR(255)" defaultNullValue="UNKNOWN"/>
+    </changeSet>
 </databaseChangeLog>

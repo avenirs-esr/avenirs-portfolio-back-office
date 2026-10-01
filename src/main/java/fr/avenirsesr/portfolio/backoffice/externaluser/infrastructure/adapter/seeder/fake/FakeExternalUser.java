@@ -16,6 +16,7 @@ public record FakeExternalUser(
     String email,
     Set<EUserCategory> categories,
     String externalId,
+    String institutionUAI,
     EUserStatus status) {
 
   private static final DataGeneratorProvider<SharedDataGenerator> dataGenerator =
@@ -24,7 +25,7 @@ public record FakeExternalUser(
 
   private static final Faker faker = new Faker();
 
-  public static FakeExternalUser random() {
+  public static FakeExternalUser random(String institutionUAI) {
     String firstName = faker.name().firstName();
     String lastName = faker.name().lastName();
     String eppn = faker.internet().emailAddress();
@@ -40,6 +41,7 @@ public record FakeExternalUser(
         eppn,
         categories,
         FakeExternalSource.generateExternalSourceId(),
+        institutionUAI,
         EUserStatus.ACTIVE);
   }
 }

@@ -53,6 +53,7 @@ class ExternalUserAffiliationServiceImplTest {
         "lucas.tessier@university.com",
         "PEG-0001",
         EExternalSource.BACK_OFFICE,
+        "0350001A",
         Set.of(categories),
         "lucas.tessier@university.com",
         "Lucas",

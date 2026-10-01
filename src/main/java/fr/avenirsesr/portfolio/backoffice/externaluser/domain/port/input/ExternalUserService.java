@@ -19,6 +19,7 @@ public interface ExternalUserService {
       String email,
       Set<EUserCategory> categories,
       String externalId,
+      String institutionUAI,
       EUserStatus status);
 
   ExternalUserImportSummary createAll(List<ExternalUserData> externalUsers);
@@ -29,7 +30,8 @@ public interface ExternalUserService {
       String lastName,
       String email,
       Set<EUserCategory> categories,
-      String externalId);
+      String externalId,
+      String institutionUAI);
 
   List<ExternalUser> updateAll(List<ExternalUserData> externalUsers);
 

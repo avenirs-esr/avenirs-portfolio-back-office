@@ -9,4 +9,5 @@ public record ExternalUserData(
     String lastName,
     String email,
     Set<EUserCategory> categories,
-    String externalId) {}
+    String externalId,
+    String institutionUAI) {}

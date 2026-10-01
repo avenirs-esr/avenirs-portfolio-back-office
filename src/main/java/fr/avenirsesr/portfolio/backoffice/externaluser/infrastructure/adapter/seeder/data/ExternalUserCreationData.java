@@ -11,4 +11,5 @@ public record ExternalUserCreationData(
     String email,
     Set<EUserCategory> categories,
     String externalId,
+    String institutionUAI,
     EUserStatus status) {}

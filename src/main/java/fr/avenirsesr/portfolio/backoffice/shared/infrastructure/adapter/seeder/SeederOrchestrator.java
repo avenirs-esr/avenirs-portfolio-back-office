@@ -54,7 +54,7 @@ public class SeederOrchestrator {
       List<UUID> savedInstitutionIds = institutionSeeder.seed();
       institutionConfigSeeder.seed(savedInstitutionIds);
       List<UUID> savedGroupIds = groupSeeder.seed(savedInstitutionIds);
-      List<ExternalUser> savedExternalUsers = externalUserSeeder.seed();
+      List<ExternalUser> savedExternalUsers = externalUserSeeder.seed(savedInstitutionIds);
       externalUserAffiliationSeeder.seed(savedExternalUsers, savedInstitutionIds, savedGroupIds);
 
       log.info("✔ Seeding successfully finished");

@@ -205,6 +205,7 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
 | `email` | string (≤255) | **Oui** | Adresse e-mail valide |
 | `categories` | array d'enums | **Oui** | `["STUDENT"]`, `["STAFF"]` ou `["STUDENT", "STAFF"]` |
 | `externalId` | string (≤255) | **Oui** | Identifiant dans le SI d'origine, **unique** |
+| `institutionUAI` | string (≤255) | **Oui** | `uai` de l'établissement d'origine de l'utilisateur |
 
 ### Règles métier
 
@@ -215,6 +216,9 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
   statut d'un utilisateur déjà existant : il reste celui en base.
 - `externalId` est unique en base : le réutiliser pour deux `eppn` différents provoque une
   erreur d'intégrité.
+- `institutionUAI` enregistre l'établissement d'origine de l'utilisateur. C'est une donnée
+  d'identité, **distincte des affiliations** (§ 5) qui portent, elles, les droits d'accès : un
+  utilisateur peut être affilié à d'autres établissements que celui de son `institutionUAI`.
 - **Aucune affiliation n'est créée** par cet import : un utilisateur importé ici n'est rattaché
   à aucun établissement tant que ses affiliations n'ont pas été importées (§ 5).
 - Un `PUT` ne touche **jamais** aux affiliations existantes : elles ne sont modifiables que par
@@ -232,7 +236,8 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
     "lastName": "Tessier",
     "email": "lucas.tessier@university.com",
     "categories": ["STUDENT"],
-    "externalId": "PEG-0001"
+    "externalId": "PEG-0001",
+    "institutionUAI": "0350001A"
   },
   {
     "eppn": "marie.dupont.staff@university.com",
@@ -240,7 +245,8 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
     "lastName": "Dupont",
     "email": "marie.dupont@university.com",
     "categories": ["STAFF", "STUDENT"],
-    "externalId": "TEACH-AG-83"
+    "externalId": "TEACH-AG-83",
+    "institutionUAI": "0350001A"
   }
 ]
 ```
@@ -476,7 +482,7 @@ fixtures référencent les entités par leur clé métier.
 |---|---|
 | `institutions.json` | Identique à `InstitutionData` |
 | `groups.json` | Identique à `GroupData` |
-| `external-users.json` | Identité seule, plus un `status` facultatif (la fixture peut créer des comptes inactifs) |
+| `external-users.json` | Identique à `ExternalUserData`, plus un `status` facultatif (la fixture peut créer des comptes inactifs) |
 | `external-user-affiliations.json` | **Une entrée par `eppn`**, avec deux listes de clés métier (schéma propre au seeder) |
 
 Le seeder résout ces clés métier en UUID, puis applique exactement les mêmes règles métier que
@@ -493,6 +499,7 @@ purge se fait dans l'ordre inverse (les affiliations d'abord).
   "email": "lucas.tessier@university.com",
   "categories": ["STUDENT", "STAFF"],
   "externalId": "PEG-0001",
+  "institutionUAI": "0350001A",
   "status": "ACTIVE"
 }
 ```
