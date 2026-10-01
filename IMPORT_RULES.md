@@ -9,11 +9,6 @@ d'import / mise à jour des entités structurantes du back-office :
 - **`ExternalUserAffiliationData`** — affiliation d'un utilisateur externe à un établissement
   et, éventuellement, à un groupe
 
-> ⚠️ **Changement majeur** — Depuis la séparation des utilisateurs externes et de leurs
-> affiliations, `ExternalUserData` **ne porte plus** `institutionId` ni `groupId`. Un
-> utilisateur externe est désormais rattaché à **plusieurs** établissements et/ou groupes via
-> des affiliations, importées par un endpoint dédié (§ 5). Voir § 5.6 pour la migration.
-
 ## 1. Généralités
 
 | Point | Valeur |
@@ -130,10 +125,26 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 | `idSISco` | string | **Oui** | Identifiant SI Scolarité, **unique** — clé d'upsert / mise à jour |
 | `institutionUAI` | string | **Oui** | `uai` de l'établissement de rattachement |
 | `codeSise` | string \| null | Non | Code SISE |
-| `startDate` | string (`yyyy-MM-dd`) \| null | Non | Date de début |
-| `endDate` | string (`yyyy-MM-dd`) \| null | Non | Date de fin |
-| `type` | enum | **Oui** | `PROGRAM` \| `PROGRAM_OPTION` \| `STUDENT_GROUP` |
+| `startDate` | string (`yyyy-MM-dd`) \| null | Non | Date de début — voir la note ci-dessous |
+| `endDate` | string (`yyyy-MM-dd`) \| null | Non | Date de fin — voir la note ci-dessous |
+| `type` | enum | **Oui** | `PROGRAM` \| `PROGRAM_OPTION` \| `STUDENT_GROUP` — voir § 3.1 |
 | `parentIdSISco` | string \| null | Conditionnel | `idSISco` du groupe parent |
+
+> 💡 `startDate` / `endDate` sont facultatives mais **utiles à renseigner** : elles portent le
+> cycle de vie du groupe — la période pendant laquelle la formation, l'option ou le groupe
+> d'étudiants est active. Les renseigner permet de distinguer un groupe en cours d'un groupe
+> clos sans avoir à le supprimer, et de filtrer dessus via
+> `GET /back-office/admin/groups?startDate=…&endDate=…` (`startDate` ⇒ groupes commençant à
+> cette date ou après, `endDate` ⇒ groupes finissant à cette date ou avant). Un groupe dont la
+> date est laissée à `null` est **exclu** du filtre correspondant.
+
+### 3.1 Types de groupe (`EGroupType`)
+
+| Valeur | Signification | Place dans la hiérarchie |
+|---|---|---|
+| `PROGRAM` | **Formation** (ex. « Licence Informatique ») | Racine : pas de parent |
+| `PROGRAM_OPTION` | **Option / parcours de formation** (ex. « Parcours IA ») | Enfant d'un `PROGRAM` |
+| `STUDENT_GROUP` | **Groupe d'étudiants** (ex. « Groupe A », une promotion, un TD) | Enfant d'un `PROGRAM` ou d'un `PROGRAM_OPTION` |
 
 ### Règles métier (hiérarchie par `type`)
 
@@ -192,8 +203,8 @@ Codes d'erreur associés (`400`) : `GROUP_PROGRAM_CANNOT_HAVE_PARENT`,
 
 ## 4. `ExternalUserData` — Utilisateur externe
 
-Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachements
-(établissements, groupes) sont importés séparément (§ 5).
+Ce payload décrit **l'identité** de l'utilisateur. Ses rattachements (établissements, groupes)
+sont importés séparément (§ 5).
 
 ### Schéma
 
@@ -253,7 +264,7 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
 
 ### Lecture d'un utilisateur externe
 
-Le DTO retourné par `GET /back-office/external-users[/{id}|/eppn/{eppn}]` expose désormais les
+Le DTO retourné par `GET /back-office/external-users[/{id}|/eppn/{eppn}]` expose les
 rattachements **sous forme de listes**, reconstituées à partir des affiliations :
 
 ```json
@@ -295,13 +306,16 @@ plusieurs formations, ou les deux.
 | Utilisateur externe | **Obligatoire** — doit exister |
 | Établissement | **Obligatoire** — doit exister |
 | Groupe | **Facultatif** (`null` ⇒ affiliation « établissement seul ») — doit exister s'il est fourni |
-| Unicité | Le triplet (utilisateur, établissement, groupe) est unique en base |
+| Catégorie | **Obligatoire** — `STUDENT` ou `STAFF`, et doit être l'une des `categories` de l'utilisateur |
+| Unicité | Le quadruplet (utilisateur, établissement, groupe, catégorie) est unique en base |
 
 Conséquences directes :
 
 - Une affiliation « établissement seul » et une affiliation « établissement + groupe » sont
   **deux lignes distinctes**. Créer la seconde ne crée pas la première.
 - Deux groupes différents du même établissement ⇒ deux affiliations.
+- Un utilisateur à la fois `STUDENT` et `STAFF` sur le même périmètre ⇒ deux affiliations, une
+  par catégorie : c'est la catégorie de l'affiliation qui détermine les droits appliqués.
 - **Aucun contrôle de cohérence** n'est fait entre l'établissement fourni et l'établissement
   porteur du groupe : c'est à l'appelant de fournir le couple cohérent.
 
@@ -319,12 +333,13 @@ En-têtes : `X-ADMIN-TOKEN` + permission `external-user-affiliation:import`.
 | `eppn` | string | **Oui** | `eppn` de l'utilisateur externe (doit déjà être importé) |
 | `institutionUAI` | string | **Oui** | `uai` de l'établissement |
 | `groupIdSISco` | string \| null | Non | `idSISco` du groupe ; `null` / absent ⇒ affiliation établissement seul |
+| `category` | enum | **Oui** | `STUDENT` ou `STAFF` — doit faire partie des `categories` de l'utilisateur |
 
 ```json
 [
-  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0350001A", "groupIdSISco": "10000003" },
-  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0330001C", "groupIdSISco": null },
-  { "eppn": "marie.dupont.staff@university.com", "institutionUAI": "0350001A" }
+  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0350001A", "groupIdSISco": "10000003", "category": "STUDENT" },
+  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0330001C", "groupIdSISco": null, "category": "STUDENT" },
+  { "eppn": "marie.dupont.staff@university.com", "institutionUAI": "0350001A", "category": "STAFF" }
 ]
 ```
 
@@ -351,15 +366,17 @@ En-têtes : `X-ADMIN-TOKEN` + permission `external-user-affiliation:import`.
       "externalUserId": "b3f2...",
       "institutionId": "3fa85f64-...",
       "groupId": "9b1deb4d-...",
+      "category": "STUDENT",
       "createdAt": "2026-09-21T12:00:00Z"
     }
   ],
-  "existing": [ { "id": "...", "externalUserId": "...", "institutionId": "...", "groupId": null, "createdAt": "..." } ],
+  "existing": [ { "id": "...", "externalUserId": "...", "institutionId": "...", "groupId": null, "category": "STAFF", "createdAt": "..." } ],
   "failed": [
     {
       "eppn": "inconnu@university.com",
       "institutionUAI": "0350001A",
       "groupIdSISco": null,
+      "category": "STUDENT",
       "message": "External user not found"
     }
   ]
@@ -367,7 +384,7 @@ En-têtes : `X-ADMIN-TOKEN` + permission `external-user-affiliation:import`.
 ```
 
 Messages d'échec possibles : `External user not found`, `Institution not found`,
-`Group not found`.
+`Group not found`, `The affiliation category must be one of the external user's categories`.
 
 ### 5.3 Endpoints unitaires (par UUID)
 
@@ -384,7 +401,8 @@ Corps du `POST` (UUID, pas de clés métier) :
 ```json
 {
   "institutionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "groupId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+  "groupId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+  "category": "STUDENT"
 }
 ```
 
@@ -403,6 +421,7 @@ Corps du `POST` (UUID, pas de clés métier) :
 | `INSTITUTION_NOT_FOUND` | `404` | `institutionUAI` / `institutionId` inconnu |
 | `GROUP_NOT_FOUND` | `404` | `groupIdSISco` / `groupId` inconnu |
 | `EXTERNAL_USER_AFFILIATION_NOT_FOUND` | `404` | Affiliation inconnue, ou n'appartenant pas à l'utilisateur ciblé |
+| `EXTERNAL_USER_AFFILIATION_CATEGORY_NOT_ALLOWED` | `400` | `category` absente, ou absente des `categories` de l'utilisateur |
 
 Sur l'import en masse, ces erreurs ne remontent pas en HTTP : elles sont **capturées ligne à
 ligne** et reportées dans `failed[]` avec leur message.
@@ -413,18 +432,6 @@ ligne** et reportées dans `failed[]` avec leur message.
 - Supprimer un **établissement** ou un **groupe** encore référencé par une affiliation échoue
   sur une violation de contrainte d'intégrité (`500`) : retirez d'abord les affiliations
   concernées.
-
-### 5.6 Migration depuis l'ancien schéma
-
-- Les champs `institutionId` et `groupId` ont disparu de `ExternalUserData`. Laissés dans un
-  ancien payload, ils sont **ignorés silencieusement** (les propriétés inconnues ne font pas
-  échouer la désérialisation) : l'utilisateur serait alors créé **sans aucune affiliation**.
-  Adaptez vos scripts pour appeler l'import d'affiliations après celui des utilisateurs.
-- Côté base, le changelog Liquibase `changelog_2026-09-21__12-00-00.xml` crée la table
-  `external_user_affiliation`, **recopie** les couples `(institution_id, group_id)` existants de
-  `external_user` en autant d'affiliations, puis **supprime ces deux colonnes**.
-- Le DTO de lecture est passé de `institutionId` / `groupId` (UUID) à `institutionIds` /
-  `groupIds` (listes d'UUID) : les consommateurs de l'API doivent être adaptés.
 
 ---
 
