@@ -37,6 +37,7 @@ class ExternalUserServiceImplTest {
   private static final Set<EUserCategory> CATEGORIES = Set.of(EUserCategory.STUDENT);
   private static final String EXTERNAL_ID = "PEG-0001";
   private static final EExternalSource SOURCE = EExternalSource.BACK_OFFICE;
+  private static final String INSTITUTION_UAI = "0350001A";
 
   @Mock private ExternalUserRepository externalUserRepository;
 
@@ -68,7 +69,14 @@ class ExternalUserServiceImplTest {
 
         result =
             service.importExternalUser(
-                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, EUserStatus.ACTIVE);
+                EPPN,
+                FIRST_NAME,
+                LAST_NAME,
+                EMAIL,
+                CATEGORIES,
+                EXTERNAL_ID,
+                INSTITUTION_UAI,
+                EUserStatus.ACTIVE);
       }
 
       @Test
@@ -87,6 +95,7 @@ class ExternalUserServiceImplTest {
         assertEquals(CATEGORIES, result.getCategories());
         assertEquals(EXTERNAL_ID, result.getExternalId());
         assertEquals(SOURCE, result.getSource());
+        assertEquals(INSTITUTION_UAI, result.getInstitutionUAI());
         assertEquals(EUserStatus.ACTIVE, result.getStatus());
       }
 
@@ -124,7 +133,7 @@ class ExternalUserServiceImplTest {
 
         result =
             service.importExternalUser(
-                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, null);
+                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, INSTITUTION_UAI, null);
       }
 
       @Test
@@ -154,7 +163,14 @@ class ExternalUserServiceImplTest {
 
         result =
             service.importExternalUser(
-                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, EUserStatus.INACTIVE);
+                EPPN,
+                FIRST_NAME,
+                LAST_NAME,
+                EMAIL,
+                CATEGORIES,
+                EXTERNAL_ID,
+                INSTITUTION_UAI,
+                EUserStatus.INACTIVE);
       }
 
       @Test
@@ -350,6 +366,7 @@ class ExternalUserServiceImplTest {
                         EMAIL,
                         CATEGORIES,
                         EXTERNAL_ID,
+                        INSTITUTION_UAI,
                         EUserStatus.ACTIVE));
 
         assertEquals(exception, result);
@@ -368,6 +385,7 @@ class ExternalUserServiceImplTest {
         EPPN,
         EXTERNAL_ID,
         SOURCE,
+        INSTITUTION_UAI,
         CATEGORIES,
         EMAIL,
         FIRST_NAME,

@@ -18,6 +18,7 @@ public class ExternalUser extends AvenirsBaseModel {
 
   @Setter private String externalId;
   @Setter private EExternalSource source;
+  @Setter private String institutionUAI;
   @Setter private Set<EUserCategory> categories;
   @Setter private String email;
   @Setter private String firstName;
@@ -31,6 +32,7 @@ public class ExternalUser extends AvenirsBaseModel {
       String eppn,
       String externalId,
       EExternalSource source,
+      String institutionUAI,
       Set<EUserCategory> categories,
       String email,
       String firstName,
@@ -40,6 +42,7 @@ public class ExternalUser extends AvenirsBaseModel {
     this.eppn = eppn;
     this.externalId = externalId;
     this.source = source;
+    this.institutionUAI = institutionUAI;
     this.categories = categories == null ? Set.of() : Set.copyOf(categories);
     this.email = email;
     this.firstName = firstName;
@@ -51,6 +54,7 @@ public class ExternalUser extends AvenirsBaseModel {
       String eppn,
       String externalId,
       EExternalSource source,
+      String institutionUAI,
       Set<EUserCategory> categories,
       String email,
       String firstName,
@@ -65,6 +69,7 @@ public class ExternalUser extends AvenirsBaseModel {
         eppn,
         externalId,
         source,
+        institutionUAI,
         categories,
         email,
         firstName,
@@ -79,6 +84,7 @@ public class ExternalUser extends AvenirsBaseModel {
       String eppn,
       String externalId,
       EExternalSource source,
+      String institutionUAI,
       Set<EUserCategory> categories,
       String email,
       String firstName,
@@ -91,6 +97,7 @@ public class ExternalUser extends AvenirsBaseModel {
         eppn,
         externalId,
         source,
+        institutionUAI,
         categories,
         email,
         firstName,

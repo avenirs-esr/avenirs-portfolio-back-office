@@ -29,9 +29,10 @@ public class TransactionalExternalUserService implements ExternalUserService {
       String email,
       Set<EUserCategory> categories,
       String externalId,
+      String institutionUAI,
       EUserStatus status) {
     return delegate.importExternalUser(
-        eppn, firstName, lastName, email, categories, externalId, status);
+        eppn, firstName, lastName, email, categories, externalId, institutionUAI, status);
   }
 
   @Override
@@ -47,8 +48,10 @@ public class TransactionalExternalUserService implements ExternalUserService {
       String lastName,
       String email,
       Set<EUserCategory> categories,
-      String externalId) {
-    return delegate.update(eppn, firstName, lastName, email, categories, externalId);
+      String externalId,
+      String institutionUAI) {
+    return delegate.update(
+        eppn, firstName, lastName, email, categories, externalId, institutionUAI);
   }
 
   @Override

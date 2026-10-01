@@ -6,6 +6,7 @@
     "email": "lucas.tessier@university.com",
     "categories": ["STUDENT"],
     "externalId": "PEG-0001",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -15,6 +16,7 @@
     "email": "lucas.tessier@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-AG-83",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -24,6 +26,7 @@
     "email": "arthur.lambert@university.com",
     "categories": ["STUDENT"],
     "externalId": "AL-2024-8834",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -33,6 +36,7 @@
     "email": "sophie.charpentier@university.com",
     "categories": ["STUDENT"],
     "externalId": "SC-PEG-4521",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -42,6 +46,7 @@
     "email": "ethan.perrin@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-EP-09",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -51,6 +56,7 @@
     "email": "camille.fournier@university.com",
     "categories": ["STAFF"],
     "externalId": "PEG-STD-1010",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -60,6 +66,7 @@
     "email": "anais.marchand@university.com",
     "categories": ["STUDENT"],
     "externalId": "AM-9912-EXT",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -69,6 +76,7 @@
     "email": "valentin.favre@university.com",
     "categories": ["STUDENT"],
     "externalId": "VF-STU-6677",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -78,6 +86,7 @@
     "email": "lina.boucher@university.com",
     "categories": ["STUDENT"],
     "externalId": "LB-PEG-3304",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -87,6 +96,7 @@
     "email": "jules.carpentier@university.com",
     "categories": ["STUDENT"],
     "externalId": "JC-2025-145",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -96,6 +106,7 @@
     "email": "eva.lamy@university.com",
     "categories": ["STUDENT"],
     "externalId": "ELAM-8821",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -105,6 +116,7 @@
     "email": "martin.fabre@university.com",
     "categories": ["STUDENT"],
     "externalId": "MF-EXT-5509",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -114,6 +126,7 @@
     "email": "zoe.cousin@university.com",
     "categories": ["STAFF"],
     "externalId": "TCHR-ZC-23",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -123,6 +136,7 @@
     "email": "noah.lefebvre@university.com",
     "categories": ["STUDENT"],
     "externalId": "NL-PEG-7744",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -132,6 +146,7 @@
     "email": "aya.paris@university.com",
     "categories": ["STUDENT"],
     "externalId": "AP-STU-9012",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -141,6 +156,7 @@
     "email": "tom.renaud@university.com",
     "categories": ["STUDENT"],
     "externalId": "TR-2024-667",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -150,6 +166,7 @@
     "email": "sarah.baron@university.com",
     "categories": ["STUDENT"],
     "externalId": "SB-PEG-3398",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -159,6 +176,7 @@
     "email": "lea.richard@university.com",
     "categories": ["STUDENT"],
     "externalId": "4f9d2c7e-acde-41ab-b3a2-998877665544",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -168,6 +186,7 @@
     "email": "adam.hubert@university.com",
     "categories": ["STUDENT"],
     "externalId": "AH-EXT-5501",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -177,6 +196,7 @@
     "email": "emma.gaillard@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-EG-14",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -186,6 +206,7 @@
     "email": "hugo.mahe@university.com",
     "categories": ["STUDENT"],
     "externalId": "HM-PEG-2211",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -195,6 +216,7 @@
     "email": "chloe.lebrun@university.com",
     "categories": ["STUDENT"],
     "externalId": "CL-STU-8843",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -204,6 +226,7 @@
     "email": "louis.arnaud@university.com",
     "categories": ["STUDENT"],
     "externalId": "LA-2025-992",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -213,6 +236,7 @@
     "email": "ines.blanc@university.com",
     "categories": ["STUDENT"],
     "externalId": "IB-PEG-4456",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -222,6 +246,7 @@
     "email": "nathan.rolland@university.com",
     "categories": ["STUDENT"],
     "externalId": "NR-EXT-7723",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -231,6 +256,7 @@
     "email": "manon.hoareau@university.com",
     "categories": ["STAFF"],
     "externalId": "TCHR-MH-88",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -240,6 +266,7 @@
     "email": "alex.poirier@university.com",
     "categories": ["STUDENT"],
     "externalId": "AP-STU-6634",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -249,6 +276,7 @@
     "email": "julie.teixeira@university.com",
     "categories": ["STUDENT"],
     "externalId": "JT-PEG-1190",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -258,6 +286,7 @@
     "email": "maxime.grondin@university.com",
     "categories": ["STUDENT"],
     "externalId": "MG-2024-558",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -267,6 +296,7 @@
     "email": "paul.lemoine@university.com",
     "categories": ["STUDENT"],
     "externalId": "PL-EXT-9921",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -276,6 +306,7 @@
     "email": "clara.renault@university.com",
     "categories": ["STUDENT"],
     "externalId": "CR-PEG-3387",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -285,6 +316,7 @@
     "email": "baptiste.royer@university.com",
     "categories": ["STUDENT"],
     "externalId": "BR-STU-7756",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -294,6 +326,7 @@
     "email": "ines.barre@university.com",
     "categories": ["STUDENT"],
     "externalId": "IB-2025-441",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -303,6 +336,7 @@
     "email": "alexandre.perret@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-AP-55",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -312,6 +346,7 @@
     "email": "marine.carlier@university.com",
     "categories": ["STUDENT"],
     "externalId": "MC-PEG-8812",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -321,6 +356,7 @@
     "email": "yaniss.rodier@university.com",
     "categories": ["STUDENT"],
     "externalId": "YR-EXT-2234",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -330,6 +366,7 @@
     "email": "maya.peltier@university.com",
     "categories": ["STUDENT"],
     "externalId": "MP-STU-6698",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -339,6 +376,7 @@
     "email": "olivier.bodin@university.com",
     "categories": ["STUDENT"],
     "externalId": "OB-PEG-1145",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -348,6 +386,7 @@
     "email": "salome.thierry@university.com",
     "categories": ["STUDENT"],
     "externalId": "ST-2024-903",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -357,6 +396,7 @@
     "email": "timeo.bertin@university.com",
     "categories": ["STAFF"],
     "externalId": "TCHR-TB-31",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -366,6 +406,7 @@
     "email": "giulia.laporte@university.com",
     "categories": ["STUDENT"],
     "externalId": "GL-EXT-5567",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -375,6 +416,7 @@
     "email": "malo.riviere@university.com",
     "categories": ["STUDENT"],
     "externalId": "MR-PEG-8834",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -384,6 +426,7 @@
     "email": "elisa.monnier@university.com",
     "categories": ["STUDENT"],
     "externalId": "EM-STU-2209",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -393,6 +436,7 @@
     "email": "mathis.descamps@university.com",
     "categories": ["STUDENT"],
     "externalId": "MD-PEG-7712",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -402,6 +446,7 @@
     "email": "camille.delorme@university.com",
     "categories": ["STUDENT"],
     "externalId": "CD-2025-334",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -411,6 +456,7 @@
     "email": "thelma.normand@university.com",
     "categories": ["STUDENT"],
     "externalId": "TN-EXT-9956",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -420,6 +466,7 @@
     "email": "noah.maury@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-NM-72",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -429,6 +476,7 @@
     "email": "louna.barreau@university.com",
     "categories": ["STUDENT"],
     "externalId": "LB-PEG-4423",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -438,6 +486,7 @@
     "email": "leo.ledoux@university.com",
     "categories": ["STUDENT"],
     "externalId": "LL-STU-6681",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -447,6 +496,7 @@
     "email": "ambre.becker@university.com",
     "categories": ["STUDENT"],
     "externalId": "AB-PEG-1198",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -456,6 +506,7 @@
     "email": "oscar.mary@university.com",
     "categories": ["STUDENT"],
     "externalId": "OM-2024-775",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -465,6 +516,7 @@
     "email": "agathe.peron@university.com",
     "categories": ["STUDENT"],
     "externalId": "AP-EXT-3312",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -474,6 +526,7 @@
     "email": "sami.barbier@university.com",
     "categories": ["STUDENT"],
     "externalId": "SB-PEG-9945",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -483,6 +536,7 @@
     "email": "elodie.chretien@university.com",
     "categories": ["STAFF"],
     "externalId": "TCHR-EC-19",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -492,6 +546,7 @@
     "email": "evan.raynaud@university.com",
     "categories": ["STUDENT"],
     "externalId": "ER-STU-5534",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -501,6 +556,7 @@
     "email": "helena.weber@university.com",
     "categories": ["STUDENT"],
     "externalId": "HW-PEG-7789",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -510,6 +566,7 @@
     "email": "simon.roy@university.com",
     "categories": ["STUDENT"],
     "externalId": "SR-2025-221",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -519,6 +576,7 @@
     "email": "nina.philippe@university.com",
     "categories": ["STUDENT"],
     "externalId": "NP-EXT-8867",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -528,6 +586,7 @@
     "email": "ilian.gilbert@university.com",
     "categories": ["STUDENT"],
     "externalId": "IG-PEG-4456",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -537,6 +596,7 @@
     "email": "axel.poulain@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-AP-43",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -546,6 +606,7 @@
     "email": "jade.caillet@university.com",
     "categories": ["STUDENT"],
     "externalId": "JC-STU-1123",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -555,6 +616,7 @@
     "email": "david.camus@university.com",
     "categories": ["STUDENT"],
     "externalId": "DC-PEG-6690",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -564,6 +626,7 @@
     "email": "lise.bonneau@university.com",
     "categories": ["STUDENT"],
     "externalId": "LB-2024-887",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -573,6 +636,7 @@
     "email": "yanis.prevost@university.com",
     "categories": ["STUDENT"],
     "externalId": "YP-EXT-3345",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -582,6 +646,7 @@
     "email": "lola.brunet@university.com",
     "categories": ["STUDENT"],
     "externalId": "LB-PEG-9978",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -591,6 +656,7 @@
     "email": "ismael.aubert@university.com",
     "categories": ["STUDENT"],
     "externalId": "IA-STU-5512",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -600,6 +666,7 @@
     "email": "eline.guillot@university.com",
     "categories": ["STAFF"],
     "externalId": "TCHR-EG-66",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -609,6 +676,7 @@
     "email": "leo.blot@university.com",
     "categories": ["STUDENT"],
     "externalId": "LB-PEG-7734",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -618,6 +686,7 @@
     "email": "nour.denis@university.com",
     "categories": ["STUDENT"],
     "externalId": "ND-2025-445",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -627,6 +696,7 @@
     "email": "alicia.navarro@university.com",
     "categories": ["STUDENT"],
     "externalId": "AN-EXT-8823",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -636,6 +706,7 @@
     "email": "mael.masson@university.com",
     "categories": ["STUDENT"],
     "externalId": "MM-PEG-1167",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -645,6 +716,7 @@
     "email": "louise.lacombe@university.com",
     "categories": ["STUDENT"],
     "externalId": "LL-STU-6656",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -654,6 +726,7 @@
     "email": "victor.schmitt@university.com",
     "categories": ["STUDENT"],
     "externalId": "VS-PEG-3390",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -663,6 +736,7 @@
     "email": "anael.hardy@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-AH-91",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -672,6 +746,7 @@
     "email": "sofia.godard@university.com",
     "categories": ["STUDENT"],
     "externalId": "SG-2024-112",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -681,6 +756,7 @@
     "email": "nolan.guichard@university.com",
     "categories": ["STUDENT"],
     "externalId": "NG-EXT-5578",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -690,6 +766,7 @@
     "email": "mila.bruneau@university.com",
     "categories": ["STUDENT"],
     "externalId": "MB-PEG-9934",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -699,6 +776,7 @@
     "email": "ilyes.lapeyre@university.com",
     "categories": ["STUDENT"],
     "externalId": "IL-STU-2267",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -708,6 +786,7 @@
     "email": "romy.launay@university.com",
     "categories": ["STUDENT"],
     "externalId": "RL-PEG-7701",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -717,6 +796,7 @@
     "email": "iris.barre@university.com",
     "categories": ["STAFF"],
     "externalId": "TCHR-IB-37",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -726,6 +806,7 @@
     "email": "maelys.descartes@university.com",
     "categories": ["STUDENT"],
     "externalId": "MD-2025-889",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -735,6 +816,7 @@
     "email": "elias.langlois@university.com",
     "categories": ["STUDENT"],
     "externalId": "EL-EXT-4423",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -744,6 +826,7 @@
     "email": "mya.jacquet@university.com",
     "categories": ["STUDENT"],
     "externalId": "MJ-PEG-6678",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -753,6 +836,7 @@
     "email": "owen.parent@university.com",
     "categories": ["STUDENT"],
     "externalId": "OP-STU-1145",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -762,6 +846,7 @@
     "email": "nora.thiery@university.com",
     "categories": ["STUDENT"],
     "externalId": "NT-PEG-9912",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -771,6 +856,7 @@
     "email": "idriss.pineau@university.com",
     "categories": ["STUDENT"],
     "externalId": "IP-2024-556",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -780,6 +866,7 @@
     "email": "lila.daniel@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-LD-28",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -789,6 +876,7 @@
     "email": "eden.perrault@university.com",
     "categories": ["STUDENT"],
     "externalId": "EP-EXT-3334",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -798,6 +886,7 @@
     "email": "talia.hoquet@university.com",
     "categories": ["STUDENT"],
     "externalId": "TH-PEG-7789",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -807,6 +896,7 @@
     "email": "marin.legendre@university.com",
     "categories": ["STUDENT"],
     "externalId": "ML-STU-2201",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -816,6 +906,7 @@
     "email": "nils.chauvet@university.com",
     "categories": ["STUDENT"],
     "externalId": "NC-PEG-5567",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -825,6 +916,7 @@
     "email": "ava.perrot@university.com",
     "categories": ["STUDENT"],
     "externalId": "AP-2025-990",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -834,6 +926,7 @@
     "email": "titouan.savary@university.com",
     "categories": ["STUDENT"],
     "externalId": "TS-EXT-8845",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -843,6 +936,7 @@
     "email": "dorian.poulain@university.com",
     "categories": ["STAFF"],
     "externalId": "TCHR-DP-54",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -852,6 +946,7 @@
     "email": "jenna.marchal@university.com",
     "categories": ["STUDENT"],
     "externalId": "JM-PEG-4412",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -861,6 +956,7 @@
     "email": "ali.meunier@university.com",
     "categories": ["STUDENT"],
     "externalId": "AM-STU-6623",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -870,6 +966,7 @@
     "email": "selena.pineau@university.com",
     "categories": ["STUDENT"],
     "externalId": "SP-PEG-1190",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -879,6 +976,7 @@
     "email": "ilan.picard@university.com",
     "categories": ["STUDENT"],
     "externalId": "IP-2024-778",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -888,6 +986,7 @@
     "email": "maud.bonnard@university.com",
     "categories": ["STUDENT"],
     "externalId": "MB-EXT-3356",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -897,6 +996,7 @@
     "email": "kenzo.roche@university.com",
     "categories": ["STUDENT"],
     "externalId": "KR-PEG-9967",
+    "institutionUAI": "0330001C",
     "status": "ACTIVE"
   },
   {
@@ -906,6 +1006,7 @@
     "email": "aya.germain@university.com",
     "categories": ["STAFF"],
     "externalId": "TEACH-AG-82",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   },
   {
@@ -915,6 +1016,7 @@
     "email": "etu1l1.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L1-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -924,6 +1026,7 @@
     "email": "etu2l1.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L1-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -933,6 +1036,7 @@
     "email": "etu3l1.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L1-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -942,6 +1046,7 @@
     "email": "etu4l2.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L2-004",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -951,6 +1056,7 @@
     "email": "etu5l3.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-L3-005",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -960,6 +1066,7 @@
     "email": "etu6m1.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-M1-006",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -969,6 +1076,7 @@
     "email": "etu7m1.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-M1-007",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -978,6 +1086,7 @@
     "email": "etu8m1.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-M1-008",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -987,6 +1096,7 @@
     "email": "etu9m2.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-M2-009",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -996,6 +1106,7 @@
     "email": "etu10fmul.amu@university.com",
     "categories": ["STUDENT"],
     "externalId": "AMU-STU-FMUL-010",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1005,6 +1116,7 @@
     "email": "staff1suio.amu@university.com",
     "categories": ["STAFF"],
     "externalId": "AMU-SUIO-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1014,6 +1126,7 @@
     "email": "staff2suio.amu@university.com",
     "categories": ["STAFF"],
     "externalId": "AMU-SUIO-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1023,6 +1136,7 @@
     "email": "staff3suio.amu@university.com",
     "categories": ["STAFF"],
     "externalId": "AMU-SUIO-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1032,6 +1146,7 @@
     "email": "ens1.amu@university.com",
     "categories": ["STAFF"],
     "externalId": "AMU-ENS-LIC-001",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1041,6 +1156,7 @@
     "email": "ens2.amu@university.com",
     "categories": ["STAFF"],
     "externalId": "AMU-ENS-MAS-002",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1050,6 +1166,7 @@
     "email": "ens3.amu@university.com",
     "categories": ["STAFF"],
     "externalId": "AMU-ENS-LM-003",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1059,6 +1176,7 @@
     "email": "etu1l1.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L1-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1068,6 +1186,7 @@
     "email": "etu2l1.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L1-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1077,6 +1196,7 @@
     "email": "etu3l1.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L1-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1086,6 +1206,7 @@
     "email": "etu4l2.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L2-004",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1095,6 +1216,7 @@
     "email": "etu5l3.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-L3-005",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1104,6 +1226,7 @@
     "email": "etu6m1.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-M1-006",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1113,6 +1236,7 @@
     "email": "etu7m1.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-M1-007",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1122,6 +1246,7 @@
     "email": "etu8m1.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-M1-008",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1131,6 +1256,7 @@
     "email": "etu9m2.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-M2-009",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1140,6 +1266,7 @@
     "email": "etu10fmul.ubo@university.com",
     "categories": ["STUDENT"],
     "externalId": "UBO-STU-FMUL-010",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1149,6 +1276,7 @@
     "email": "staff1suio.ubo@university.com",
     "categories": ["STAFF"],
     "externalId": "UBO-SUIO-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1158,6 +1286,7 @@
     "email": "staff2suio.ubo@university.com",
     "categories": ["STAFF"],
     "externalId": "UBO-SUIO-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1167,6 +1296,7 @@
     "email": "staff3suio.ubo@university.com",
     "categories": ["STAFF"],
     "externalId": "UBO-SUIO-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1176,6 +1306,7 @@
     "email": "ens1.ubo@university.com",
     "categories": ["STAFF"],
     "externalId": "UBO-ENS-LIC-001",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1185,6 +1316,7 @@
     "email": "ens2.ubo@university.com",
     "categories": ["STAFF"],
     "externalId": "UBO-ENS-MAS-002",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1194,6 +1326,7 @@
     "email": "ens3.ubo@university.com",
     "categories": ["STAFF"],
     "externalId": "UBO-ENS-LM-003",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1203,6 +1336,7 @@
     "email": "etu1l1.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L1-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1212,6 +1346,7 @@
     "email": "etu2l1.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L1-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1221,6 +1356,7 @@
     "email": "etu3l1.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L1-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1230,6 +1366,7 @@
     "email": "etu4l2.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L2-004",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1239,6 +1376,7 @@
     "email": "etu5l3.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-L3-005",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1248,6 +1386,7 @@
     "email": "etu6m1.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-M1-006",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1257,6 +1396,7 @@
     "email": "etu7m1.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-M1-007",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1266,6 +1406,7 @@
     "email": "etu8m1.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-M1-008",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1275,6 +1416,7 @@
     "email": "etu9m2.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-M2-009",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1284,6 +1426,7 @@
     "email": "etu10fmul.usmb@university.com",
     "categories": ["STUDENT"],
     "externalId": "USMB-STU-FMUL-010",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1293,6 +1436,7 @@
     "email": "staff1suio.usmb@university.com",
     "categories": ["STAFF"],
     "externalId": "USMB-SUIO-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1302,6 +1446,7 @@
     "email": "staff2suio.usmb@university.com",
     "categories": ["STAFF"],
     "externalId": "USMB-SUIO-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1311,6 +1456,7 @@
     "email": "staff3suio.usmb@university.com",
     "categories": ["STAFF"],
     "externalId": "USMB-SUIO-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1320,6 +1466,7 @@
     "email": "ens1.usmb@university.com",
     "categories": ["STAFF"],
     "externalId": "USMB-ENS-LIC-001",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1329,6 +1476,7 @@
     "email": "ens2.usmb@university.com",
     "categories": ["STAFF"],
     "externalId": "USMB-ENS-MAS-002",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1338,6 +1486,7 @@
     "email": "ens3.usmb@university.com",
     "categories": ["STAFF"],
     "externalId": "USMB-ENS-LM-003",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1347,6 +1496,7 @@
     "email": "etu1l1.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L1-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1356,6 +1506,7 @@
     "email": "etu2l1.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L1-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1365,6 +1516,7 @@
     "email": "etu3l1.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L1-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1374,6 +1526,7 @@
     "email": "etu4l2.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L2-004",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1383,6 +1536,7 @@
     "email": "etu5l3.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-L3-005",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1392,6 +1546,7 @@
     "email": "etu6m1.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-M1-006",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1401,6 +1556,7 @@
     "email": "etu7m1.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-M1-007",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1410,6 +1566,7 @@
     "email": "etu8m1.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-M1-008",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1419,6 +1576,7 @@
     "email": "etu9m2.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-M2-009",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1428,6 +1586,7 @@
     "email": "etu10fmul.ulille@university.com",
     "categories": ["STUDENT"],
     "externalId": "ULILLE-STU-FMUL-010",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1437,6 +1596,7 @@
     "email": "staff1suio.ulille@university.com",
     "categories": ["STAFF"],
     "externalId": "ULILLE-SUIO-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1446,6 +1606,7 @@
     "email": "staff2suio.ulille@university.com",
     "categories": ["STAFF"],
     "externalId": "ULILLE-SUIO-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1455,6 +1616,7 @@
     "email": "staff3suio.ulille@university.com",
     "categories": ["STAFF"],
     "externalId": "ULILLE-SUIO-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1464,6 +1626,7 @@
     "email": "ens1.ulille@university.com",
     "categories": ["STAFF"],
     "externalId": "ULILLE-ENS-LIC-001",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1473,6 +1636,7 @@
     "email": "ens2.ulille@university.com",
     "categories": ["STAFF"],
     "externalId": "ULILLE-ENS-MAS-002",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1482,6 +1646,7 @@
     "email": "ens3.ulille@university.com",
     "categories": ["STAFF"],
     "externalId": "ULILLE-ENS-LM-003",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1491,6 +1656,7 @@
     "email": "etu1l1.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L1-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1500,6 +1666,7 @@
     "email": "etu2l1.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L1-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1509,6 +1676,7 @@
     "email": "etu3l1.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L1-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1518,6 +1686,7 @@
     "email": "etu4l2.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L2-004",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1527,6 +1696,7 @@
     "email": "etu5l3.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-L3-005",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1536,6 +1706,7 @@
     "email": "etu6m1.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-M1-006",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1545,6 +1716,7 @@
     "email": "etu7m1.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-M1-007",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1554,6 +1726,7 @@
     "email": "etu8m1.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-M1-008",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1563,6 +1736,7 @@
     "email": "etu9m2.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-M2-009",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1572,6 +1746,7 @@
     "email": "etu10fmul.rpltk@university.com",
     "categories": ["STUDENT"],
     "externalId": "RPLTK-STU-FMUL-010",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1581,6 +1756,7 @@
     "email": "staff1suio.rpltk@university.com",
     "categories": ["STAFF"],
     "externalId": "RPLTK-SUIO-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1590,6 +1766,7 @@
     "email": "staff2suio.rpltk@university.com",
     "categories": ["STAFF"],
     "externalId": "RPLTK-SUIO-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1599,6 +1776,7 @@
     "email": "staff3suio.rpltk@university.com",
     "categories": ["STAFF"],
     "externalId": "RPLTK-SUIO-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1608,6 +1786,7 @@
     "email": "ens1.rpltk@university.com",
     "categories": ["STAFF"],
     "externalId": "RPLTK-ENS-LIC-001",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1617,6 +1796,7 @@
     "email": "ens2.rpltk@university.com",
     "categories": ["STAFF"],
     "externalId": "RPLTK-ENS-MAS-002",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1626,6 +1806,7 @@
     "email": "ens3.rpltk@university.com",
     "categories": ["STAFF"],
     "externalId": "RPLTK-ENS-LM-003",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1635,6 +1816,7 @@
     "email": "etu1l1.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L1-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1644,6 +1826,7 @@
     "email": "etu2l1.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L1-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1653,6 +1836,7 @@
     "email": "etu3l1.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L1-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1662,6 +1846,7 @@
     "email": "etu4l2.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L2-004",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1671,6 +1856,7 @@
     "email": "etu5l3.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-L3-005",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1680,6 +1866,7 @@
     "email": "etu6m1.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-M1-006",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1689,6 +1876,7 @@
     "email": "etu7m1.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-M1-007",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1698,6 +1886,7 @@
     "email": "etu8m1.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-M1-008",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1707,6 +1896,7 @@
     "email": "etu9m2.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-M2-009",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1716,6 +1906,7 @@
     "email": "etu10fmul.utln@university.com",
     "categories": ["STUDENT"],
     "externalId": "UTLN-STU-FMUL-010",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1725,6 +1916,7 @@
     "email": "staff1suio.utln@university.com",
     "categories": ["STAFF"],
     "externalId": "UTLN-SUIO-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1734,6 +1926,7 @@
     "email": "staff2suio.utln@university.com",
     "categories": ["STAFF"],
     "externalId": "UTLN-SUIO-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1743,6 +1936,7 @@
     "email": "staff3suio.utln@university.com",
     "categories": ["STAFF"],
     "externalId": "UTLN-SUIO-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1752,6 +1946,7 @@
     "email": "ens1.utln@university.com",
     "categories": ["STAFF"],
     "externalId": "UTLN-ENS-LIC-001",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1761,6 +1956,7 @@
     "email": "ens2.utln@university.com",
     "categories": ["STAFF"],
     "externalId": "UTLN-ENS-MAS-002",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1770,6 +1966,7 @@
     "email": "ens3.utln@university.com",
     "categories": ["STAFF"],
     "externalId": "UTLN-ENS-LM-003",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1779,6 +1976,7 @@
     "email": "etu1l1.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L1-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1788,6 +1986,7 @@
     "email": "etu2l1.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L1-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1797,6 +1996,7 @@
     "email": "etu3l1.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L1-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1806,6 +2006,7 @@
     "email": "etu4l2.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L2-004",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1815,6 +2016,7 @@
     "email": "etu5l3.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-L3-005",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1824,6 +2026,7 @@
     "email": "etu6m1.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-M1-006",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1833,6 +2036,7 @@
     "email": "etu7m1.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-M1-007",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1842,6 +2046,7 @@
     "email": "etu8m1.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-M1-008",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1851,6 +2056,7 @@
     "email": "etu9m2.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-M2-009",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1860,6 +2066,7 @@
     "email": "etu10fmul.nu@university.com",
     "categories": ["STUDENT"],
     "externalId": "NU-STU-FMUL-010",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1869,6 +2076,7 @@
     "email": "staff1suio.nu@university.com",
     "categories": ["STAFF"],
     "externalId": "NU-SUIO-001",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1878,6 +2086,7 @@
     "email": "staff2suio.nu@university.com",
     "categories": ["STAFF"],
     "externalId": "NU-SUIO-002",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1887,6 +2096,7 @@
     "email": "staff3suio.nu@university.com",
     "categories": ["STAFF"],
     "externalId": "NU-SUIO-003",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1896,6 +2106,7 @@
     "email": "ens1.nu@university.com",
     "categories": ["STAFF"],
     "externalId": "NU-ENS-LIC-001",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   },
   {
@@ -1905,6 +2116,7 @@
     "email": "ens2.nu@university.com",
     "categories": ["STAFF"],
     "externalId": "NU-ENS-MAS-002",
+    "institutionUAI": "0330001C",
     "status": "INACTIVE"
   },
   {
@@ -1914,6 +2126,7 @@
     "email": "ens3.nu@university.com",
     "categories": ["STAFF"],
     "externalId": "NU-ENS-LM-003",
+    "institutionUAI": "0350001A",
     "status": "INACTIVE"
   }
 ]

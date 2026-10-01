@@ -5,10 +5,13 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.input.ExternalUserService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.seeder.data.ExternalUserCreationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.seeder.fake.FakeExternalUser;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.ESeederSource;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import fr.avenirsesr.portfolio.common.utils.FileReader;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,18 +29,19 @@ public class ExternalUserSeeder {
 
   private final FileReader fileReader;
   private final ExternalUserService externalUserService;
+  private final InstitutionRepository institutionRepository;
 
   @Value("${seeder.source}")
   private ESeederSource seederSource;
 
   @Transactional
-  public List<ExternalUser> seed() {
+  public List<ExternalUser> seed(List<UUID> savedInstitutionIds) {
     log.info("Seeding External Users...");
 
     List<ExternalUser> externalUsers =
         switch (seederSource) {
           case CSV -> seedFromFixture();
-          case FAKER -> seedFake();
+          case FAKER -> seedFake(savedInstitutionIds);
         };
 
     log.info("✔ {} external users synced", externalUsers.size());
@@ -59,15 +63,19 @@ public class ExternalUserSeeder {
                     data.email(),
                     data.categories(),
                     data.externalId(),
+                    data.institutionUAI(),
                     data.status() != null ? data.status() : EUserStatus.ACTIVE))
         .toList();
   }
 
-  private List<ExternalUser> seedFake() {
+  private List<ExternalUser> seedFake(List<UUID> savedInstitutionIds) {
+    List<String> institutionUAIs = savedInstitutionIds.stream().map(this::resolveUAI).toList();
+
     return IntStream.range(0, EXTERNAL_USERS_TOTAL_NB)
         .mapToObj(
             i -> {
-              FakeExternalUser fake = FakeExternalUser.random();
+              FakeExternalUser fake =
+                  FakeExternalUser.random(institutionUAIs.get(i % institutionUAIs.size()));
               return externalUserService.importExternalUser(
                   fake.eppn(),
                   fake.firstName(),
@@ -75,8 +83,16 @@ public class ExternalUserSeeder {
                   fake.email(),
                   fake.categories(),
                   fake.externalId(),
+                  fake.institutionUAI(),
                   fake.status());
             })
         .toList();
+  }
+
+  private String resolveUAI(UUID institutionId) {
+    return institutionRepository
+        .findById(institutionId)
+        .orElseThrow(InstitutionNotFoundException::new)
+        .getUai();
   }
 }

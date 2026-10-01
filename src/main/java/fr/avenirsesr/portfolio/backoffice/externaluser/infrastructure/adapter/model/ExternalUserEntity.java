@@ -44,6 +44,9 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
   @Enumerated(EnumType.STRING)
   private EExternalSource source;
 
+  @Column(nullable = false, name = "institution_uai", length = 255)
+  private String institutionUAI;
+
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(
       name = "external_user_category",
@@ -75,6 +78,7 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
       String eppn,
       String externalId,
       EExternalSource source,
+      String institutionUAI,
       Set<EUserCategory> categories,
       String email,
       String firstName,
@@ -86,6 +90,7 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
     this.eppn = eppn;
     this.externalId = externalId;
     this.source = source;
+    this.institutionUAI = institutionUAI;
     this.categories = categories != null ? categories : new HashSet<>();
     this.email = email;
     this.firstName = firstName;
@@ -100,6 +105,7 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
       String eppn,
       String externalId,
       EExternalSource source,
+      String institutionUAI,
       Set<EUserCategory> categories,
       String email,
       String firstName,
@@ -112,6 +118,7 @@ public class ExternalUserEntity extends AvenirsBaseEntity {
         eppn,
         externalId,
         source,
+        institutionUAI,
         categories,
         email,
         firstName,
