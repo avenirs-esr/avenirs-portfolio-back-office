@@ -59,7 +59,6 @@ public class ExternalUserSeeder {
                     data.email(),
                     data.categories(),
                     data.externalId(),
-                    data.source(),
                     data.status() != null ? data.status() : EUserStatus.ACTIVE))
         .toList();
   }
@@ -76,7 +75,6 @@ public class ExternalUserSeeder {
                   fake.email(),
                   fake.categories(),
                   fake.externalId(),
-                  fake.source(),
                   fake.status());
             })
         .toList();

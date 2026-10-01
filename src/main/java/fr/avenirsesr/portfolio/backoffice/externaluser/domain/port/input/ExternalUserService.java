@@ -3,7 +3,6 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.input;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportSummary;
-import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.List;
@@ -20,7 +19,6 @@ public interface ExternalUserService {
       String email,
       Set<EUserCategory> categories,
       String externalId,
-      EExternalSource source,
       EUserStatus status);
 
   ExternalUserImportSummary createAll(List<ExternalUserData> externalUsers);
@@ -32,7 +30,6 @@ public interface ExternalUserService {
       String email,
       Set<EUserCategory> categories,
       String externalId,
-      EExternalSource source,
       EUserStatus status);
 
   List<ExternalUser> updateAll(List<ExternalUserData> externalUsers);

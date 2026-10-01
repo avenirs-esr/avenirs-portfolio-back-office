@@ -36,7 +36,7 @@ class ExternalUserServiceImplTest {
   private static final String EMAIL = "lucas.tessier@university.com";
   private static final Set<EUserCategory> CATEGORIES = Set.of(EUserCategory.STUDENT);
   private static final String EXTERNAL_ID = "PEG-0001";
-  private static final EExternalSource SOURCE = EExternalSource.PEGASE;
+  private static final EExternalSource SOURCE = EExternalSource.BACK_OFFICE;
 
   @Mock private ExternalUserRepository externalUserRepository;
 
@@ -74,7 +74,6 @@ class ExternalUserServiceImplTest {
                 EMAIL,
                 CATEGORIES,
                 EXTERNAL_ID,
-                SOURCE,
                 EUserStatus.ACTIVE);
       }
 
@@ -131,7 +130,7 @@ class ExternalUserServiceImplTest {
 
         result =
             service.importExternalUser(
-                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, SOURCE, null);
+                EPPN, FIRST_NAME, LAST_NAME, EMAIL, CATEGORIES, EXTERNAL_ID, null);
       }
 
       @Test
@@ -167,7 +166,6 @@ class ExternalUserServiceImplTest {
                 EMAIL,
                 CATEGORIES,
                 EXTERNAL_ID,
-                SOURCE,
                 EUserStatus.INACTIVE);
       }
 
@@ -364,7 +362,6 @@ class ExternalUserServiceImplTest {
                         EMAIL,
                         CATEGORIES,
                         EXTERNAL_ID,
-                        SOURCE,
                         EUserStatus.ACTIVE));
 
         assertEquals(exception, result);
