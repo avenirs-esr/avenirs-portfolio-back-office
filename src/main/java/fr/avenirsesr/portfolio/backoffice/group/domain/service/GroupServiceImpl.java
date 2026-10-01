@@ -38,14 +38,14 @@ public class GroupServiceImpl implements GroupService {
   @Override
   public Group create(
       String name,
-      String idSiSco,
+      String idSISco,
       UUID institutionId,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
-      String parentIdSiSco) {
-    return upsert(name, idSiSco, institutionId, codeSise, startDate, endDate, type, parentIdSiSco)
+      String parentIdSISco) {
+    return upsert(name, idSISco, institutionId, codeSise, startDate, endDate, type, parentIdSISco)
         .group();
   }
 
@@ -60,21 +60,21 @@ public class GroupServiceImpl implements GroupService {
         UpsertResult result =
             upsert(
                 data.name(),
-                data.idSiSco(),
+                data.idSISco(),
                 data.institutionId(),
                 data.codeSise(),
                 data.startDate(),
                 data.endDate(),
                 data.type(),
-                data.parentIdSiSco());
+                data.parentIdSISco());
         if (result.created()) {
           created.add(result.group());
         } else {
           updated.add(result.group());
         }
       } catch (BusinessException e) {
-        log.warn("Failed to import group with id_si_sco {}: {}", data.idSiSco(), e.getMessage());
-        failed.add(new GroupImportFailure(data.idSiSco(), e.getMessage()));
+        log.warn("Failed to import group with id_si_sco {}: {}", data.idSISco(), e.getMessage());
+        failed.add(new GroupImportFailure(data.idSISco(), e.getMessage()));
       }
     }
 
@@ -84,27 +84,27 @@ public class GroupServiceImpl implements GroupService {
   /** Creates the group, or updates the existing one matching the given id_si_sco. */
   private UpsertResult upsert(
       String name,
-      String idSiSco,
+      String idSISco,
       UUID institutionId,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
-      String parentIdSiSco) {
-    Optional<Group> existing = groupRepository.findByIdSiSco(idSiSco);
+      String parentIdSISco) {
+    Optional<Group> existing = groupRepository.findByIdSISco(idSISco);
     if (existing.isPresent()) {
       return new UpsertResult(
-          update(idSiSco, name, institutionId, codeSise, startDate, endDate, type, parentIdSiSco),
+          update(idSISco, name, institutionId, codeSise, startDate, endDate, type, parentIdSISco),
           false);
     }
 
     Institution institution = findInstitutionOrThrow(institutionId);
-    Group parent = resolveParent(type, parentIdSiSco);
+    Group parent = resolveParent(type, parentIdSISco);
     Group group =
         Group.create(
-            idFromIdSiSco(idSiSco),
+            idFromIdSISco(idSISco),
             name,
-            idSiSco,
+            idSISco,
             institution,
             codeSise,
             startDate,
@@ -114,26 +114,26 @@ public class GroupServiceImpl implements GroupService {
     return new UpsertResult(groupRepository.save(group), true);
   }
 
-  private static UUID idFromIdSiSco(String idSiSco) {
-    return UUID.nameUUIDFromBytes(("group:" + idSiSco).getBytes(StandardCharsets.UTF_8));
+  private static UUID idFromIdSISco(String idSISco) {
+    return UUID.nameUUIDFromBytes(("group:" + idSISco).getBytes(StandardCharsets.UTF_8));
   }
 
   private record UpsertResult(Group group, boolean created) {}
 
   @Override
   public Group update(
-      String idSiSco,
+      String idSISco,
       String name,
       UUID institutionId,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
-      String parentIdSiSco) {
-    Group group = groupRepository.findByIdSiSco(idSiSco).orElseThrow(GroupNotFoundException::new);
+      String parentIdSISco) {
+    Group group = groupRepository.findByIdSISco(idSISco).orElseThrow(GroupNotFoundException::new);
 
     Institution institution = findInstitutionOrThrow(institutionId);
-    Group parent = resolveParent(type, parentIdSiSco);
+    Group parent = resolveParent(type, parentIdSISco);
 
     group.setName(name);
     group.setInstitution(institution);
@@ -152,14 +152,14 @@ public class GroupServiceImpl implements GroupService {
         .map(
             data ->
                 update(
-                    data.idSiSco(),
+                    data.idSISco(),
                     data.name(),
                     data.institutionId(),
                     data.codeSise(),
                     data.startDate(),
                     data.endDate(),
                     data.type(),
-                    data.parentIdSiSco()))
+                    data.parentIdSISco()))
         .toList();
   }
 
@@ -251,29 +251,29 @@ public class GroupServiceImpl implements GroupService {
         .orElseThrow(InstitutionNotFoundException::new);
   }
 
-  private Group resolveParent(EGroupType type, String parentIdSiSco) {
+  private Group resolveParent(EGroupType type, String parentIdSISco) {
     return switch (type) {
       case PROGRAM -> {
-        if (parentIdSiSco != null) {
+        if (parentIdSISco != null) {
           throw new GroupProgramCannotHaveParentException();
         }
         yield null;
       }
       case PROGRAM_OPTION -> {
-        if (parentIdSiSco == null) {
+        if (parentIdSISco == null) {
           throw new GroupProgramOptionRequiresParentException();
         }
-        Group parent = findParentOrThrow(parentIdSiSco);
+        Group parent = findParentOrThrow(parentIdSISco);
         if (parent.getType() != EGroupType.PROGRAM) {
           throw new GroupProgramOptionParentMustBeProgramException();
         }
         yield parent;
       }
       case STUDENT_GROUP -> {
-        if (parentIdSiSco == null) {
+        if (parentIdSISco == null) {
           throw new GroupStudentGroupRequiresParentException();
         }
-        Group parent = findParentOrThrow(parentIdSiSco);
+        Group parent = findParentOrThrow(parentIdSISco);
         if (parent.getType() != EGroupType.PROGRAM
             && parent.getType() != EGroupType.PROGRAM_OPTION) {
           throw new GroupStudentGroupParentMustBeProgramOrOptionException();
@@ -283,7 +283,7 @@ public class GroupServiceImpl implements GroupService {
     };
   }
 
-  private Group findParentOrThrow(String parentIdSiSco) {
-    return groupRepository.findByIdSiSco(parentIdSiSco).orElseThrow(GroupNotFoundException::new);
+  private Group findParentOrThrow(String parentIdSISco) {
+    return groupRepository.findByIdSISco(parentIdSISco).orElseThrow(GroupNotFoundException::new);
   }
 }

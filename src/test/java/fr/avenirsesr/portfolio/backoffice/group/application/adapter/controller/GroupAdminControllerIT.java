@@ -120,14 +120,14 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
         .andExpect(jsonPath("$.updatedCount", is(0)))
         .andExpect(jsonPath("$.failedCount", is(0)))
         .andExpect(jsonPath("$.created", hasSize(2)))
-        .andExpect(jsonPath("$.created[0].idSiSco", is("20000001")))
-        .andExpect(jsonPath("$.created[1].idSiSco", is("20000002")));
+        .andExpect(jsonPath("$.created[0].idSISco", is("20000001")))
+        .andExpect(jsonPath("$.created[1].idSISco", is("20000002")));
 
     BddLogger.then("it should create and return a summary of the groups");
   }
 
   @Test
-  void shouldUpdateExistingGroup_whenCreateAllBatchReusesAnExistingIdSiSco() throws Exception {
+  void shouldUpdateExistingGroup_whenCreateAllBatchReusesAnExistingIdSISco() throws Exception {
     BddLogger.given("a batch reusing the id_si_sco of a program seeded beforehand");
     List<GroupData> payload =
         List.of(
@@ -154,7 +154,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
         .andExpect(jsonPath("$.createdCount", is(0)))
         .andExpect(jsonPath("$.updatedCount", is(1)))
         .andExpect(jsonPath("$.failedCount", is(0)))
-        .andExpect(jsonPath("$.updated[0].idSiSco", is(SEEDED_PROGRAM_ID_SI_SCO)))
+        .andExpect(jsonPath("$.updated[0].idSISco", is(SEEDED_PROGRAM_ID_SI_SCO)))
         .andExpect(jsonPath("$.updated[0].name", is("Licence Informatique - Renamed via import")));
 
     BddLogger.then("it should update the existing program instead of failing");
@@ -197,8 +197,8 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
         .andExpect(jsonPath("$.createdCount", is(1)))
         .andExpect(jsonPath("$.updatedCount", is(0)))
         .andExpect(jsonPath("$.failedCount", is(1)))
-        .andExpect(jsonPath("$.created[0].idSiSco", is("20000003")))
-        .andExpect(jsonPath("$.failed[0].idSiSco", is("20000004")));
+        .andExpect(jsonPath("$.created[0].idSISco", is("20000003")))
+        .andExpect(jsonPath("$.failed[0].idSISco", is("20000004")));
 
     BddLogger.then("it should import the valid program and report the other as failed");
   }
@@ -228,7 +228,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(payload)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].idSiSco", is(SEEDED_PROGRAM_ID_SI_SCO)))
+        .andExpect(jsonPath("$[0].idSISco", is(SEEDED_PROGRAM_ID_SI_SCO)))
         .andExpect(jsonPath("$[0].name", is("Licence Informatique - Renamed")));
 
     BddLogger.then("it should update and return the program");
@@ -311,7 +311,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(2)))
         .andExpect(
-            jsonPath("$[*].idSiSco")
+            jsonPath("$[*].idSISco")
                 .value(
                     containsInAnyOrder(
                         SEEDED_OTHER_PROGRAM_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
@@ -322,7 +322,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
   @Test
   void shouldReturnOnlyChildGroups_whenFilteringByParentId() throws Exception {
     BddLogger.given("a seeded program used as the parent of a program option");
-    UUID parentId = groupRepository.findByIdSiSco(SEEDED_PROGRAM_ID_SI_SCO).orElseThrow().getId();
+    UUID parentId = groupRepository.findByIdSISco(SEEDED_PROGRAM_ID_SI_SCO).orElseThrow().getId();
 
     BddLogger.when("calling GET /back-office/admin/groups filtered by parentId");
     mockMvc
@@ -335,7 +335,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].idSiSco", is(SEEDED_PROGRAM_OPTION_ID_SI_SCO)));
+        .andExpect(jsonPath("$[0].idSISco", is(SEEDED_PROGRAM_OPTION_ID_SI_SCO)));
 
     BddLogger.then("it should return only the direct children of that group");
   }
@@ -355,7 +355,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(
-            jsonPath("$[*].idSiSco")
+            jsonPath("$[*].idSISco")
                 .value(
                     containsInAnyOrder(
                         SEEDED_STUDENT_GROUP_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
@@ -379,7 +379,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(
-            jsonPath("$[*].idSiSco")
+            jsonPath("$[*].idSISco")
                 .value(
                     containsInAnyOrder(
                         SEEDED_STUDENT_GROUP_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
@@ -405,7 +405,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].idSiSco", is(SEEDED_PROGRAM_OPTION_ID_SI_SCO)));
+        .andExpect(jsonPath("$[0].idSISco", is(SEEDED_PROGRAM_OPTION_ID_SI_SCO)));
 
     BddLogger.then("it should return only the group matching every filter");
   }

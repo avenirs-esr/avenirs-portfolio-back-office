@@ -11,25 +11,25 @@ import java.util.UUID;
 public interface GroupService {
   Group create(
       String name,
-      String idSiSco,
+      String idSISco,
       UUID institutionId,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
-      String parentIdSiSco);
+      String parentIdSISco);
 
   GroupImportSummary createAll(List<GroupData> groups);
 
   Group update(
-      String idSiSco,
+      String idSISco,
       String name,
       UUID institutionId,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
-      String parentIdSiSco);
+      String parentIdSISco);
 
   List<Group> updateAll(List<GroupData> groups);
 

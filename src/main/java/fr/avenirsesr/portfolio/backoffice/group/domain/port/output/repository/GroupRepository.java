@@ -10,9 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface GroupRepository extends GenericRepositoryPort<Group> {
-  boolean existsByIdSiSco(String idSiSco);
+  boolean existsByIdSISco(String idSISco);
 
-  Optional<Group> findByIdSiSco(String idSiSco);
+  Optional<Group> findByIdSISco(String idSISco);
 
   List<Group> findAll(
       UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate);

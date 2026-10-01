@@ -28,7 +28,7 @@ public class FakeGroup {
     return new FakeGroup(
         new GroupCreationData(
             faker.educator().course(),
-            dataGenerator.with("idSiSco").regexify("[0-9]{8}"),
+            dataGenerator.with("idSISco").regexify("[0-9]{8}"),
             institutionId,
             faker.numerify("###########"),
             startDate,
@@ -37,32 +37,32 @@ public class FakeGroup {
             null));
   }
 
-  public static FakeGroup programOption(UUID institutionId, String parentIdSiSco) {
+  public static FakeGroup programOption(UUID institutionId, String parentIdSISco) {
     LocalDate startDate = pastDate(730);
     return new FakeGroup(
         new GroupCreationData(
             faker.educator().course() + " - " + faker.educator().subjectWithNumber(),
-            dataGenerator.with("idSiSco").regexify("[0-9]{8}"),
+            dataGenerator.with("idSISco").regexify("[0-9]{8}"),
             institutionId,
             faker.numerify("###########"),
             startDate,
             startDate.plusYears(2),
             EGroupType.PROGRAM_OPTION,
-            parentIdSiSco));
+            parentIdSISco));
   }
 
-  public static FakeGroup studentGroup(UUID institutionId, String parentIdSiSco) {
+  public static FakeGroup studentGroup(UUID institutionId, String parentIdSISco) {
     LocalDate startDate = pastDate(365);
     return new FakeGroup(
         new GroupCreationData(
             "Groupe " + faker.letterify("?").toUpperCase(),
-            dataGenerator.with("idSiSco").regexify("[0-9]{8}"),
+            dataGenerator.with("idSISco").regexify("[0-9]{8}"),
             institutionId,
             faker.numerify("###########"),
             startDate,
             startDate.plusYears(1),
             EGroupType.STUDENT_GROUP,
-            parentIdSiSco));
+            parentIdSISco));
   }
 
   private static LocalDate pastDate(int maxDaysAgo) {

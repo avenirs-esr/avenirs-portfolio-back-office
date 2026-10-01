@@ -52,21 +52,21 @@ class GroupServiceImplTest {
   private final LocalDate endDate = LocalDate.of(2026, 8, 31);
 
   @Test
-  void shouldUpdateGroup_whenCreating_withAlreadyUsedIdSiSco() {
+  void shouldUpdateGroup_whenCreating_withAlreadyUsedIdSISco() {
     BddLogger.given("an existing group registered under an id_si_sco");
-    String idSiSco = "10000001";
+    String idSISco = "10000001";
     Group existing =
         Group.create(
             UUID.randomUUID(),
             "Licence Informatique",
-            idSiSco,
+            idSISco,
             institution,
             "11000001",
             startDate,
             endDate,
             EGroupType.PROGRAM,
             null);
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.of(existing));
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.of(existing));
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -75,7 +75,7 @@ class GroupServiceImplTest {
     Group result =
         service.create(
             "Licence Informatique - Renamed",
-            idSiSco,
+            idSISco,
             institutionId,
             "new-code-sise",
             startDate,
@@ -90,10 +90,10 @@ class GroupServiceImplTest {
   }
 
   @Test
-  void shouldCreateProgram_whenParentIdSiScoIsNull() {
+  void shouldCreateProgram_whenParentIdSIScoIsNull() {
     BddLogger.given("a GroupServiceImpl service");
-    String idSiSco = "10000001";
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    String idSISco = "10000001";
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -102,7 +102,7 @@ class GroupServiceImplTest {
     Group result =
         service.create(
             "Licence Informatique",
-            idSiSco,
+            idSISco,
             institutionId,
             "11000001",
             startDate,
@@ -120,8 +120,8 @@ class GroupServiceImplTest {
   @Test
   void shouldThrowInstitutionNotFoundException_whenCreating_withUnknownInstitutionId() {
     BddLogger.given("an unknown institution id");
-    String idSiSco = "10000001";
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    String idSISco = "10000001";
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.empty());
 
     BddLogger.when("creating a group with an unknown institution id");
@@ -130,7 +130,7 @@ class GroupServiceImplTest {
         () ->
             service.create(
                 "Licence Informatique",
-                idSiSco,
+                idSISco,
                 institutionId,
                 "11000001",
                 startDate,
@@ -143,10 +143,10 @@ class GroupServiceImplTest {
   }
 
   @Test
-  void shouldThrowGroupProgramCannotHaveParentException_whenCreatingProgram_withParentIdSiSco() {
+  void shouldThrowGroupProgramCannotHaveParentException_whenCreatingProgram_withParentIdSISco() {
     BddLogger.given("a GroupServiceImpl service");
-    String idSiSco = "10000001";
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    String idSISco = "10000001";
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
 
     BddLogger.when("creating a program with a parent id_si_sco");
@@ -155,7 +155,7 @@ class GroupServiceImplTest {
         () ->
             service.create(
                 "Licence Informatique",
-                idSiSco,
+                idSISco,
                 institutionId,
                 "11000001",
                 startDate,
@@ -169,10 +169,10 @@ class GroupServiceImplTest {
 
   @Test
   void
-      shouldThrowGroupProgramOptionRequiresParentException_whenCreatingProgramOption_withoutParentIdSiSco() {
+      shouldThrowGroupProgramOptionRequiresParentException_whenCreatingProgramOption_withoutParentIdSISco() {
     BddLogger.given("a GroupServiceImpl service");
-    String idSiSco = "10000002";
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    String idSISco = "10000002";
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
 
     BddLogger.when("creating a program option without a parent id_si_sco");
@@ -181,7 +181,7 @@ class GroupServiceImplTest {
         () ->
             service.create(
                 "Parcours IA",
-                idSiSco,
+                idSISco,
                 institutionId,
                 "11000002",
                 startDate,
@@ -194,13 +194,13 @@ class GroupServiceImplTest {
   }
 
   @Test
-  void shouldThrowGroupNotFoundException_whenCreatingProgramOption_withUnknownParentIdSiSco() {
+  void shouldThrowGroupNotFoundException_whenCreatingProgramOption_withUnknownParentIdSISco() {
     BddLogger.given("a GroupServiceImpl service");
-    String idSiSco = "10000002";
-    String parentIdSiSco = "10000001";
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    String idSISco = "10000002";
+    String parentIdSISco = "10000001";
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
-    when(groupRepository.findByIdSiSco(parentIdSiSco)).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.empty());
 
     BddLogger.when("creating a program option with an unknown parent id_si_sco");
     assertThrows(
@@ -208,13 +208,13 @@ class GroupServiceImplTest {
         () ->
             service.create(
                 "Parcours IA",
-                idSiSco,
+                idSISco,
                 institutionId,
                 "11000002",
                 startDate,
                 endDate,
                 EGroupType.PROGRAM_OPTION,
-                parentIdSiSco));
+                parentIdSISco));
 
     BddLogger.then("it should not save anything");
     verify(groupRepository, never()).save(any());
@@ -224,22 +224,22 @@ class GroupServiceImplTest {
   void
       shouldThrowGroupProgramOptionParentMustBeProgramException_whenCreatingProgramOption_withNonProgramParent() {
     BddLogger.given("a program option and a student group parent");
-    String idSiSco = "10000002";
-    String parentIdSiSco = "10000003";
+    String idSISco = "10000002";
+    String parentIdSISco = "10000003";
     Group studentGroupParent =
         Group.create(
             UUID.randomUUID(),
             "Groupe A",
-            parentIdSiSco,
+            parentIdSISco,
             institution,
             "11000003",
             startDate,
             endDate,
             EGroupType.STUDENT_GROUP,
             null);
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
-    when(groupRepository.findByIdSiSco(parentIdSiSco)).thenReturn(Optional.of(studentGroupParent));
+    when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(studentGroupParent));
 
     BddLogger.when("creating a program option attached to a student group");
     assertThrows(
@@ -247,13 +247,13 @@ class GroupServiceImplTest {
         () ->
             service.create(
                 "Parcours IA",
-                idSiSco,
+                idSISco,
                 institutionId,
                 "11000002",
                 startDate,
                 endDate,
                 EGroupType.PROGRAM_OPTION,
-                parentIdSiSco));
+                parentIdSISco));
 
     BddLogger.then("it should not save anything");
     verify(groupRepository, never()).save(any());
@@ -262,22 +262,22 @@ class GroupServiceImplTest {
   @Test
   void shouldCreateProgramOption_whenParentIsProgram() {
     BddLogger.given("a program parent");
-    String idSiSco = "10000002";
-    String parentIdSiSco = "10000001";
+    String idSISco = "10000002";
+    String parentIdSISco = "10000001";
     Group programParent =
         Group.create(
             UUID.randomUUID(),
             "Licence Informatique",
-            parentIdSiSco,
+            parentIdSISco,
             institution,
             "11000001",
             startDate,
             endDate,
             EGroupType.PROGRAM,
             null);
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
-    when(groupRepository.findByIdSiSco(parentIdSiSco)).thenReturn(Optional.of(programParent));
+    when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(programParent));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -285,13 +285,13 @@ class GroupServiceImplTest {
     Group result =
         service.create(
             "Parcours IA",
-            idSiSco,
+            idSISco,
             institutionId,
             "11000002",
             startDate,
             endDate,
             EGroupType.PROGRAM_OPTION,
-            parentIdSiSco);
+            parentIdSISco);
 
     BddLogger.then("it should save the program option with the resolved parent");
     assertNotNull(result);
@@ -301,10 +301,10 @@ class GroupServiceImplTest {
 
   @Test
   void
-      shouldThrowGroupStudentGroupRequiresParentException_whenCreatingStudentGroup_withoutParentIdSiSco() {
+      shouldThrowGroupStudentGroupRequiresParentException_whenCreatingStudentGroup_withoutParentIdSISco() {
     BddLogger.given("a GroupServiceImpl service");
-    String idSiSco = "10000003";
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    String idSISco = "10000003";
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
 
     BddLogger.when("creating a student group without a parent id_si_sco");
@@ -313,7 +313,7 @@ class GroupServiceImplTest {
         () ->
             service.create(
                 "Groupe A",
-                idSiSco,
+                idSISco,
                 institutionId,
                 "11000003",
                 startDate,
@@ -329,22 +329,22 @@ class GroupServiceImplTest {
   void
       shouldThrowGroupStudentGroupParentMustBeProgramOrOptionException_whenParentIsAnotherStudentGroup() {
     BddLogger.given("a student group used as parent");
-    String idSiSco = "10000003";
-    String parentIdSiSco = "10000004";
+    String idSISco = "10000003";
+    String parentIdSISco = "10000004";
     Group studentGroupParent =
         Group.create(
             UUID.randomUUID(),
             "Groupe B",
-            parentIdSiSco,
+            parentIdSISco,
             institution,
             "11000004",
             startDate,
             endDate,
             EGroupType.STUDENT_GROUP,
             null);
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
-    when(groupRepository.findByIdSiSco(parentIdSiSco)).thenReturn(Optional.of(studentGroupParent));
+    when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(studentGroupParent));
 
     BddLogger.when("creating a student group attached to another student group");
     assertThrows(
@@ -352,13 +352,13 @@ class GroupServiceImplTest {
         () ->
             service.create(
                 "Groupe A",
-                idSiSco,
+                idSISco,
                 institutionId,
                 "11000003",
                 startDate,
                 endDate,
                 EGroupType.STUDENT_GROUP,
-                parentIdSiSco));
+                parentIdSISco));
 
     BddLogger.then("it should not save anything");
     verify(groupRepository, never()).save(any());
@@ -367,22 +367,22 @@ class GroupServiceImplTest {
   @Test
   void shouldCreateStudentGroup_whenParentIsProgram() {
     BddLogger.given("a program parent");
-    String idSiSco = "10000003";
-    String parentIdSiSco = "10000001";
+    String idSISco = "10000003";
+    String parentIdSISco = "10000001";
     Group programParent =
         Group.create(
             UUID.randomUUID(),
             "Licence Informatique",
-            parentIdSiSco,
+            parentIdSISco,
             institution,
             "11000001",
             startDate,
             endDate,
             EGroupType.PROGRAM,
             null);
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
-    when(groupRepository.findByIdSiSco(parentIdSiSco)).thenReturn(Optional.of(programParent));
+    when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(programParent));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -390,13 +390,13 @@ class GroupServiceImplTest {
     Group result =
         service.create(
             "Groupe A",
-            idSiSco,
+            idSISco,
             institutionId,
             "11000003",
             startDate,
             endDate,
             EGroupType.STUDENT_GROUP,
-            parentIdSiSco);
+            parentIdSISco);
 
     BddLogger.then("it should save the student group with the resolved parent");
     assertNotNull(result);
@@ -407,22 +407,22 @@ class GroupServiceImplTest {
   @Test
   void shouldCreateStudentGroup_whenParentIsProgramOption() {
     BddLogger.given("a program option parent");
-    String idSiSco = "10000003";
-    String parentIdSiSco = "10000002";
+    String idSISco = "10000003";
+    String parentIdSISco = "10000002";
     Group programOptionParent =
         Group.create(
             UUID.randomUUID(),
             "Parcours IA",
-            parentIdSiSco,
+            parentIdSISco,
             institution,
             "11000002",
             startDate,
             endDate,
             EGroupType.PROGRAM_OPTION,
             null);
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
-    when(groupRepository.findByIdSiSco(parentIdSiSco)).thenReturn(Optional.of(programOptionParent));
+    when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(programOptionParent));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -430,13 +430,13 @@ class GroupServiceImplTest {
     Group result =
         service.create(
             "Groupe A",
-            idSiSco,
+            idSISco,
             institutionId,
             "11000003",
             startDate,
             endDate,
             EGroupType.STUDENT_GROUP,
-            parentIdSiSco);
+            parentIdSISco);
 
     BddLogger.then("it should save the student group with the resolved parent");
     assertNotNull(result);
@@ -447,7 +447,7 @@ class GroupServiceImplTest {
   @Test
   void shouldCreateAllGroups_whenBatchIsValid() {
     BddLogger.given("a GroupServiceImpl service");
-    when(groupRepository.findByIdSiSco(any())).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco(any())).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -483,21 +483,21 @@ class GroupServiceImplTest {
   }
 
   @Test
-  void shouldUpdateGroup_whenCreatingAllGroups_withAlreadyUsedIdSiSco() {
+  void shouldUpdateGroup_whenCreatingAllGroups_withAlreadyUsedIdSISco() {
     BddLogger.given("an existing group registered under an id_si_sco");
-    String idSiSco = "10000001";
+    String idSISco = "10000001";
     Group existing =
         Group.create(
             UUID.randomUUID(),
             "Licence Informatique",
-            idSiSco,
+            idSISco,
             institution,
             "11000001",
             startDate,
             endDate,
             EGroupType.PROGRAM,
             null);
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.of(existing));
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.of(existing));
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -508,7 +508,7 @@ class GroupServiceImplTest {
             List.of(
                 new GroupData(
                     "Licence Informatique - Renamed",
-                    idSiSco,
+                    idSISco,
                     institutionId,
                     "new-code-sise",
                     startDate,
@@ -526,8 +526,8 @@ class GroupServiceImplTest {
   @Test
   void shouldContinueBatch_whenOneGroupFails() {
     BddLogger.given("a batch with one program option missing its parent id_si_sco");
-    when(groupRepository.findByIdSiSco("10000001")).thenReturn(Optional.empty());
-    when(groupRepository.findByIdSiSco("10000002")).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco("10000001")).thenReturn(Optional.empty());
+    when(groupRepository.findByIdSISco("10000002")).thenReturn(Optional.empty());
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -559,26 +559,26 @@ class GroupServiceImplTest {
     assertEquals(1, result.created().size());
     assertEquals(0, result.updated().size());
     assertEquals(1, result.failed().size());
-    assertEquals("10000002", result.failed().get(0).idSiSco());
+    assertEquals("10000002", result.failed().get(0).idSISco());
     verify(groupRepository, times(1)).save(any(Group.class));
   }
 
   @Test
-  void shouldUpdateGroup_whenIdSiScoExists() {
+  void shouldUpdateGroup_whenIdSIScoExists() {
     BddLogger.given("an existing group");
-    String idSiSco = "10000001";
+    String idSISco = "10000001";
     Group existing =
         Group.create(
             UUID.randomUUID(),
             "Licence Informatique",
-            idSiSco,
+            idSISco,
             institution,
             "11000001",
             startDate,
             endDate,
             EGroupType.PROGRAM,
             null);
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.of(existing));
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.of(existing));
     when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -586,7 +586,7 @@ class GroupServiceImplTest {
     BddLogger.when("updating the group");
     Group result =
         service.update(
-            idSiSco,
+            idSISco,
             "Licence Informatique - Renamed",
             institutionId,
             "new-code-sise",
@@ -602,17 +602,17 @@ class GroupServiceImplTest {
   }
 
   @Test
-  void shouldThrowGroupNotFoundException_whenUpdating_withUnknownIdSiSco() {
+  void shouldThrowGroupNotFoundException_whenUpdating_withUnknownIdSISco() {
     BddLogger.given("a GroupServiceImpl service");
-    String idSiSco = "unknown-id-si-sco";
-    when(groupRepository.findByIdSiSco(idSiSco)).thenReturn(Optional.empty());
+    String idSISco = "unknown-id-si-sco";
+    when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
 
     BddLogger.when("updating a group with an unknown id_si_sco");
     assertThrows(
         GroupNotFoundException.class,
         () ->
             service.update(
-                idSiSco,
+                idSISco,
                 "name",
                 institutionId,
                 "code-sise",

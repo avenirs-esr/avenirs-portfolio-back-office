@@ -6,10 +6,10 @@ import java.util.UUID;
 
 public record GroupCreationData(
     String name,
-    String idSiSco,
+    String idSISco,
     UUID institutionId,
     String codeSise,
     LocalDate startDate,
     LocalDate endDate,
     EGroupType type,
-    String parentIdSiSco) {}
+    String parentIdSISco) {}

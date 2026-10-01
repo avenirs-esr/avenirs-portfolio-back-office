@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface GroupJpaRepository
     extends JpaRepository<GroupEntity, UUID>, JpaSpecificationExecutor<GroupEntity> {
-  boolean existsByIdSiSco(String idSiSco);
+  boolean existsByIdSISco(String idSISco);
 
-  Optional<GroupEntity> findByIdSiSco(String idSiSco);
+  Optional<GroupEntity> findByIdSISco(String idSISco);
 }

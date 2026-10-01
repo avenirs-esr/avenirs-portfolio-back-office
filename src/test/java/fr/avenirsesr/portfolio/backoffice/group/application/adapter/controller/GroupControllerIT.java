@@ -40,8 +40,8 @@ class GroupControllerIT extends ContainerConfigurationTest {
     seederRunner.run();
   }
 
-  private UUID groupIdOf(String idSiSco) {
-    return groupRepository.findByIdSiSco(idSiSco).orElseThrow().getId();
+  private UUID groupIdOf(String idSISco) {
+    return groupRepository.findByIdSISco(idSISco).orElseThrow().getId();
   }
 
   @Nested

@@ -6,10 +6,10 @@ import java.time.LocalDate;
 /** CSV/JSON fixture shape for {@link GroupCreationData}, referencing the institution by uai. */
 public record GroupCsvCreationData(
     String name,
-    String idSiSco,
+    String idSISco,
     String institutionUAI,
     String codeSise,
     LocalDate startDate,
     LocalDate endDate,
     EGroupType type,
-    String parentIdSiSco) {}
+    String parentIdSISco) {}

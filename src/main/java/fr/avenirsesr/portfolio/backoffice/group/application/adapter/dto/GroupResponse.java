@@ -9,13 +9,13 @@ import java.util.UUID;
 public record GroupResponse(
     UUID id,
     String name,
-    String idSiSco,
+    String idSISco,
     UUID institutionId,
     String codeSise,
     LocalDate startDate,
     LocalDate endDate,
     EGroupType type,
-    String parentIdSiSco,
+    String parentIdSISco,
     Instant createdAt,
     Instant updatedAt) {
 
@@ -23,13 +23,13 @@ public record GroupResponse(
     return new GroupResponse(
         group.getId(),
         group.getName(),
-        group.getIdSiSco(),
+        group.getIdSISco(),
         group.getInstitution().getId(),
         group.getCodeSise(),
         group.getStartDate(),
         group.getEndDate(),
         group.getType(),
-        group.getParent().map(Group::getIdSiSco).orElse(null),
+        group.getParent().map(Group::getIdSISco).orElse(null),
         group.getCreatedAt(),
         group.getUpdatedAt());
   }
