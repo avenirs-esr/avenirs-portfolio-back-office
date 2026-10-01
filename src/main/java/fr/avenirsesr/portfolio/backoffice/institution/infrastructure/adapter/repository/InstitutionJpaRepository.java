@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface InstitutionJpaRepository
     extends JpaRepository<InstitutionEntity, UUID>, JpaSpecificationExecutor<InstitutionEntity> {
-  boolean existsByHai(String hai);
+  boolean existsByUai(String uai);
 
-  Optional<InstitutionEntity> findByHai(String hai);
+  Optional<InstitutionEntity> findByUai(String uai);
 }

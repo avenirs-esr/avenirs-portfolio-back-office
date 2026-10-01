@@ -8,11 +8,11 @@ import java.util.UUID;
 public record InstitutionResponse(
     UUID id,
     String name,
-    String hai,
+    String uai,
     String siret,
     String siren,
     EInstitutionType type,
-    String parentHai,
+    String parentUAI,
     Instant createdAt,
     Instant updatedAt) {
 
@@ -20,11 +20,11 @@ public record InstitutionResponse(
     return new InstitutionResponse(
         institution.getId(),
         institution.getName(),
-        institution.getHai(),
+        institution.getUai(),
         institution.getSiret(),
         institution.getSiren(),
         institution.getType(),
-        institution.getParent().map(Institution::getHai).orElse(null),
+        institution.getParent().map(Institution::getUai).orElse(null),
         institution.getCreatedAt(),
         institution.getUpdatedAt());
   }

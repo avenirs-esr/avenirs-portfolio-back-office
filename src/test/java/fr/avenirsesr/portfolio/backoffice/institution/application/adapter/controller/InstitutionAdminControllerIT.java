@@ -28,7 +28,7 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
 
   private static final String BASE_PATH = "/back-office/admin/institutions";
   private static final String ADMIN_TOKEN_HEADER = "X-ADMIN-TOKEN";
-  private static final String SEEDED_PRIMARY_HAI = "0350001A";
+  private static final String SEEDED_PRIMARY_UAI = "0350001A";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
@@ -95,20 +95,20 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
         .andExpect(jsonPath("$.updatedCount", is(0)))
         .andExpect(jsonPath("$.failedCount", is(0)))
         .andExpect(jsonPath("$.created", hasSize(2)))
-        .andExpect(jsonPath("$.created[0].hai", is("0440001A")))
-        .andExpect(jsonPath("$.created[1].hai", is("0690001A")));
+        .andExpect(jsonPath("$.created[0].uai", is("0440001A")))
+        .andExpect(jsonPath("$.created[1].uai", is("0690001A")));
 
     BddLogger.then("it should create and return a summary of the institutions");
   }
 
   @Test
-  void shouldUpdateExistingInstitution_whenCreateAllBatchReusesAnExistingHai() throws Exception {
-    BddLogger.given("a batch reusing the hai of an institution seeded beforehand");
+  void shouldUpdateExistingInstitution_whenCreateAllBatchReusesAnExistingUai() throws Exception {
+    BddLogger.given("a batch reusing the uai of an institution seeded beforehand");
     List<InstitutionData> payload =
         List.of(
             new InstitutionData(
                 "Université de Rennes - Renamed via import",
-                SEEDED_PRIMARY_HAI,
+                SEEDED_PRIMARY_UAI,
                 "13000550100015",
                 "130005501",
                 EInstitutionType.PRIMARY,
@@ -127,7 +127,7 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
         .andExpect(jsonPath("$.createdCount", is(0)))
         .andExpect(jsonPath("$.updatedCount", is(1)))
         .andExpect(jsonPath("$.failedCount", is(0)))
-        .andExpect(jsonPath("$.updated[0].hai", is(SEEDED_PRIMARY_HAI)))
+        .andExpect(jsonPath("$.updated[0].uai", is(SEEDED_PRIMARY_UAI)))
         .andExpect(jsonPath("$.updated[0].name", is("Université de Rennes - Renamed via import")));
 
     BddLogger.then("it should update the existing institution instead of failing");
@@ -166,20 +166,20 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
         .andExpect(jsonPath("$.createdCount", is(1)))
         .andExpect(jsonPath("$.updatedCount", is(0)))
         .andExpect(jsonPath("$.failedCount", is(1)))
-        .andExpect(jsonPath("$.created[0].hai", is("0310001A")))
-        .andExpect(jsonPath("$.failed[0].hai", is("0310002B")));
+        .andExpect(jsonPath("$.created[0].uai", is("0310001A")))
+        .andExpect(jsonPath("$.failed[0].uai", is("0310002B")));
 
     BddLogger.then("it should import the valid institution and report the other as failed");
   }
 
   @Test
   void shouldUpdateAndReturnInstitutions_whenValidBatchPayload() throws Exception {
-    BddLogger.given("an update payload targeting an institution seeded by hai");
+    BddLogger.given("an update payload targeting an institution seeded by uai");
     List<InstitutionData> payload =
         List.of(
             new InstitutionData(
                 "Université de Rennes - Renamed",
-                SEEDED_PRIMARY_HAI,
+                SEEDED_PRIMARY_UAI,
                 "13000550100015",
                 "130005501",
                 EInstitutionType.PRIMARY,
@@ -195,7 +195,7 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(payload)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].hai", is(SEEDED_PRIMARY_HAI)))
+        .andExpect(jsonPath("$[0].uai", is(SEEDED_PRIMARY_UAI)))
         .andExpect(jsonPath("$[0].name", is("Université de Rennes - Renamed")));
 
     BddLogger.then("it should update and return the institution");

@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class Institution extends AvenirsBaseModel {
   private String name;
-  private String hai;
+  private String uai;
   private String siret;
   private String siren;
   private EInstitutionType type;
@@ -24,7 +24,7 @@ public class Institution extends AvenirsBaseModel {
   private Institution(
       UUID id,
       String name,
-      String hai,
+      String uai,
       String siret,
       String siren,
       EInstitutionType type,
@@ -33,7 +33,7 @@ public class Institution extends AvenirsBaseModel {
       Instant updatedAt) {
     super(id, createdAt, updatedAt);
     this.name = name;
-    this.hai = hai;
+    this.uai = uai;
     this.siret = siret;
     this.siren = siren;
     this.type = type;
@@ -43,26 +43,26 @@ public class Institution extends AvenirsBaseModel {
   public static Institution create(
       UUID id,
       String name,
-      String hai,
+      String uai,
       String siret,
       String siren,
       EInstitutionType type,
       Institution parent) {
     Instant now = Instant.now();
-    return new Institution(id, name, hai, siret, siren, type, parent, now, now);
+    return new Institution(id, name, uai, siret, siren, type, parent, now, now);
   }
 
   public static Institution toDomain(
       UUID id,
       String name,
-      String hai,
+      String uai,
       String siret,
       String siren,
       EInstitutionType type,
       Institution parent,
       Instant createdAt,
       Instant updatedAt) {
-    return new Institution(id, name, hai, siret, siren, type, parent, createdAt, updatedAt);
+    return new Institution(id, name, uai, siret, siren, type, parent, createdAt, updatedAt);
   }
 
   public Optional<Institution> getParent() {

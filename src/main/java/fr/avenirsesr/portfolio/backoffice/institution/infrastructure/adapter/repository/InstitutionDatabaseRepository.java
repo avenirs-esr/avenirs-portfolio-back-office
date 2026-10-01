@@ -26,13 +26,13 @@ public class InstitutionDatabaseRepository
   }
 
   @Override
-  public boolean existsByHai(String hai) {
-    return jpaRepository.existsByHai(hai);
+  public boolean existsByUai(String uai) {
+    return jpaRepository.existsByUai(uai);
   }
 
   @Override
-  public Optional<Institution> findByHai(String hai) {
-    return jpaRepository.findByHai(hai).map(InstitutionMapper.INSTANCE::toDomain);
+  public Optional<Institution> findByUai(String uai) {
+    return jpaRepository.findByUai(uai).map(InstitutionMapper.INSTANCE::toDomain);
   }
 
   @Override

@@ -81,7 +81,7 @@ public class GroupSeeder {
   }
 
   /**
-   * The CSV fixture references institutions by hai (a stable business key), since a seeded
+   * The CSV fixture references institutions by uai (a stable business key), since a seeded
    * institution's id is a fresh random UUID at each run and cannot be hardcoded in the fixture.
    */
   private List<GroupCreationData> readGroupCreationDataFromFile() {
@@ -94,7 +94,7 @@ public class GroupSeeder {
                 new GroupCreationData(
                     data.name(),
                     data.idSiSco(),
-                    resolveInstitutionId(data.institutionHai()),
+                    resolveInstitutionId(data.institutionUAI()),
                     data.codeSise(),
                     data.startDate(),
                     data.endDate(),
@@ -103,9 +103,9 @@ public class GroupSeeder {
         .toList();
   }
 
-  private UUID resolveInstitutionId(String institutionHai) {
+  private UUID resolveInstitutionId(String institutionUAI) {
     return institutionRepository
-        .findByHai(institutionHai)
+        .findByUai(institutionUAI)
         .orElseThrow(InstitutionNotFoundException::new)
         .getId();
   }

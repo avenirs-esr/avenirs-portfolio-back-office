@@ -31,12 +31,12 @@ public class InstitutionServiceImpl implements InstitutionService {
   @Override
   public Institution create(
       String name,
-      String hai,
+      String uai,
       String siret,
       String siren,
       EInstitutionType type,
-      String parentHai) {
-    return upsert(name, hai, siret, siren, type, parentHai).institution();
+      String parentUAI) {
+    return upsert(name, uai, siret, siren, type, parentUAI).institution();
   }
 
   @Override
@@ -49,58 +49,58 @@ public class InstitutionServiceImpl implements InstitutionService {
       try {
         UpsertResult result =
             upsert(
-                data.name(), data.hai(), data.siret(), data.siren(), data.type(), data.parentHai());
+                data.name(), data.uai(), data.siret(), data.siren(), data.type(), data.parentUAI());
         if (result.created()) {
           created.add(result.institution());
         } else {
           updated.add(result.institution());
         }
       } catch (BusinessException e) {
-        log.warn("Failed to import institution with hai {}: {}", data.hai(), e.getMessage());
-        failed.add(new InstitutionImportFailure(data.hai(), e.getMessage()));
+        log.warn("Failed to import institution with uai {}: {}", data.uai(), e.getMessage());
+        failed.add(new InstitutionImportFailure(data.uai(), e.getMessage()));
       }
     }
 
     return new InstitutionImportSummary(created, updated, failed);
   }
 
-  /** Creates the institution, or updates the existing one matching the given hai. */
+  /** Creates the institution, or updates the existing one matching the given uai. */
   private UpsertResult upsert(
       String name,
-      String hai,
+      String uai,
       String siret,
       String siren,
       EInstitutionType type,
-      String parentHai) {
-    Optional<Institution> existing = institutionRepository.findByHai(hai);
+      String parentUAI) {
+    Optional<Institution> existing = institutionRepository.findByUai(uai);
     if (existing.isPresent()) {
-      return new UpsertResult(update(hai, name, siret, siren, type, parentHai), false);
+      return new UpsertResult(update(uai, name, siret, siren, type, parentUAI), false);
     }
 
-    Institution parent = resolveParent(type, parentHai);
+    Institution parent = resolveParent(type, parentUAI);
     Institution institution =
-        Institution.create(idFromHai(hai), name, hai, siret, siren, type, parent);
+        Institution.create(idFromUai(uai), name, uai, siret, siren, type, parent);
     return new UpsertResult(institutionRepository.save(institution), true);
   }
 
-  private static UUID idFromHai(String hai) {
-    return UUID.nameUUIDFromBytes(("institution:" + hai).getBytes(StandardCharsets.UTF_8));
+  private static UUID idFromUai(String uai) {
+    return UUID.nameUUIDFromBytes(("institution:" + uai).getBytes(StandardCharsets.UTF_8));
   }
 
   private record UpsertResult(Institution institution, boolean created) {}
 
   @Override
   public Institution update(
-      String hai,
+      String uai,
       String name,
       String siret,
       String siren,
       EInstitutionType type,
-      String parentHai) {
+      String parentUAI) {
     Institution institution =
-        institutionRepository.findByHai(hai).orElseThrow(InstitutionNotFoundException::new);
+        institutionRepository.findByUai(uai).orElseThrow(InstitutionNotFoundException::new);
 
-    Institution parent = resolveParent(type, parentHai);
+    Institution parent = resolveParent(type, parentUAI);
 
     institution.setName(name);
     institution.setSiret(siret);
@@ -117,12 +117,12 @@ public class InstitutionServiceImpl implements InstitutionService {
         .map(
             data ->
                 update(
-                    data.hai(),
+                    data.uai(),
                     data.name(),
                     data.siret(),
                     data.siren(),
                     data.type(),
-                    data.parentHai()))
+                    data.parentUAI()))
         .toList();
   }
 
@@ -184,20 +184,20 @@ public class InstitutionServiceImpl implements InstitutionService {
     institutionRepository.removeFromDatabase(findById(id));
   }
 
-  private Institution resolveParent(EInstitutionType type, String parentHai) {
+  private Institution resolveParent(EInstitutionType type, String parentUAI) {
     if (type == EInstitutionType.PRIMARY) {
-      if (parentHai != null) {
+      if (parentUAI != null) {
         throw new InstitutionPrimaryCannotHaveParentException();
       }
       return null;
     }
 
-    if (parentHai == null) {
+    if (parentUAI == null) {
       throw new InstitutionSecondaryRequiresParentException();
     }
 
     Institution parent =
-        institutionRepository.findByHai(parentHai).orElseThrow(InstitutionNotFoundException::new);
+        institutionRepository.findByUai(parentUAI).orElseThrow(InstitutionNotFoundException::new);
 
     if (parent.getType() != EInstitutionType.PRIMARY) {
       throw new InstitutionParentMustBePrimaryException();

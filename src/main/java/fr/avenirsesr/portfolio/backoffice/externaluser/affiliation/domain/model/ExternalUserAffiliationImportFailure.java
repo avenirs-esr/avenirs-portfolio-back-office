@@ -4,7 +4,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 
 public record ExternalUserAffiliationImportFailure(
     String eppn,
-    String institutionHai,
+    String institutionUAI,
     String groupIdSiSco,
     EUserCategory category,
     String message) {}

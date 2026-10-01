@@ -14,7 +14,7 @@ public class InstitutionMapper implements Mapper<InstitutionEntity, Institution>
     return InstitutionEntity.of(
         institution.getId(),
         institution.getName(),
-        institution.getHai(),
+        institution.getUai(),
         institution.getSiret(),
         institution.getSiren(),
         institution.getType(),
@@ -30,7 +30,7 @@ public class InstitutionMapper implements Mapper<InstitutionEntity, Institution>
     return Institution.toDomain(
         entity.getId(),
         entity.getName(),
-        entity.getHai(),
+        entity.getUai(),
         entity.getSiret(),
         entity.getSiren(),
         entity.getType(),

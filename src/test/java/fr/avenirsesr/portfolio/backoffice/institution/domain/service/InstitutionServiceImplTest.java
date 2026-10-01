@@ -30,27 +30,27 @@ class InstitutionServiceImplTest {
   @InjectMocks private InstitutionServiceImpl service;
 
   @Test
-  void shouldUpdateInstitution_whenCreating_withAlreadyUsedHai() {
-    BddLogger.given("an existing institution registered under a hai");
-    String hai = "0350001A";
+  void shouldUpdateInstitution_whenCreating_withAlreadyUsedUai() {
+    BddLogger.given("an existing institution registered under a uai");
+    String uai = "0350001A";
     Institution existing =
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
-            hai,
+            uai,
             "siret",
             "siren",
             EInstitutionType.PRIMARY,
             null);
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.of(existing));
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.of(existing));
     when(institutionRepository.save(any(Institution.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
-    BddLogger.when("creating an institution with an already used hai");
+    BddLogger.when("creating an institution with an already used uai");
     Institution result =
         service.create(
             "Université de Rennes - Renamed",
-            hai,
+            uai,
             "new-siret",
             "new-siren",
             EInstitutionType.PRIMARY,
@@ -59,22 +59,22 @@ class InstitutionServiceImplTest {
     BddLogger.then("it should update and save the existing institution instead of failing");
     assertEquals("Université de Rennes - Renamed", result.getName());
     assertEquals("new-siret", result.getSiret());
-    verify(institutionRepository, never()).existsByHai(any());
+    verify(institutionRepository, never()).existsByUai(any());
     verify(institutionRepository).save(existing);
   }
 
   @Test
-  void shouldCreatePrimaryInstitution_whenParentHaiIsNull() {
+  void shouldCreatePrimaryInstitution_whenParentUAIIsNull() {
     BddLogger.given("an InstitutionServiceImpl service");
-    String hai = "0350001A";
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.empty());
+    String uai = "0350001A";
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
     when(institutionRepository.save(any(Institution.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
     BddLogger.when("creating a primary institution without a parent");
     Institution result =
         service.create(
-            "Université de Rennes", hai, "siret", "siren", EInstitutionType.PRIMARY, null);
+            "Université de Rennes", uai, "siret", "siren", EInstitutionType.PRIMARY, null);
 
     BddLogger.then("it should save the institution without a parent");
     assertNotNull(result);
@@ -83,18 +83,18 @@ class InstitutionServiceImplTest {
   }
 
   @Test
-  void shouldThrowInstitutionPrimaryCannotHaveParentException_whenCreatingPrimary_withParentHai() {
+  void shouldThrowInstitutionPrimaryCannotHaveParentException_whenCreatingPrimary_withParentUAI() {
     BddLogger.given("an InstitutionServiceImpl service");
-    String hai = "0350001A";
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.empty());
+    String uai = "0350001A";
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
 
-    BddLogger.when("creating a primary institution with a parent hai");
+    BddLogger.when("creating a primary institution with a parent uai");
     assertThrows(
         InstitutionPrimaryCannotHaveParentException.class,
         () ->
             service.create(
                 "Université de Rennes",
-                hai,
+                uai,
                 "siret",
                 "siren",
                 EInstitutionType.PRIMARY,
@@ -106,18 +106,18 @@ class InstitutionServiceImplTest {
 
   @Test
   void
-      shouldThrowInstitutionSecondaryRequiresParentException_whenCreatingSecondary_withoutParentHai() {
+      shouldThrowInstitutionSecondaryRequiresParentException_whenCreatingSecondary_withoutParentUAI() {
     BddLogger.given("an InstitutionServiceImpl service");
-    String hai = "0350002B";
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.empty());
+    String uai = "0350002B";
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
 
-    BddLogger.when("creating a secondary institution without a parent hai");
+    BddLogger.when("creating a secondary institution without a parent uai");
     assertThrows(
         InstitutionSecondaryRequiresParentException.class,
         () ->
             service.create(
                 "Université de Rennes - IUT",
-                hai,
+                uai,
                 "siret",
                 "siren",
                 EInstitutionType.SECONDARY,
@@ -128,24 +128,24 @@ class InstitutionServiceImplTest {
   }
 
   @Test
-  void shouldThrowInstitutionNotFoundException_whenCreatingSecondary_withUnknownParentHai() {
+  void shouldThrowInstitutionNotFoundException_whenCreatingSecondary_withUnknownParentUAI() {
     BddLogger.given("an InstitutionServiceImpl service");
-    String hai = "0350002B";
-    String parentHai = "0350001A";
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.empty());
-    when(institutionRepository.findByHai(parentHai)).thenReturn(Optional.empty());
+    String uai = "0350002B";
+    String parentUAI = "0350001A";
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
+    when(institutionRepository.findByUai(parentUAI)).thenReturn(Optional.empty());
 
-    BddLogger.when("creating a secondary institution with an unknown parent hai");
+    BddLogger.when("creating a secondary institution with an unknown parent uai");
     assertThrows(
         InstitutionNotFoundException.class,
         () ->
             service.create(
                 "Université de Rennes - IUT",
-                hai,
+                uai,
                 "siret",
                 "siren",
                 EInstitutionType.SECONDARY,
-                parentHai));
+                parentUAI));
 
     BddLogger.then("it should not save anything");
     verify(institutionRepository, never()).save(any());
@@ -155,19 +155,19 @@ class InstitutionServiceImplTest {
   void
       shouldThrowInstitutionParentMustBePrimaryException_whenCreatingSecondary_withSecondaryParent() {
     BddLogger.given("an InstitutionServiceImpl service");
-    String hai = "0350002B";
-    String parentHai = "0350003C";
+    String uai = "0350002B";
+    String parentUAI = "0350003C";
     Institution secondaryParent =
         Institution.create(
             UUID.randomUUID(),
             "Autre IUT",
-            parentHai,
+            parentUAI,
             "siret",
             "siren",
             EInstitutionType.SECONDARY,
             null);
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.empty());
-    when(institutionRepository.findByHai(parentHai)).thenReturn(Optional.of(secondaryParent));
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
+    when(institutionRepository.findByUai(parentUAI)).thenReturn(Optional.of(secondaryParent));
 
     BddLogger.when("creating a secondary institution attached to a secondary parent");
     assertThrows(
@@ -175,11 +175,11 @@ class InstitutionServiceImplTest {
         () ->
             service.create(
                 "Université de Rennes - IUT",
-                hai,
+                uai,
                 "siret",
                 "siren",
                 EInstitutionType.SECONDARY,
-                parentHai));
+                parentUAI));
 
     BddLogger.then("it should not save anything");
     verify(institutionRepository, never()).save(any());
@@ -188,19 +188,19 @@ class InstitutionServiceImplTest {
   @Test
   void shouldCreateSecondaryInstitution_whenParentIsPrimary() {
     BddLogger.given("an InstitutionServiceImpl service");
-    String hai = "0350002B";
-    String parentHai = "0350001A";
+    String uai = "0350002B";
+    String parentUAI = "0350001A";
     Institution primaryParent =
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
-            parentHai,
+            parentUAI,
             "siret",
             "siren",
             EInstitutionType.PRIMARY,
             null);
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.empty());
-    when(institutionRepository.findByHai(parentHai)).thenReturn(Optional.of(primaryParent));
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
+    when(institutionRepository.findByUai(parentUAI)).thenReturn(Optional.of(primaryParent));
     when(institutionRepository.save(any(Institution.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -208,11 +208,11 @@ class InstitutionServiceImplTest {
     Institution result =
         service.create(
             "Université de Rennes - IUT",
-            hai,
+            uai,
             "siret",
             "siren",
             EInstitutionType.SECONDARY,
-            parentHai);
+            parentUAI);
 
     BddLogger.then("it should save the institution with the resolved parent");
     assertNotNull(result);
@@ -223,7 +223,7 @@ class InstitutionServiceImplTest {
   @Test
   void shouldCreateAllInstitutions_whenBatchIsValid() {
     BddLogger.given("an InstitutionServiceImpl service");
-    when(institutionRepository.findByHai(any())).thenReturn(Optional.empty());
+    when(institutionRepository.findByUai(any())).thenReturn(Optional.empty());
     when(institutionRepository.save(any(Institution.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -254,29 +254,29 @@ class InstitutionServiceImplTest {
   }
 
   @Test
-  void shouldUpdateInstitution_whenCreatingAllInstitutions_withAlreadyUsedHai() {
-    BddLogger.given("an existing institution registered under a hai");
-    String hai = "0350001A";
+  void shouldUpdateInstitution_whenCreatingAllInstitutions_withAlreadyUsedUai() {
+    BddLogger.given("an existing institution registered under a uai");
+    String uai = "0350001A";
     Institution existing =
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
-            hai,
+            uai,
             "siret",
             "siren",
             EInstitutionType.PRIMARY,
             null);
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.of(existing));
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.of(existing));
     when(institutionRepository.save(any(Institution.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
-    BddLogger.when("creating a batch containing that hai");
+    BddLogger.when("creating a batch containing that uai");
     InstitutionImportSummary result =
         service.createAll(
             List.of(
                 new InstitutionData(
                     "Université de Rennes - Renamed",
-                    hai,
+                    uai,
                     "new-siret",
                     "new-siren",
                     EInstitutionType.PRIMARY,
@@ -291,9 +291,9 @@ class InstitutionServiceImplTest {
 
   @Test
   void shouldContinueBatch_whenOneInstitutionFails() {
-    BddLogger.given("a batch with one secondary institution missing its parent hai");
-    when(institutionRepository.findByHai("0350001A")).thenReturn(Optional.empty());
-    when(institutionRepository.findByHai("0350002B")).thenReturn(Optional.empty());
+    BddLogger.given("a batch with one secondary institution missing its parent uai");
+    when(institutionRepository.findByUai("0350001A")).thenReturn(Optional.empty());
+    when(institutionRepository.findByUai("0350002B")).thenReturn(Optional.empty());
     when(institutionRepository.save(any(Institution.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -320,31 +320,31 @@ class InstitutionServiceImplTest {
     assertEquals(1, result.created().size());
     assertEquals(0, result.updated().size());
     assertEquals(1, result.failed().size());
-    assertEquals("0350002B", result.failed().get(0).hai());
+    assertEquals("0350002B", result.failed().get(0).uai());
     verify(institutionRepository, times(1)).save(any(Institution.class));
   }
 
   @Test
-  void shouldUpdateInstitution_whenHaiExists() {
+  void shouldUpdateInstitution_whenUaiExists() {
     BddLogger.given("an existing institution");
-    String hai = "0350001A";
+    String uai = "0350001A";
     Institution existing =
         Institution.create(
             UUID.randomUUID(),
             "Université de Rennes",
-            hai,
+            uai,
             "siret",
             "siren",
             EInstitutionType.PRIMARY,
             null);
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.of(existing));
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.of(existing));
     when(institutionRepository.save(any(Institution.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
     BddLogger.when("updating the institution");
     Institution result =
         service.update(
-            hai,
+            uai,
             "Université de Rennes - Renamed",
             "new-siret",
             "new-siren",
@@ -359,15 +359,15 @@ class InstitutionServiceImplTest {
   }
 
   @Test
-  void shouldThrowInstitutionNotFoundException_whenUpdating_withUnknownHai() {
+  void shouldThrowInstitutionNotFoundException_whenUpdating_withUnknownUai() {
     BddLogger.given("an InstitutionServiceImpl service");
-    String hai = "unknown-hai";
-    when(institutionRepository.findByHai(hai)).thenReturn(Optional.empty());
+    String uai = "unknown-uai";
+    when(institutionRepository.findByUai(uai)).thenReturn(Optional.empty());
 
-    BddLogger.when("updating an institution with an unknown hai");
+    BddLogger.when("updating an institution with an unknown uai");
     assertThrows(
         InstitutionNotFoundException.class,
-        () -> service.update(hai, "name", "siret", "siren", EInstitutionType.PRIMARY, null));
+        () -> service.update(uai, "name", "siret", "siren", EInstitutionType.PRIMARY, null));
 
     BddLogger.then("it should not save anything");
     verify(institutionRepository, never()).save(any());

@@ -21,12 +21,12 @@ public class TransactionalInstitutionService implements InstitutionService {
   @Override
   public Institution create(
       String name,
-      String hai,
+      String uai,
       String siret,
       String siren,
       EInstitutionType type,
-      String parentHai) {
-    return delegate.create(name, hai, siret, siren, type, parentHai);
+      String parentUAI) {
+    return delegate.create(name, uai, siret, siren, type, parentUAI);
   }
 
   @Override
@@ -37,13 +37,13 @@ public class TransactionalInstitutionService implements InstitutionService {
 
   @Override
   public Institution update(
-      String hai,
+      String uai,
       String name,
       String siret,
       String siren,
       EInstitutionType type,
-      String parentHai) {
-    return delegate.update(hai, name, siret, siren, type, parentHai);
+      String parentUAI) {
+    return delegate.update(uai, name, siret, siren, type, parentUAI);
   }
 
   @Override

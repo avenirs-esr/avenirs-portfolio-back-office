@@ -23,22 +23,22 @@ public class FakeInstitution {
     return new FakeInstitution(
         new InstitutionCreationData(
             faker.university().name(),
-            dataGenerator.with("hai").regexify("[0-9]{7}[A-Z]"),
+            dataGenerator.with("uai").regexify("[0-9]{7}[A-Z]"),
             faker.numerify("#############"),
             faker.numerify("#########"),
             EInstitutionType.PRIMARY,
             null));
   }
 
-  public static FakeInstitution secondary(String parentHai) {
+  public static FakeInstitution secondary(String parentUAI) {
     return new FakeInstitution(
         new InstitutionCreationData(
             faker.university().name(),
-            dataGenerator.with("hai").regexify("[0-9]{7}[A-Z]"),
+            dataGenerator.with("uai").regexify("[0-9]{7}[A-Z]"),
             faker.numerify("#############"),
             faker.numerify("#########"),
             EInstitutionType.SECONDARY,
-            parentHai));
+            parentUAI));
   }
 
   public InstitutionCreationData toCreationData() {

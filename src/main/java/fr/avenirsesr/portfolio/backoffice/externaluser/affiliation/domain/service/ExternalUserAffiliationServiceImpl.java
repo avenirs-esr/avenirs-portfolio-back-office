@@ -106,14 +106,14 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             "Failed to import affiliation for eppn {} / institution {} / group {} / category {}:"
                 + " {}",
             data.eppn(),
-            data.institutionHai(),
+            data.institutionUAI(),
             data.groupIdSiSco(),
             data.category(),
             e.getMessage());
         failed.add(
             new ExternalUserAffiliationImportFailure(
                 data.eppn(),
-                data.institutionHai(),
+                data.institutionUAI(),
                 data.groupIdSiSco(),
                 data.category(),
                 e.getMessage()));
@@ -253,7 +253,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             .orElseThrow(ExternalUserNotFoundException::new);
     Institution institution =
         institutionRepository
-            .findByHai(data.institutionHai())
+            .findByUai(data.institutionUAI())
             .orElseThrow(InstitutionNotFoundException::new);
     Group group =
         data.groupIdSiSco() != null
