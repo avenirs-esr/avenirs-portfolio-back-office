@@ -33,14 +33,13 @@ public class ExternalUserServiceImpl implements ExternalUserService {
       String email,
       Set<EUserCategory> categories,
       String externalId,
-      EExternalSource source,
       EUserStatus status) {
 
     var externalUser =
         ExternalUser.create(
             eppn,
             externalId,
-            source,
+            EExternalSource.BACK_OFFICE,
             categories,
             email,
             firstName,
@@ -84,7 +83,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
               data.email(),
               data.categories(),
               data.externalId(),
-              data.source(),
               data.status());
       return new UpsertResult(updated, false);
     }
@@ -97,7 +95,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             data.email(),
             data.categories(),
             data.externalId(),
-            data.source(),
             data.status());
     return new UpsertResult(created, true);
   }
@@ -112,7 +109,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
       String email,
       Set<EUserCategory> categories,
       String externalId,
-      EExternalSource source,
       EUserStatus status) {
     ExternalUser externalUser =
         externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);
@@ -122,7 +118,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
     externalUser.setEmail(email);
     externalUser.setCategories(categories);
     externalUser.setExternalId(externalId);
-    externalUser.setSource(source);
+    externalUser.setSource(EExternalSource.BACK_OFFICE);
     externalUser.setStatus(status != null ? status : externalUser.getStatus());
 
     return externalUserRepository.save(externalUser);
@@ -140,7 +136,6 @@ public class ExternalUserServiceImpl implements ExternalUserService {
                     data.email(),
                     data.categories(),
                     data.externalId(),
-                    data.source(),
                     data.status()))
         .toList();
   }

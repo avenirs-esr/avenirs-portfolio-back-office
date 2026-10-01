@@ -3,7 +3,6 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.s
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportSummary;
-import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.input.ExternalUserService;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
@@ -30,10 +29,9 @@ public class TransactionalExternalUserService implements ExternalUserService {
       String email,
       Set<EUserCategory> categories,
       String externalId,
-      EExternalSource source,
       EUserStatus status) {
     return delegate.importExternalUser(
-        eppn, firstName, lastName, email, categories, externalId, source, status);
+        eppn, firstName, lastName, email, categories, externalId, status);
   }
 
   @Override
@@ -50,10 +48,9 @@ public class TransactionalExternalUserService implements ExternalUserService {
       String email,
       Set<EUserCategory> categories,
       String externalId,
-      EExternalSource source,
       EUserStatus status) {
     return delegate.update(
-        eppn, firstName, lastName, email, categories, externalId, source, status);
+        eppn, firstName, lastName, email, categories, externalId, status);
   }
 
   @Override

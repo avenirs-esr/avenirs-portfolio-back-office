@@ -1,6 +1,5 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.seeder.fake;
 
-import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.seeder.domain.port.output.SharedDataGenerator;
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.FakeExternalSource;
@@ -17,7 +16,6 @@ public record FakeExternalUser(
     String email,
     Set<EUserCategory> categories,
     String externalId,
-    EExternalSource source,
     EUserStatus status) {
 
   private static final DataGeneratorProvider<SharedDataGenerator> dataGenerator =
@@ -42,7 +40,6 @@ public record FakeExternalUser(
         eppn,
         categories,
         FakeExternalSource.generateExternalSourceId(),
-        EExternalSource.BACK_OFFICE,
         EUserStatus.ACTIVE);
   }
 }

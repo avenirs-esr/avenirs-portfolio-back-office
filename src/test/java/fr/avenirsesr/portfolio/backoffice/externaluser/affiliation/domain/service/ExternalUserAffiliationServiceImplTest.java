@@ -52,7 +52,7 @@ class ExternalUserAffiliationServiceImplTest {
     return ExternalUser.create(
         "lucas.tessier@university.com",
         "PEG-0001",
-        EExternalSource.PEGASE,
+        EExternalSource.BACK_OFFICE,
         Set.of(categories),
         "lucas.tessier@university.com",
         "Lucas",

@@ -207,8 +207,7 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
 | `lastName` | string (≤255) | **Oui** | Nom |
 | `email` | string (≤255) | **Oui** | Adresse e-mail valide |
 | `categories` | array d'enums | **Oui** | `["STUDENT"]`, `["STAFF"]` ou `["STUDENT", "STAFF"]` |
-| `externalId` | string (≤255) | **Oui** | Identifiant dans le SI source ; **unique par couple (`externalId`, `source`)** |
-| `source` | enum | **Oui** | `PEGASE` \| `BACK_OFFICE` |
+| `externalId` | string (≤255) | **Oui** | Identifiant dans le SI d'origine, **unique** |
 | `status` | enum \| null | Non | `ACTIVE` \| `INACTIVE` \| `REMOVED` \| `BLOCKED` |
 
 ### Règles métier
@@ -219,8 +218,8 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
 - `status` :
   - à la **création**, `null` ou absent ⇒ valeur par défaut `ACTIVE` ;
   - à la **mise à jour**, `null` ou absent ⇒ le statut courant est **conservé**.
-- Le couple (`externalId`, `source`) est unique en base : réutiliser le même couple pour deux
-  `eppn` différents provoque une erreur d'intégrité.
+- `externalId` est unique en base : le réutiliser pour deux `eppn` différents provoque une
+  erreur d'intégrité.
 - **Aucune affiliation n'est créée** par cet import : un utilisateur importé ici n'est rattaché
   à aucun établissement tant que ses affiliations n'ont pas été importées (§ 5).
 - Un `PUT` ne touche **jamais** aux affiliations existantes : elles ne sont modifiables que par
@@ -239,7 +238,6 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
     "email": "lucas.tessier@university.com",
     "categories": ["STUDENT"],
     "externalId": "PEG-0001",
-    "source": "PEGASE",
     "status": "ACTIVE"
   },
   {
@@ -249,7 +247,6 @@ Ce payload ne décrit plus que **l'identité** de l'utilisateur. Ses rattachemen
     "email": "marie.dupont@university.com",
     "categories": ["STAFF", "STUDENT"],
     "externalId": "TEACH-AG-83",
-    "source": "BACK_OFFICE",
     "status": null
   }
 ]
@@ -275,6 +272,7 @@ rattachements **sous forme de listes**, reconstituées à partir des affiliation
 }
 ```
 
+- `source` : toujours `BACK_OFFICE`, l'import étant la seule origine des utilisateurs externes.
 - `institutionIds` : établissements de **toutes** les affiliations, dédoublonnés.
 - `groupIds` : groupes des affiliations qui en portent un (les affiliations « établissement
   seul » n'y contribuent pas).
@@ -501,7 +499,6 @@ purge se fait dans l'ordre inverse (les affiliations d'abord).
   "email": "lucas.tessier@university.com",
   "categories": ["STUDENT", "STAFF"],
   "externalId": "PEG-0001",
-  "source": "BACK_OFFICE",
   "status": "ACTIVE"
 }
 ```
