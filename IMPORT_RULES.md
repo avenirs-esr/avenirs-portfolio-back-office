@@ -80,7 +80,6 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 | `name` | string | **Oui** | Nom de l'établissement |
 | `uai` | string | **Oui** | Identifiant UAI, **unique** — sert de clé d'upsert / mise à jour |
 | `siret` | string \| null | Non | Numéro SIRET (14 chiffres) |
-| `siren` | string \| null | Non | Numéro SIREN (9 chiffres) |
 | `type` | enum | **Oui** | `PRIMARY` \| `SECONDARY` |
 | `parentUAI` | string \| null | Conditionnel | `uai` de l'établissement parent |
 
@@ -103,7 +102,6 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
     "name": "Université de Rennes",
     "uai": "0350001A",
     "siret": "13000550100015",
-    "siren": "130005501",
     "type": "PRIMARY",
     "parentUAI": null
   },
@@ -111,7 +109,6 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
     "name": "Université de Rennes - IUT",
     "uai": "0350002B",
     "siret": "13000550100023",
-    "siren": "130005501",
     "type": "SECONDARY",
     "parentUAI": "0350001A"
   }

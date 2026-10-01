@@ -9,12 +9,12 @@ import java.util.UUID;
 
 public interface InstitutionService {
   Institution create(
-      String name, String uai, String siret, String siren, EInstitutionType type, String parentUAI);
+      String name, String uai, String siret, EInstitutionType type, String parentUAI);
 
   InstitutionImportSummary createAll(List<InstitutionData> institutions);
 
   Institution update(
-      String uai, String name, String siret, String siren, EInstitutionType type, String parentUAI);
+      String uai, String name, String siret, EInstitutionType type, String parentUAI);
 
   List<Institution> updateAll(List<InstitutionData> institutions);
 

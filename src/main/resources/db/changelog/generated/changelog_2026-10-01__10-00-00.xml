@@ -25,4 +25,10 @@
         </preConditions>
         <addUniqueConstraint columnNames="uai" constraintName="uk_institution_uai" tableName="institution"/>
     </changeSet>
+    <changeSet author="iamgreendev" id="20261001100000-4">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="institution" columnName="siren"/>
+        </preConditions>
+        <dropColumn tableName="institution" columnName="siren"/>
+    </changeSet>
 </databaseChangeLog>

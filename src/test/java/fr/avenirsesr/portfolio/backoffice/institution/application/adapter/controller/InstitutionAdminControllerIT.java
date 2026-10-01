@@ -70,14 +70,12 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
                 "Université de Nantes",
                 "0440001A",
                 "13000552300010",
-                "130005523",
                 EInstitutionType.PRIMARY,
                 null),
             new InstitutionData(
                 "Université de Lyon",
                 "0690001A",
                 "13000552400018",
-                "130005524",
                 EInstitutionType.PRIMARY,
                 null));
 
@@ -110,7 +108,6 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
                 "Université de Rennes - Renamed via import",
                 SEEDED_PRIMARY_UAI,
                 "13000550100015",
-                "130005501",
                 EInstitutionType.PRIMARY,
                 null));
 
@@ -142,14 +139,12 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
                 "Université de Toulouse",
                 "0310001A",
                 "13000552600014",
-                "130005526",
                 EInstitutionType.PRIMARY,
                 null),
             new InstitutionData(
                 "IUT sans parent",
                 "0310002B",
                 "13000552700012",
-                "130005527",
                 EInstitutionType.SECONDARY,
                 null));
 
@@ -181,7 +176,6 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
                 "Université de Rennes - Renamed",
                 SEEDED_PRIMARY_UAI,
                 "13000550100015",
-                "130005501",
                 EInstitutionType.PRIMARY,
                 null));
 
@@ -228,7 +222,6 @@ class InstitutionAdminControllerIT extends ContainerConfigurationTest {
                 "Université à supprimer",
                 "0990001A",
                 "13000552500017",
-                "130005525",
                 EInstitutionType.PRIMARY,
                 null));
 

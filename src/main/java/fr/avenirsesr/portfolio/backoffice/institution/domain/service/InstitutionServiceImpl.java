@@ -33,10 +33,9 @@ public class InstitutionServiceImpl implements InstitutionService {
       String name,
       String uai,
       String siret,
-      String siren,
       EInstitutionType type,
       String parentUAI) {
-    return upsert(name, uai, siret, siren, type, parentUAI).institution();
+    return upsert(name, uai, siret, type, parentUAI).institution();
   }
 
   @Override
@@ -49,7 +48,7 @@ public class InstitutionServiceImpl implements InstitutionService {
       try {
         UpsertResult result =
             upsert(
-                data.name(), data.uai(), data.siret(), data.siren(), data.type(), data.parentUAI());
+                data.name(), data.uai(), data.siret(), data.type(), data.parentUAI());
         if (result.created()) {
           created.add(result.institution());
         } else {
@@ -69,17 +68,16 @@ public class InstitutionServiceImpl implements InstitutionService {
       String name,
       String uai,
       String siret,
-      String siren,
       EInstitutionType type,
       String parentUAI) {
     Optional<Institution> existing = institutionRepository.findByUai(uai);
     if (existing.isPresent()) {
-      return new UpsertResult(update(uai, name, siret, siren, type, parentUAI), false);
+      return new UpsertResult(update(uai, name, siret, type, parentUAI), false);
     }
 
     Institution parent = resolveParent(type, parentUAI);
     Institution institution =
-        Institution.create(idFromUai(uai), name, uai, siret, siren, type, parent);
+        Institution.create(idFromUai(uai), name, uai, siret, type, parent);
     return new UpsertResult(institutionRepository.save(institution), true);
   }
 
@@ -94,7 +92,6 @@ public class InstitutionServiceImpl implements InstitutionService {
       String uai,
       String name,
       String siret,
-      String siren,
       EInstitutionType type,
       String parentUAI) {
     Institution institution =
@@ -104,7 +101,6 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     institution.setName(name);
     institution.setSiret(siret);
-    institution.setSiren(siren);
     institution.setType(type);
     institution.setParent(parent);
 
@@ -120,7 +116,6 @@ public class InstitutionServiceImpl implements InstitutionService {
                     data.uai(),
                     data.name(),
                     data.siret(),
-                    data.siren(),
                     data.type(),
                     data.parentUAI()))
         .toList();
