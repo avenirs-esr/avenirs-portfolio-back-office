@@ -66,8 +66,8 @@ class AccessControllerIT extends ContainerConfigurationTest {
         BddLogger.given(
             "a STAFF external user affiliated to a primary institution having a secondary"
                 + " child");
-        institutionId = institutionRepository.findByHai("0350001A").orElseThrow().getId();
-        childInstitutionId = institutionRepository.findByHai("0350002B").orElseThrow().getId();
+        institutionId = institutionRepository.findByUai("0350001A").orElseThrow().getId();
+        childInstitutionId = institutionRepository.findByUai("0350002B").orElseThrow().getId();
 
         BddLogger.when("calling GET /back-office/access/staff/scope as that user");
         response =
@@ -110,7 +110,7 @@ class AccessControllerIT extends ContainerConfigurationTest {
             "a STAFF external user affiliated to a program whose hierarchy has a program option"
                 + " and a student group");
         UUID externalUserId = externalUserRepository.findByEppn(STAFF_EPPN).orElseThrow().getId();
-        UUID institutionId = institutionRepository.findByHai("0350001A").orElseThrow().getId();
+        UUID institutionId = institutionRepository.findByUai("0350001A").orElseThrow().getId();
         programId = groupRepository.findByIdSiSco("10000001").orElseThrow().getId();
         programOptionId = groupRepository.findByIdSiSco("10000002").orElseThrow().getId();
         studentGroupId = groupRepository.findByIdSiSco("10000003").orElseThrow().getId();

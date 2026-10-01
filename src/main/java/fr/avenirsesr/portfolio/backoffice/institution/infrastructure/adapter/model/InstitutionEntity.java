@@ -22,8 +22,8 @@ import lombok.Setter;
     name = "institution",
     uniqueConstraints = {
       @UniqueConstraint(
-          name = "uk_institution_hai",
-          columnNames = {"hai"})
+          name = "uk_institution_uai",
+          columnNames = {"uai"})
     })
 @NoArgsConstructor
 @Getter
@@ -34,7 +34,7 @@ public class InstitutionEntity extends AvenirsBaseEntity {
   private String name;
 
   @Column(nullable = false)
-  private String hai;
+  private String uai;
 
   private String siret;
 
@@ -51,7 +51,7 @@ public class InstitutionEntity extends AvenirsBaseEntity {
   private InstitutionEntity(
       UUID id,
       String name,
-      String hai,
+      String uai,
       String siret,
       String siren,
       EInstitutionType type,
@@ -60,7 +60,7 @@ public class InstitutionEntity extends AvenirsBaseEntity {
       Instant updatedAt) {
     this.setId(id);
     this.name = name;
-    this.hai = hai;
+    this.uai = uai;
     this.siret = siret;
     this.siren = siren;
     this.type = type;
@@ -72,13 +72,13 @@ public class InstitutionEntity extends AvenirsBaseEntity {
   public static InstitutionEntity of(
       UUID id,
       String name,
-      String hai,
+      String uai,
       String siret,
       String siren,
       EInstitutionType type,
       InstitutionEntity parent,
       Instant createdAt,
       Instant updatedAt) {
-    return new InstitutionEntity(id, name, hai, siret, siren, type, parent, createdAt, updatedAt);
+    return new InstitutionEntity(id, name, uai, siret, siren, type, parent, createdAt, updatedAt);
   }
 }

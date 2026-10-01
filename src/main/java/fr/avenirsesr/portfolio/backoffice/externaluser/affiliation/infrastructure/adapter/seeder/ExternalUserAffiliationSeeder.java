@@ -70,9 +70,9 @@ public class ExternalUserAffiliationSeeder {
     for (ExternalUserAffiliationCreationData data : creationData) {
       UUID externalUserId = resolveExternalUserId(data.eppn());
 
-      for (String institutionHai : data.institutionHais()) {
+      for (String institutionUAI : data.institutionUAIs()) {
         externalUserAffiliationService.addAffiliation(
-            externalUserId, resolveInstitutionId(institutionHai), null, data.category());
+            externalUserId, resolveInstitutionId(institutionUAI), null, data.category());
         count++;
       }
 
@@ -149,9 +149,9 @@ public class ExternalUserAffiliationSeeder {
         .getId();
   }
 
-  private UUID resolveInstitutionId(String institutionHai) {
+  private UUID resolveInstitutionId(String institutionUAI) {
     return institutionRepository
-        .findByHai(institutionHai)
+        .findByUai(institutionUAI)
         .orElseThrow(InstitutionNotFoundException::new)
         .getId();
   }

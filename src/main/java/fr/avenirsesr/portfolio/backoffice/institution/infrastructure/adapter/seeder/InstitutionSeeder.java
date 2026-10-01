@@ -52,7 +52,7 @@ public class InstitutionSeeder {
             data -> {
               Institution institution =
                   institutionService.create(
-                      data.name(), data.hai(), data.siret(), data.siren(), data.type(), null);
+                      data.name(), data.uai(), data.siret(), data.siren(), data.type(), null);
               savedInstitutionIds.add(institution.getId());
             });
 
@@ -63,11 +63,11 @@ public class InstitutionSeeder {
               Institution institution =
                   institutionService.create(
                       data.name(),
-                      data.hai(),
+                      data.uai(),
                       data.siret(),
                       data.siren(),
                       data.type(),
-                      data.parentHai());
+                      data.parentUAI());
               savedInstitutionIds.add(institution.getId());
             });
 
@@ -87,7 +87,7 @@ public class InstitutionSeeder {
                   .forEach(
                       j ->
                           creationDataList.add(
-                              FakeInstitution.secondary(primary.hai()).toCreationData()));
+                              FakeInstitution.secondary(primary.uai()).toCreationData()));
             });
 
     return creationDataList;

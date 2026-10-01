@@ -1,42 +1,42 @@
 [
   {
     "name": "Université de Rennes",
-    "hai": "0350001A",
+    "uai": "0350001A",
     "siret": "13000550100015",
     "siren": "130005501",
     "type": "PRIMARY",
-    "parentHai": null
+    "parentUAI": null
   },
   {
     "name": "Université de Rennes - IUT",
-    "hai": "0350002B",
+    "uai": "0350002B",
     "siret": "13000550100023",
     "siren": "130005501",
     "type": "SECONDARY",
-    "parentHai": "0350001A"
+    "parentUAI": "0350001A"
   },
   {
     "name": "Université de Bordeaux",
-    "hai": "0330001C",
+    "uai": "0330001C",
     "siret": "13000551200011",
     "siren": "130005512",
     "type": "PRIMARY",
-    "parentHai": null
+    "parentUAI": null
   },
   {
     "name": "Université de Bordeaux - IUT",
-    "hai": "0330002D",
+    "uai": "0330002D",
     "siret": "13000551200029",
     "siren": "130005512",
     "type": "SECONDARY",
-    "parentHai": "0330001C"
+    "parentUAI": "0330001C"
   },
   {
     "name": "ANR",
-    "hai": "0750001A",
+    "uai": "0750001A",
     "siret": "13000560000010",
     "siren": "130005600",
     "type": "PRIMARY",
-    "parentHai": null
+    "parentUAI": null
   }
 ]

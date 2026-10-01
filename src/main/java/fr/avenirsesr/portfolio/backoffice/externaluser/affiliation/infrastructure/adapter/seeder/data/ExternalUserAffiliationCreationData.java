@@ -6,5 +6,5 @@ import java.util.List;
 public record ExternalUserAffiliationCreationData(
     String eppn,
     EUserCategory category,
-    List<String> institutionHais,
+    List<String> institutionUAIs,
     List<String> groupIdSiScos) {}

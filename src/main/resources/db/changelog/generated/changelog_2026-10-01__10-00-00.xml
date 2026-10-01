@@ -1,0 +1,28 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="iamgreendev" id="20261001100000-1">
+        <preConditions onFail="MARK_RAN">
+            <uniqueConstraintExists constraintName="uk_institution_hai" tableName="institution"/>
+        </preConditions>
+        <dropUniqueConstraint constraintName="uk_institution_hai" tableName="institution"/>
+    </changeSet>
+    <changeSet author="iamgreendev" id="20261001100000-2">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="institution" columnName="hai"/>
+                <not>
+                    <columnExists tableName="institution" columnName="uai"/>
+                </not>
+            </and>
+        </preConditions>
+        <renameColumn tableName="institution" oldColumnName="hai" newColumnName="uai" columnDataType="VARCHAR(255)"/>
+    </changeSet>
+    <changeSet author="iamgreendev" id="20261001100000-3">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists constraintName="uk_institution_uai" tableName="institution"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint columnNames="uai" constraintName="uk_institution_uai" tableName="institution"/>
+    </changeSet>
+</databaseChangeLog>

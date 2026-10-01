@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface InstitutionRepository extends GenericRepositoryPort<Institution> {
-  boolean existsByHai(String hai);
+  boolean existsByUai(String uai);
 
-  Optional<Institution> findByHai(String hai);
+  Optional<Institution> findByUai(String uai);
 
   List<Institution> findAll(UUID parentId, EInstitutionType type);
 

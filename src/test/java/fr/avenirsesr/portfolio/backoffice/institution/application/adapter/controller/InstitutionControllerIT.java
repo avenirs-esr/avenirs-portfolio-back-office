@@ -25,8 +25,8 @@ import org.springframework.test.web.servlet.ResultActions;
 class InstitutionControllerIT extends ContainerConfigurationTest {
 
   private static final String BASE_PATH = "/back-office/institutions";
-  private static final String SEEDED_PRIMARY_HAI = "0350001A";
-  private static final String SEEDED_SECONDARY_HAI = "0350002B";
+  private static final String SEEDED_PRIMARY_UAI = "0350001A";
+  private static final String SEEDED_SECONDARY_UAI = "0350002B";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private InstitutionRepository institutionRepository;
@@ -39,8 +39,8 @@ class InstitutionControllerIT extends ContainerConfigurationTest {
     seederRunner.run();
   }
 
-  private UUID institutionIdOf(String hai) {
-    return institutionRepository.findByHai(hai).orElseThrow().getId();
+  private UUID institutionIdOf(String uai) {
+    return institutionRepository.findByUai(uai).orElseThrow().getId();
   }
 
   @Nested
@@ -56,8 +56,8 @@ class InstitutionControllerIT extends ContainerConfigurationTest {
       @BeforeEach
       void setupWhen() throws Exception {
         BddLogger.given("a seeded secondary institution attached to a primary one");
-        secondaryId = institutionIdOf(SEEDED_SECONDARY_HAI);
-        primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        secondaryId = institutionIdOf(SEEDED_SECONDARY_UAI);
+        primaryId = institutionIdOf(SEEDED_PRIMARY_UAI);
 
         BddLogger.when("calling GET /back-office/institutions/{id} with the api key only");
         response =
@@ -89,7 +89,7 @@ class InstitutionControllerIT extends ContainerConfigurationTest {
       @BeforeEach
       void setupWhen() throws Exception {
         BddLogger.given("a seeded primary institution without parent");
-        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_UAI);
 
         BddLogger.when("calling GET /back-office/institutions/{id}");
         response =
@@ -146,7 +146,7 @@ class InstitutionControllerIT extends ContainerConfigurationTest {
       @BeforeEach
       void setupWhen() throws Exception {
         BddLogger.given("a request without api key");
-        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_HAI);
+        UUID primaryId = institutionIdOf(SEEDED_PRIMARY_UAI);
 
         BddLogger.when("calling GET /back-office/institutions/{id}");
         response =

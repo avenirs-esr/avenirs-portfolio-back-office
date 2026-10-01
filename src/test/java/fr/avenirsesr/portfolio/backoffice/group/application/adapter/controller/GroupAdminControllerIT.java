@@ -37,8 +37,8 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
   private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
   private static final String SEEDED_OTHER_PROGRAM_ID_SI_SCO = "10000004";
   private static final String SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO = "10000005";
-  private static final String SEEDED_INSTITUTION_HAI = "0350001A";
-  private static final String SEEDED_OTHER_INSTITUTION_HAI = "0330001C";
+  private static final String SEEDED_INSTITUTION_UAI = "0350001A";
+  private static final String SEEDED_OTHER_INSTITUTION_UAI = "0330001C";
   private static final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
   private static final LocalDate END_DATE = LocalDate.of(2027, 8, 31);
 
@@ -60,9 +60,9 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
       @Autowired SeederRunner seederRunner,
       @Autowired InstitutionRepository institutionRepository) {
     seederRunner.run();
-    institutionId = institutionRepository.findByHai(SEEDED_INSTITUTION_HAI).orElseThrow().getId();
+    institutionId = institutionRepository.findByUai(SEEDED_INSTITUTION_UAI).orElseThrow().getId();
     otherInstitutionId =
-        institutionRepository.findByHai(SEEDED_OTHER_INSTITUTION_HAI).orElseThrow().getId();
+        institutionRepository.findByUai(SEEDED_OTHER_INSTITUTION_UAI).orElseThrow().getId();
   }
 
   @Test

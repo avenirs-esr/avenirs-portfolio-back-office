@@ -42,7 +42,7 @@ permissions `external-user:read` / `external-user:update` **sans** `X-ADMIN-TOKE
 ### Sémantique POST vs PUT
 
 **POST = upsert tolérant.** Chaque élément est créé, ou mis à jour s'il existe déjà (recherche
-sur la clé métier : `hai`, `idSiSco`, `eppn`). Les éléments en erreur métier n'interrompent pas
+sur la clé métier : `uai`, `idSiSco`, `eppn`). Les éléments en erreur métier n'interrompent pas
 le traitement : ils sont retournés dans `failed[]`. Réponse :
 
 ```json
@@ -52,13 +52,13 @@ le traitement : ils sont retournés dans `failed[]`. Réponse :
   "failedCount": 1,
   "created": [ ... ],
   "updated": [ ... ],
-  "failed": [ { "hai": "0350009Z", "message": "Institution not found" } ]
+  "failed": [ { "uai": "0350009Z", "message": "Institution not found" } ]
 }
 ```
 
-La clé identifiant l'élément en échec est `hai` pour les établissements, `idSiSco` pour les
+La clé identifiant l'élément en échec est `uai` pour les établissements, `idSiSco` pour les
 groupes et `eppn` pour les utilisateurs externes. Pour les affiliations, l'échec est identifié
-par le **triplet** (`eppn`, `institutionHai`, `groupIdSiSco`) et le résumé expose
+par le **triplet** (`eppn`, `institutionUAI`, `groupIdSiSco`) et le résumé expose
 `existingCount` / `existing[]` au lieu de `updatedCount` / `updated[]` (§ 5.2).
 
 **PUT = mise à jour stricte.** L'élément doit déjà exister (sinon `404`). **Aucune tolérance aux
@@ -78,19 +78,19 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 | Champ | Type JSON | Obligatoire | Description |
 |---|---|---|---|
 | `name` | string | **Oui** | Nom de l'établissement |
-| `hai` | string | **Oui** | Identifiant HAI, **unique** — sert de clé d'upsert / mise à jour |
+| `uai` | string | **Oui** | Identifiant UAI, **unique** — sert de clé d'upsert / mise à jour |
 | `siret` | string \| null | Non | Numéro SIRET (14 chiffres) |
 | `siren` | string \| null | Non | Numéro SIREN (9 chiffres) |
 | `type` | enum | **Oui** | `PRIMARY` \| `SECONDARY` |
-| `parentHai` | string \| null | Conditionnel | `hai` de l'établissement parent |
+| `parentUAI` | string \| null | Conditionnel | `uai` de l'établissement parent |
 
 ### Règles métier
 
-- `type = PRIMARY` → `parentHai` **doit être `null` / absent**
+- `type = PRIMARY` → `parentUAI` **doit être `null` / absent**
   (sinon `INSTITUTION_PRIMARY_CANNOT_HAVE_PARENT`, `400`).
-- `type = SECONDARY` → `parentHai` **est obligatoire**
+- `type = SECONDARY` → `parentUAI` **est obligatoire**
   (sinon `INSTITUTION_SECONDARY_REQUIRES_PARENT`, `400`).
-- Le parent référencé par `parentHai` doit exister (`INSTITUTION_NOT_FOUND`, `404`) et être de
+- Le parent référencé par `parentUAI` doit exister (`INSTITUTION_NOT_FOUND`, `404`) et être de
   type `PRIMARY` (`INSTITUTION_PARENT_MUST_BE_PRIMARY`, `400`).
 - Hiérarchie sur **2 niveaux uniquement** : un `SECONDARY` ne peut pas être parent.
 - Ordre d'import : importer les `PRIMARY` **avant** les `SECONDARY` qui les référencent.
@@ -101,19 +101,19 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 [
   {
     "name": "Université de Rennes",
-    "hai": "0350001A",
+    "uai": "0350001A",
     "siret": "13000550100015",
     "siren": "130005501",
     "type": "PRIMARY",
-    "parentHai": null
+    "parentUAI": null
   },
   {
     "name": "Université de Rennes - IUT",
-    "hai": "0350002B",
+    "uai": "0350002B",
     "siret": "13000550100023",
     "siren": "130005501",
     "type": "SECONDARY",
-    "parentHai": "0350001A"
+    "parentUAI": "0350001A"
   }
 ]
 ```
@@ -128,7 +128,7 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 |---|---|---|---|
 | `name` | string | **Oui** | Libellé du groupe |
 | `idSiSco` | string | **Oui** | Identifiant SI Scolarité, **unique** — clé d'upsert / mise à jour |
-| `institutionId` | string (UUID) | **Oui** | **UUID** de l'établissement de rattachement (pas le `hai`) |
+| `institutionId` | string (UUID) | **Oui** | **UUID** de l'établissement de rattachement (pas le `uai`) |
 | `codeSise` | string \| null | Non | Code SISE |
 | `startDate` | string (`yyyy-MM-dd`) \| null | Non | Date de début |
 | `endDate` | string (`yyyy-MM-dd`) \| null | Non | Date de fin |
@@ -136,7 +136,7 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 | `parentIdSiSco` | string \| null | Conditionnel | `idSiSco` du groupe parent |
 
 > `institutionId` attend l'**UUID** renvoyé par `GET /back-office/admin/institutions`
-> (champ `id`), et non le `hai`. À l'inverse, le parent est référencé par son `idSiSco`.
+> (champ `id`), et non le `uai`. À l'inverse, le parent est référencé par son `idSiSco`.
 
 ### Règles métier (hiérarchie par `type`)
 
@@ -320,14 +320,14 @@ En-têtes : `X-ADMIN-TOKEN` + permission `external-user-affiliation:import`.
 | Champ | Type JSON | Obligatoire | Description |
 |---|---|---|---|
 | `eppn` | string | **Oui** | `eppn` de l'utilisateur externe (doit déjà être importé) |
-| `institutionHai` | string | **Oui** | `hai` de l'établissement |
+| `institutionUAI` | string | **Oui** | `uai` de l'établissement |
 | `groupIdSiSco` | string \| null | Non | `idSiSco` du groupe ; `null` / absent ⇒ affiliation établissement seul |
 
 ```json
 [
-  { "eppn": "lucas.tessier@university.com", "institutionHai": "0350001A", "groupIdSiSco": "10000003" },
-  { "eppn": "lucas.tessier@university.com", "institutionHai": "0330001C", "groupIdSiSco": null },
-  { "eppn": "marie.dupont.staff@university.com", "institutionHai": "0350001A" }
+  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0350001A", "groupIdSiSco": "10000003" },
+  { "eppn": "lucas.tessier@university.com", "institutionUAI": "0330001C", "groupIdSiSco": null },
+  { "eppn": "marie.dupont.staff@university.com", "institutionUAI": "0350001A" }
 ]
 ```
 
@@ -361,7 +361,7 @@ En-têtes : `X-ADMIN-TOKEN` + permission `external-user-affiliation:import`.
   "failed": [
     {
       "eppn": "inconnu@university.com",
-      "institutionHai": "0350001A",
+      "institutionUAI": "0350001A",
       "groupIdSiSco": null,
       "message": "External user not found"
     }
@@ -403,7 +403,7 @@ Corps du `POST` (UUID, pas de clés métier) :
 | Code | HTTP | Cas |
 |---|---|---|
 | `EXTERNAL_USER_NOT_FOUND` | `404` | `eppn` / `externalUserId` inconnu |
-| `INSTITUTION_NOT_FOUND` | `404` | `institutionHai` / `institutionId` inconnu |
+| `INSTITUTION_NOT_FOUND` | `404` | `institutionUAI` / `institutionId` inconnu |
 | `GROUP_NOT_FOUND` | `404` | `groupIdSiSco` / `groupId` inconnu |
 | `EXTERNAL_USER_AFFILIATION_NOT_FOUND` | `404` | Affiliation inconnue, ou n'appartenant pas à l'utilisateur ciblé |
 
@@ -437,7 +437,7 @@ ligne** et reportées dans `failed[]` avec leur message.
 2. **Groupes** : `PROGRAM`, puis `PROGRAM_OPTION`, puis `STUDENT_GROUP`
    (récupérer au préalable les UUID via `GET /back-office/admin/institutions`)
 3. **Utilisateurs externes** (identité seule — aucun UUID nécessaire)
-4. **Affiliations** — par clés métier (`eppn`, `hai`, `idSiSco`) : aucune récupération d'UUID
+4. **Affiliations** — par clés métier (`eppn`, `uai`, `idSiSco`) : aucune récupération d'UUID
    n'est nécessaire à cette étape
 
 ### Exemple d'appel
@@ -483,7 +483,7 @@ fixtures référencent les entités par leur clé métier.
 | Fichier | Différences avec le schéma d'import |
 |---|---|
 | `institutions.json` | Identique à `InstitutionData` |
-| `groups.json` | `institutionHai` (HAI) **au lieu de** `institutionId` (UUID) |
+| `groups.json` | `institutionUAI` (UAI) **au lieu de** `institutionId` (UUID) |
 | `external-users.json` | Identité seule : **plus aucune** référence à un établissement ou à un groupe |
 | `external-user-affiliations.json` | **Une entrée par `eppn`**, avec deux listes de clés métier (schéma propre au seeder) |
 
@@ -510,17 +510,17 @@ purge se fait dans l'ordre inverse (les affiliations d'abord).
 // seeder/external-user-affiliations.json
 {
   "eppn": "lucas.tessier@university.com",
-  "institutionHais": ["0350001A", "0330001C"],
+  "institutionUAIs": ["0350001A", "0330001C"],
   "groupIdSiScos": ["10000003", "10000005"]
 }
 ```
 
 Règles de résolution propres à cette fixture :
 
-- chaque `hai` de `institutionHais` produit une affiliation **sans groupe** ;
+- chaque `uai` de `institutionUAIs` produit une affiliation **sans groupe** ;
 - chaque `idSiSco` de `groupIdSiScos` produit une affiliation vers ce groupe **et vers
   l'établissement porteur du groupe**, déduit automatiquement (inutile de le répéter dans
-  `institutionHais`) ;
+  `institutionUAIs`) ;
 - les doublons sont absorbés par le « find or create » : l'exemple ci-dessus crée 4
   affiliations (2 établissements seuls + 2 groupes).
 
