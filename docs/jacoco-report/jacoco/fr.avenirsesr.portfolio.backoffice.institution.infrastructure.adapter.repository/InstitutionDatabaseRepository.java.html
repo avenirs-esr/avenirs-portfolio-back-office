@@ -26,13 +26,13 @@ public class InstitutionDatabaseRepository
 <span class="fc" id="L26">  }</span>
 
   @Override
-  public boolean existsByHai(String hai) {
-<span class="nc" id="L30">    return jpaRepository.existsByHai(hai);</span>
+  public boolean existsByUai(String uai) {
+<span class="nc" id="L30">    return jpaRepository.existsByUai(uai);</span>
   }
 
   @Override
-  public Optional&lt;Institution&gt; findByHai(String hai) {
-<span class="fc" id="L35">    return jpaRepository.findByHai(hai).map(InstitutionMapper.INSTANCE::toDomain);</span>
+  public Optional&lt;Institution&gt; findByUai(String uai) {
+<span class="fc" id="L35">    return jpaRepository.findByUai(uai).map(InstitutionMapper.INSTANCE::toDomain);</span>
   }
 
   @Override

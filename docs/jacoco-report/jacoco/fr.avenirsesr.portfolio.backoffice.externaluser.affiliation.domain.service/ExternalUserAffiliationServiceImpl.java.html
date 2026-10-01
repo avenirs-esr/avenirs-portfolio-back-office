@@ -106,15 +106,15 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             &quot;Failed to import affiliation for eppn {} / institution {} / group {} / category {}:&quot;
                 + &quot; {}&quot;,
 <span class="nc" id="L108">            data.eppn(),</span>
-<span class="nc" id="L109">            data.institutionHai(),</span>
-<span class="nc" id="L110">            data.groupIdSiSco(),</span>
+<span class="nc" id="L109">            data.institutionUAI(),</span>
+<span class="nc" id="L110">            data.groupIdSISco(),</span>
 <span class="nc" id="L111">            data.category(),</span>
 <span class="nc" id="L112">            e.getMessage());</span>
 <span class="nc" id="L113">        failed.add(</span>
             new ExternalUserAffiliationImportFailure(
 <span class="nc" id="L115">                data.eppn(),</span>
-<span class="nc" id="L116">                data.institutionHai(),</span>
-<span class="nc" id="L117">                data.groupIdSiSco(),</span>
+<span class="nc" id="L116">                data.institutionUAI(),</span>
+<span class="nc" id="L117">                data.groupIdSISco(),</span>
 <span class="nc" id="L118">                data.category(),</span>
 <span class="nc" id="L119">                e.getMessage()));</span>
 <span class="nc" id="L120">      }</span>
@@ -253,12 +253,12 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
 <span class="nc" id="L253">            .orElseThrow(ExternalUserNotFoundException::new);</span>
 <span class="nc" id="L254">    Institution institution =</span>
         institutionRepository
-<span class="nc" id="L256">            .findByHai(data.institutionHai())</span>
+<span class="nc" id="L256">            .findByUai(data.institutionUAI())</span>
 <span class="nc" id="L257">            .orElseThrow(InstitutionNotFoundException::new);</span>
     Group group =
-<span class="nc bnc" id="L259" title="All 2 branches missed.">        data.groupIdSiSco() != null</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        data.groupIdSISco() != null</span>
             ? groupRepository
-<span class="nc" id="L261">                .findByIdSiSco(data.groupIdSiSco())</span>
+<span class="nc" id="L261">                .findByIdSISco(data.groupIdSISco())</span>
 <span class="nc" id="L262">                .orElseThrow(GroupNotFoundException::new)</span>
 <span class="nc" id="L263">            : null;</span>
 

@@ -72,7 +72,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.applicati
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller,WebsiteContentController,66,4,0,0,19,1,5,1,5,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.service,ConfigurationTranslationServiceImpl,1,142,1,1,0,44,1,12,0,12
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.service,LoggedInExternalUserServiceImpl,4,14,1,1,1,5,1,1,0,1
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.domain.service,ExternalUserServiceImpl,224,40,10,2,69,8,12,6,7,5
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.domain.service,ExternalUserServiceImpl,214,41,8,2,66,8,11,6,7,5
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.domain.service,ExternalUserServiceImpl.UpsertResult,9,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.domain.service,WebsiteContentConfigurationServiceImpl,44,129,5,7,11,37,9,11,5,9
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.validation.infrastructure.adapter.utils,ValidationUtils,14,0,4,0,4,0,4,0,2,0
@@ -84,7 +84,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.file.infrastruc
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill.infrastructure.service,AdditionalSkillConfigurationServiceConfig,0,21,0,0,0,6,0,3,0,3
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.dependency.domain.service,DependencyCheckerImpl,293,0,20,0,63,0,16,0,6,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.service,ExternalUserServiceConfig,0,9,0,0,0,1,0,1,0,1
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.service,TransactionalExternalUserService,48,12,0,0,9,1,8,1,8,1
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.service,TransactionalExternalUserService,47,12,0,0,9,1,8,1,8,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.service,WebsiteContentConfigurationServiceConfig,0,17,0,0,0,5,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio,BackOfficeApplication,5,3,0,0,2,1,1,1,1,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.specification,InstitutionSpecification,36,16,6,2,9,3,9,2,5,2

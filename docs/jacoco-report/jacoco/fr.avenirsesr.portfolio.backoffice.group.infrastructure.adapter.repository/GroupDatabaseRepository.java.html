@@ -26,13 +26,13 @@ public class GroupDatabaseRepository extends GenericJpaRepositoryAdapter&lt;Grou
 <span class="fc" id="L26">  }</span>
 
   @Override
-  public boolean existsByIdSiSco(String idSiSco) {
-<span class="nc" id="L30">    return jpaRepository.existsByIdSiSco(idSiSco);</span>
+  public boolean existsByIdSISco(String idSISco) {
+<span class="nc" id="L30">    return jpaRepository.existsByIdSISco(idSISco);</span>
   }
 
   @Override
-  public Optional&lt;Group&gt; findByIdSiSco(String idSiSco) {
-<span class="fc" id="L35">    return jpaRepository.findByIdSiSco(idSiSco).map(GroupMapper.INSTANCE::toDomain);</span>
+  public Optional&lt;Group&gt; findByIdSISco(String idSISco) {
+<span class="fc" id="L35">    return jpaRepository.findByIdSISco(idSISco).map(GroupMapper.INSTANCE::toDomain);</span>
   }
 
   @Override
