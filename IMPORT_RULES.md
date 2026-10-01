@@ -128,15 +128,12 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 |---|---|---|---|
 | `name` | string | **Oui** | Libellé du groupe |
 | `idSISco` | string | **Oui** | Identifiant SI Scolarité, **unique** — clé d'upsert / mise à jour |
-| `institutionId` | string (UUID) | **Oui** | **UUID** de l'établissement de rattachement (pas le `uai`) |
+| `institutionUAI` | string | **Oui** | `uai` de l'établissement de rattachement |
 | `codeSise` | string \| null | Non | Code SISE |
 | `startDate` | string (`yyyy-MM-dd`) \| null | Non | Date de début |
 | `endDate` | string (`yyyy-MM-dd`) \| null | Non | Date de fin |
 | `type` | enum | **Oui** | `PROGRAM` \| `PROGRAM_OPTION` \| `STUDENT_GROUP` |
 | `parentIdSISco` | string \| null | Conditionnel | `idSISco` du groupe parent |
-
-> `institutionId` attend l'**UUID** renvoyé par `GET /back-office/admin/institutions`
-> (champ `id`), et non le `uai`. À l'inverse, le parent est référencé par son `idSISco`.
 
 ### Règles métier (hiérarchie par `type`)
 
@@ -150,7 +147,7 @@ Codes d'erreur associés (`400`) : `GROUP_PROGRAM_CANNOT_HAVE_PARENT`,
 `GROUP_PROGRAM_OPTION_REQUIRES_PARENT`, `GROUP_PROGRAM_OPTION_PARENT_MUST_BE_PROGRAM`,
 `GROUP_STUDENT_GROUP_REQUIRES_PARENT`, `GROUP_STUDENT_GROUP_PARENT_MUST_BE_PROGRAM_OR_OPTION`.
 
-- L'établissement (`institutionId`) doit exister → sinon `INSTITUTION_NOT_FOUND` (`404`).
+- L'établissement (`institutionUAI`) doit exister → sinon `INSTITUTION_NOT_FOUND` (`404`).
 - Le groupe parent (`parentIdSISco`) doit exister → sinon `GROUP_NOT_FOUND` (`404`).
 - Ordre d'import : `PROGRAM`, puis `PROGRAM_OPTION`, puis `STUDENT_GROUP`.
 
@@ -161,7 +158,7 @@ Codes d'erreur associés (`400`) : `GROUP_PROGRAM_CANNOT_HAVE_PARENT`,
   {
     "name": "Licence Informatique",
     "idSISco": "10000001",
-    "institutionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "institutionUAI": "0350001A",
     "codeSise": "11000001",
     "startDate": "2023-09-01",
     "endDate": "2026-08-31",
@@ -171,7 +168,7 @@ Codes d'erreur associés (`400`) : `GROUP_PROGRAM_CANNOT_HAVE_PARENT`,
   {
     "name": "Licence Informatique - Parcours IA",
     "idSISco": "10000002",
-    "institutionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "institutionUAI": "0350001A",
     "codeSise": "11000002",
     "startDate": "2023-09-01",
     "endDate": "2025-08-31",
@@ -181,7 +178,7 @@ Codes d'erreur associés (`400`) : `GROUP_PROGRAM_CANNOT_HAVE_PARENT`,
   {
     "name": "Groupe A",
     "idSISco": "10000003",
-    "institutionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "institutionUAI": "0350001A",
     "codeSise": "11000003",
     "startDate": "2024-09-01",
     "endDate": "2025-06-30",
@@ -429,10 +426,11 @@ ligne** et reportées dans `failed[]` avec leur message.
 
 1. **Établissements** : `PRIMARY`, puis `SECONDARY`
 2. **Groupes** : `PROGRAM`, puis `PROGRAM_OPTION`, puis `STUDENT_GROUP`
-   (récupérer au préalable les UUID via `GET /back-office/admin/institutions`)
-3. **Utilisateurs externes** (identité seule — aucun UUID nécessaire)
-4. **Affiliations** — par clés métier (`eppn`, `uai`, `idSISco`) : aucune récupération d'UUID
-   n'est nécessaire à cette étape
+3. **Utilisateurs externes**
+4. **Affiliations**
+
+Tout l'import se fait par clés métier (`uai`, `idSISco`, `eppn`) : aucun UUID interne n'est à
+récupérer entre deux étapes.
 
 ### Exemple d'appel
 
@@ -477,7 +475,7 @@ fixtures référencent les entités par leur clé métier.
 | Fichier | Différences avec le schéma d'import |
 |---|---|
 | `institutions.json` | Identique à `InstitutionData` |
-| `groups.json` | `institutionUAI` (UAI) **au lieu de** `institutionId` (UUID) |
+| `groups.json` | Identique à `GroupData` |
 | `external-users.json` | Identité seule, plus un `status` facultatif (la fixture peut créer des comptes inactifs) |
 | `external-user-affiliations.json` | **Une entrée par `eppn`**, avec deux listes de clés métier (schéma propre au seeder) |
 

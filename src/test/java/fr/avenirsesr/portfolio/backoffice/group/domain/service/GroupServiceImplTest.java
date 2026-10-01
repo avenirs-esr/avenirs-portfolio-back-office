@@ -39,6 +39,7 @@ class GroupServiceImplTest {
   @InjectMocks private GroupServiceImpl service;
 
   private final UUID institutionId = UUID.randomUUID();
+  private final String institutionUAI = "0350001A";
   private final Institution institution =
       Institution.create(
           institutionId,
@@ -67,7 +68,7 @@ class GroupServiceImplTest {
             EGroupType.PROGRAM,
             null);
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.of(existing));
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -76,7 +77,7 @@ class GroupServiceImplTest {
         service.create(
             "Licence Informatique - Renamed",
             idSISco,
-            institutionId,
+            institutionUAI,
             "new-code-sise",
             startDate,
             endDate,
@@ -94,7 +95,7 @@ class GroupServiceImplTest {
     BddLogger.given("a GroupServiceImpl service");
     String idSISco = "10000001";
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -103,7 +104,7 @@ class GroupServiceImplTest {
         service.create(
             "Licence Informatique",
             idSISco,
-            institutionId,
+            institutionUAI,
             "11000001",
             startDate,
             endDate,
@@ -122,7 +123,7 @@ class GroupServiceImplTest {
     BddLogger.given("an unknown institution id");
     String idSISco = "10000001";
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.empty());
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.empty());
 
     BddLogger.when("creating a group with an unknown institution id");
     assertThrows(
@@ -131,7 +132,7 @@ class GroupServiceImplTest {
             service.create(
                 "Licence Informatique",
                 idSISco,
-                institutionId,
+                institutionUAI,
                 "11000001",
                 startDate,
                 endDate,
@@ -147,7 +148,7 @@ class GroupServiceImplTest {
     BddLogger.given("a GroupServiceImpl service");
     String idSISco = "10000001";
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
 
     BddLogger.when("creating a program with a parent id_si_sco");
     assertThrows(
@@ -156,7 +157,7 @@ class GroupServiceImplTest {
             service.create(
                 "Licence Informatique",
                 idSISco,
-                institutionId,
+                institutionUAI,
                 "11000001",
                 startDate,
                 endDate,
@@ -173,7 +174,7 @@ class GroupServiceImplTest {
     BddLogger.given("a GroupServiceImpl service");
     String idSISco = "10000002";
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
 
     BddLogger.when("creating a program option without a parent id_si_sco");
     assertThrows(
@@ -182,7 +183,7 @@ class GroupServiceImplTest {
             service.create(
                 "Parcours IA",
                 idSISco,
-                institutionId,
+                institutionUAI,
                 "11000002",
                 startDate,
                 endDate,
@@ -199,7 +200,7 @@ class GroupServiceImplTest {
     String idSISco = "10000002";
     String parentIdSISco = "10000001";
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.empty());
 
     BddLogger.when("creating a program option with an unknown parent id_si_sco");
@@ -209,7 +210,7 @@ class GroupServiceImplTest {
             service.create(
                 "Parcours IA",
                 idSISco,
-                institutionId,
+                institutionUAI,
                 "11000002",
                 startDate,
                 endDate,
@@ -238,7 +239,7 @@ class GroupServiceImplTest {
             EGroupType.STUDENT_GROUP,
             null);
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(studentGroupParent));
 
     BddLogger.when("creating a program option attached to a student group");
@@ -248,7 +249,7 @@ class GroupServiceImplTest {
             service.create(
                 "Parcours IA",
                 idSISco,
-                institutionId,
+                institutionUAI,
                 "11000002",
                 startDate,
                 endDate,
@@ -276,7 +277,7 @@ class GroupServiceImplTest {
             EGroupType.PROGRAM,
             null);
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(programParent));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -286,7 +287,7 @@ class GroupServiceImplTest {
         service.create(
             "Parcours IA",
             idSISco,
-            institutionId,
+            institutionUAI,
             "11000002",
             startDate,
             endDate,
@@ -305,7 +306,7 @@ class GroupServiceImplTest {
     BddLogger.given("a GroupServiceImpl service");
     String idSISco = "10000003";
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
 
     BddLogger.when("creating a student group without a parent id_si_sco");
     assertThrows(
@@ -314,7 +315,7 @@ class GroupServiceImplTest {
             service.create(
                 "Groupe A",
                 idSISco,
-                institutionId,
+                institutionUAI,
                 "11000003",
                 startDate,
                 endDate,
@@ -343,7 +344,7 @@ class GroupServiceImplTest {
             EGroupType.STUDENT_GROUP,
             null);
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(studentGroupParent));
 
     BddLogger.when("creating a student group attached to another student group");
@@ -353,7 +354,7 @@ class GroupServiceImplTest {
             service.create(
                 "Groupe A",
                 idSISco,
-                institutionId,
+                institutionUAI,
                 "11000003",
                 startDate,
                 endDate,
@@ -381,7 +382,7 @@ class GroupServiceImplTest {
             EGroupType.PROGRAM,
             null);
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(programParent));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -391,7 +392,7 @@ class GroupServiceImplTest {
         service.create(
             "Groupe A",
             idSISco,
-            institutionId,
+            institutionUAI,
             "11000003",
             startDate,
             endDate,
@@ -421,7 +422,7 @@ class GroupServiceImplTest {
             EGroupType.PROGRAM_OPTION,
             null);
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.findByIdSISco(parentIdSISco)).thenReturn(Optional.of(programOptionParent));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -431,7 +432,7 @@ class GroupServiceImplTest {
         service.create(
             "Groupe A",
             idSISco,
-            institutionId,
+            institutionUAI,
             "11000003",
             startDate,
             endDate,
@@ -448,7 +449,7 @@ class GroupServiceImplTest {
   void shouldCreateAllGroups_whenBatchIsValid() {
     BddLogger.given("a GroupServiceImpl service");
     when(groupRepository.findByIdSISco(any())).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -459,7 +460,7 @@ class GroupServiceImplTest {
                 new GroupData(
                     "Licence Informatique",
                     "10000001",
-                    institutionId,
+                    institutionUAI,
                     "11000001",
                     startDate,
                     endDate,
@@ -468,7 +469,7 @@ class GroupServiceImplTest {
                 new GroupData(
                     "Licence Mathematiques",
                     "10000004",
-                    institutionId,
+                    institutionUAI,
                     "11000004",
                     startDate,
                     endDate,
@@ -498,7 +499,7 @@ class GroupServiceImplTest {
             EGroupType.PROGRAM,
             null);
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.of(existing));
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -509,7 +510,7 @@ class GroupServiceImplTest {
                 new GroupData(
                     "Licence Informatique - Renamed",
                     idSISco,
-                    institutionId,
+                    institutionUAI,
                     "new-code-sise",
                     startDate,
                     endDate,
@@ -528,7 +529,7 @@ class GroupServiceImplTest {
     BddLogger.given("a batch with one program option missing its parent id_si_sco");
     when(groupRepository.findByIdSISco("10000001")).thenReturn(Optional.empty());
     when(groupRepository.findByIdSISco("10000002")).thenReturn(Optional.empty());
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -539,7 +540,7 @@ class GroupServiceImplTest {
                 new GroupData(
                     "Licence Informatique",
                     "10000001",
-                    institutionId,
+                    institutionUAI,
                     "11000001",
                     startDate,
                     endDate,
@@ -548,7 +549,7 @@ class GroupServiceImplTest {
                 new GroupData(
                     "Parcours IA",
                     "10000002",
-                    institutionId,
+                    institutionUAI,
                     "11000002",
                     startDate,
                     endDate,
@@ -579,7 +580,7 @@ class GroupServiceImplTest {
             EGroupType.PROGRAM,
             null);
     when(groupRepository.findByIdSISco(idSISco)).thenReturn(Optional.of(existing));
-    when(institutionRepository.findById(institutionId)).thenReturn(Optional.of(institution));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -588,7 +589,7 @@ class GroupServiceImplTest {
         service.update(
             idSISco,
             "Licence Informatique - Renamed",
-            institutionId,
+            institutionUAI,
             "new-code-sise",
             startDate,
             endDate,
@@ -614,7 +615,7 @@ class GroupServiceImplTest {
             service.update(
                 idSISco,
                 "name",
-                institutionId,
+                institutionUAI,
                 "code-sise",
                 startDate,
                 endDate,

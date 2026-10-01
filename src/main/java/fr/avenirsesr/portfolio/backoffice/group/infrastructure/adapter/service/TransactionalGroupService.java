@@ -23,14 +23,14 @@ public class TransactionalGroupService implements GroupService {
   public Group create(
       String name,
       String idSISco,
-      UUID institutionId,
+      String institutionUAI,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
       String parentIdSISco) {
     return delegate.create(
-        name, idSISco, institutionId, codeSise, startDate, endDate, type, parentIdSISco);
+        name, idSISco, institutionUAI, codeSise, startDate, endDate, type, parentIdSISco);
   }
 
   @Override
@@ -43,14 +43,14 @@ public class TransactionalGroupService implements GroupService {
   public Group update(
       String idSISco,
       String name,
-      UUID institutionId,
+      String institutionUAI,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
       String parentIdSISco) {
     return delegate.update(
-        idSISco, name, institutionId, codeSise, startDate, endDate, type, parentIdSISco);
+        idSISco, name, institutionUAI, codeSise, startDate, endDate, type, parentIdSISco);
   }
 
   @Override

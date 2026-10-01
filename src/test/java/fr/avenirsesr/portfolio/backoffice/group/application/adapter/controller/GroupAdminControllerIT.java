@@ -90,7 +90,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
             new GroupData(
                 "Licence Physique",
                 "20000001",
-                institutionId,
+                SEEDED_INSTITUTION_UAI,
                 "21000001",
                 START_DATE,
                 END_DATE,
@@ -99,7 +99,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
             new GroupData(
                 "Licence Chimie",
                 "20000002",
-                institutionId,
+                SEEDED_INSTITUTION_UAI,
                 "21000002",
                 START_DATE,
                 END_DATE,
@@ -134,7 +134,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
             new GroupData(
                 "Licence Informatique - Renamed via import",
                 SEEDED_PROGRAM_ID_SI_SCO,
-                institutionId,
+                SEEDED_INSTITUTION_UAI,
                 "31000001",
                 START_DATE,
                 END_DATE,
@@ -168,7 +168,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
             new GroupData(
                 "Licence Biologie",
                 "20000003",
-                institutionId,
+                SEEDED_INSTITUTION_UAI,
                 "21000003",
                 START_DATE,
                 END_DATE,
@@ -177,7 +177,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
             new GroupData(
                 "Option sans parent",
                 "20000004",
-                institutionId,
+                SEEDED_INSTITUTION_UAI,
                 "21000004",
                 START_DATE,
                 END_DATE,
@@ -211,7 +211,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
             new GroupData(
                 "Licence Informatique - Renamed",
                 SEEDED_PROGRAM_ID_SI_SCO,
-                institutionId,
+                SEEDED_INSTITUTION_UAI,
                 "31000001",
                 START_DATE,
                 END_DATE,
@@ -260,7 +260,7 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
             new GroupData(
                 "Licence a supprimer",
                 "20000005",
-                institutionId,
+                SEEDED_INSTITUTION_UAI,
                 "21000005",
                 START_DATE,
                 END_DATE,
