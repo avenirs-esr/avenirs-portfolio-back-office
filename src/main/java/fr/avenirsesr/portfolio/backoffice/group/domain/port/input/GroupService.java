@@ -12,7 +12,7 @@ public interface GroupService {
   Group create(
       String name,
       String idSISco,
-      UUID institutionId,
+      String institutionUAI,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
@@ -24,7 +24,7 @@ public interface GroupService {
   Group update(
       String idSISco,
       String name,
-      UUID institutionId,
+      String institutionUAI,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,

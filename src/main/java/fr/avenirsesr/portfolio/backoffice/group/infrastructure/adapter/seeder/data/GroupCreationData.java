@@ -2,12 +2,12 @@ package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.d
 
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
-import java.util.UUID;
 
+/** Seeder fixture shape, referencing the institution by uai. */
 public record GroupCreationData(
     String name,
     String idSISco,
-    UUID institutionId,
+    String institutionUAI,
     String codeSise,
     LocalDate startDate,
     LocalDate endDate,

@@ -6,7 +6,6 @@ import fr.avenirsesr.portfolio.common.seeder.domain.port.output.SharedDataGenera
 import fr.avenirsesr.portfolio.common.seeder.infrastructure.adapter.data.DataGeneratorProvider;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import net.datafaker.Faker;
 
@@ -23,13 +22,13 @@ public class FakeGroup {
     this.group = group;
   }
 
-  public static FakeGroup program(UUID institutionId) {
+  public static FakeGroup program(String institutionUAI) {
     LocalDate startDate = pastDate(730);
     return new FakeGroup(
         new GroupCreationData(
             faker.educator().course(),
             dataGenerator.with("idSISco").regexify("[0-9]{8}"),
-            institutionId,
+            institutionUAI,
             faker.numerify("###########"),
             startDate,
             startDate.plusYears(3),
@@ -37,13 +36,13 @@ public class FakeGroup {
             null));
   }
 
-  public static FakeGroup programOption(UUID institutionId, String parentIdSISco) {
+  public static FakeGroup programOption(String institutionUAI, String parentIdSISco) {
     LocalDate startDate = pastDate(730);
     return new FakeGroup(
         new GroupCreationData(
             faker.educator().course() + " - " + faker.educator().subjectWithNumber(),
             dataGenerator.with("idSISco").regexify("[0-9]{8}"),
-            institutionId,
+            institutionUAI,
             faker.numerify("###########"),
             startDate,
             startDate.plusYears(2),
@@ -51,13 +50,13 @@ public class FakeGroup {
             parentIdSISco));
   }
 
-  public static FakeGroup studentGroup(UUID institutionId, String parentIdSISco) {
+  public static FakeGroup studentGroup(String institutionUAI, String parentIdSISco) {
     LocalDate startDate = pastDate(365);
     return new FakeGroup(
         new GroupCreationData(
             "Groupe " + faker.letterify("?").toUpperCase(),
             dataGenerator.with("idSISco").regexify("[0-9]{8}"),
-            institutionId,
+            institutionUAI,
             faker.numerify("###########"),
             startDate,
             startDate.plusYears(1),

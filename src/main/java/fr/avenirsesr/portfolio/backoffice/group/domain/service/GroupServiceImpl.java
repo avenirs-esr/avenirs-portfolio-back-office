@@ -39,13 +39,13 @@ public class GroupServiceImpl implements GroupService {
   public Group create(
       String name,
       String idSISco,
-      UUID institutionId,
+      String institutionUAI,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
       String parentIdSISco) {
-    return upsert(name, idSISco, institutionId, codeSise, startDate, endDate, type, parentIdSISco)
+    return upsert(name, idSISco, institutionUAI, codeSise, startDate, endDate, type, parentIdSISco)
         .group();
   }
 
@@ -61,7 +61,7 @@ public class GroupServiceImpl implements GroupService {
             upsert(
                 data.name(),
                 data.idSISco(),
-                data.institutionId(),
+                data.institutionUAI(),
                 data.codeSise(),
                 data.startDate(),
                 data.endDate(),
@@ -85,7 +85,7 @@ public class GroupServiceImpl implements GroupService {
   private UpsertResult upsert(
       String name,
       String idSISco,
-      UUID institutionId,
+      String institutionUAI,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
@@ -94,11 +94,11 @@ public class GroupServiceImpl implements GroupService {
     Optional<Group> existing = groupRepository.findByIdSISco(idSISco);
     if (existing.isPresent()) {
       return new UpsertResult(
-          update(idSISco, name, institutionId, codeSise, startDate, endDate, type, parentIdSISco),
+          update(idSISco, name, institutionUAI, codeSise, startDate, endDate, type, parentIdSISco),
           false);
     }
 
-    Institution institution = findInstitutionOrThrow(institutionId);
+    Institution institution = findInstitutionOrThrow(institutionUAI);
     Group parent = resolveParent(type, parentIdSISco);
     Group group =
         Group.create(
@@ -124,7 +124,7 @@ public class GroupServiceImpl implements GroupService {
   public Group update(
       String idSISco,
       String name,
-      UUID institutionId,
+      String institutionUAI,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
@@ -132,7 +132,7 @@ public class GroupServiceImpl implements GroupService {
       String parentIdSISco) {
     Group group = groupRepository.findByIdSISco(idSISco).orElseThrow(GroupNotFoundException::new);
 
-    Institution institution = findInstitutionOrThrow(institutionId);
+    Institution institution = findInstitutionOrThrow(institutionUAI);
     Group parent = resolveParent(type, parentIdSISco);
 
     group.setName(name);
@@ -154,7 +154,7 @@ public class GroupServiceImpl implements GroupService {
                 update(
                     data.idSISco(),
                     data.name(),
-                    data.institutionId(),
+                    data.institutionUAI(),
                     data.codeSise(),
                     data.startDate(),
                     data.endDate(),
@@ -245,9 +245,9 @@ public class GroupServiceImpl implements GroupService {
     groupRepository.removeFromDatabase(findById(id));
   }
 
-  private Institution findInstitutionOrThrow(UUID institutionId) {
+  private Institution findInstitutionOrThrow(String institutionUAI) {
     return institutionRepository
-        .findById(institutionId)
+        .findByUai(institutionUAI)
         .orElseThrow(InstitutionNotFoundException::new);
   }
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.data.GroupCreationData;
-import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.data.GroupCsvCreationData;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.seeder.fake.FakeGroup;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
@@ -66,7 +65,7 @@ public class GroupSeeder {
                     groupService.create(
                         data.name(),
                         data.idSISco(),
-                        data.institutionId(),
+                        data.institutionUAI(),
                         data.codeSise(),
                         data.startDate(),
                         data.endDate(),
@@ -80,63 +79,47 @@ public class GroupSeeder {
     return List.copyOf(savedGroupIds);
   }
 
-  /**
-   * The CSV fixture references institutions by uai (a stable business key), since a seeded
-   * institution's id is a fresh random UUID at each run and cannot be hardcoded in the fixture.
-   */
   private List<GroupCreationData> readGroupCreationDataFromFile() {
-    List<GroupCsvCreationData> csvCreationDataList =
-        fileReader.readJSON(PATH_FILE, new TypeReference<>() {});
-
-    return csvCreationDataList.stream()
-        .map(
-            data ->
-                new GroupCreationData(
-                    data.name(),
-                    data.idSISco(),
-                    resolveInstitutionId(data.institutionUAI()),
-                    data.codeSise(),
-                    data.startDate(),
-                    data.endDate(),
-                    data.type(),
-                    data.parentIdSISco()))
-        .toList();
-  }
-
-  private UUID resolveInstitutionId(String institutionUAI) {
-    return institutionRepository
-        .findByUai(institutionUAI)
-        .orElseThrow(InstitutionNotFoundException::new)
-        .getId();
+    return fileReader.readJSON(PATH_FILE, new TypeReference<>() {});
   }
 
   private List<GroupCreationData> buildFakeGroups(List<UUID> savedInstitutionIds) {
     List<GroupCreationData> creationDataList = new ArrayList<>();
 
-    savedInstitutionIds.forEach(
-        institutionId ->
-            IntStream.range(0, PROGRAMS_PER_INSTITUTION_NB)
-                .forEach(
-                    i -> {
-                      GroupCreationData program = FakeGroup.program(institutionId).toCreationData();
-                      creationDataList.add(program);
-                      creationDataList.add(
-                          FakeGroup.studentGroup(institutionId, program.idSISco())
-                              .toCreationData());
+    savedInstitutionIds.stream()
+        .map(this::resolveInstitutionUAI)
+        .forEach(
+            institutionUAI ->
+                IntStream.range(0, PROGRAMS_PER_INSTITUTION_NB)
+                    .forEach(
+                        i -> {
+                          GroupCreationData program =
+                              FakeGroup.program(institutionUAI).toCreationData();
+                          creationDataList.add(program);
+                          creationDataList.add(
+                              FakeGroup.studentGroup(institutionUAI, program.idSISco())
+                                  .toCreationData());
 
-                      IntStream.range(0, OPTIONS_PER_PROGRAM_NB)
-                          .forEach(
-                              j -> {
-                                GroupCreationData option =
-                                    FakeGroup.programOption(institutionId, program.idSISco())
-                                        .toCreationData();
-                                creationDataList.add(option);
-                                creationDataList.add(
-                                    FakeGroup.studentGroup(institutionId, option.idSISco())
-                                        .toCreationData());
-                              });
-                    }));
+                          IntStream.range(0, OPTIONS_PER_PROGRAM_NB)
+                              .forEach(
+                                  j -> {
+                                    GroupCreationData option =
+                                        FakeGroup.programOption(institutionUAI, program.idSISco())
+                                            .toCreationData();
+                                    creationDataList.add(option);
+                                    creationDataList.add(
+                                        FakeGroup.studentGroup(institutionUAI, option.idSISco())
+                                            .toCreationData());
+                                  });
+                        }));
 
     return creationDataList;
+  }
+
+  private String resolveInstitutionUAI(UUID institutionId) {
+    return institutionRepository
+        .findById(institutionId)
+        .orElseThrow(InstitutionNotFoundException::new)
+        .getUai();
   }
 }
