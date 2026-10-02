@@ -7,6 +7,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.mod
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.specification.InstitutionSpecification;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,26 +21,31 @@ public class InstitutionDatabaseRepository
   private final InstitutionJpaRepository jpaRepository;
 
   public InstitutionDatabaseRepository(InstitutionJpaRepository jpaRepository) {
-<span class="fc" id="L23">    super(jpaRepository, jpaRepository, InstitutionEntity.class, InstitutionMapper.INSTANCE);</span>
-<span class="fc" id="L24">    this.jpaRepository = jpaRepository;</span>
-<span class="fc" id="L25">  }</span>
+<span class="fc" id="L24">    super(jpaRepository, jpaRepository, InstitutionEntity.class, InstitutionMapper.INSTANCE);</span>
+<span class="fc" id="L25">    this.jpaRepository = jpaRepository;</span>
+<span class="fc" id="L26">  }</span>
 
   @Override
-  public boolean existsByHai(String hai) {
-<span class="nc" id="L29">    return jpaRepository.existsByHai(hai);</span>
+  public boolean existsByUai(String uai) {
+<span class="nc" id="L30">    return jpaRepository.existsByUai(uai);</span>
   }
 
   @Override
-  public Optional&lt;Institution&gt; findByHai(String hai) {
-<span class="fc" id="L34">    return jpaRepository.findByHai(hai).map(InstitutionMapper.INSTANCE::toDomain);</span>
+  public Optional&lt;Institution&gt; findByUai(String uai) {
+<span class="fc" id="L35">    return jpaRepository.findByUai(uai).map(InstitutionMapper.INSTANCE::toDomain);</span>
   }
 
   @Override
   public List&lt;Institution&gt; findAll(UUID parentId, EInstitutionType type) {
-<span class="nc" id="L39">    Specification&lt;InstitutionEntity&gt; specification =</span>
-<span class="nc" id="L40">        Specification.where(InstitutionSpecification.withParentId(parentId))</span>
-<span class="nc" id="L41">            .and(InstitutionSpecification.withType(type));</span>
-<span class="nc" id="L42">    return findAll(specification);</span>
+<span class="nc" id="L40">    Specification&lt;InstitutionEntity&gt; specification =</span>
+<span class="nc" id="L41">        Specification.where(InstitutionSpecification.withParentId(parentId))</span>
+<span class="nc" id="L42">            .and(InstitutionSpecification.withType(type));</span>
+<span class="nc" id="L43">    return findAll(specification);</span>
+  }
+
+  @Override
+  public List&lt;Institution&gt; findAllByParentIds(Collection&lt;UUID&gt; parentIds) {
+<span class="fc" id="L48">    return findAll(InstitutionSpecification.withParentIds(parentIds));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

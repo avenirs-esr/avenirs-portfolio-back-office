@@ -31,12 +31,12 @@ public class InstitutionServiceImpl implements InstitutionService {
   @Override
   public Institution create(
       String name,
-      String hai,
+      String sigle,
+      String uai,
       String siret,
-      String siren,
       EInstitutionType type,
-      String parentHai) {
-<span class="fc" id="L39">    return upsert(name, hai, siret, siren, type, parentHai).institution();</span>
+      String parentUAI) {
+<span class="fc" id="L39">    return upsert(name, sigle, uai, siret, type, parentUAI).institution();</span>
   }
 
   @Override
@@ -49,62 +49,62 @@ public class InstitutionServiceImpl implements InstitutionService {
       try {
 <span class="fc" id="L50">        UpsertResult result =</span>
 <span class="fc" id="L51">            upsert(</span>
-<span class="fc" id="L52">                data.name(), data.hai(), data.siret(), data.siren(), data.type(), data.parentHai());</span>
+<span class="fc" id="L52">                data.name(), data.sigle(), data.uai(), data.siret(), data.type(), data.parentUAI());</span>
 <span class="fc bfc" id="L53" title="All 2 branches covered.">        if (result.created()) {</span>
 <span class="fc" id="L54">          created.add(result.institution());</span>
         } else {
 <span class="fc" id="L56">          updated.add(result.institution());</span>
         }
 <span class="fc" id="L58">      } catch (BusinessException e) {</span>
-<span class="fc" id="L59">        log.warn(&quot;Failed to import institution with hai {}: {}&quot;, data.hai(), e.getMessage());</span>
-<span class="fc" id="L60">        failed.add(new InstitutionImportFailure(data.hai(), e.getMessage()));</span>
+<span class="fc" id="L59">        log.warn(&quot;Failed to import institution with uai {}: {}&quot;, data.uai(), e.getMessage());</span>
+<span class="fc" id="L60">        failed.add(new InstitutionImportFailure(data.uai(), e.getMessage()));</span>
 <span class="fc" id="L61">      }</span>
 <span class="fc" id="L62">    }</span>
 
 <span class="fc" id="L64">    return new InstitutionImportSummary(created, updated, failed);</span>
   }
 
-  /** Creates the institution, or updates the existing one matching the given hai. */
+  /** Creates the institution, or updates the existing one matching the given uai. */
   private UpsertResult upsert(
       String name,
-      String hai,
+      String sigle,
+      String uai,
       String siret,
-      String siren,
       EInstitutionType type,
-      String parentHai) {
-<span class="fc" id="L75">    Optional&lt;Institution&gt; existing = institutionRepository.findByHai(hai);</span>
+      String parentUAI) {
+<span class="fc" id="L75">    Optional&lt;Institution&gt; existing = institutionRepository.findByUai(uai);</span>
 <span class="fc bfc" id="L76" title="All 2 branches covered.">    if (existing.isPresent()) {</span>
-<span class="fc" id="L77">      return new UpsertResult(update(hai, name, siret, siren, type, parentHai), false);</span>
+<span class="fc" id="L77">      return new UpsertResult(update(uai, name, sigle, siret, type, parentUAI), false);</span>
     }
 
-<span class="fc" id="L80">    Institution parent = resolveParent(type, parentHai);</span>
+<span class="fc" id="L80">    Institution parent = resolveParent(type, parentUAI);</span>
 <span class="fc" id="L81">    Institution institution =</span>
-<span class="fc" id="L82">        Institution.create(idFromHai(hai), name, hai, siret, siren, type, parent);</span>
+<span class="fc" id="L82">        Institution.create(idFromUai(uai), name, sigle, uai, siret, type, parent);</span>
 <span class="fc" id="L83">    return new UpsertResult(institutionRepository.save(institution), true);</span>
   }
 
-  private static UUID idFromHai(String hai) {
-<span class="fc" id="L87">    return UUID.nameUUIDFromBytes((&quot;institution:&quot; + hai).getBytes(StandardCharsets.UTF_8));</span>
+  private static UUID idFromUai(String uai) {
+<span class="fc" id="L87">    return UUID.nameUUIDFromBytes((&quot;institution:&quot; + uai).getBytes(StandardCharsets.UTF_8));</span>
   }
 
 <span class="fc" id="L90">  private record UpsertResult(Institution institution, boolean created) {}</span>
 
   @Override
   public Institution update(
-      String hai,
+      String uai,
       String name,
+      String sigle,
       String siret,
-      String siren,
       EInstitutionType type,
-      String parentHai) {
+      String parentUAI) {
 <span class="fc" id="L100">    Institution institution =</span>
-<span class="fc" id="L101">        institutionRepository.findByHai(hai).orElseThrow(InstitutionNotFoundException::new);</span>
+<span class="fc" id="L101">        institutionRepository.findByUai(uai).orElseThrow(InstitutionNotFoundException::new);</span>
 
-<span class="fc" id="L103">    Institution parent = resolveParent(type, parentHai);</span>
+<span class="fc" id="L103">    Institution parent = resolveParent(type, parentUAI);</span>
 
 <span class="fc" id="L105">    institution.setName(name);</span>
-<span class="fc" id="L106">    institution.setSiret(siret);</span>
-<span class="fc" id="L107">    institution.setSiren(siren);</span>
+<span class="fc" id="L106">    institution.setSigle(sigle);</span>
+<span class="fc" id="L107">    institution.setSiret(siret);</span>
 <span class="fc" id="L108">    institution.setType(type);</span>
 <span class="fc" id="L109">    institution.setParent(parent);</span>
 
@@ -117,12 +117,12 @@ public class InstitutionServiceImpl implements InstitutionService {
 <span class="fc" id="L117">        .map(</span>
             data -&gt;
 <span class="fc" id="L119">                update(</span>
-<span class="fc" id="L120">                    data.hai(),</span>
+<span class="fc" id="L120">                    data.uai(),</span>
 <span class="fc" id="L121">                    data.name(),</span>
-<span class="fc" id="L122">                    data.siret(),</span>
-<span class="fc" id="L123">                    data.siren(),</span>
+<span class="fc" id="L122">                    data.sigle(),</span>
+<span class="fc" id="L123">                    data.siret(),</span>
 <span class="fc" id="L124">                    data.type(),</span>
-<span class="fc" id="L125">                    data.parentHai()))</span>
+<span class="fc" id="L125">                    data.parentUAI()))</span>
 <span class="fc" id="L126">        .toList();</span>
   }
 
@@ -184,20 +184,20 @@ public class InstitutionServiceImpl implements InstitutionService {
 <span class="fc" id="L184">    institutionRepository.removeFromDatabase(findById(id));</span>
 <span class="fc" id="L185">  }</span>
 
-  private Institution resolveParent(EInstitutionType type, String parentHai) {
+  private Institution resolveParent(EInstitutionType type, String parentUAI) {
 <span class="fc bfc" id="L188" title="All 2 branches covered.">    if (type == EInstitutionType.PRIMARY) {</span>
-<span class="fc bfc" id="L189" title="All 2 branches covered.">      if (parentHai != null) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">      if (parentUAI != null) {</span>
 <span class="fc" id="L190">        throw new InstitutionPrimaryCannotHaveParentException();</span>
       }
 <span class="fc" id="L192">      return null;</span>
     }
 
-<span class="fc bfc" id="L195" title="All 2 branches covered.">    if (parentHai == null) {</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">    if (parentUAI == null) {</span>
 <span class="fc" id="L196">      throw new InstitutionSecondaryRequiresParentException();</span>
     }
 
 <span class="fc" id="L199">    Institution parent =</span>
-<span class="fc" id="L200">        institutionRepository.findByHai(parentHai).orElseThrow(InstitutionNotFoundException::new);</span>
+<span class="fc" id="L200">        institutionRepository.findByUai(parentUAI).orElseThrow(InstitutionNotFoundException::new);</span>
 
 <span class="fc bfc" id="L202" title="All 2 branches covered.">    if (parent.getType() != EInstitutionType.PRIMARY) {</span>
 <span class="fc" id="L203">      throw new InstitutionParentMustBePrimaryException();</span>
