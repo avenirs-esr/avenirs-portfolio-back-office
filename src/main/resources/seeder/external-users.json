@@ -2328,5 +2328,15 @@
     "externalId": "ADMIN-0001",
     "institutionUAI": "0350001A",
     "status": "ACTIVE"
+  },
+  {
+    "eppn": "cofadmin",
+    "firstName": "CoFolio",
+    "lastName": "ADMIN",
+    "email": "cofadmin@university.com",
+    "categories": ["STUDENT", "STAFF"],
+    "externalId": "ADMIN-0002",
+    "source": "BACK_OFFICE",
+    "status": "ACTIVE"
   }
 ]

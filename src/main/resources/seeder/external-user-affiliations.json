@@ -1408,5 +1408,17 @@
     "category": "STAFF",
     "institutionUAIs": ["0350001A"],
     "groupIdSIScos": []
+  },
+  {
+    "eppn": "cofadmin",
+    "category": "STUDENT",
+    "institutionUAIs": ["0350001A"],
+    "groupIdSIScos": []
+  },
+  {
+    "eppn": "cofadmin",
+    "category": "STAFF",
+    "institutionUAIs": ["0350001A"],
+    "groupIdSIScos": []
   }
 ]
