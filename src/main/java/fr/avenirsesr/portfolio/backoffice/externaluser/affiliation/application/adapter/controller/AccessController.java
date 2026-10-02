@@ -61,7 +61,10 @@ public class AccessController {
 
   private static List<ScopeNodeResponse> toResponse(List<AffiliationScopeNode> nodes) {
     return nodes.stream()
-        .map(node -> new ScopeNodeResponse(node.id(), node.title(), toResponse(node.children())))
+        .map(
+            node ->
+                new ScopeNodeResponse(
+                    node.id(), node.title(), node.type(), toResponse(node.children())))
         .toList();
   }
 }

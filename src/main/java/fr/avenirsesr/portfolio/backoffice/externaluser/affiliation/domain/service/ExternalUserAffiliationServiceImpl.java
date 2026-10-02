@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.servi
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationCategoryNotAllowedException;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliationScopeNode;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.EAffiliationScopeNodeType;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportFailure;
@@ -178,12 +179,16 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
     return new ScopeItem(
         institution.getId(),
         institution.getName(),
+        EAffiliationScopeNodeType.valueOf(institution.getType().name()),
         institution.getParent().map(Institution::getId).orElse(null));
   }
 
   private ScopeItem toGroupItem(Group group) {
     return new ScopeItem(
-        group.getId(), group.getName(), group.getParent().map(Group::getId).orElse(null));
+        group.getId(),
+        group.getName(),
+        EAffiliationScopeNodeType.valueOf(group.getType().name()),
+        group.getParent().map(Group::getId).orElse(null));
   }
 
   private List<ScopeItem> findInstitutionChildren(Collection<UUID> parentIds) {
@@ -225,10 +230,10 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             .map(child -> toScopeNode(child, childrenByParentId))
             .toList();
 
-    return new AffiliationScopeNode(item.id(), item.name(), children);
+    return new AffiliationScopeNode(item.id(), item.name(), item.type(), children);
   }
 
-  private record ScopeItem(UUID id, String name, UUID parentId) {}
+  private record ScopeItem(UUID id, String name, EAffiliationScopeNodeType type, UUID parentId) {}
 
   private List<UUID> institutionIdsOf(UUID externalUserId, EUserCategory category) {
     return externalUserAffiliationRepository.findDistinctInstitutionIds(externalUserId, category);
