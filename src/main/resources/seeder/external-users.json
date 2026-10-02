@@ -2336,7 +2336,7 @@
     "email": "cofadmin@university.com",
     "categories": ["STUDENT", "STAFF"],
     "externalId": "ADMIN-0002",
-    "source": "BACK_OFFICE",
+    "institutionUAI": "0350001A",
     "status": "ACTIVE"
   }
 ]
