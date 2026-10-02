@@ -22,15 +22,15 @@ public class TransactionalGroupService implements GroupService {
   @Override
   public Group create(
       String name,
-      String idSISco,
-      String institutionUAI,
+      String idSiSco,
+      UUID institutionId,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
-      String parentIdSISco) {
+      String parentIdSiSco) {
 <span class="fc" id="L32">    return delegate.create(</span>
-        name, idSISco, institutionUAI, codeSise, startDate, endDate, type, parentIdSISco);
+        name, idSiSco, institutionId, codeSise, startDate, endDate, type, parentIdSiSco);
   }
 
   @Override
@@ -41,16 +41,16 @@ public class TransactionalGroupService implements GroupService {
 
   @Override
   public Group update(
-      String idSISco,
+      String idSiSco,
       String name,
-      String institutionUAI,
+      UUID institutionId,
       String codeSise,
       LocalDate startDate,
       LocalDate endDate,
       EGroupType type,
-      String parentIdSISco) {
+      String parentIdSiSco) {
 <span class="nc" id="L52">    return delegate.update(</span>
-        idSISco, name, institutionUAI, codeSise, startDate, endDate, type, parentIdSISco);
+        idSiSco, name, institutionId, codeSise, startDate, endDate, type, parentIdSiSco);
   }
 
   @Override

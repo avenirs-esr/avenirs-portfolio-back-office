@@ -8,7 +8,6 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
-import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,19 +21,17 @@ public class ExternalUserAffiliationServiceConfig {
   private final GroupRepository groupRepository;
   private final InstitutionService institutionService;
   private final GroupService groupService;
-  private final LoggedInExternalUserService loggedInExternalUserService;
 
   @Bean
   public ExternalUserAffiliationService externalUserAffiliationService() {
-<span class="fc" id="L29">    return new TransactionalExternalUserAffiliationService(</span>
+<span class="fc" id="L27">    return new TransactionalExternalUserAffiliationService(</span>
         new ExternalUserAffiliationServiceImpl(
             externalUserAffiliationRepository,
             externalUserRepository,
             institutionRepository,
             groupRepository,
             institutionService,
-            groupService,
-            loggedInExternalUserService));
+            groupService));
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

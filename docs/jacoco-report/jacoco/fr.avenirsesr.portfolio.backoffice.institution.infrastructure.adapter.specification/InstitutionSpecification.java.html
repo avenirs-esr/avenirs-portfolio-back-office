@@ -2,31 +2,23 @@
 
 import fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.model.InstitutionEntity;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
-import java.util.Collection;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 
-<span class="nc" id="L9">public class InstitutionSpecification {</span>
+<span class="nc" id="L8">public class InstitutionSpecification {</span>
   public static Specification&lt;InstitutionEntity&gt; withParentId(UUID parentId) {
-<span class="nc bnc" id="L11" title="All 2 branches missed.">    if (parentId == null) {</span>
-<span class="nc" id="L12">      return Specification.unrestricted();</span>
+<span class="nc bnc" id="L10" title="All 2 branches missed.">    if (parentId == null) {</span>
+<span class="nc" id="L11">      return Specification.unrestricted();</span>
     }
-<span class="nc" id="L14">    return (root, query, criteriaBuilder) -&gt;</span>
-<span class="nc" id="L15">        criteriaBuilder.equal(root.get(&quot;parent&quot;).get(&quot;id&quot;), parentId);</span>
-  }
-
-  public static Specification&lt;InstitutionEntity&gt; withParentIds(Collection&lt;UUID&gt; parentIds) {
-<span class="fc" id="L19">    return (root, query, criteriaBuilder) -&gt;</span>
-<span class="pc bpc" id="L20" title="2 of 4 branches missed.">        parentIds == null || parentIds.isEmpty()</span>
-<span class="nc" id="L21">            ? criteriaBuilder.disjunction()</span>
-<span class="fc" id="L22">            : root.get(&quot;parent&quot;).get(&quot;id&quot;).in(parentIds);</span>
+<span class="nc" id="L13">    return (root, query, criteriaBuilder) -&gt;</span>
+<span class="nc" id="L14">        criteriaBuilder.equal(root.get(&quot;parent&quot;).get(&quot;id&quot;), parentId);</span>
   }
 
   public static Specification&lt;InstitutionEntity&gt; withType(EInstitutionType type) {
-<span class="nc bnc" id="L26" title="All 2 branches missed.">    if (type == null) {</span>
-<span class="nc" id="L27">      return Specification.unrestricted();</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">    if (type == null) {</span>
+<span class="nc" id="L19">      return Specification.unrestricted();</span>
     }
-<span class="nc" id="L29">    return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;type&quot;), type);</span>
+<span class="nc" id="L21">    return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;type&quot;), type);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
