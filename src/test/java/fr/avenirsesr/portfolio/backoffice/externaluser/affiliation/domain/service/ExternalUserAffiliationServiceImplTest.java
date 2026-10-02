@@ -1,11 +1,13 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationCategoryNotAllowedException;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliationScopeNode;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.EAffiliationScopeNodeType;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
@@ -25,6 +27,8 @@ import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -66,8 +70,12 @@ class ExternalUserAffiliationServiceImplTest {
   }
 
   private static Institution institution(UUID id, Institution parent) {
-    return Institution.create(
-        id, "Université de Rennes", null, "0350001A", null, EInstitutionType.PRIMARY, parent);
+    return institution(id, "Université de Rennes", EInstitutionType.PRIMARY, parent);
+  }
+
+  private static Institution institution(
+      UUID id, String name, EInstitutionType type, Institution parent) {
+    return Institution.create(id, name, null, "0350001A", null, type, parent);
   }
 
   @Test
@@ -211,12 +219,15 @@ class ExternalUserAffiliationServiceImplTest {
     assertEquals(parentInstitutionId, institutionNode.id());
     assertEquals(1, institutionNode.children().size());
     assertEquals(childInstitutionId, institutionNode.children().get(0).id());
+    assertEquals(EAffiliationScopeNodeType.PRIMARY, institutionNode.type());
+    assertEquals(EAffiliationScopeNodeType.PRIMARY, institutionNode.children().get(0).type());
 
     assertEquals(1, scope.groups().size());
     AffiliationScopeNode groupNode = scope.groups().get(0);
     assertEquals(programId, groupNode.id());
     assertEquals(1, groupNode.children().size());
     assertEquals(optionId, groupNode.children().get(0).id());
+    assertEquals(EAffiliationScopeNodeType.PROGRAM, groupNode.type());
   }
 
   @Test
@@ -234,6 +245,214 @@ class ExternalUserAffiliationServiceImplTest {
   }
 
   private static Group group(UUID id, String name, Group parent) {
-    return Group.create(id, name, name, null, null, null, null, EGroupType.PROGRAM, parent);
+    return group(id, name, EGroupType.PROGRAM, parent);
+  }
+
+  private static Group group(UUID id, String name, EGroupType type, Group parent) {
+    return Group.create(id, name, name, null, null, null, null, type, parent);
+  }
+
+  private StaffAffiliationScope resolveGroupScope(Group root, Group... descendants) {
+    ExternalUser user = externalUser(EUserCategory.STAFF);
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(user);
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            user.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of());
+    when(externalUserAffiliationRepository.findDistinctGroupIds(user.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of(root.getId()));
+    when(institutionRepository.findAllById(List.of())).thenReturn(List.of());
+    when(groupRepository.findAllById(List.of(root.getId()))).thenReturn(List.of(root));
+    when(groupRepository.findAllByParentIds(anyCollection()))
+        .thenAnswer(
+            invocation -> {
+              Collection<UUID> parentIds = invocation.getArgument(0);
+              return Arrays.stream(descendants)
+                  .filter(g -> parentIds.contains(g.getParent().orElseThrow().getId()))
+                  .toList();
+            });
+    return service.staffScope();
+  }
+
+  private StaffAffiliationScope resolveInstitutionScope(
+      Institution root, Institution... descendants) {
+    ExternalUser user = externalUser(EUserCategory.STAFF);
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(user);
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            user.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of(root.getId()));
+    when(externalUserAffiliationRepository.findDistinctGroupIds(user.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of());
+    when(institutionRepository.findAllById(List.of(root.getId()))).thenReturn(List.of(root));
+    when(groupRepository.findAllById(List.of())).thenReturn(List.of());
+    when(institutionRepository.findAllByParentIds(anyCollection()))
+        .thenAnswer(
+            invocation -> {
+              Collection<UUID> parentIds = invocation.getArgument(0);
+              return Arrays.stream(descendants)
+                  .filter(i -> parentIds.contains(i.getParent().orElseThrow().getId()))
+                  .toList();
+            });
+    return service.staffScope();
+  }
+
+  private static void assertNode(
+      AffiliationScopeNode node, UUID id, String title, EAffiliationScopeNodeType type) {
+    assertEquals(id, node.id());
+    assertEquals(title, node.title());
+    assertEquals(type, node.type());
+  }
+
+  @Test
+  void shouldExposePrimaryWithoutChildren_whenResolvingStaffScope() {
+    BddLogger.given("a STAFF affiliated to a PRIMARY institution without SECONDARY");
+    Institution primary =
+        institution(UUID.randomUUID(), "Université de Nantes", EInstitutionType.PRIMARY, null);
+
+    BddLogger.when("resolving the staff scope");
+    AffiliationScopeNode root = resolveInstitutionScope(primary).institutions().get(0);
+
+    BddLogger.then("it should expose a PRIMARY node with empty children");
+    assertNode(root, primary.getId(), "Université de Nantes", EAffiliationScopeNodeType.PRIMARY);
+    assertEquals(List.of(), root.children());
+  }
+
+  @Test
+  void shouldExposePrimaryWithSeveralSecondaries_whenResolvingStaffScope() {
+    BddLogger.given("a STAFF affiliated to a PRIMARY institution with two SECONDARY");
+    Institution primary =
+        institution(UUID.randomUUID(), "Université de Nantes", EInstitutionType.PRIMARY, null);
+    Institution iut =
+        institution(UUID.randomUUID(), "IUT de Nantes", EInstitutionType.SECONDARY, primary);
+    Institution ufr =
+        institution(UUID.randomUUID(), "UFR Sciences", EInstitutionType.SECONDARY, primary);
+
+    BddLogger.when("resolving the staff scope");
+    AffiliationScopeNode root = resolveInstitutionScope(primary, iut, ufr).institutions().get(0);
+
+    BddLogger.then("it should expose the PRIMARY with both SECONDARY leaves");
+    assertNode(root, primary.getId(), "Université de Nantes", EAffiliationScopeNodeType.PRIMARY);
+    assertEquals(2, root.children().size());
+    assertNode(
+        root.children().get(0), iut.getId(), "IUT de Nantes", EAffiliationScopeNodeType.SECONDARY);
+    assertNode(
+        root.children().get(1), ufr.getId(), "UFR Sciences", EAffiliationScopeNodeType.SECONDARY);
+    root.children().forEach(child -> assertEquals(List.of(), child.children()));
+  }
+
+  @Test
+  void shouldExposeSecondaryAsRoot_whenOnlyASecondaryIsAffiliated() {
+    BddLogger.given("a STAFF affiliated directly to a SECONDARY institution");
+    Institution primary =
+        institution(UUID.randomUUID(), "Université de Nantes", EInstitutionType.PRIMARY, null);
+    Institution iut =
+        institution(UUID.randomUUID(), "IUT de Nantes", EInstitutionType.SECONDARY, primary);
+
+    BddLogger.when("resolving the staff scope");
+    AffiliationScopeNode root = resolveInstitutionScope(iut).institutions().get(0);
+
+    BddLogger.then("the root node should be typed SECONDARY");
+    assertNode(root, iut.getId(), "IUT de Nantes", EAffiliationScopeNodeType.SECONDARY);
+    assertEquals(List.of(), root.children());
+  }
+
+  @Test
+  void shouldExposeProgramWithoutChildren_whenResolvingStaffScope() {
+    BddLogger.given("a STAFF affiliated to a PROGRAM without children");
+    Group program = group(UUID.randomUUID(), "BUT Informatique", EGroupType.PROGRAM, null);
+
+    BddLogger.when("resolving the staff scope");
+    AffiliationScopeNode root = resolveGroupScope(program).groups().get(0);
+
+    BddLogger.then("it should expose a PROGRAM node with empty children");
+    assertNode(root, program.getId(), "BUT Informatique", EAffiliationScopeNodeType.PROGRAM);
+    assertEquals(List.of(), root.children());
+  }
+
+  @Test
+  void shouldKeepProgramOptionType_whenOptionHasNoChildren() {
+    BddLogger.given("a PROGRAM with a PROGRAM_OPTION that has no STUDENT_GROUP");
+    Group program = group(UUID.randomUUID(), "BUT Informatique", EGroupType.PROGRAM, null);
+    Group option = group(UUID.randomUUID(), "Cybersécurité", EGroupType.PROGRAM_OPTION, program);
+
+    BddLogger.when("resolving the staff scope");
+    AffiliationScopeNode root = resolveGroupScope(program, option).groups().get(0);
+
+    BddLogger.then("the leaf should still be typed PROGRAM_OPTION, never STUDENT_GROUP");
+    assertEquals(1, root.children().size());
+    assertNode(
+        root.children().get(0),
+        option.getId(),
+        "Cybersécurité",
+        EAffiliationScopeNodeType.PROGRAM_OPTION);
+    assertEquals(List.of(), root.children().get(0).children());
+  }
+
+  @Test
+  void shouldExposeDirectStudentGroup_whenProgramHasNoOption() {
+    BddLogger.given("a PROGRAM with a direct STUDENT_GROUP");
+    Group program = group(UUID.randomUUID(), "BUT Informatique", EGroupType.PROGRAM, null);
+    Group studentGroup =
+        group(UUID.randomUUID(), "Groupe BUT-ALL", EGroupType.STUDENT_GROUP, program);
+
+    BddLogger.when("resolving the staff scope");
+    AffiliationScopeNode root = resolveGroupScope(program, studentGroup).groups().get(0);
+
+    BddLogger.then("the child should be typed STUDENT_GROUP");
+    assertEquals(1, root.children().size());
+    assertNode(
+        root.children().get(0),
+        studentGroup.getId(),
+        "Groupe BUT-ALL",
+        EAffiliationScopeNodeType.STUDENT_GROUP);
+  }
+
+  @Test
+  void shouldExposeFullGroupHierarchy_whenProgramHasOptionAndDirectStudentGroup() {
+    BddLogger.given(
+        "a PROGRAM with a PROGRAM_OPTION holding a STUDENT_GROUP, and a direct STUDENT_GROUP");
+    Group program = group(UUID.randomUUID(), "BUT Informatique", EGroupType.PROGRAM, null);
+    Group option = group(UUID.randomUUID(), "Cybersécurité", EGroupType.PROGRAM_OPTION, program);
+    Group cyberA = group(UUID.randomUUID(), "Groupe CYBER-A", EGroupType.STUDENT_GROUP, option);
+    Group all = group(UUID.randomUUID(), "Groupe BUT-ALL", EGroupType.STUDENT_GROUP, program);
+
+    BddLogger.when("resolving the staff scope");
+    AffiliationScopeNode root = resolveGroupScope(program, option, cyberA, all).groups().get(0);
+
+    BddLogger.then("every node should carry its real type and children");
+    assertNode(root, program.getId(), "BUT Informatique", EAffiliationScopeNodeType.PROGRAM);
+    assertEquals(2, root.children().size());
+    AffiliationScopeNode optionNode = root.children().get(0);
+    assertNode(
+        optionNode, option.getId(), "Cybersécurité", EAffiliationScopeNodeType.PROGRAM_OPTION);
+    assertEquals(1, optionNode.children().size());
+    assertNode(
+        optionNode.children().get(0),
+        cyberA.getId(),
+        "Groupe CYBER-A",
+        EAffiliationScopeNodeType.STUDENT_GROUP);
+    assertNode(
+        root.children().get(1),
+        all.getId(),
+        "Groupe BUT-ALL",
+        EAffiliationScopeNodeType.STUDENT_GROUP);
+  }
+
+  @Test
+  void shouldExposeProgramOptionAsRoot_whenOnlyAnOptionIsAffiliated() {
+    BddLogger.given("a STAFF affiliated directly to a PROGRAM_OPTION");
+    Group program = group(UUID.randomUUID(), "BUT Informatique", EGroupType.PROGRAM, null);
+    Group option = group(UUID.randomUUID(), "Cybersécurité", EGroupType.PROGRAM_OPTION, program);
+    Group cyberA = group(UUID.randomUUID(), "Groupe CYBER-A", EGroupType.STUDENT_GROUP, option);
+
+    BddLogger.when("resolving the staff scope");
+    AffiliationScopeNode root = resolveGroupScope(option, cyberA).groups().get(0);
+
+    BddLogger.then("the root node should be typed PROGRAM_OPTION with its STUDENT_GROUP child");
+    assertNode(root, option.getId(), "Cybersécurité", EAffiliationScopeNodeType.PROGRAM_OPTION);
+    assertNode(
+        root.children().get(0),
+        cyberA.getId(),
+        "Groupe CYBER-A",
+        EAffiliationScopeNodeType.STUDENT_GROUP);
   }
 }
