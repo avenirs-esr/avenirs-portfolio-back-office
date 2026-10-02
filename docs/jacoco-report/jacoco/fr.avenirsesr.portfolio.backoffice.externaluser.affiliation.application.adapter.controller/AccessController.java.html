@@ -61,8 +61,11 @@ public class AccessController {
 
   private static List&lt;ScopeNodeResponse&gt; toResponse(List&lt;AffiliationScopeNode&gt; nodes) {
 <span class="fc" id="L63">    return nodes.stream()</span>
-<span class="fc" id="L64">        .map(node -&gt; new ScopeNodeResponse(node.id(), node.title(), toResponse(node.children())))</span>
-<span class="fc" id="L65">        .toList();</span>
+<span class="fc" id="L64">        .map(</span>
+            node -&gt;
+<span class="fc" id="L66">                new ScopeNodeResponse(</span>
+<span class="fc" id="L67">                    node.id(), node.title(), node.type(), toResponse(node.children())))</span>
+<span class="fc" id="L68">        .toList();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
