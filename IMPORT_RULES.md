@@ -9,6 +9,39 @@ d'import / mise à jour des entités structurantes du back-office :
 - **`ExternalUserAffiliationData`** — affiliation d'un utilisateur externe à un établissement
   et, éventuellement, à un groupe
 
+## Sommaire
+
+- [1. Généralités](#1-généralités)
+  - [Endpoints](#endpoints)
+  - [Sémantique POST vs PUT](#sémantique-post-vs-put)
+- [2. `InstitutionData` — Établissement](#2-institutiondata--établissement)
+  - [Schéma](#schéma)
+  - [Règles métier](#règles-métier)
+  - [Exemple](#exemple)
+- [3. `GroupData` — Groupe](#3-groupdata--groupe)
+  - [Schéma](#schéma-1)
+  - [3.1 Types de groupe (`EGroupType`)](#31-types-de-groupe-egrouptype)
+  - [Règles métier (hiérarchie par `type`)](#règles-métier-hiérarchie-par-type)
+  - [Exemple](#exemple-1)
+- [4. `ExternalUserData` — Utilisateur externe](#4-externaluserdata--utilisateur-externe)
+  - [Schéma](#schéma-2)
+  - [Règles métier](#règles-métier-1)
+  - [Exemple](#exemple-2)
+  - [Lecture d'un utilisateur externe](#lecture-dun-utilisateur-externe)
+- [5. `ExternalUserAffiliationData` — Affiliation](#5-externaluseraffiliationdata--affiliation)
+  - [5.1 Modèle](#51-modèle)
+  - [5.2 Import en masse — `POST /back-office/external-user-affiliations`](#52-import-en-masse--post-back-officeexternal-user-affiliations)
+    - [Schéma du corps](#schéma-du-corps)
+    - [Comportement](#comportement)
+    - [Réponse (`200`)](#réponse-200)
+  - [5.3 Endpoints unitaires (par UUID)](#53-endpoints-unitaires-par-uuid)
+  - [5.4 Codes d'erreur](#54-codes-derreur)
+  - [5.5 Suppressions et intégrité](#55-suppressions-et-intégrité)
+- [6. Ordre d'import recommandé](#6-ordre-dimport-recommandé)
+  - [Exemple d'appel](#exemple-dappel)
+- [7. Codes de retour transverses](#7-codes-de-retour-transverses)
+- [Annexe — Jeux de données du seeder](#annexe--jeux-de-données-du-seeder)
+
 ## 1. Généralités
 
 | Point | Valeur |
