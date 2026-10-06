@@ -25,7 +25,7 @@ public class FakeInstitution {
             faker.university().name(),
             faker.lorem().characters(4, false, false).toUpperCase(),
             dataGenerator.with("uai").regexify("[0-9]{7}[A-Z]"),
-            faker.numerify("#############"),
+            faker.numerify("##############"),
             EInstitutionType.PRIMARY,
             null));
   }
@@ -36,7 +36,7 @@ public class FakeInstitution {
             faker.university().name(),
             faker.lorem().characters(4, false, false).toUpperCase(),
             dataGenerator.with("uai").regexify("[0-9]{7}[A-Z]"),
-            faker.numerify("#############"),
+            faker.numerify("##############"),
             EInstitutionType.SECONDARY,
             parentUAI));
   }

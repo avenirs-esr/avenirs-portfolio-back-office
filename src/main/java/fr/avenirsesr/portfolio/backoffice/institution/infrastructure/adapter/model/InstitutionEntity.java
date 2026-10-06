@@ -38,6 +38,7 @@ public class InstitutionEntity extends AvenirsBaseEntity {
   @Column(nullable = false)
   private String uai;
 
+  @Column(nullable = false)
   private String siret;
 
   @Enumerated(EnumType.STRING)
