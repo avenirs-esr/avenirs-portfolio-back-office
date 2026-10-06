@@ -108,7 +108,7 @@ erreurs** : la première erreur fait échouer toute la requête. Réponse : la l
 | `name` | string | **Oui** | Nom de l'établissement |
 | `sigle` | string \| null | Non | Sigle / nom court de l'établissement (ex. `UR`) |
 | `uai` | string | **Oui** | Identifiant UAI, **unique** — sert de clé d'upsert / mise à jour |
-| `siret` | string \| null | Non | Numéro SIRET (14 chiffres) |
+| `siret` | string | **Oui** | Numéro SIRET (14 chiffres) |
 | `type` | enum | **Oui** | `PRIMARY` \| `SECONDARY` |
 | `parentUAI` | string \| null | Conditionnel | `uai` de l'établissement parent |
 

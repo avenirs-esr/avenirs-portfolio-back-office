@@ -1,0 +1,10 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="iamgreendev" id="20261006120000-1">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="institution" columnName="siret"/>
+        </preConditions>
+        <comment>Institutions with no siret keep the UNKNOWN sentinel, to be fixed by a reimport.</comment>
+        <addNotNullConstraint tableName="institution" columnName="siret" columnDataType="VARCHAR(255)" defaultNullValue="UNKNOWN"/>
+    </changeSet>
+</databaseChangeLog>
