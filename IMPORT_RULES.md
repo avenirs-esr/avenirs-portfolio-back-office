@@ -247,15 +247,27 @@ sont importés séparément (§ 5).
 | `firstName` | string (≤255) | **Oui** | Prénom |
 | `lastName` | string (≤255) | **Oui** | Nom |
 | `email` | string (≤255) | **Oui** | Adresse e-mail valide |
-| `categories` | array d'enums | **Oui** | `["STUDENT"]`, `["STAFF"]` ou `["STUDENT", "STAFF"]` |
+| `roles` | array d'enums | **Oui** | `TEACHER`, `SUIO` et/ou `STUDENT` (ex. `["TEACHER"]`, `["TEACHER", "STUDENT"]`) |
 | `externalId` | string (≤255) | **Oui** | Identifiant dans le SI d'origine, **unique** |
 | `institutionUAI` | string (≤255) | **Oui** | `uai` de l'établissement d'origine de l'utilisateur |
 
+Valeurs possibles de `roles` :
+
+| Rôle | Signification |
+|---|---|
+| `TEACHER` | Enseignant |
+| `SUIO` | Personnel du service universitaire d'information et d'orientation |
+| `STUDENT` | Étudiant |
+
 ### Règles métier
 
-- **`categories` est un tableau** (multi-catégories) et non une valeur unique. Les doublons sont
-  ignorés (ensemble). S'il est absent ou `null`, l'utilisateur est créé **sans aucune
-  catégorie** : renseignez-le toujours explicitement.
+- **`roles` est un tableau** (multi-rôles) et non une valeur unique : un utilisateur peut être
+  déclaré `TEACHER` **et** `STUDENT`. Les doublons sont ignorés (ensemble). S'il est absent ou
+  `null`, l'utilisateur est créé **sans aucun rôle** : renseignez-le toujours explicitement.
+- `TEACHER` et `SUIO` ouvrent les mêmes droits : les déclarer tous les deux est accepté, mais
+  équivaut à n'en déclarer qu'un.
+- Toute valeur autre que `TEACHER`, `SUIO` ou `STUDENT` est rejetée en `400` à la lecture du
+  corps.
 - Un utilisateur importé est créé **actif** (`status = ACTIVE`). L'import ne touche jamais au
   statut d'un utilisateur déjà existant : il reste celui en base.
 - `externalId` est unique en base : le réutiliser pour deux `eppn` différents provoque une
@@ -279,7 +291,7 @@ sont importés séparément (§ 5).
     "firstName": "Lucas",
     "lastName": "Tessier",
     "email": "lucas.tessier@university.com",
-    "categories": ["STUDENT"],
+    "roles": ["STUDENT"],
     "externalId": "PEG-0001",
     "institutionUAI": "0350001A"
   },
@@ -288,7 +300,7 @@ sont importés séparément (§ 5).
     "firstName": "Marie",
     "lastName": "Dupont",
     "email": "marie.dupont@university.com",
-    "categories": ["STAFF", "STUDENT"],
+    "roles": ["TEACHER", "STUDENT"],
     "externalId": "TEACH-AG-83",
     "institutionUAI": "0350001A"
   }
@@ -339,7 +351,7 @@ plusieurs formations, ou les deux.
 | Utilisateur externe | **Obligatoire** — doit exister |
 | Établissement | **Obligatoire** — doit exister |
 | Groupe | **Facultatif** (`null` ⇒ affiliation « établissement seul ») — doit exister s'il est fourni |
-| Catégorie | **Obligatoire** — `STUDENT` ou `STAFF`, et doit être l'une des `categories` de l'utilisateur |
+| Catégorie | **Obligatoire** — `STUDENT` ou `STAFF`, et doit correspondre à un rôle déclaré pour cet utilisateur à l'import (§ 4) |
 | Unicité | Le quadruplet (utilisateur, établissement, groupe, catégorie) est unique en base |
 
 Conséquences directes :
@@ -366,7 +378,7 @@ En-têtes : `X-ADMIN-TOKEN` + permission `external-user-affiliation:import`.
 | `eppn` | string | **Oui** | `eppn` de l'utilisateur externe (doit déjà être importé) |
 | `institutionUAI` | string | **Oui** | `uai` de l'établissement |
 | `groupIdSISco` | string \| null | Non | `idSISco` du groupe ; `null` / absent ⇒ affiliation établissement seul |
-| `category` | enum | **Oui** | `STUDENT` ou `STAFF` — doit faire partie des `categories` de l'utilisateur |
+| `category` | enum | **Oui** | `STUDENT` ou `STAFF` — doit correspondre à un rôle déclaré pour cet utilisateur à l'import (§ 4) |
 
 ```json
 [
@@ -454,7 +466,7 @@ Corps du `POST` (UUID, pas de clés métier) :
 | `INSTITUTION_NOT_FOUND` | `404` | `institutionUAI` / `institutionId` inconnu |
 | `GROUP_NOT_FOUND` | `404` | `groupIdSISco` / `groupId` inconnu |
 | `EXTERNAL_USER_AFFILIATION_NOT_FOUND` | `404` | Affiliation inconnue, ou n'appartenant pas à l'utilisateur ciblé |
-| `EXTERNAL_USER_AFFILIATION_CATEGORY_NOT_ALLOWED` | `400` | `category` absente, ou absente des `categories` de l'utilisateur |
+| `EXTERNAL_USER_AFFILIATION_CATEGORY_NOT_ALLOWED` | `400` | `category` absente, ou absente des catégories de l'utilisateur |
 
 Sur l'import en masse, ces erreurs ne remontent pas en HTTP : elles sont **capturées ligne à
 ligne** et reportées dans `failed[]` avec leur message.
@@ -515,13 +527,13 @@ curl -X POST http://localhost:8080/back-office/external-user-affiliations \
 
 Le seeder (`POST /back-office/seeder/reset`, également protégé par `X-ADMIN-TOKEN`) purge puis
 recharge la base à partir des fichiers `src/main/resources/seeder/*.json`. Ces fixtures suivent
-le même schéma que les endpoints d'import, à deux exceptions près :
+le même schéma que les endpoints d'import, à quelques exceptions près :
 
 | Fichier | Écart avec le schéma d'import |
 |---|---|
 | `institutions.json` | Identique à `InstitutionData` |
 | `groups.json` | Identique à `GroupData` |
-| `external-users.json` | `ExternalUserData` + un `status` facultatif (la fixture peut créer des comptes inactifs) |
+| `external-users.json` | `ExternalUserData` avec des `categories` au lieu des `roles` (la fixture alimente directement le modèle interne) + un `status` facultatif (elle peut créer des comptes inactifs) |
 | `external-user-affiliations.json` | **Une entrée par couple (`eppn`, `category`)**, avec deux listes de clés métier |
 
 Le seeder résout les clés métier en UUID, puis applique exactement les mêmes règles métier que

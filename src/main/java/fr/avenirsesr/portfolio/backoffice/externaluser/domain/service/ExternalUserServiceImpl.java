@@ -5,6 +5,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportFailure;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalUserRole;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.input.ExternalUserService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,7 +85,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
               data.firstName(),
               data.lastName(),
               data.email(),
-              data.categories(),
+              toCategories(data.roles()),
               data.externalId(),
               data.institutionUAI());
       return new UpsertResult(updated, false);
@@ -95,7 +97,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
             data.firstName(),
             data.lastName(),
             data.email(),
-            data.categories(),
+            toCategories(data.roles()),
             data.externalId(),
             data.institutionUAI(),
             EUserStatus.ACTIVE);
@@ -103,6 +105,25 @@ public class ExternalUserServiceImpl implements ExternalUserService {
   }
 
   private record UpsertResult(ExternalUser externalUser, boolean created) {}
+
+  /**
+   * Translates the roles declared on the import payload into the categories the domain works with:
+   * {@code TEACHER} and {@code SUIO} are staff, {@code STUDENT} is a student.
+   */
+  private static Set<EUserCategory> toCategories(Set<EExternalUserRole> roles) {
+    if (roles == null) {
+      return Set.of();
+    }
+
+    return roles.stream()
+        .map(
+            role ->
+                switch (role) {
+                  case TEACHER, SUIO -> EUserCategory.STAFF;
+                  case STUDENT -> EUserCategory.STUDENT;
+                })
+        .collect(Collectors.toUnmodifiableSet());
+  }
 
   @Override
   public ExternalUser update(
@@ -137,7 +158,7 @@ public class ExternalUserServiceImpl implements ExternalUserService {
                     data.firstName(),
                     data.lastName(),
                     data.email(),
-                    data.categories(),
+                    toCategories(data.roles()),
                     data.externalId(),
                     data.institutionUAI()))
         .toList();
