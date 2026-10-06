@@ -9,13 +9,13 @@
     "eppn": "lucas.tessier@university.com",
     "category": "STAFF",
     "institutionUAIs": ["0330001C"],
-    "groupIdSIScos": []
+    "groupIdSIScos": ["10000004", "10000005"]
   },
   {
     "eppn": "lucas.tessier.staff@university.com",
     "category": "STAFF",
     "institutionUAIs": ["0330001C", "0350001A"],
-    "groupIdSIScos": []
+    "groupIdSIScos": ["10000001", "10000004"]
   },
   {
     "eppn": "arthur.lambert@university.com",
@@ -33,7 +33,7 @@
     "eppn": "ethan.perrin@university.com",
     "category": "STAFF",
     "institutionUAIs": ["0350001A"],
-    "groupIdSIScos": []
+    "groupIdSIScos": ["10000001", "10000003"]
   },
   {
     "eppn": "camille.fournier@university.com",
