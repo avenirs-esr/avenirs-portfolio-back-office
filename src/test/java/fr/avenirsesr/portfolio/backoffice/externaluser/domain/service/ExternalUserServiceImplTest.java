@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserData;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalUserRole;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
@@ -375,6 +378,88 @@ class ExternalUserServiceImplTest {
         verifyNoMoreInteractions(externalUserRepository);
       }
     }
+
+    @Nested
+    class WhenImportingExternalUsersFromRoles {
+
+      private ExternalUserImportSummary result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("importing external users declared with roles");
+
+        when(externalUserRepository.findByEppn(anyString())).thenReturn(Optional.empty());
+
+        result =
+            service.createAll(
+                List.of(
+                    externalUserData("teacher@university.com", EExternalUserRole.TEACHER),
+                    externalUserData("suio@university.com", EExternalUserRole.SUIO),
+                    externalUserData("student@university.com", EExternalUserRole.STUDENT),
+                    externalUserData(
+                        "teacher.student@university.com",
+                        EExternalUserRole.TEACHER,
+                        EExternalUserRole.STUDENT),
+                    externalUserData("no.role@university.com")));
+      }
+
+      @Test
+      void thenItShouldMapTeacherAndSuioToStaffAndStudentToStudent() {
+        BddLogger.then("it should map TEACHER and SUIO to STAFF, and STUDENT to STUDENT");
+
+        assertTrue(result.updated().isEmpty());
+        assertTrue(result.failed().isEmpty());
+        assertEquals(5, result.created().size());
+
+        assertEquals(Set.of(EUserCategory.STAFF), categoriesOf(result, "teacher@university.com"));
+        assertEquals(Set.of(EUserCategory.STAFF), categoriesOf(result, "suio@university.com"));
+        assertEquals(Set.of(EUserCategory.STUDENT), categoriesOf(result, "student@university.com"));
+        assertEquals(
+            Set.of(EUserCategory.STAFF, EUserCategory.STUDENT),
+            categoriesOf(result, "teacher.student@university.com"));
+        assertEquals(Set.of(), categoriesOf(result, "no.role@university.com"));
+      }
+    }
+
+    @Nested
+    class WhenUpdatingExternalUsersFromRoles {
+
+      private ExternalUser existingExternalUser;
+      private List<ExternalUser> result;
+
+      @BeforeEach
+      void setupWhen() {
+        BddLogger.when("updating an external user declared with a role");
+
+        existingExternalUser = externalUser();
+
+        when(externalUserRepository.findByEppn(EPPN)).thenReturn(Optional.of(existingExternalUser));
+
+        result = service.updateAll(List.of(externalUserData(EPPN, EExternalUserRole.SUIO)));
+      }
+
+      @Test
+      void thenItShouldMapTheRoleToTheStaffCategory() {
+        BddLogger.then("it should map the role to the staff category");
+
+        assertEquals(1, result.size());
+        assertEquals(Set.of(EUserCategory.STAFF), result.getFirst().getCategories());
+        assertEquals(Set.of(EUserCategory.STAFF), existingExternalUser.getCategories());
+      }
+    }
+  }
+
+  private static ExternalUserData externalUserData(String eppn, EExternalUserRole... roles) {
+    return new ExternalUserData(
+        eppn, FIRST_NAME, LAST_NAME, EMAIL, Set.of(roles), EXTERNAL_ID, INSTITUTION_UAI);
+  }
+
+  private static Set<EUserCategory> categoriesOf(ExternalUserImportSummary summary, String eppn) {
+    return summary.created().stream()
+        .filter(externalUser -> eppn.equals(externalUser.getEppn()))
+        .findFirst()
+        .orElseThrow()
+        .getCategories();
   }
 
   private ExternalUser externalUser() {
