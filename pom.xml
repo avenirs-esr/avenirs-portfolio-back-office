@@ -30,7 +30,20 @@
         <java.version>25</java.version>
         <maven.build.timestamp.format>yyyy-MM-dd__HH-mm-ss</maven.build.timestamp.format>
         <maven.build.timestamp>${maven.build.timestamp}</maven.build.timestamp>
+        <awssdk.version>2.54.10</awssdk.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${awssdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -143,6 +156,12 @@
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot-starter</artifactId>
             <version>3.0.5</version>
+        </dependency>
+
+        <!-- Required by the S3 backend of the file registry shared through the common library. -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
         </dependency>
     </dependencies>
 
