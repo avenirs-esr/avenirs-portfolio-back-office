@@ -5,11 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!--
-      This service now registers the files it owns instead of delegating them to the portfolio api.
-      The table mirrors the one of the api because both embed the same registry, shared through the
-      common library; the rows however are distinct, each service holding only its own files.
-    -->
     <changeSet author="iamgreendev" id="file-registry-create-table">
         <createTable tableName="file">
             <column name="id" type="UUID">
@@ -27,11 +22,6 @@
             <column name="uri" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <!--
-              Identifier of the uploader, with no foreign key: this service authenticates external
-              users and holds no user table. The api holds the very same column for the same
-              reason, so that the registry stays portable.
-            -->
             <column name="uploaded_by" type="UUID">
                 <constraints nullable="false"/>
             </column>
@@ -64,13 +54,6 @@
         </rollback>
     </changeSet>
 
-    <!--
-      cgu.file_id could not be a foreign key while the files lived in the database of the api. Now
-      that they are local, the link is enforced — but only for the rows written from here on:
-      validate="false" leaves the constraint NOT VALID, because the terms of use published before
-      this change point at a file of the api that was never copied over. Those versions have to be
-      published again; the constraint can be validated once that is done.
-    -->
     <changeSet author="iamgreendev" id="file-registry-link-cgu-to-file">
         <addForeignKeyConstraint
                 baseTableName="cgu"
