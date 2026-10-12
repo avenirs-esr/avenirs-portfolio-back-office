@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>S3FileStorageService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.file.infrastructure.adapter.service</a> &gt; <span class="el_source">S3FileStorageService.java</span></div><h1>S3FileStorageService.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.file.infrastructure.adapter.service;
+
+import fr.avenirsesr.portfolio.common.file.domain.exception.FileStorageException;
+import fr.avenirsesr.portfolio.common.file.domain.exception.FileNotFoundException;
+import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
+import fr.avenirsesr.portfolio.common.file.domain.model.FileResource;
+import fr.avenirsesr.portfolio.common.file.domain.port.output.service.FileStorageService;
+import fr.avenirsesr.portfolio.common.file.infrastructure.configuration.S3StorageProperties;
+import java.io.IOException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
+
+/**
+ * Stores files in an S3-compatible bucket. The locator handed back to the domain is the object key.
+ */
+<span class="nc" id="L28">@Slf4j</span>
+@Component
+@Primary
+@RequiredArgsConstructor
+@ConditionalOnProperty(name = &quot;file.storage.type&quot;, havingValue = &quot;s3&quot;)
+public class S3FileStorageService implements FileStorageService {
+  private final S3Client s3Client;
+  private final S3StorageProperties properties;
+
+  @Override
+  public String upload(FileResource fileResource) {
+<span class="nc" id="L39">    var key = fileResource.id() + &quot;.&quot; + fileResource.fileType().name().toLowerCase();</span>
+
+    try {
+<span class="nc" id="L42">      s3Client.putObject(</span>
+<span class="nc" id="L43">          PutObjectRequest.builder()</span>
+<span class="nc" id="L44">              .bucket(properties.getBucket())</span>
+<span class="nc" id="L45">              .key(key)</span>
+<span class="nc" id="L46">              .contentType(fileResource.fileType().getMimeType())</span>
+<span class="nc" id="L47">              .build(),</span>
+<span class="nc" id="L48">          RequestBody.fromInputStream(fileResource.content().open(), fileResource.size()));</span>
+<span class="nc" id="L49">    } catch (IOException e) {</span>
+<span class="nc" id="L50">      throw new FileStorageException(&quot;Failed to read file &quot; + fileResource.fileName(), e);</span>
+<span class="nc" id="L51">    } catch (S3Exception e) {</span>
+<span class="nc" id="L52">      throw new FileStorageException(&quot;Failed to upload file &quot; + fileResource.fileName(), e);</span>
+<span class="nc" id="L53">    }</span>
+
+<span class="nc" id="L55">    log.info(&quot;File {} has been uploaded as {}&quot;, fileResource.fileName(), key);</span>
+<span class="nc" id="L56">    return key;</span>
+  }
+
+  /**
+   * Opens the object without reading it.
+   *
+   * &lt;p&gt;{@code getObject} hands back a stream still attached to the connection, so the bytes travel
+   * to the caller as they arrive rather than being gathered first.
+   */
+  @Override
+  public FileContent get(String locator) {
+    try {
+<span class="nc" id="L68">      ResponseInputStream&lt;GetObjectResponse&gt; object =</span>
+<span class="nc" id="L69">          s3Client.getObject(</span>
+<span class="nc" id="L70">              GetObjectRequest.builder().bucket(properties.getBucket()).key(locator).build());</span>
+<span class="nc" id="L71">      return () -&gt; object;</span>
+<span class="nc" id="L72">    } catch (NoSuchKeyException e) {</span>
+<span class="nc" id="L73">      log.error(&quot;No object found for key {}&quot;, locator);</span>
+<span class="nc" id="L74">      FileNotFoundException notFound = new FileNotFoundException();</span>
+<span class="nc" id="L75">      notFound.initCause(e);</span>
+<span class="nc" id="L76">      throw notFound;</span>
+<span class="nc" id="L77">    } catch (S3Exception e) {</span>
+<span class="nc" id="L78">      throw new FileStorageException(&quot;Failed to read object with key &quot; + locator, e);</span>
+    }
+  }
+
+  /**
+   * Deletes the object. S3 answers successfully for a key that does not exist, so unlike the local
+   * adapter this never reports a missing file.
+   */
+  @Override
+  public void delete(String locator) {
+    try {
+<span class="nc" id="L89">      s3Client.deleteObject(</span>
+<span class="nc" id="L90">          DeleteObjectRequest.builder().bucket(properties.getBucket()).key(locator).build());</span>
+<span class="nc" id="L91">    } catch (S3Exception e) {</span>
+<span class="nc" id="L92">      throw new FileStorageException(&quot;Failed to delete object with key &quot; + locator, e);</span>
+<span class="nc" id="L93">    }</span>
+
+<span class="nc" id="L95">    log.info(&quot;Object with key {} has been deleted&quot;, locator);</span>
+<span class="nc" id="L96">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

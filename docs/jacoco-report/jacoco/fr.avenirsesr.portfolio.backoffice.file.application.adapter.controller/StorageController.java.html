@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StorageController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.file.application.adapter.controller</a> &gt; <span class="el_source">StorageController.java</span></div><h1>StorageController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.file.application.adapter.controller;
+
+import fr.avenirsesr.portfolio.common.file.application.adapter.controller.AbstractStorageController;
+import fr.avenirsesr.portfolio.common.file.domain.port.input.FileResourceService;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * Serves the content of the files owned by this service.
+ *
+ * &lt;p&gt;The files used to be stored by the portfolio api, which served them from its own {@code
+ * /storage}; they are now registered here, so this is the endpoint {@code FileDTO.url} points at.
+ * Unlike its counterpart in the api it is not listed in {@code security.permit-all-paths}: back
+ * office files are reached by authenticated administrators only.
+ */
+@RestController
+@RequestMapping(&quot;back-office/storage&quot;)
+public class StorageController extends AbstractStorageController {
+  public StorageController(FileResourceService fileResourceService) {
+<span class="fc" id="L20">    super(fileResourceService);</span>
+<span class="fc" id="L21">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

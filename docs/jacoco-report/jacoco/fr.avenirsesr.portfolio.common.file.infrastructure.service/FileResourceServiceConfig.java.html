@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileResourceServiceConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.file.infrastructure.service</a> &gt; <span class="el_source">FileResourceServiceConfig.java</span></div><h1>FileResourceServiceConfig.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.file.infrastructure.service;
+
+import fr.avenirsesr.portfolio.common.file.domain.port.input.FileResourceService;
+import fr.avenirsesr.portfolio.common.file.domain.port.output.repository.FileRepository;
+import fr.avenirsesr.portfolio.common.file.domain.port.output.service.FileStorageService;
+import fr.avenirsesr.portfolio.common.file.domain.port.output.service.FileUploaderProvider;
+import fr.avenirsesr.portfolio.common.file.domain.service.FileResourceServiceImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
+/**
+ * Part of the shared file registry, wired only where {@code file.registry.enabled} is true.
+ *
+ * &lt;p&gt;Every service embeds the sources of this library, including the ones it has no use for. Gating
+ * the registry keeps a service that owns no file from having to declare a storage backend, an
+ * uploader provider or a file table just to start up.
+ */
+@ConditionalOnProperty(name = &quot;file.registry.enabled&quot;, havingValue = &quot;true&quot;)
+@Configuration
+@RequiredArgsConstructor
+public class FileResourceServiceConfig {
+  private final FileStorageService fileStorageService;
+  private final FileRepository fileRepository;
+  private final FileUploaderProvider fileUploaderProvider;
+
+  @Bean
+  @Primary
+  public FileResourceService fileResourceService() {
+<span class="fc" id="L32">    return new FileResourceServiceImpl(fileStorageService, fileRepository, fileUploaderProvider);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

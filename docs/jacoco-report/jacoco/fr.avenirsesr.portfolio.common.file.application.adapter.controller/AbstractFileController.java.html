@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFileController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.common.file.application.adapter.controller</a> &gt; <span class="el_source">AbstractFileController.java</span></div><h1>AbstractFileController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.common.file.application.adapter.controller;
+
+import static fr.avenirsesr.portfolio.common.file.application.adapter.MultipartFileReader.asUploadRequest;
+
+import fr.avenirsesr.portfolio.common.file.application.adapter.client.FileClient;
+import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+/**
+ * Registers a file owned by the host service.
+ *
+ * &lt;p&gt;Carries no mapping of its own: a service exposes the operation by extending this with its own
+ * {@code @RestController} and {@code @RequestMapping}, which is what keeps the api serving {@code
+ * /files} while the back office serves {@code back-office/files}.
+ *
+ * &lt;p&gt;Only uploading is shared. Reading a file goes through {@link AbstractStorageController}, and
+ * deleting one is deliberately absent: who may drop a file depends on what the file is attached to,
+ * so a service that needs it declares the route together with the authority it requires.
+ */
+<span class="fc" id="L26">@Slf4j</span>
+public abstract class AbstractFileController {
+  protected final FileClient fileClient;
+
+<span class="fc" id="L30">  protected AbstractFileController(FileClient fileClient) {</span>
+<span class="fc" id="L31">    this.fileClient = fileClient;</span>
+<span class="fc" id="L32">  }</span>
+
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity&lt;FileDTO&gt; upload(
+      @RequestParam(&quot;file&quot;) MultipartFile file,
+      @RequestParam(value = &quot;isRestricted&quot;, defaultValue = &quot;false&quot;) boolean isRestricted) {
+<span class="nc" id="L38">    log.debug(&quot;Received request to upload file [{}]&quot;, file.getOriginalFilename());</span>
+
+<span class="nc" id="L40">    FileDTO uploaded = fileClient.upload(asUploadRequest(file, isRestricted));</span>
+
+<span class="nc" id="L42">    return ResponseEntity.status(HttpStatus.CREATED).body(uploaded);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
