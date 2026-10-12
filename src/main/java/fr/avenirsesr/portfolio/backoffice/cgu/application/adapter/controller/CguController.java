@@ -1,11 +1,10 @@
 package fr.avenirsesr.portfolio.backoffice.cgu.application.adapter.controller;
 
-import static fr.avenirsesr.portfolio.common.file.application.adapter.MultipartFileReader.readBytes;
+import static fr.avenirsesr.portfolio.common.file.application.adapter.MultipartFileReader.asUploadRequest;
 
 import fr.avenirsesr.portfolio.backoffice.cgu.domain.port.input.CguService;
 import fr.avenirsesr.portfolio.common.cgu.application.adapter.dto.CguDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
-import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,10 +30,7 @@ public class CguController {
   public ResponseEntity<FileDTO> uploadCgu(@RequestParam("file") MultipartFile file) {
     log.debug("Received request to upload a new terms of use version");
 
-    FileDTO published =
-        cguService.publish(
-            new FileUploadRequest(
-                file.getOriginalFilename(), file.getContentType(), readBytes(file), false));
+    FileDTO published = cguService.publish(asUploadRequest(file, false));
 
     return ResponseEntity.status(HttpStatus.CREATED).body(published);
   }

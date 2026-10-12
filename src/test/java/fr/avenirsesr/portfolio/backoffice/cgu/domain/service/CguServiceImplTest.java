@@ -15,6 +15,7 @@ import fr.avenirsesr.portfolio.common.file.application.adapter.client.FileClient
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
 import fr.avenirsesr.portfolio.common.file.domain.exception.FileTypeNotSupportedException;
+import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
 import fr.avenirsesr.portfolio.common.file.domain.model.enums.EFileType;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.nio.charset.StandardCharsets;
@@ -37,8 +38,9 @@ class CguServiceImplTest {
   @InjectMocks private CguServiceImpl service;
 
   private static FileUploadRequest requestWithMimeType(String mimeType) {
+    byte[] content = "<html></html>".getBytes(StandardCharsets.UTF_8);
     return new FileUploadRequest(
-        "cgu.html", mimeType, "<html></html>".getBytes(StandardCharsets.UTF_8), false);
+        "cgu.html", mimeType, FileContent.ofBytes(content), content.length, false);
   }
 
   private static FileDTO uploadedFile() {
