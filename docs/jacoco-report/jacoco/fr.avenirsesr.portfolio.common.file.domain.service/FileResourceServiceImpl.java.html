@@ -46,62 +46,52 @@ public class FileResourceServiceImpl implements FileResourceService {
 <span class="nc" id="L46">    return fileRepository.save(file);</span>
   }
 
-  /**
-   * Duplicates a file under a new identifier.
-   *
-   * &lt;p&gt;The content of the source is handed straight to the upload: the bytes flow from one storage
-   * location to the other without being gathered in between.
-   */
   @Override
   public File copy(UUID fileId) {
-<span class="nc" id="L57">    var source = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
-<span class="nc" id="L58">    var content = fileStorageService.get(source.getUri());</span>
-<span class="nc" id="L59">    return upload(</span>
-<span class="nc" id="L60">        source.getFileName(),</span>
-<span class="nc" id="L61">        source.getFileType().getMimeType(),</span>
-<span class="nc" id="L62">        source.getSize(),</span>
+<span class="nc" id="L51">    var source = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
+<span class="nc" id="L52">    var content = fileStorageService.get(source.getUri());</span>
+<span class="nc" id="L53">    return upload(</span>
+<span class="nc" id="L54">        source.getFileName(),</span>
+<span class="nc" id="L55">        source.getFileType().getMimeType(),</span>
+<span class="nc" id="L56">        source.getSize(),</span>
         content,
-<span class="nc" id="L64">        source.isRestricted());</span>
+<span class="nc" id="L58">        source.isRestricted());</span>
   }
 
   @Override
   public File get(UUID fileId) {
-<span class="nc" id="L69">    return fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
+<span class="nc" id="L63">    return fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
   }
 
   @Override
   public FileResource fetchContent(UUID fileId) {
-<span class="nc" id="L74">    var file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
-<span class="nc bnc" id="L75" title="All 2 branches missed.">    if (file.isRestricted()) {</span>
-<span class="nc" id="L76">      throw new FileNotFoundException();</span>
+<span class="nc" id="L68">    var file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">    if (file.isRestricted()) {</span>
+<span class="nc" id="L70">      throw new FileNotFoundException();</span>
     }
 
-<span class="nc" id="L79">    return new FileResource(</span>
-<span class="nc" id="L80">        file.getId(),</span>
-<span class="nc" id="L81">        file.getFileName(),</span>
-<span class="nc" id="L82">        file.getFileType(),</span>
-<span class="nc" id="L83">        file.getSize(),</span>
-<span class="nc" id="L84">        fileStorageService.get(file.getUri()));</span>
+<span class="nc" id="L73">    return new FileResource(</span>
+<span class="nc" id="L74">        file.getId(),</span>
+<span class="nc" id="L75">        file.getFileName(),</span>
+<span class="nc" id="L76">        file.getFileType(),</span>
+<span class="nc" id="L77">        file.getSize(),</span>
+<span class="nc" id="L78">        fileStorageService.get(file.getUri()));</span>
   }
 
   @Override
   public FileDownload download(UUID fileId) {
-<span class="nc" id="L89">    var file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
-<span class="nc" id="L90">    return new FileDownload(</span>
-<span class="nc" id="L91">        file.getFileName(), file.getSize(), fileStorageService.get(file.getUri()));</span>
+<span class="nc" id="L83">    var file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
+<span class="nc" id="L84">    return new FileDownload(</span>
+<span class="nc" id="L85">        file.getFileName(), file.getSize(), fileStorageService.get(file.getUri()));</span>
   }
 
   @Override
   public void delete(UUID fileId) {
-<span class="nc" id="L96">    var file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
+<span class="nc" id="L90">    var file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
 
-    // The row goes first on purpose. There is no transaction spanning the database and the storage
-    // backend, so one of the two writes may be lost: dropping the row first leaves orphan bytes,
-    // which a sweep can reclaim, while dropping the bytes first would leave a row pointing at
-    // nothing and break every read of that file.
-<span class="nc" id="L102">    fileRepository.removeFromDatabase(file);</span>
-<span class="nc" id="L103">    fileStorageService.delete(file.getUri());</span>
-<span class="nc" id="L104">    log.info(&quot;File deleted: {}&quot;, file);</span>
-<span class="nc" id="L105">  }</span>
+<span class="nc" id="L92">    fileRepository.removeFromDatabase(file);</span>
+<span class="nc" id="L93">    fileStorageService.delete(file.getUri());</span>
+<span class="nc" id="L94">    log.info(&quot;File deleted: {}&quot;, file);</span>
+<span class="nc" id="L95">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

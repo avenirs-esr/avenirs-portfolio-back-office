@@ -56,26 +56,20 @@ public class S3FileStorageService implements FileStorageService {
 <span class="nc" id="L56">    return key;</span>
   }
 
-  /**
-   * Opens the object without reading it.
-   *
-   * &lt;p&gt;{@code getObject} hands back a stream still attached to the connection, so the bytes travel
-   * to the caller as they arrive rather than being gathered first.
-   */
   @Override
   public FileContent get(String locator) {
     try {
-<span class="nc" id="L68">      ResponseInputStream&lt;GetObjectResponse&gt; object =</span>
-<span class="nc" id="L69">          s3Client.getObject(</span>
-<span class="nc" id="L70">              GetObjectRequest.builder().bucket(properties.getBucket()).key(locator).build());</span>
-<span class="nc" id="L71">      return () -&gt; object;</span>
-<span class="nc" id="L72">    } catch (NoSuchKeyException e) {</span>
-<span class="nc" id="L73">      log.error(&quot;No object found for key {}&quot;, locator);</span>
-<span class="nc" id="L74">      FileNotFoundException notFound = new FileNotFoundException();</span>
-<span class="nc" id="L75">      notFound.initCause(e);</span>
-<span class="nc" id="L76">      throw notFound;</span>
-<span class="nc" id="L77">    } catch (S3Exception e) {</span>
-<span class="nc" id="L78">      throw new FileStorageException(&quot;Failed to read object with key &quot; + locator, e);</span>
+<span class="nc" id="L62">      ResponseInputStream&lt;GetObjectResponse&gt; object =</span>
+<span class="nc" id="L63">          s3Client.getObject(</span>
+<span class="nc" id="L64">              GetObjectRequest.builder().bucket(properties.getBucket()).key(locator).build());</span>
+<span class="nc" id="L65">      return () -&gt; object;</span>
+<span class="nc" id="L66">    } catch (NoSuchKeyException e) {</span>
+<span class="nc" id="L67">      log.error(&quot;No object found for key {}&quot;, locator);</span>
+<span class="nc" id="L68">      FileNotFoundException notFound = new FileNotFoundException();</span>
+<span class="nc" id="L69">      notFound.initCause(e);</span>
+<span class="nc" id="L70">      throw notFound;</span>
+<span class="nc" id="L71">    } catch (S3Exception e) {</span>
+<span class="nc" id="L72">      throw new FileStorageException(&quot;Failed to read object with key &quot; + locator, e);</span>
     }
   }
 
@@ -86,13 +80,13 @@ public class S3FileStorageService implements FileStorageService {
   @Override
   public void delete(String locator) {
     try {
-<span class="nc" id="L89">      s3Client.deleteObject(</span>
-<span class="nc" id="L90">          DeleteObjectRequest.builder().bucket(properties.getBucket()).key(locator).build());</span>
-<span class="nc" id="L91">    } catch (S3Exception e) {</span>
-<span class="nc" id="L92">      throw new FileStorageException(&quot;Failed to delete object with key &quot; + locator, e);</span>
-<span class="nc" id="L93">    }</span>
+<span class="nc" id="L83">      s3Client.deleteObject(</span>
+<span class="nc" id="L84">          DeleteObjectRequest.builder().bucket(properties.getBucket()).key(locator).build());</span>
+<span class="nc" id="L85">    } catch (S3Exception e) {</span>
+<span class="nc" id="L86">      throw new FileStorageException(&quot;Failed to delete object with key &quot; + locator, e);</span>
+<span class="nc" id="L87">    }</span>
 
-<span class="nc" id="L95">    log.info(&quot;Object with key {} has been deleted&quot;, locator);</span>
-<span class="nc" id="L96">  }</span>
+<span class="nc" id="L89">    log.info(&quot;Object with key {} has been deleted&quot;, locator);</span>
+<span class="nc" id="L90">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

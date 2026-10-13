@@ -6,12 +6,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/**
- * Binds the shared file registry to the notion of a current user held by the back office.
- *
- * &lt;p&gt;Users are external here, there is no user table to point at: this is precisely why the
- * registry stores the uploader as a plain identifier.
- */
 @Component
 @RequiredArgsConstructor
 public class ExternalUserFileUploaderProvider implements FileUploaderProvider {
@@ -19,7 +13,7 @@ public class ExternalUserFileUploaderProvider implements FileUploaderProvider {
 
   @Override
   public UUID currentUploaderId() {
-<span class="nc" id="L22">    return loggedInExternalUserService.getLoggedInExternalUser().getId();</span>
+<span class="nc" id="L16">    return loggedInExternalUserService.getLoggedInExternalUser().getId();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

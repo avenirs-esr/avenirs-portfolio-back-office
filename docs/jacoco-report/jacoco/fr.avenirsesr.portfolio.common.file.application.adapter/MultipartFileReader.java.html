@@ -7,27 +7,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MultipartFileReader {
 
-  /**
-   * Turns an uploaded part into a registry request without reading it.
-   *
-   * &lt;p&gt;Spring already spills a large part to disk on its own, so handing over the way to open it
-   * keeps the bytes off the heap on their way to a storage backend.
-   */
   static FileUploadRequest asUploadRequest(MultipartFile file, boolean isRestricted) {
-<span class="fc" id="L17">    return new FileUploadRequest(</span>
-<span class="fc" id="L18">        file.getOriginalFilename(),</span>
-<span class="fc" id="L19">        file.getContentType(),</span>
-<span class="fc" id="L20">        file::getInputStream,</span>
-<span class="fc" id="L21">        file.getSize(),</span>
+<span class="fc" id="L11">    return new FileUploadRequest(</span>
+<span class="fc" id="L12">        file.getOriginalFilename(),</span>
+<span class="fc" id="L13">        file.getContentType(),</span>
+<span class="fc" id="L14">        file::getInputStream,</span>
+<span class="fc" id="L15">        file.getSize(),</span>
         isRestricted);
   }
 
-  /** Reads the whole part on the heap. Only for a caller that genuinely needs the bytes. */
   static byte[] readBytes(MultipartFile file) {
     try {
-<span class="nc" id="L28">      return file.getBytes();</span>
-<span class="nc" id="L29">    } catch (IOException e) {</span>
-<span class="nc" id="L30">      throw new FileStorageException(&quot;Failed to read uploaded file &quot; + file.getName(), e);</span>
+<span class="nc" id="L21">      return file.getBytes();</span>
+<span class="nc" id="L22">    } catch (IOException e) {</span>
+<span class="nc" id="L23">      throw new FileStorageException(&quot;Failed to read uploaded file &quot; + file.getName(), e);</span>
     }
   }
 }

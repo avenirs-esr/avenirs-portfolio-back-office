@@ -13,14 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-/**
- * Part of the shared file registry, wired only where {@code file.registry.enabled} is true.
- *
- * &lt;p&gt;Every service embeds the sources of this library, including the ones it has no use for. Gating
- * the registry keeps a service that owns no file from having to declare a storage backend, an
- * uploader provider or a file table just to start up.
- */
-<span class="fc" id="L23">@Slf4j</span>
+<span class="fc" id="L16">@Slf4j</span>
 @Component
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = &quot;file.registry.enabled&quot;, havingValue = &quot;true&quot;)
@@ -29,44 +22,37 @@ public class LocalFileClient implements FileClient {
 
   @Override
   public FileDTO upload(FileUploadRequest request) {
-<span class="nc" id="L32">    log.debug(&quot;Uploading file {} of type {}&quot;, request.fileName(), request.mimeType());</span>
-<span class="nc" id="L33">    var file =</span>
-<span class="nc" id="L34">        fileResourceService.upload(</span>
-<span class="nc" id="L35">            request.fileName(),</span>
-<span class="nc" id="L36">            request.mimeType(),</span>
-<span class="nc" id="L37">            request.size(),</span>
-<span class="nc" id="L38">            request.content(),</span>
-<span class="nc" id="L39">            request.isRestricted());</span>
-<span class="nc" id="L40">    return FileDTO.fromDomain(file);</span>
+<span class="nc" id="L25">    log.debug(&quot;Uploading file {} of type {}&quot;, request.fileName(), request.mimeType());</span>
+<span class="nc" id="L26">    var file =</span>
+<span class="nc" id="L27">        fileResourceService.upload(</span>
+<span class="nc" id="L28">            request.fileName(),</span>
+<span class="nc" id="L29">            request.mimeType(),</span>
+<span class="nc" id="L30">            request.size(),</span>
+<span class="nc" id="L31">            request.content(),</span>
+<span class="nc" id="L32">            request.isRestricted());</span>
+<span class="nc" id="L33">    return FileDTO.fromDomain(file);</span>
   }
 
   @Override
   public FileDTO get(UUID fileId) {
-<span class="nc" id="L45">    log.debug(&quot;Fetching file {}&quot;, fileId);</span>
-<span class="nc" id="L46">    return FileDTO.fromDomain(fileResourceService.get(fileId));</span>
+<span class="nc" id="L38">    log.debug(&quot;Fetching file {}&quot;, fileId);</span>
+<span class="nc" id="L39">    return FileDTO.fromDomain(fileResourceService.get(fileId));</span>
   }
 
-  /**
-   * Reads the whole content on the heap.
-   *
-   * &lt;p&gt;This is the convenience left to a caller that needs the bytes themselves — embedding a
-   * terms-of-use document in a response, for instance. Serving a file to a client goes through
-   * {@code FileResourceService.fetchContent} instead, which keeps it a stream.
-   */
   @Override
   public byte[] fetchContent(UUID fileId) {
-<span class="nc" id="L58">    log.debug(&quot;Fetching file content {}&quot;, fileId);</span>
-<span class="nc" id="L59">    try (InputStream content = fileResourceService.fetchContent(fileId).content().open()) {</span>
-<span class="nc" id="L60">      return content.readAllBytes();</span>
-<span class="nc" id="L61">    } catch (IOException e) {</span>
-<span class="nc" id="L62">      throw new FileStorageException(&quot;Failed to read the content of file &quot; + fileId, e);</span>
+<span class="nc" id="L44">    log.debug(&quot;Fetching file content {}&quot;, fileId);</span>
+<span class="nc" id="L45">    try (InputStream content = fileResourceService.fetchContent(fileId).content().open()) {</span>
+<span class="nc" id="L46">      return content.readAllBytes();</span>
+<span class="nc" id="L47">    } catch (IOException e) {</span>
+<span class="nc" id="L48">      throw new FileStorageException(&quot;Failed to read the content of file &quot; + fileId, e);</span>
     }
   }
 
   @Override
   public void delete(UUID fileId) {
-<span class="nc" id="L68">    log.debug(&quot;Deleting file {}&quot;, fileId);</span>
-<span class="nc" id="L69">    fileResourceService.delete(fileId);</span>
-<span class="nc" id="L70">  }</span>
+<span class="nc" id="L54">    log.debug(&quot;Deleting file {}&quot;, fileId);</span>
+<span class="nc" id="L55">    fileResourceService.delete(fileId);</span>
+<span class="nc" id="L56">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

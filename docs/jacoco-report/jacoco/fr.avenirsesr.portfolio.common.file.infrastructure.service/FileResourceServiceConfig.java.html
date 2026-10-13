@@ -11,13 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
-/**
- * Part of the shared file registry, wired only where {@code file.registry.enabled} is true.
- *
- * &lt;p&gt;Every service embeds the sources of this library, including the ones it has no use for. Gating
- * the registry keeps a service that owns no file from having to declare a storage backend, an
- * uploader provider or a file table just to start up.
- */
 @ConditionalOnProperty(name = &quot;file.registry.enabled&quot;, havingValue = &quot;true&quot;)
 @Configuration
 @RequiredArgsConstructor
@@ -29,7 +22,7 @@ public class FileResourceServiceConfig {
   @Bean
   @Primary
   public FileResourceService fileResourceService() {
-<span class="fc" id="L32">    return new FileResourceServiceImpl(fileStorageService, fileRepository, fileUploaderProvider);</span>
+<span class="fc" id="L25">    return new FileResourceServiceImpl(fileStorageService, fileRepository, fileUploaderProvider);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

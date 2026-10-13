@@ -5,17 +5,11 @@ import fr.avenirsesr.portfolio.common.file.application.adapter.controller.Abstra
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Exposes the upload of the shared registry on the route of this service.
- *
- * &lt;p&gt;Not listed in {@code security.permit-all-paths}, so uploading requires an authenticated
- * administrator.
- */
 @RestController
 @RequestMapping(&quot;back-office/files&quot;)
 public class FileController extends AbstractFileController {
   public FileController(FileClient fileClient) {
-<span class="fc" id="L18">    super(fileClient);</span>
-<span class="fc" id="L19">  }</span>
+<span class="fc" id="L12">    super(fileClient);</span>
+<span class="fc" id="L13">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
