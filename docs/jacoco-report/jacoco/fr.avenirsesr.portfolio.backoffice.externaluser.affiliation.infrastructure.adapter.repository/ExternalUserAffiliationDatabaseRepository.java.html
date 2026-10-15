@@ -66,11 +66,5 @@ public class ExternalUserAffiliationDatabaseRepository
 
 <span class="fc" id="L67">    return findAll(specification).stream().findFirst();</span>
   }
-
-  @Override
-  public int countExternalUsersByGroupId(UUID groupId) {
-<span class="nc" id="L72">    return Math.toIntExact(</span>
-<span class="nc" id="L73">        jpaRepository.count(ExternalUserAffiliationSpecification.withGroupId(groupId)));</span>
-  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

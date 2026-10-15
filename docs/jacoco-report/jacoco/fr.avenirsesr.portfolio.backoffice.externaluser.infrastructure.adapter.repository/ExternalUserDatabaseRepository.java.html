@@ -36,11 +36,18 @@ public class ExternalUserDatabaseRepository
   }
 
   @Override
-  public List&lt;ExternalUser&gt; findAll(UUID institutionId, UUID groupId) {
+  public int countAll(UUID groupId) {
 <span class="nc" id="L40">    Specification&lt;ExternalUserEntity&gt; specification =</span>
-<span class="nc" id="L41">        Specification.where(ExternalUserSpecification.withInstitutionId(institutionId))</span>
-<span class="nc" id="L42">            .and(ExternalUserSpecification.withGroupId(groupId));</span>
-<span class="nc" id="L43">    return findAll(specification);</span>
+<span class="nc" id="L41">        Specification.where(ExternalUserSpecification.withGroupId(groupId));</span>
+<span class="nc" id="L42">    return Math.toIntExact(jpaRepository.count(specification));</span>
+  }
+
+  @Override
+  public List&lt;ExternalUser&gt; findAll(UUID institutionId, UUID groupId) {
+<span class="nc" id="L47">    Specification&lt;ExternalUserEntity&gt; specification =</span>
+<span class="nc" id="L48">        Specification.where(ExternalUserSpecification.withInstitutionId(institutionId))</span>
+<span class="nc" id="L49">            .and(ExternalUserSpecification.withGroupId(groupId));</span>
+<span class="nc" id="L50">    return findAll(specification);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
