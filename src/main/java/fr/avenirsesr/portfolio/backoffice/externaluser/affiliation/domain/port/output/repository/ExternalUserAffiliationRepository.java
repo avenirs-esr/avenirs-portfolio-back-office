@@ -20,6 +20,4 @@ public interface ExternalUserAffiliationRepository
 
   Optional<ExternalUserAffiliation> findByExternalUserIdAndInstitutionIdAndGroupIdAndCategory(
       UUID externalUserId, UUID institutionId, UUID groupId, EUserCategory category);
-
-  int countExternalUsersByGroupId(UUID groupId);
 }

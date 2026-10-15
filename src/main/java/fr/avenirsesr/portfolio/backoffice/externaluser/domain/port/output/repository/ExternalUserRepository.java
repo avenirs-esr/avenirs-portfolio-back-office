@@ -16,4 +16,6 @@ public interface ExternalUserRepository extends GenericRepositoryPort<ExternalUs
   List<ExternalUser> findAll(UUID institutionId, UUID groupId);
 
   int countAll();
+
+  int countAllByGroupId(UUID groupId);
 }

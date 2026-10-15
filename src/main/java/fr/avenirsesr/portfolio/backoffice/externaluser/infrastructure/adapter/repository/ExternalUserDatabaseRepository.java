@@ -36,6 +36,13 @@ public class ExternalUserDatabaseRepository
   }
 
   @Override
+  public int countAllByGroupId(UUID groupId) {
+    Specification<ExternalUserEntity> specification =
+        Specification.where(ExternalUserSpecification.withGroupId(groupId));
+    return Math.toIntExact(jpaRepository.count(specification));
+  }
+
+  @Override
   public List<ExternalUser> findAll(UUID institutionId, UUID groupId) {
     Specification<ExternalUserEntity> specification =
         Specification.where(ExternalUserSpecification.withInstitutionId(institutionId))
