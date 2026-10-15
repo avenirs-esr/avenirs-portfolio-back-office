@@ -12,6 +12,7 @@ public class GroupApplicationMapper {
         group.getId(),
         group.getName(),
         group.getType(),
-        group.getParent().map(Group::getId).orElse(null));
+        group.getParent().map(Group::getId).orElse(null),
+        group.getParent().map(Group::getName).orElse(null));
   }
 }
