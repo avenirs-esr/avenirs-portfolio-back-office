@@ -39,26 +39,31 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   }
 
   @Override
+  public int countExternalUsersByGroupId(UUID groupId) {
+<span class="nc" id="L43">    return delegate.countExternalUsersByGroupId(groupId);</span>
+  }
+
+  @Override
   @Transactional
   public ExternalUserAffiliationImportSummary createAll(
       List&lt;ExternalUserAffiliationData&gt; affiliations) {
-<span class="nc" id="L45">    return delegate.createAll(affiliations);</span>
+<span class="nc" id="L50">    return delegate.createAll(affiliations);</span>
   }
 
   @Override
   public boolean staffHasAccess(
       String eppn, List&lt;UUID&gt; targetInstitutionIds, List&lt;UUID&gt; targetGroupIds) {
-<span class="nc" id="L51">    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);</span>
+<span class="nc" id="L56">    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);</span>
   }
 
   @Override
   public ExternalUserAffiliationScope studentScope(String eppn) {
-<span class="nc" id="L56">    return delegate.studentScope(eppn);</span>
+<span class="nc" id="L61">    return delegate.studentScope(eppn);</span>
   }
 
   @Override
   public StaffAffiliationScope staffScope() {
-<span class="fc" id="L61">    return delegate.staffScope();</span>
+<span class="fc" id="L66">    return delegate.staffScope();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
