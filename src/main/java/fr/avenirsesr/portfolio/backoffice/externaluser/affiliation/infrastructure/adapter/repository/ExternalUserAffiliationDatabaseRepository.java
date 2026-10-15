@@ -66,4 +66,10 @@ public class ExternalUserAffiliationDatabaseRepository
 
     return findAll(specification).stream().findFirst();
   }
+
+  @Override
+  public int countExternalUsersByGroupId(UUID groupId) {
+    return Math.toIntExact(
+        jpaRepository.count(ExternalUserAffiliationSpecification.withGroupId(groupId)));
+  }
 }
