@@ -18,6 +18,8 @@ public interface ExternalUserAffiliationService {
 
   List<ExternalUserAffiliation> getAffiliations(UUID externalUserId);
 
+  int countExternalUsersByGroupId(UUID groupId);
+
   ExternalUserAffiliationImportSummary createAll(List<ExternalUserAffiliationData> affiliations);
 
   boolean staffHasAccess(String eppn, List<UUID> targetInstitutionIds, List<UUID> targetGroupIds);
