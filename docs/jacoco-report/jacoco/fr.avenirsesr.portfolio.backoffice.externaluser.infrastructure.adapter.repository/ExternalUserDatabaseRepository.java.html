@@ -36,7 +36,7 @@ public class ExternalUserDatabaseRepository
   }
 
   @Override
-  public int countAll(UUID groupId) {
+  public int countAllByGroupId(UUID groupId) {
 <span class="nc" id="L40">    Specification&lt;ExternalUserEntity&gt; specification =</span>
 <span class="nc" id="L41">        Specification.where(ExternalUserSpecification.withGroupId(groupId));</span>
 <span class="nc" id="L42">    return Math.toIntExact(jpaRepository.count(specification));</span>
