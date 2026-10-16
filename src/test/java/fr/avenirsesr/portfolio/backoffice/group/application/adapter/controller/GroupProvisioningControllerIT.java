@@ -1,10 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -12,8 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
-import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
@@ -28,26 +24,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-class GroupAdminControllerIT extends ContainerConfigurationTest {
+class GroupProvisioningControllerIT extends ContainerConfigurationTest {
 
   private static final String BASE_PATH = "/back-office/admin/groups";
   private static final String ADMIN_TOKEN_HEADER = "X-ADMIN-TOKEN";
   private static final String SEEDED_PROGRAM_ID_SI_SCO = "10000001";
-  private static final String SEEDED_PROGRAM_OPTION_ID_SI_SCO = "10000002";
-  private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
-  private static final String SEEDED_OTHER_PROGRAM_ID_SI_SCO = "10000004";
-  private static final String SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO = "10000005";
   private static final String SEEDED_INSTITUTION_UAI = "0350001A";
-  private static final String SEEDED_OTHER_INSTITUTION_UAI = "0330001C";
   private static final LocalDate START_DATE = LocalDate.of(2024, 9, 1);
   private static final LocalDate END_DATE = LocalDate.of(2027, 8, 31);
 
-  private UUID institutionId;
-  private UUID otherInstitutionId;
-
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
-  @Autowired private GroupRepository groupRepository;
 
   @Value("${security.authentication.api-key}")
   private String apiKeyValue;
@@ -56,27 +43,23 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
   private String adminTokenValue;
 
   @BeforeAll
-  void setup(
-      @Autowired SeederRunner seederRunner,
-      @Autowired InstitutionRepository institutionRepository) {
+  void setup(@Autowired SeederRunner seederRunner) {
     seederRunner.run();
-    institutionId = institutionRepository.findByUai(SEEDED_INSTITUTION_UAI).orElseThrow().getId();
-    otherInstitutionId =
-        institutionRepository.findByUai(SEEDED_OTHER_INSTITUTION_UAI).orElseThrow().getId();
   }
 
   @Test
   void shouldReturnForbidden_whenAdminTokenIsInvalid() throws Exception {
     BddLogger.given("an invalid admin token");
 
-    BddLogger.when("calling GET /back-office/admin/groups");
+    BddLogger.when("calling POST /back-office/admin/groups");
     mockMvc
         .perform(
-            get(BASE_PATH)
+            post(BASE_PATH)
                 .principal(uuidPrincipal())
                 .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
                 .header(ADMIN_TOKEN_HEADER, "wrong-token")
-                .accept(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("[]"))
         .andExpect(status().isForbidden());
 
     BddLogger.then("it should return 403");
@@ -235,24 +218,6 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
   }
 
   @Test
-  void shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
-    BddLogger.given("a random group id that does not exist");
-    UUID unknownId = UUID.randomUUID();
-
-    BddLogger.when("calling GET /back-office/admin/groups/{id}");
-    mockMvc
-        .perform(
-            get(BASE_PATH + "/" + unknownId)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .header(ADMIN_TOKEN_HEADER, adminTokenValue)
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNotFound());
-
-    BddLogger.then("it should return 404");
-  }
-
-  @Test
   void shouldDeleteGroup_whenIdExists() throws Exception {
     BddLogger.given("a newly created program");
     List<GroupData> payload =
@@ -293,140 +258,5 @@ class GroupAdminControllerIT extends ContainerConfigurationTest {
         .andExpect(status().isNoContent());
 
     BddLogger.then("it should delete the program");
-  }
-
-  @Test
-  void shouldReturnOnlyGroupsOfInstitution_whenFilteringByInstitutionId() throws Exception {
-    BddLogger.given("groups seeded across two institutions");
-
-    BddLogger.when("calling GET /back-office/admin/groups filtered by institutionId");
-    mockMvc
-        .perform(
-            get(BASE_PATH)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .header(ADMIN_TOKEN_HEADER, adminTokenValue)
-                .param("institutionId", otherInstitutionId.toString())
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(2)))
-        .andExpect(
-            jsonPath("$[*].idSISco")
-                .value(
-                    containsInAnyOrder(
-                        SEEDED_OTHER_PROGRAM_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
-
-    BddLogger.then("it should return only the groups belonging to that institution");
-  }
-
-  @Test
-  void shouldReturnOnlyChildGroups_whenFilteringByParentId() throws Exception {
-    BddLogger.given("a seeded program used as the parent of a program option");
-    UUID parentId = groupRepository.findByIdSISco(SEEDED_PROGRAM_ID_SI_SCO).orElseThrow().getId();
-
-    BddLogger.when("calling GET /back-office/admin/groups filtered by parentId");
-    mockMvc
-        .perform(
-            get(BASE_PATH)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .header(ADMIN_TOKEN_HEADER, adminTokenValue)
-                .param("parentId", parentId.toString())
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].idSISco", is(SEEDED_PROGRAM_OPTION_ID_SI_SCO)));
-
-    BddLogger.then("it should return only the direct children of that group");
-  }
-
-  @Test
-  void shouldReturnOnlyGroupsOfType_whenFilteringByType() throws Exception {
-    BddLogger.given("student groups seeded across two institutions");
-
-    BddLogger.when("calling GET /back-office/admin/groups filtered by type");
-    mockMvc
-        .perform(
-            get(BASE_PATH)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .header(ADMIN_TOKEN_HEADER, adminTokenValue)
-                .param("type", EGroupType.STUDENT_GROUP.name())
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(
-            jsonPath("$[*].idSISco")
-                .value(
-                    containsInAnyOrder(
-                        SEEDED_STUDENT_GROUP_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
-
-    BddLogger.then("it should return only groups of that type");
-  }
-
-  @Test
-  void shouldReturnOnlyGroupsWithinDateRange_whenFilteringByStartDateAndEndDate() throws Exception {
-    BddLogger.given("groups seeded with different start and end dates");
-
-    BddLogger.when("calling GET /back-office/admin/groups filtered by startDate and endDate");
-    mockMvc
-        .perform(
-            get(BASE_PATH)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .header(ADMIN_TOKEN_HEADER, adminTokenValue)
-                .param("startDate", "2024-09-01")
-                .param("endDate", "2025-06-30")
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(
-            jsonPath("$[*].idSISco")
-                .value(
-                    containsInAnyOrder(
-                        SEEDED_STUDENT_GROUP_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
-
-    BddLogger.then(
-        "it should return only groups whose start date and end date fall within the range");
-  }
-
-  @Test
-  void shouldReturnMatchingGroup_whenCombiningMultipleFilters() throws Exception {
-    BddLogger.given("a program option belonging to the seeded institution");
-
-    BddLogger.when(
-        "calling GET /back-office/admin/groups filtered by institutionId and type together");
-    mockMvc
-        .perform(
-            get(BASE_PATH)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .header(ADMIN_TOKEN_HEADER, adminTokenValue)
-                .param("institutionId", institutionId.toString())
-                .param("type", EGroupType.PROGRAM_OPTION.name())
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].idSISco", is(SEEDED_PROGRAM_OPTION_ID_SI_SCO)));
-
-    BddLogger.then("it should return only the group matching every filter");
-  }
-
-  @Test
-  void shouldReturnEmptyList_whenNoGroupMatchesTheFilters() throws Exception {
-    BddLogger.given("a filter combination matched by no seeded or created group");
-
-    BddLogger.when("calling GET /back-office/admin/groups filtered by institutionId and type");
-    mockMvc
-        .perform(
-            get(BASE_PATH)
-                .principal(uuidPrincipal())
-                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
-                .header(ADMIN_TOKEN_HEADER, adminTokenValue)
-                .param("institutionId", otherInstitutionId.toString())
-                .param("type", EGroupType.PROGRAM_OPTION.name())
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(0)));
-
-    BddLogger.then("it should return an empty list");
   }
 }
