@@ -1,9 +1,11 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper.GroupApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
 import fr.avenirsesr.portfolio.common.data.application.adapter.dto.PageInfoDTO;
 import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
@@ -11,6 +13,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupDTO;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupOverviewDTO;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,6 +39,7 @@ public class GroupQueryController {
 
   private final GroupService groupService;
   private final ExternalUserAffiliationService externalUserAffiliationService;
+  private final LoggedInExternalUserService loggedInExternalUserService;
 
   @PreAuthorize("hasAuthority('group:read')")
   @GetMapping
@@ -77,10 +81,46 @@ public class GroupQueryController {
   }
 
   @PreAuthorize("hasAuthority('group:read')")
+  @GetMapping("/{id}/sub-groups")
+  public ResponseEntity<List<GroupOverviewDTO>> getSubGroupsOfGroup(@PathVariable UUID id) {
+    log.debug("Getting sub-groups of group for id: {}", id);
+
+    requireAffiliationToInstitutionOf(groupService.findById(id));
+
+    List<Group> subGroups = groupService.findSubGroupsOf(id);
+    Map<UUID, Integer> usersCounts =
+        externalUserAffiliationService.countExternalUsersByGroupIds(
+            subGroups.stream().map(Group::getId).toList());
+
+    return ResponseEntity.ok(
+        subGroups.stream()
+            .map(
+                subGroup ->
+                    GroupApplicationMapper.toGroupOverviewDTO(
+                        subGroup, usersCounts.getOrDefault(subGroup.getId(), 0)))
+            .toList());
+  }
+
+  @PreAuthorize("hasAuthority('group:read')")
   @GetMapping("/{id}/program")
   public ResponseEntity<GroupDTO> getProgramOfGroup(@PathVariable UUID id) {
     log.debug("Getting program of group for id: {}", id);
 
     return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findProgramOf(id)));
+  }
+
+  private void requireAffiliationToInstitutionOf(Group group) {
+    ExternalUser loggedInUser = loggedInExternalUserService.getLoggedInExternalUser();
+    UUID institutionId = group.getInstitution().getId();
+
+    if (!externalUserAffiliationService.isAffiliated(loggedInUser, institutionId)) {
+      log.warn(
+          "User {} is not affiliated to the institution {} holding the group {}",
+          loggedInUser.getId(),
+          institutionId,
+          group.getId());
+      throw new UserNotAuthorizedException(
+          "The group does not belong to an institution the user is affiliated to");
+    }
   }
 }

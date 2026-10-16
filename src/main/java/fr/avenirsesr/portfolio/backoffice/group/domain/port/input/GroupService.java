@@ -42,6 +42,8 @@ public interface GroupService {
 
   Group findProgramOf(UUID groupId);
 
+  List<Group> findSubGroupsOf(UUID groupId);
+
   boolean staffHasAccess(List<UUID> affiliatedIds, List<UUID> targetIds);
 
   List<UUID> studentAccessibleIds(List<UUID> affiliatedIds);

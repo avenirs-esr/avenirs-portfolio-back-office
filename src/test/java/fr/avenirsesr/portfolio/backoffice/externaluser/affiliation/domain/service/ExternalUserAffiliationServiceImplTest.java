@@ -121,6 +121,54 @@ class ExternalUserAffiliationServiceImplTest {
   }
 
   @Test
+  void shouldConfirmAffiliation_whenUserIsAffiliatedToTheInstitution() {
+    BddLogger.given("a user affiliated to an institution");
+    ExternalUser user = externalUser(EUserCategory.STAFF);
+    UUID institutionId = UUID.randomUUID();
+    when(externalUserAffiliationRepository.findAllByExternalUserId(user.getId()))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(
+                    user, institution(institutionId), null, EUserCategory.STAFF)));
+
+    BddLogger.when("checking its affiliation to that institution");
+    boolean result = service.isAffiliated(user, institutionId);
+
+    BddLogger.then("it should confirm the affiliation");
+    assertTrue(result);
+  }
+
+  @Test
+  void shouldDenyAffiliation_whenUserIsAffiliatedToAnotherInstitutionOnly() {
+    BddLogger.given("a user affiliated to a single institution");
+    ExternalUser user = externalUser(EUserCategory.STAFF);
+    when(externalUserAffiliationRepository.findAllByExternalUserId(user.getId()))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(
+                    user, institution(UUID.randomUUID()), null, EUserCategory.STAFF)));
+
+    BddLogger.when("checking its affiliation to another institution");
+    boolean result = service.isAffiliated(user, UUID.randomUUID());
+
+    BddLogger.then("it should deny the affiliation");
+    assertFalse(result);
+  }
+
+  @Test
+  void shouldDenyAffiliation_whenInstitutionIdIsNull() {
+    BddLogger.given("a user and no institution to check");
+    ExternalUser user = externalUser(EUserCategory.STAFF);
+
+    BddLogger.when("checking its affiliation to a null institution");
+    boolean result = service.isAffiliated(user, null);
+
+    BddLogger.then("it should deny the affiliation without hitting the repository");
+    assertFalse(result);
+    verify(externalUserAffiliationRepository, never()).findAllByExternalUserId(any());
+  }
+
+  @Test
   void shouldOnlyUseStaffAffiliations_whenCheckingStaffAccess() {
     BddLogger.given("a multi-profile external user with different STUDENT and STAFF institutions");
     ExternalUser user = externalUser(EUserCategory.STUDENT, EUserCategory.STAFF);

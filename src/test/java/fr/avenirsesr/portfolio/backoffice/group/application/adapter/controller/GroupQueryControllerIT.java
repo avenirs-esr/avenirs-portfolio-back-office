@@ -443,4 +443,174 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
       }
     }
   }
+
+  @Nested
+  class WhenGettingSubGroupsOfGroup {
+
+    @Nested
+    class AndGroupHasChildren {
+
+      private UUID programOptionId;
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded program whose only direct child is a program option");
+        UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+        programOptionId = groupIdOf(SEEDED_PROGRAM_OPTION_ID_SI_SCO);
+
+        BddLogger.when("calling GET /back-office/groups/{id}/sub-groups");
+        response =
+            mockMvc.perform(
+                asStaffUser(get(BASE_PATH + "/" + programId + "/sub-groups"), STAFF_EPPN)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnItsDirectChildrenOnly() throws Exception {
+        BddLogger.then("it should return the program option, not the student group below it");
+
+        response
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].id", is(programOptionId.toString())))
+            .andExpect(jsonPath("$[0].name", is("Licence Informatique - Parcours IA")))
+            .andExpect(jsonPath("$[0].type", is("PROGRAM_OPTION")))
+            .andExpect(jsonPath("$[0].parentName", is("Licence Informatique")))
+            .andExpect(jsonPath("$[0].usersCount", is(0)));
+      }
+    }
+
+    @Nested
+    class AndChildrenHoldAffiliatedUsers {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded program option whose child student group holds affiliated users");
+        UUID programOptionId = groupIdOf(SEEDED_PROGRAM_OPTION_ID_SI_SCO);
+
+        BddLogger.when("calling GET /back-office/groups/{id}/sub-groups");
+        response =
+            mockMvc.perform(
+                asStaffUser(get(BASE_PATH + "/" + programOptionId + "/sub-groups"), STAFF_EPPN)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnTheNumberOfAffiliatedUsersOfEachSubGroup() throws Exception {
+        BddLogger.then("it should report the count of distinct users affiliated to each sub-group");
+
+        response
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is("Groupe A")))
+            .andExpect(jsonPath("$[0].type", is("STUDENT_GROUP")))
+            .andExpect(jsonPath("$[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
+      }
+    }
+
+    @Nested
+    class AndGroupHasNoChild {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded student group, which cannot have children");
+        UUID studentGroupId = groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO);
+
+        BddLogger.when("calling GET /back-office/groups/{id}/sub-groups");
+        response =
+            mockMvc.perform(
+                asStaffUser(get(BASE_PATH + "/" + studentGroupId + "/sub-groups"), STAFF_EPPN)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnAnEmptyList() throws Exception {
+        BddLogger.then("it should return an empty list");
+
+        response.andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(0)));
+      }
+    }
+
+    @Nested
+    class AndGroupDoesNotExist {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a random group id that does not exist");
+        UUID unknownId = UUID.randomUUID();
+
+        BddLogger.when("calling GET /back-office/groups/{id}/sub-groups");
+        response =
+            mockMvc.perform(
+                asStaffUser(get(BASE_PATH + "/" + unknownId + "/sub-groups"), STAFF_EPPN)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnNotFound() throws Exception {
+        BddLogger.then("it should return 404");
+
+        response.andExpect(status().isNotFound());
+      }
+    }
+
+    @Nested
+    class AndGroupBelongsToAnotherInstitution {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a staff of the Bordeaux institution and a group of the Rennes one");
+        UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+
+        BddLogger.when("calling GET /back-office/groups/{id}/sub-groups");
+        response =
+            mockMvc.perform(
+                asStaffUser(get(BASE_PATH + "/" + programId + "/sub-groups"), OTHER_STAFF_EPPN)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnForbidden() throws Exception {
+        BddLogger.then("it should return 403, the staff not being affiliated to that institution");
+
+        response.andExpect(status().isForbidden());
+      }
+    }
+
+    @Nested
+    class AndStaffMissesTheReadPermission {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a logged-in staff without the group read permission");
+        UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+
+        BddLogger.when("calling GET /back-office/groups/{id}/sub-groups");
+        response =
+            mockMvc.perform(
+                get(BASE_PATH + "/" + programId + "/sub-groups")
+                    .header("X-Forwarded-For", "203.0.113.10")
+                    .with(authentication(new HmacAuthenticationToken(STAFF_EPPN)))
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnForbidden() throws Exception {
+        BddLogger.then("it should return 403");
+
+        response.andExpect(status().isForbidden());
+      }
+    }
+  }
 }
