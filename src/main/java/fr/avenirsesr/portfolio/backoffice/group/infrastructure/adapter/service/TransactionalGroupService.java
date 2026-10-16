@@ -4,6 +4,8 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
 import java.util.List;
@@ -60,9 +62,9 @@ public class TransactionalGroupService implements GroupService {
   }
 
   @Override
-  public List<Group> findAll(
-      UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate) {
-    return delegate.findAll(institutionId, parentId, type, startDate, endDate);
+  public PagedResult<Group> findAllOfStaffPrimaryInstitution(
+      String keyword, EGroupType type, PageCriteria pageCriteria) {
+    return delegate.findAllOfStaffPrimaryInstitution(keyword, type, pageCriteria);
   }
 
   @Override

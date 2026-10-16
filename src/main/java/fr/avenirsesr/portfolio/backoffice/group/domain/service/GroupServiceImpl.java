@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.group.domain.service;
 
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupProgramCannotHaveParentException;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupProgramOptionParentMustBeProgramException;
@@ -15,8 +16,12 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.Gr
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GroupServiceImpl implements GroupService {
   private final GroupRepository groupRepository;
   private final InstitutionRepository institutionRepository;
+  private final LoggedInExternalUserService loggedInExternalUserService;
 
   @Override
   public Group create(
@@ -164,9 +170,37 @@ public class GroupServiceImpl implements GroupService {
   }
 
   @Override
-  public List<Group> findAll(
-      UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate) {
-    return groupRepository.findAll(institutionId, parentId, type, startDate, endDate);
+  public PagedResult<Group> findAllOfStaffPrimaryInstitution(
+      String keyword, EGroupType type, PageCriteria pageCriteria) {
+    Institution primaryInstitution = primaryInstitutionOfLoggedInStaff();
+
+    return groupRepository.findAll(primaryInstitution.getId(), keyword, type, pageCriteria);
+  }
+
+  /**
+   * Resolves the institution the logged-in staff belongs to, walking up to its primary institution:
+   * groups are administered at that level.
+   */
+  private Institution primaryInstitutionOfLoggedInStaff() {
+    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();
+    Institution institution = findInstitutionOrThrow(staff.getInstitutionUAI());
+
+    Set<UUID> visited = new HashSet<>();
+    visited.add(institution.getId());
+    Optional<Institution> parent = institution.getParent();
+    while (parent.isPresent() && visited.add(parent.get().getId())) {
+      institution = parent.get();
+      parent = institution.getParent();
+    }
+
+    if (institution.getType() != EInstitutionType.PRIMARY) {
+      log.warn(
+          "Staff {} has no primary institution ancestor, falling back on its topmost ancestor {}",
+          staff.getEppn(),
+          institution.getId());
+    }
+
+    return institution;
   }
 
   @Override
