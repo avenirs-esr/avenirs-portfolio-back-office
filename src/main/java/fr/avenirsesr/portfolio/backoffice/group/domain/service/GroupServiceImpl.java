@@ -24,6 +24,7 @@ import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -203,6 +204,15 @@ public class GroupServiceImpl implements GroupService {
     }
 
     return program;
+  }
+
+  @Override
+  public List<Group> findSubGroupsOf(UUID groupId) {
+    Group group = findById(groupId);
+
+    return groupRepository.findAllByParentIds(List.of(group.getId())).stream()
+        .sorted(Comparator.comparing(Group::getName, String.CASE_INSENSITIVE_ORDER))
+        .toList();
   }
 
   @Override

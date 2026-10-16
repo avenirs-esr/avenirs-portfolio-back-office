@@ -78,6 +78,11 @@ public class TransactionalGroupService implements GroupService {
   }
 
   @Override
+  public List<Group> findSubGroupsOf(UUID groupId) {
+    return delegate.findSubGroupsOf(groupId);
+  }
+
+  @Override
   public boolean staffHasAccess(List<UUID> affiliatedIds, List<UUID> targetIds) {
     return delegate.staffHasAccess(affiliatedIds, targetIds);
   }
