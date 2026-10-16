@@ -6,8 +6,6 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
-import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,57 +15,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Write-only endpoints letting an institution provision its own group referential, typically from
+ * an automated feed on its side, hence the API key authentication. Reads are exposed to the
+ * logged-in staff by {@link GroupQueryController}.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("back-office/admin/groups")
-public class GroupAdminController {
+public class GroupProvisioningController {
 
   private final GroupService groupService;
 
   @Value("${admin.token:}")
   private String adminToken;
-
-  @PreAuthorize("hasAuthority('group:read')")
-  @GetMapping
-  public ResponseEntity<List<GroupResponse>> findAll(
-      @RequestParam(required = false) UUID institutionId,
-      @RequestParam(required = false) UUID parentId,
-      @RequestParam(required = false) EGroupType type,
-      @RequestParam(required = false) LocalDate startDate,
-      @RequestParam(required = false) LocalDate endDate,
-      @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
-    HttpStatus rejection = checkAdminToken(token);
-    if (rejection != null) {
-      return ResponseEntity.status(rejection).build();
-    }
-
-    List<Group> groups = groupService.findAll(institutionId, parentId, type, startDate, endDate);
-    return ResponseEntity.ok(groups.stream().map(GroupResponse::from).toList());
-  }
-
-  @PreAuthorize("hasAuthority('group:read')")
-  @GetMapping("/{id}")
-  public ResponseEntity<GroupResponse> findById(
-      @PathVariable UUID id, @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
-    HttpStatus rejection = checkAdminToken(token);
-    if (rejection != null) {
-      return ResponseEntity.status(rejection).build();
-    }
-
-    Group group = groupService.findById(id);
-    return ResponseEntity.ok(GroupResponse.from(group));
-  }
 
   @PreAuthorize("hasAuthority('group:import')")
   @PostMapping
