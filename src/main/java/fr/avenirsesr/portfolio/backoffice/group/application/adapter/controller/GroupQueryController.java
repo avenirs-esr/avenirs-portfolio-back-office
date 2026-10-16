@@ -77,6 +77,25 @@ public class GroupQueryController {
   }
 
   @PreAuthorize("hasAuthority('group:read')")
+  @GetMapping("/{id}/sub-groups")
+  public ResponseEntity<List<GroupOverviewDTO>> getSubGroupsOfGroup(@PathVariable UUID id) {
+    log.debug("Getting sub-groups of group for id: {}", id);
+
+    List<Group> subGroups = groupService.findSubGroupsOf(id);
+    Map<UUID, Integer> usersCounts =
+        externalUserAffiliationService.countExternalUsersByGroupIds(
+            subGroups.stream().map(Group::getId).toList());
+
+    return ResponseEntity.ok(
+        subGroups.stream()
+            .map(
+                subGroup ->
+                    GroupApplicationMapper.toGroupOverviewDTO(
+                        subGroup, usersCounts.getOrDefault(subGroup.getId(), 0)))
+            .toList());
+  }
+
+  @PreAuthorize("hasAuthority('group:read')")
   @GetMapping("/{id}/program")
   public ResponseEntity<GroupDTO> getProgramOfGroup(@PathVariable UUID id) {
     log.debug("Getting program of group for id: {}", id);

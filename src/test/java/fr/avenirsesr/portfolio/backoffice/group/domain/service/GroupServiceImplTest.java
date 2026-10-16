@@ -861,6 +861,91 @@ class GroupServiceImplTest {
   }
 
   @Test
+  void shouldReturnDirectSubGroupsSortedByName_whenListingThem() {
+    BddLogger.given("a program holding two options");
+    UUID programId = UUID.randomUUID();
+    Group program =
+        Group.create(
+            programId,
+            "Licence Informatique",
+            "10000001",
+            institution,
+            "11000001",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM,
+            null);
+    Group webOption =
+        Group.create(
+            UUID.randomUUID(),
+            "Licence Informatique - Parcours Web",
+            "10000003",
+            institution,
+            "11000003",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM_OPTION,
+            program);
+    Group aiOption =
+        Group.create(
+            UUID.randomUUID(),
+            "Licence Informatique - Parcours IA",
+            "10000002",
+            institution,
+            "11000002",
+            startDate,
+            endDate,
+            EGroupType.PROGRAM_OPTION,
+            program);
+    when(groupRepository.findById(programId)).thenReturn(Optional.of(program));
+    when(groupRepository.findAllByParentIds(List.of(programId)))
+        .thenReturn(List.of(webOption, aiOption));
+
+    BddLogger.when("listing the sub-groups of the program");
+    List<Group> result = service.findSubGroupsOf(programId);
+
+    BddLogger.then("it should return its direct children ordered by name");
+    assertEquals(List.of(aiOption, webOption), result);
+  }
+
+  @Test
+  void shouldReturnNoSubGroup_whenGroupHasNoChild() {
+    BddLogger.given("a student group without any child");
+    UUID studentGroupId = UUID.randomUUID();
+    Group studentGroup =
+        Group.create(
+            studentGroupId,
+            "Groupe A",
+            "10000003",
+            institution,
+            "11000003",
+            startDate,
+            endDate,
+            EGroupType.STUDENT_GROUP,
+            null);
+    when(groupRepository.findById(studentGroupId)).thenReturn(Optional.of(studentGroup));
+    when(groupRepository.findAllByParentIds(List.of(studentGroupId))).thenReturn(List.of());
+
+    BddLogger.when("listing its sub-groups");
+    List<Group> result = service.findSubGroupsOf(studentGroupId);
+
+    BddLogger.then("it should return an empty list");
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldThrowGroupNotFoundException_whenListingTheSubGroupsOfAnUnknownGroup() {
+    BddLogger.given("an unknown group id");
+    UUID id = UUID.randomUUID();
+    when(groupRepository.findById(id)).thenReturn(Optional.empty());
+
+    BddLogger.when("listing its sub-groups");
+    BddLogger.then("it should throw GroupNotFoundException");
+    assertThrows(GroupNotFoundException.class, () -> service.findSubGroupsOf(id));
+    verify(groupRepository, never()).findAllByParentIds(any());
+  }
+
+  @Test
   void shouldThrowGroupNotFoundException_whenFindingById_withUnknownId() {
     BddLogger.given("an unknown group id");
     UUID id = UUID.randomUUID();
