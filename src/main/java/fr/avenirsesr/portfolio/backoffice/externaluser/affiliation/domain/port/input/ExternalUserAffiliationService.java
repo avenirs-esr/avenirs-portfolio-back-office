@@ -5,6 +5,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ public interface ExternalUserAffiliationService {
   Map<UUID, Integer> countExternalUsersByGroupIds(List<UUID> groupIds);
 
   ExternalUserAffiliationImportSummary createAll(List<ExternalUserAffiliationData> affiliations);
+
+  boolean isAffiliated(ExternalUser externalUser, UUID institutionId);
 
   boolean staffHasAccess(String eppn, List<UUID> targetInstitutionIds, List<UUID> targetGroupIds);
 
