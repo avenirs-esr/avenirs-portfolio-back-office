@@ -562,6 +562,31 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
     }
 
     @Nested
+    class AndGroupBelongsToAnotherInstitution {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a staff of the Bordeaux institution and a group of the Rennes one");
+        UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+
+        BddLogger.when("calling GET /back-office/groups/{id}/sub-groups");
+        response =
+            mockMvc.perform(
+                asStaffUser(get(BASE_PATH + "/" + programId + "/sub-groups"), OTHER_STAFF_EPPN)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnForbidden() throws Exception {
+        BddLogger.then("it should return 403, the staff not being affiliated to that institution");
+
+        response.andExpect(status().isForbidden());
+      }
+    }
+
+    @Nested
     class AndStaffMissesTheReadPermission {
 
       private ResultActions response;

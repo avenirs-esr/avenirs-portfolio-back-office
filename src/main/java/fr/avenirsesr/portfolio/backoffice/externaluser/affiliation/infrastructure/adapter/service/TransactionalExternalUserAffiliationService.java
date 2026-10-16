@@ -6,6 +6,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,11 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   public ExternalUserAffiliationImportSummary createAll(
       List<ExternalUserAffiliationData> affiliations) {
     return delegate.createAll(affiliations);
+  }
+
+  @Override
+  public boolean isAffiliated(ExternalUser externalUser, UUID institutionId) {
+    return delegate.isAffiliated(externalUser, institutionId);
   }
 
   @Override

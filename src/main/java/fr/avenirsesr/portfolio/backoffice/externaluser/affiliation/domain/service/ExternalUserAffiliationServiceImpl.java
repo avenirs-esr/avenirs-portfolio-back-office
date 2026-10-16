@@ -130,6 +130,17 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   }
 
   @Override
+  public boolean isAffiliated(ExternalUser externalUser, UUID institutionId) {
+    if (externalUser == null || institutionId == null) {
+      return false;
+    }
+
+    return externalUserAffiliationRepository.findAllByExternalUserId(externalUser.getId()).stream()
+        .map(ExternalUserAffiliation::getInstitution)
+        .anyMatch(institution -> institutionId.equals(institution.getId()));
+  }
+
+  @Override
   public boolean staffHasAccess(
       String eppn, List<UUID> targetInstitutionIds, List<UUID> targetGroupIds) {
     ExternalUser externalUser =
