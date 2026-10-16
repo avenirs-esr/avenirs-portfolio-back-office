@@ -182,14 +182,14 @@ public abstract class GenericJpaRepositoryAdapter&lt;
 <span class="nc" id="L182">  }</span>
 
   protected PagedResult&lt;D&gt; toPagedResult(Page&lt;E&gt; page) {
-<span class="nc" id="L185">    var content = page.getContent().stream().map(mapper::toDomain).toList();</span>
+<span class="fc" id="L185">    var content = page.getContent().stream().map(mapper::toDomain).toList();</span>
 
-<span class="nc" id="L187">    return new PagedResult&lt;&gt;(</span>
+<span class="fc" id="L187">    return new PagedResult&lt;&gt;(</span>
         content,
         new PageInfo(
-<span class="nc" id="L190">            page.getPageable().getPageNumber(),</span>
-<span class="nc" id="L191">            page.getPageable().getPageSize(),</span>
-<span class="nc" id="L192">            page.getTotalElements()));</span>
+<span class="fc" id="L190">            page.getPageable().getPageNumber(),</span>
+<span class="fc" id="L191">            page.getPageable().getPageSize(),</span>
+<span class="fc" id="L192">            page.getTotalElements()));</span>
   }
 
   @Override
@@ -221,9 +221,9 @@ public abstract class GenericJpaRepositoryAdapter&lt;
   }
 
   protected PagedResult&lt;D&gt; findAll(Specification&lt;E&gt; specification, PageRequest pageRequest) {
-<span class="nc" id="L224">    var page = jpaSpecificationExecutor.findAll(specification, pageRequest);</span>
+<span class="fc" id="L224">    var page = jpaSpecificationExecutor.findAll(specification, pageRequest);</span>
 
-<span class="nc" id="L226">    return toPagedResult(page);</span>
+<span class="fc" id="L226">    return toPagedResult(page);</span>
   }
 
   protected PagedResult&lt;D&gt; findAll(

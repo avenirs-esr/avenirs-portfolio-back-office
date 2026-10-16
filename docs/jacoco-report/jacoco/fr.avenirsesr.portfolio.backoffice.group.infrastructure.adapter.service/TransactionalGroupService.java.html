@@ -4,6 +4,8 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupData;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.GroupImportSummary;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.time.LocalDate;
 import java.util.List;
@@ -29,14 +31,14 @@ public class TransactionalGroupService implements GroupService {
       LocalDate endDate,
       EGroupType type,
       String parentIdSISco) {
-<span class="fc" id="L32">    return delegate.create(</span>
+<span class="fc" id="L34">    return delegate.create(</span>
         name, idSISco, institutionUAI, codeSise, startDate, endDate, type, parentIdSISco);
   }
 
   @Override
   @Transactional
   public GroupImportSummary createAll(List&lt;GroupData&gt; groups) {
-<span class="fc" id="L39">    return delegate.createAll(groups);</span>
+<span class="fc" id="L41">    return delegate.createAll(groups);</span>
   }
 
   @Override
@@ -49,45 +51,45 @@ public class TransactionalGroupService implements GroupService {
       LocalDate endDate,
       EGroupType type,
       String parentIdSISco) {
-<span class="nc" id="L52">    return delegate.update(</span>
+<span class="nc" id="L54">    return delegate.update(</span>
         idSISco, name, institutionUAI, codeSise, startDate, endDate, type, parentIdSISco);
   }
 
   @Override
   @Transactional
   public List&lt;Group&gt; updateAll(List&lt;GroupData&gt; groups) {
-<span class="fc" id="L59">    return delegate.updateAll(groups);</span>
+<span class="fc" id="L61">    return delegate.updateAll(groups);</span>
   }
 
   @Override
-  public List&lt;Group&gt; findAll(
-      UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate) {
-<span class="fc" id="L65">    return delegate.findAll(institutionId, parentId, type, startDate, endDate);</span>
+  public PagedResult&lt;Group&gt; findAllOfStaffInstitution(
+      String keyword, EGroupType type, PageCriteria pageCriteria) {
+<span class="fc" id="L67">    return delegate.findAllOfStaffInstitution(keyword, type, pageCriteria);</span>
   }
 
   @Override
   public Group findById(UUID id) {
-<span class="fc" id="L70">    return delegate.findById(id);</span>
+<span class="fc" id="L72">    return delegate.findById(id);</span>
   }
 
   @Override
   public Group findProgramOf(UUID groupId) {
-<span class="fc" id="L75">    return delegate.findProgramOf(groupId);</span>
+<span class="fc" id="L77">    return delegate.findProgramOf(groupId);</span>
   }
 
   @Override
   public boolean staffHasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
-<span class="nc" id="L80">    return delegate.staffHasAccess(affiliatedIds, targetIds);</span>
+<span class="nc" id="L82">    return delegate.staffHasAccess(affiliatedIds, targetIds);</span>
   }
 
   @Override
   public List&lt;UUID&gt; studentAccessibleIds(List&lt;UUID&gt; affiliatedIds) {
-<span class="nc" id="L85">    return delegate.studentAccessibleIds(affiliatedIds);</span>
+<span class="nc" id="L87">    return delegate.studentAccessibleIds(affiliatedIds);</span>
   }
 
   @Override
   public void delete(UUID id) {
-<span class="fc" id="L90">    delegate.delete(id);</span>
-<span class="fc" id="L91">  }</span>
+<span class="fc" id="L92">    delegate.delete(id);</span>
+<span class="fc" id="L93">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -5,13 +5,16 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.Gr
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.mapper.GroupMapper;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model.GroupEntity;
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.specification.GroupSpecification;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
@@ -21,35 +24,39 @@ public class GroupDatabaseRepository extends GenericJpaRepositoryAdapter&lt;Grou
   private final GroupJpaRepository jpaRepository;
 
   public GroupDatabaseRepository(GroupJpaRepository jpaRepository) {
-<span class="fc" id="L24">    super(jpaRepository, jpaRepository, GroupEntity.class, GroupMapper.INSTANCE);</span>
-<span class="fc" id="L25">    this.jpaRepository = jpaRepository;</span>
-<span class="fc" id="L26">  }</span>
+<span class="fc" id="L27">    super(jpaRepository, jpaRepository, GroupEntity.class, GroupMapper.INSTANCE);</span>
+<span class="fc" id="L28">    this.jpaRepository = jpaRepository;</span>
+<span class="fc" id="L29">  }</span>
 
   @Override
   public boolean existsByIdSISco(String idSISco) {
-<span class="nc" id="L30">    return jpaRepository.existsByIdSISco(idSISco);</span>
+<span class="nc" id="L33">    return jpaRepository.existsByIdSISco(idSISco);</span>
   }
 
   @Override
   public Optional&lt;Group&gt; findByIdSISco(String idSISco) {
-<span class="fc" id="L35">    return jpaRepository.findByIdSISco(idSISco).map(GroupMapper.INSTANCE::toDomain);</span>
+<span class="fc" id="L38">    return jpaRepository.findByIdSISco(idSISco).map(GroupMapper.INSTANCE::toDomain);</span>
   }
 
   @Override
-  public List&lt;Group&gt; findAll(
-      UUID institutionId, UUID parentId, EGroupType type, LocalDate startDate, LocalDate endDate) {
-<span class="fc" id="L41">    Specification&lt;GroupEntity&gt; specification =</span>
-<span class="fc" id="L42">        Specification.where(GroupSpecification.withInstitutionId(institutionId))</span>
-<span class="fc" id="L43">            .and(GroupSpecification.withParentId(parentId))</span>
-<span class="fc" id="L44">            .and(GroupSpecification.withType(type))</span>
-<span class="fc" id="L45">            .and(GroupSpecification.withStartDate(startDate))</span>
-<span class="fc" id="L46">            .and(GroupSpecification.withEndDate(endDate));</span>
-<span class="fc" id="L47">    return findAll(specification);</span>
+  public PagedResult&lt;Group&gt; findAll(
+      UUID institutionId, String keyword, EGroupType type, PageCriteria pageCriteria) {
+<span class="fc" id="L44">    Specification&lt;GroupEntity&gt; specification =</span>
+<span class="fc" id="L45">        Specification.where(GroupSpecification.withInstitutionId(institutionId))</span>
+<span class="fc" id="L46">            .and(GroupSpecification.withNameContaining(keyword))</span>
+<span class="fc" id="L47">            .and(GroupSpecification.withType(type));</span>
+<span class="fc" id="L48">    PageRequest pageRequest =</span>
+<span class="fc" id="L49">        PageRequest.of(</span>
+<span class="fc" id="L50">            pageCriteria.page(),</span>
+<span class="fc" id="L51">            pageCriteria.pageSize(),</span>
+<span class="fc" id="L52">            Sort.by(Sort.Order.asc(&quot;name&quot;).ignoreCase()));</span>
+
+<span class="fc" id="L54">    return findAll(specification, pageRequest);</span>
   }
 
   @Override
   public List&lt;Group&gt; findAllByParentIds(Collection&lt;UUID&gt; parentIds) {
-<span class="fc" id="L52">    return findAll(GroupSpecification.withParentIds(parentIds));</span>
+<span class="fc" id="L59">    return findAll(GroupSpecification.withParentIds(parentIds));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
