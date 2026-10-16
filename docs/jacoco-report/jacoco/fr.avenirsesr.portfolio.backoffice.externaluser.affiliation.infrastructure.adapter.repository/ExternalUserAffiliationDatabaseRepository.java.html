@@ -41,7 +41,7 @@ public class ExternalUserAffiliationDatabaseRepository
 
   @Override
   public List&lt;ExternalUserAffiliation&gt; findAllByExternalUserId(UUID externalUserId) {
-<span class="nc" id="L44">    return findAll(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId));</span>
+<span class="fc" id="L44">    return findAll(ExternalUserAffiliationSpecification.withExternalUserId(externalUserId));</span>
   }
 
   @Override

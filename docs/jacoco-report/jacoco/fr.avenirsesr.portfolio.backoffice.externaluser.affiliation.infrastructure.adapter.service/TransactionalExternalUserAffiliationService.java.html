@@ -6,6 +6,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.List;
 import java.util.Map;
@@ -25,46 +26,51 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Transactional
   public ExternalUserAffiliation addAffiliation(
       UUID externalUserId, UUID institutionId, UUID groupId, EUserCategory category) {
-<span class="fc" id="L28">    return delegate.addAffiliation(externalUserId, institutionId, groupId, category);</span>
+<span class="fc" id="L29">    return delegate.addAffiliation(externalUserId, institutionId, groupId, category);</span>
   }
 
   @Override
   @Transactional
   public void removeAffiliation(UUID externalUserId, UUID affiliationId) {
-<span class="nc" id="L34">    delegate.removeAffiliation(externalUserId, affiliationId);</span>
-<span class="nc" id="L35">  }</span>
+<span class="nc" id="L35">    delegate.removeAffiliation(externalUserId, affiliationId);</span>
+<span class="nc" id="L36">  }</span>
 
   @Override
   public List&lt;ExternalUserAffiliation&gt; getAffiliations(UUID externalUserId) {
-<span class="nc" id="L39">    return delegate.getAffiliations(externalUserId);</span>
+<span class="nc" id="L40">    return delegate.getAffiliations(externalUserId);</span>
   }
 
   @Override
   public Map&lt;UUID, Integer&gt; countExternalUsersByGroupIds(List&lt;UUID&gt; groupIds) {
-<span class="fc" id="L44">    return delegate.countExternalUsersByGroupIds(groupIds);</span>
+<span class="fc" id="L45">    return delegate.countExternalUsersByGroupIds(groupIds);</span>
   }
 
   @Override
   @Transactional
   public ExternalUserAffiliationImportSummary createAll(
       List&lt;ExternalUserAffiliationData&gt; affiliations) {
-<span class="nc" id="L51">    return delegate.createAll(affiliations);</span>
+<span class="nc" id="L52">    return delegate.createAll(affiliations);</span>
+  }
+
+  @Override
+  public boolean isAffiliated(ExternalUser externalUser, UUID institutionId) {
+<span class="fc" id="L57">    return delegate.isAffiliated(externalUser, institutionId);</span>
   }
 
   @Override
   public boolean staffHasAccess(
       String eppn, List&lt;UUID&gt; targetInstitutionIds, List&lt;UUID&gt; targetGroupIds) {
-<span class="nc" id="L57">    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);</span>
+<span class="nc" id="L63">    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);</span>
   }
 
   @Override
   public ExternalUserAffiliationScope studentScope(String eppn) {
-<span class="nc" id="L62">    return delegate.studentScope(eppn);</span>
+<span class="nc" id="L68">    return delegate.studentScope(eppn);</span>
   }
 
   @Override
   public StaffAffiliationScope staffScope() {
-<span class="fc" id="L67">    return delegate.staffScope();</span>
+<span class="fc" id="L73">    return delegate.staffScope();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

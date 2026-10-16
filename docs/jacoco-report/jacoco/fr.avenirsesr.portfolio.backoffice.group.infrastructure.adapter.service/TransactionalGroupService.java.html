@@ -78,18 +78,23 @@ public class TransactionalGroupService implements GroupService {
   }
 
   @Override
+  public List&lt;Group&gt; findSubGroupsOf(UUID groupId) {
+<span class="fc" id="L82">    return delegate.findSubGroupsOf(groupId);</span>
+  }
+
+  @Override
   public boolean staffHasAccess(List&lt;UUID&gt; affiliatedIds, List&lt;UUID&gt; targetIds) {
-<span class="nc" id="L82">    return delegate.staffHasAccess(affiliatedIds, targetIds);</span>
+<span class="nc" id="L87">    return delegate.staffHasAccess(affiliatedIds, targetIds);</span>
   }
 
   @Override
   public List&lt;UUID&gt; studentAccessibleIds(List&lt;UUID&gt; affiliatedIds) {
-<span class="nc" id="L87">    return delegate.studentAccessibleIds(affiliatedIds);</span>
+<span class="nc" id="L92">    return delegate.studentAccessibleIds(affiliatedIds);</span>
   }
 
   @Override
   public void delete(UUID id) {
-<span class="fc" id="L92">    delegate.delete(id);</span>
-<span class="fc" id="L93">  }</span>
+<span class="fc" id="L97">    delegate.delete(id);</span>
+<span class="fc" id="L98">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

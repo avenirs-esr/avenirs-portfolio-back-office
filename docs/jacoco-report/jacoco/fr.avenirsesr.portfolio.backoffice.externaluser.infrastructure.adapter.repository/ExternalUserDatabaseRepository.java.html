@@ -41,8 +41,8 @@ public class ExternalUserDatabaseRepository
 
   @Override
   public Map&lt;UUID, Integer&gt; countAllByGroupIds(Collection&lt;UUID&gt; groupIds) {
-<span class="pc bpc" id="L44" title="2 of 4 branches missed.">    if (groupIds == null || groupIds.isEmpty()) {</span>
-<span class="nc" id="L45">      return Map.of();</span>
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">    if (groupIds == null || groupIds.isEmpty()) {</span>
+<span class="fc" id="L45">      return Map.of();</span>
     }
 
 <span class="fc" id="L48">    return jpaRepository.countAllByGroupIds(groupIds).stream()</span>
