@@ -1,7 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -37,6 +36,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
   private static final String BASE_PATH = "/back-office/groups";
   private static final String STAFF_EPPN = "ethan.perrin@university.com";
   private static final String OTHER_STAFF_EPPN = "camille.fournier@university.com";
+  private static final int SEEDED_GROUPE_A_USERS_COUNT = 80;
   private static final String SEEDED_PROGRAM_ID_SI_SCO = "10000001";
   private static final String SEEDED_PROGRAM_OPTION_ID_SI_SCO = "10000002";
   private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
@@ -73,7 +73,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
 
     @Test
     void thenItShouldReturnTheGroupsOfTheStaffInstitutionSortedAlphabetically() throws Exception {
-      BddLogger.given("a staff of the Rennes institution and groups seeded in two institutions");
+      BddLogger.given("a staff attached to the Rennes institution, with groups in two of them");
 
       BddLogger.when("calling GET /back-office/groups");
       mockMvc
@@ -90,20 +90,24 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
           .andExpect(jsonPath("$.page.totalPages", is(1)));
 
       BddLogger.then(
-          "it should return only the groups of its primary institution, ordered by name");
+          "it should return only the groups of the institution it is attached to, ordered by"
+              + " name");
     }
 
     @Test
-    void thenItShouldReportNoMemberYet() throws Exception {
-      BddLogger.given("a staff of the Rennes institution");
+    void thenItShouldReturnTheNumberOfAffiliatedUsersOfEachGroup() throws Exception {
+      BddLogger.given("a student group holding affiliated users and two groups holding none");
 
       BddLogger.when("calling GET /back-office/groups");
       mockMvc
           .perform(asStaffUser(get(BASE_PATH), STAFF_EPPN).accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data[*].usersCount", everyItem(is(0))));
+          .andExpect(jsonPath("$.data[0].name", is("Groupe A")))
+          .andExpect(jsonPath("$.data[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)))
+          .andExpect(jsonPath("$.data[1].usersCount", is(0)))
+          .andExpect(jsonPath("$.data[2].usersCount", is(0)));
 
-      BddLogger.then("it should report a member count of 0, which is not wired yet");
+      BddLogger.then("it should report the count of distinct users affiliated to each group");
     }
 
     @Test
@@ -118,7 +122,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
           .andExpect(jsonPath("$.data[0].name", is("Groupe B")))
           .andExpect(jsonPath("$.data[1].name", is("Licence Mathematiques")));
 
-      BddLogger.then("it should return only the groups of its own institution");
+      BddLogger.then("it should return only the groups of the institution it is attached to");
     }
 
     @Test

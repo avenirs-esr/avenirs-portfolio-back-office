@@ -35,8 +35,7 @@ public interface GroupService {
 
   List<Group> updateAll(List<GroupData> groups);
 
-  /** Lists the groups of the primary institution the logged-in staff belongs to. */
-  PagedResult<Group> findAllOfStaffPrimaryInstitution(
+  PagedResult<Group> findAllOfStaffInstitution(
       String keyword, EGroupType type, PageCriteria pageCriteria);
 
   Group findById(UUID id);

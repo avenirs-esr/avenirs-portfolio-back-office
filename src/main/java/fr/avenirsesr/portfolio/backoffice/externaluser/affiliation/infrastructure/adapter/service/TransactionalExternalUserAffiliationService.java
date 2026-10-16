@@ -8,6 +8,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +40,8 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   }
 
   @Override
-  public int countExternalUsersByGroupId(UUID groupId) {
-    return delegate.countExternalUsersByGroupId(groupId);
+  public Map<UUID, Integer> countExternalUsersByGroupIds(List<UUID> groupIds) {
+    return delegate.countExternalUsersByGroupIds(groupIds);
   }
 
   @Override

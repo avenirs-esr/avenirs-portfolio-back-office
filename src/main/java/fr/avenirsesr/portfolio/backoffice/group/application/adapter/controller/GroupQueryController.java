@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper.GroupApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
@@ -10,6 +11,8 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupDTO;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupOverviewDTO;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupQueryController {
 
   private final GroupService groupService;
+  private final ExternalUserAffiliationService externalUserAffiliationService;
 
   @PreAuthorize("hasAuthority('group:read')")
   @GetMapping
@@ -47,12 +51,20 @@ public class GroupQueryController {
         type,
         pageCriteria);
 
-    PagedResult<Group> groups =
-        groupService.findAllOfStaffPrimaryInstitution(keyword, type, pageCriteria);
+    PagedResult<Group> groups = groupService.findAllOfStaffInstitution(keyword, type, pageCriteria);
+    List<Group> content = groups.content();
+    Map<UUID, Integer> usersCounts =
+        externalUserAffiliationService.countExternalUsersByGroupIds(
+            content.stream().map(Group::getId).toList());
 
     return ResponseEntity.ok(
         new PagedResponse<>(
-            groups.content().stream().map(GroupQueryController::toOverview).toList(),
+            content.stream()
+                .map(
+                    group ->
+                        GroupApplicationMapper.toGroupOverviewDTO(
+                            group, usersCounts.getOrDefault(group.getId(), 0)))
+                .toList(),
             PageInfoDTO.fromDomain(groups.pageInfo())));
   }
 
@@ -70,10 +82,5 @@ public class GroupQueryController {
     log.debug("Getting program of group for id: {}", id);
 
     return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findProgramOf(id)));
-  }
-
-  /** The member count is not wired yet, it is reported as 0 until its source is settled. */
-  private static GroupOverviewDTO toOverview(Group group) {
-    return GroupApplicationMapper.toGroupOverviewDTO(group, 0);
   }
 }

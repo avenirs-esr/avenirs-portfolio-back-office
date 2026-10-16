@@ -88,8 +88,8 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   }
 
   @Override
-  public int countExternalUsersByGroupId(UUID groupId) {
-    return externalUserRepository.countAllByGroupId(groupId);
+  public Map<UUID, Integer> countExternalUsersByGroupIds(List<UUID> groupIds) {
+    return externalUserRepository.countAllByGroupIds(groupIds);
   }
 
   @Override

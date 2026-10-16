@@ -7,6 +7,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ExternalUserAffiliationService {
@@ -18,7 +19,7 @@ public interface ExternalUserAffiliationService {
 
   List<ExternalUserAffiliation> getAffiliations(UUID externalUserId);
 
-  int countExternalUsersByGroupId(UUID groupId);
+  Map<UUID, Integer> countExternalUsersByGroupIds(List<UUID> groupIds);
 
   ExternalUserAffiliationImportSummary createAll(List<ExternalUserAffiliationData> affiliations);
 
