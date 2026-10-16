@@ -3,6 +3,8 @@ package fr.avenirsesr.portfolio.backoffice.group.domain.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupProgramCannotHaveParentException;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupProgramOptionParentMustBeProgramException;
@@ -16,12 +18,19 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.Gr
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageInfo;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +44,8 @@ class GroupServiceImplTest {
   @Mock private GroupRepository groupRepository;
 
   @Mock private InstitutionRepository institutionRepository;
+
+  @Mock private LoggedInExternalUserService loggedInExternalUserService;
 
   @InjectMocks private GroupServiceImpl service;
 
@@ -51,6 +62,19 @@ class GroupServiceImplTest {
           null);
   private final LocalDate startDate = LocalDate.of(2023, 9, 1);
   private final LocalDate endDate = LocalDate.of(2026, 8, 31);
+
+  private static ExternalUser staff(String institutionUAI) {
+    return ExternalUser.create(
+        "ethan.perrin@university.com",
+        "TEACH-EP-09",
+        EExternalSource.BACK_OFFICE,
+        institutionUAI,
+        Set.of(EUserCategory.STAFF),
+        "ethan.perrin@university.com",
+        "Ethan",
+        "Perrin",
+        EUserStatus.ACTIVE);
+  }
 
   @Test
   void shouldUpdateGroup_whenCreating_withAlreadyUsedIdSISco() {
@@ -627,8 +651,8 @@ class GroupServiceImplTest {
   }
 
   @Test
-  void shouldReturnAllGroups() {
-    BddLogger.given("groups in the repository");
+  void shouldReturnGroupsOfStaffPrimaryInstitution_whenListingThem() {
+    BddLogger.given("a logged-in staff belonging to a primary institution");
     Group group =
         Group.create(
             UUID.randomUUID(),
@@ -640,42 +664,60 @@ class GroupServiceImplTest {
             endDate,
             EGroupType.PROGRAM,
             null);
-    when(groupRepository.findAll(null, null, null, null, null)).thenReturn(List.of(group));
+    PageCriteria pageCriteria = new PageCriteria(0, 8);
+    PagedResult<Group> expected = new PagedResult<>(List.of(group), new PageInfo(0, 8, 1));
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff(institutionUAI));
+    when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
+    when(groupRepository.findAll(institutionId, "licence", EGroupType.PROGRAM, pageCriteria))
+        .thenReturn(expected);
 
-    BddLogger.when("fetching all groups");
-    List<Group> result = service.findAll(null, null, null, null, null);
+    BddLogger.when("listing the groups of its institution filtered by keyword and type");
+    PagedResult<Group> result =
+        service.findAllOfStaffPrimaryInstitution("licence", EGroupType.PROGRAM, pageCriteria);
 
-    BddLogger.then("it should return every group");
-    assertEquals(List.of(group), result);
+    BddLogger.then("it should return the paged groups of that institution");
+    assertEquals(expected, result);
   }
 
   @Test
-  void shouldReturnFilteredGroups_whenFindingAllWithFilters() {
-    BddLogger.given("groups in the repository and a set of filter criteria");
-    UUID parentId = UUID.randomUUID();
-    Group group =
-        Group.create(
+  void shouldTargetParentInstitution_whenStaffBelongsToASecondaryInstitution() {
+    BddLogger.given("a logged-in staff belonging to a secondary institution");
+    String secondaryUAI = "0350002B";
+    Institution secondary =
+        Institution.create(
             UUID.randomUUID(),
-            "Parcours IA",
-            "10000002",
-            institution,
-            "11000002",
-            startDate,
-            endDate,
-            EGroupType.PROGRAM_OPTION,
-            null);
-    when(groupRepository.findAll(
-            institutionId, parentId, EGroupType.PROGRAM_OPTION, startDate, endDate))
-        .thenReturn(List.of(group));
+            "Universite de Rennes - IUT",
+            null,
+            secondaryUAI,
+            "siret",
+            EInstitutionType.SECONDARY,
+            institution);
+    PageCriteria pageCriteria = new PageCriteria(0, 8);
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff(secondaryUAI));
+    when(institutionRepository.findByUai(secondaryUAI)).thenReturn(Optional.of(secondary));
+    when(groupRepository.findAll(institutionId, null, null, pageCriteria))
+        .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
 
-    BddLogger.when("fetching groups filtered by institution, parent, type and date range");
-    List<Group> result =
-        service.findAll(institutionId, parentId, EGroupType.PROGRAM_OPTION, startDate, endDate);
+    BddLogger.when("listing the groups of its institution");
+    service.findAllOfStaffPrimaryInstitution(null, null, pageCriteria);
 
-    BddLogger.then("it should delegate the filters to the repository and return the match");
-    assertEquals(List.of(group), result);
-    verify(groupRepository)
-        .findAll(institutionId, parentId, EGroupType.PROGRAM_OPTION, startDate, endDate);
+    BddLogger.then("it should list the groups of the primary institution it depends on");
+    verify(groupRepository).findAll(institutionId, null, null, pageCriteria);
+  }
+
+  @Test
+  void shouldThrowInstitutionNotFound_whenStaffInstitutionIsUnknown() {
+    BddLogger.given("a logged-in staff referencing an unknown institution");
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff("9999999Z"));
+    when(institutionRepository.findByUai("9999999Z")).thenReturn(Optional.empty());
+
+    BddLogger.when("listing the groups of its institution");
+    PageCriteria pageCriteria = new PageCriteria(0, 8);
+
+    BddLogger.then("it should fail with an institution not found error");
+    assertThrows(
+        InstitutionNotFoundException.class,
+        () -> service.findAllOfStaffPrimaryInstitution(null, null, pageCriteria));
   }
 
   @Test

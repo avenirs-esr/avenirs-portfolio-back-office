@@ -4,6 +4,7 @@ import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.service.GroupServiceImpl;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +14,11 @@ import org.springframework.context.annotation.Configuration;
 public class GroupServiceConfig {
   private final GroupRepository groupRepository;
   private final InstitutionRepository institutionRepository;
+  private final LoggedInExternalUserService loggedInExternalUserService;
 
   @Bean
   public GroupService groupService() {
     return new TransactionalGroupService(
-        new GroupServiceImpl(groupRepository, institutionRepository));
+        new GroupServiceImpl(groupRepository, institutionRepository, loggedInExternalUserService));
   }
 }

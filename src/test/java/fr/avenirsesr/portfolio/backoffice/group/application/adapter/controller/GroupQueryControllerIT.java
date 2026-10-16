@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -11,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
@@ -36,16 +36,10 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
 
   private static final String BASE_PATH = "/back-office/groups";
   private static final String STAFF_EPPN = "ethan.perrin@university.com";
+  private static final String OTHER_STAFF_EPPN = "camille.fournier@university.com";
   private static final String SEEDED_PROGRAM_ID_SI_SCO = "10000001";
   private static final String SEEDED_PROGRAM_OPTION_ID_SI_SCO = "10000002";
   private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
-  private static final String SEEDED_OTHER_PROGRAM_ID_SI_SCO = "10000004";
-  private static final String SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO = "10000005";
-  private static final String SEEDED_INSTITUTION_UAI = "0350001A";
-  private static final String SEEDED_OTHER_INSTITUTION_UAI = "0330001C";
-
-  private UUID institutionId;
-  private UUID otherInstitutionId;
 
   @Autowired private MockMvc mockMvc;
   @Autowired private GroupRepository groupRepository;
@@ -54,13 +48,8 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
   private String apiKeyValue;
 
   @BeforeAll
-  void setup(
-      @Autowired SeederRunner seederRunner,
-      @Autowired InstitutionRepository institutionRepository) {
+  void setup(@Autowired SeederRunner seederRunner) {
     seederRunner.run();
-    institutionId = institutionRepository.findByUai(SEEDED_INSTITUTION_UAI).orElseThrow().getId();
-    otherInstitutionId =
-        institutionRepository.findByUai(SEEDED_OTHER_INSTITUTION_UAI).orElseThrow().getId();
   }
 
   private UUID groupIdOf(String idSISco) {
@@ -68,13 +57,14 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
   }
 
   /** Authenticates the request as a logged-in staff granted the group read permission. */
-  private static MockHttpServletRequestBuilder asStaffUser(MockHttpServletRequestBuilder builder) {
+  private static MockHttpServletRequestBuilder asStaffUser(
+      MockHttpServletRequestBuilder builder, String eppn) {
     return builder
         .header("X-Forwarded-For", "203.0.113.10")
         .with(
             authentication(
                 new HmacAuthenticationToken(
-                    STAFF_EPPN,
+                    eppn,
                     List.of(new SimpleGrantedAuthority(EPermission.PERM_GROUP_READ.authority())))));
   }
 
@@ -82,120 +72,111 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
   class WhenGettingGroups {
 
     @Test
-    void thenItShouldReturnOnlyGroupsOfInstitution_whenFilteringByInstitutionId() throws Exception {
-      BddLogger.given("groups seeded across two institutions");
+    void thenItShouldReturnTheGroupsOfTheStaffInstitutionSortedAlphabetically() throws Exception {
+      BddLogger.given("a staff of the Rennes institution and groups seeded in two institutions");
 
-      BddLogger.when("calling GET /back-office/groups filtered by institutionId");
+      BddLogger.when("calling GET /back-office/groups");
       mockMvc
-          .perform(
-              asStaffUser(get(BASE_PATH))
-                  .param("institutionId", otherInstitutionId.toString())
-                  .accept(MediaType.APPLICATION_JSON))
+          .perform(asStaffUser(get(BASE_PATH), STAFF_EPPN).accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$", hasSize(2)))
-          .andExpect(
-              jsonPath("$[*].idSISco")
-                  .value(
-                      containsInAnyOrder(
-                          SEEDED_OTHER_PROGRAM_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
+          .andExpect(jsonPath("$.data", hasSize(3)))
+          .andExpect(jsonPath("$.data[0].name", is("Groupe A")))
+          .andExpect(jsonPath("$.data[1].name", is("Licence Informatique")))
+          .andExpect(jsonPath("$.data[2].name", is("Licence Informatique - Parcours IA")))
+          .andExpect(jsonPath("$.data[2].type", is("PROGRAM_OPTION")))
+          .andExpect(jsonPath("$.data[2].parentName", is("Licence Informatique")))
+          .andExpect(jsonPath("$.page.page", is(0)))
+          .andExpect(jsonPath("$.page.totalElements", is(3)))
+          .andExpect(jsonPath("$.page.totalPages", is(1)));
 
-      BddLogger.then("it should return only the groups belonging to that institution");
+      BddLogger.then(
+          "it should return only the groups of its primary institution, ordered by name");
     }
 
     @Test
-    void thenItShouldReturnOnlyChildGroups_whenFilteringByParentId() throws Exception {
-      BddLogger.given("a seeded program used as the parent of a program option");
-      UUID parentId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+    void thenItShouldReportNoMemberYet() throws Exception {
+      BddLogger.given("a staff of the Rennes institution");
 
-      BddLogger.when("calling GET /back-office/groups filtered by parentId");
+      BddLogger.when("calling GET /back-office/groups");
+      mockMvc
+          .perform(asStaffUser(get(BASE_PATH), STAFF_EPPN).accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[*].usersCount", everyItem(is(0))));
+
+      BddLogger.then("it should report a member count of 0, which is not wired yet");
+    }
+
+    @Test
+    void thenItShouldReturnTheGroupsOfTheOtherInstitution_whenAnotherStaffAsks() throws Exception {
+      BddLogger.given("a staff of the Bordeaux institution");
+
+      BddLogger.when("calling GET /back-office/groups");
+      mockMvc
+          .perform(asStaffUser(get(BASE_PATH), OTHER_STAFF_EPPN).accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data", hasSize(2)))
+          .andExpect(jsonPath("$.data[0].name", is("Groupe B")))
+          .andExpect(jsonPath("$.data[1].name", is("Licence Mathematiques")));
+
+      BddLogger.then("it should return only the groups of its own institution");
+    }
+
+    @Test
+    void thenItShouldReturnMatchingGroups_whenFilteringByKeyword() throws Exception {
+      BddLogger.given("a staff of the Rennes institution");
+
+      BddLogger.when("calling GET /back-office/groups with a keyword");
       mockMvc
           .perform(
-              asStaffUser(get(BASE_PATH))
-                  .param("parentId", parentId.toString())
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "licence")
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$", hasSize(1)))
-          .andExpect(jsonPath("$[0].idSISco", is(SEEDED_PROGRAM_OPTION_ID_SI_SCO)));
+          .andExpect(jsonPath("$.data", hasSize(2)))
+          .andExpect(
+              jsonPath("$.data[*].name")
+                  .value(contains("Licence Informatique", "Licence Informatique - Parcours IA")));
 
-      BddLogger.then("it should return only the direct children of that group");
+      BddLogger.then("it should return only the groups whose name contains the keyword");
     }
 
     @Test
     void thenItShouldReturnOnlyGroupsOfType_whenFilteringByType() throws Exception {
-      BddLogger.given("student groups seeded across two institutions");
+      BddLogger.given("a staff of the Rennes institution");
 
       BddLogger.when("calling GET /back-office/groups filtered by type");
       mockMvc
           .perform(
-              asStaffUser(get(BASE_PATH))
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
                   .param("type", EGroupType.STUDENT_GROUP.name())
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(
-              jsonPath("$[*].idSISco")
-                  .value(
-                      containsInAnyOrder(
-                          SEEDED_STUDENT_GROUP_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
+          .andExpect(jsonPath("$.data", hasSize(1)))
+          .andExpect(jsonPath("$.data[0].name", is("Groupe A")));
 
-      BddLogger.then("it should return only groups of that type");
+      BddLogger.then("it should return only the groups of that type");
     }
 
     @Test
-    void thenItShouldReturnOnlyGroupsWithinDateRange_whenFilteringByStartDateAndEndDate()
-        throws Exception {
-      BddLogger.given("groups seeded with different start and end dates");
+    void thenItShouldReturnTheRequestedPage_whenPaginating() throws Exception {
+      BddLogger.given("a staff of the Rennes institution owning three groups");
 
-      BddLogger.when("calling GET /back-office/groups filtered by startDate and endDate");
+      BddLogger.when("calling GET /back-office/groups with a page size of two");
       mockMvc
           .perform(
-              asStaffUser(get(BASE_PATH))
-                  .param("startDate", "2024-09-01")
-                  .param("endDate", "2025-06-30")
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("page", "1")
+                  .param("pageSize", "2")
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(
-              jsonPath("$[*].idSISco")
-                  .value(
-                      containsInAnyOrder(
-                          SEEDED_STUDENT_GROUP_ID_SI_SCO, SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO)));
+          .andExpect(jsonPath("$.data", hasSize(1)))
+          .andExpect(jsonPath("$.data[0].name", is("Licence Informatique - Parcours IA")))
+          .andExpect(jsonPath("$.page.page", is(1)))
+          .andExpect(jsonPath("$.page.pageSize", is(2)))
+          .andExpect(jsonPath("$.page.totalElements", is(3)))
+          .andExpect(jsonPath("$.page.totalPages", is(2)));
 
-      BddLogger.then(
-          "it should return only groups whose start date and end date fall within the range");
-    }
-
-    @Test
-    void thenItShouldReturnMatchingGroup_whenCombiningMultipleFilters() throws Exception {
-      BddLogger.given("a program option belonging to the seeded institution");
-
-      BddLogger.when("calling GET /back-office/groups filtered by institutionId and type together");
-      mockMvc
-          .perform(
-              asStaffUser(get(BASE_PATH))
-                  .param("institutionId", institutionId.toString())
-                  .param("type", EGroupType.PROGRAM_OPTION.name())
-                  .accept(MediaType.APPLICATION_JSON))
-          .andExpect(status().isOk())
-          .andExpect(jsonPath("$", hasSize(1)))
-          .andExpect(jsonPath("$[0].idSISco", is(SEEDED_PROGRAM_OPTION_ID_SI_SCO)));
-
-      BddLogger.then("it should return only the group matching every filter");
-    }
-
-    @Test
-    void thenItShouldReturnEmptyList_whenNoGroupMatchesTheFilters() throws Exception {
-      BddLogger.given("a filter combination matched by no seeded group");
-
-      BddLogger.when("calling GET /back-office/groups filtered by institutionId and type");
-      mockMvc
-          .perform(
-              asStaffUser(get(BASE_PATH))
-                  .param("institutionId", otherInstitutionId.toString())
-                  .param("type", EGroupType.PROGRAM_OPTION.name())
-                  .accept(MediaType.APPLICATION_JSON))
-          .andExpect(status().isOk())
-          .andExpect(jsonPath("$", hasSize(0)));
-
-      BddLogger.then("it should return an empty list");
+      BddLogger.then("it should return the second page and its page information");
     }
 
     @Test

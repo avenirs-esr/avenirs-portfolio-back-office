@@ -2,7 +2,6 @@ package fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.specific
 
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model.GroupEntity;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,14 +13,6 @@ public class GroupSpecification {
     }
     return (root, query, criteriaBuilder) ->
         criteriaBuilder.equal(root.get("institution").get("id"), institutionId);
-  }
-
-  public static Specification<GroupEntity> withParentId(UUID parentId) {
-    if (parentId == null) {
-      return Specification.unrestricted();
-    }
-    return (root, query, criteriaBuilder) ->
-        criteriaBuilder.equal(root.get("parent").get("id"), parentId);
   }
 
   public static Specification<GroupEntity> withParentIds(Collection<UUID> parentIds) {
@@ -38,19 +29,12 @@ public class GroupSpecification {
     return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("type"), type);
   }
 
-  public static Specification<GroupEntity> withStartDate(LocalDate startDate) {
-    if (startDate == null) {
+  public static Specification<GroupEntity> withNameContaining(String keyword) {
+    if (keyword == null || keyword.isBlank()) {
       return Specification.unrestricted();
     }
+    String pattern = "%" + keyword.trim().toLowerCase() + "%";
     return (root, query, criteriaBuilder) ->
-        criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), startDate);
-  }
-
-  public static Specification<GroupEntity> withEndDate(LocalDate endDate) {
-    if (endDate == null) {
-      return Specification.unrestricted();
-    }
-    return (root, query, criteriaBuilder) ->
-        criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), endDate);
+        criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), pattern);
   }
 }
