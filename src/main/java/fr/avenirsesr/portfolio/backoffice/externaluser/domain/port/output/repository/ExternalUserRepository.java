@@ -2,7 +2,9 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repos
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.common.data.domain.port.output.repository.GenericRepositoryPort;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,5 +19,5 @@ public interface ExternalUserRepository extends GenericRepositoryPort<ExternalUs
 
   int countAll();
 
-  int countAllByGroupId(UUID groupId);
+  Map<UUID, Integer> countAllByGroupIds(Collection<UUID> groupIds);
 }

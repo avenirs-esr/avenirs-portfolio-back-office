@@ -15,7 +15,6 @@ public interface GroupRepository extends GenericRepositoryPort<Group> {
 
   Optional<Group> findByIdSISco(String idSISco);
 
-  /** Lists the groups of an institution, sorted alphabetically by name. */
   PagedResult<Group> findAll(
       UUID institutionId, String keyword, EGroupType type, PageCriteria pageCriteria);
 

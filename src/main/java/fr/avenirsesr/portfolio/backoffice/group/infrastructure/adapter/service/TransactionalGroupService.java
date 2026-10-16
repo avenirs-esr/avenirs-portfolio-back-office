@@ -62,9 +62,9 @@ public class TransactionalGroupService implements GroupService {
   }
 
   @Override
-  public PagedResult<Group> findAllOfStaffPrimaryInstitution(
+  public PagedResult<Group> findAllOfStaffInstitution(
       String keyword, EGroupType type, PageCriteria pageCriteria) {
-    return delegate.findAllOfStaffPrimaryInstitution(keyword, type, pageCriteria);
+    return delegate.findAllOfStaffInstitution(keyword, type, pageCriteria);
   }
 
   @Override

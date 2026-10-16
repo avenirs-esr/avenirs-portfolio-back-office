@@ -651,8 +651,8 @@ class GroupServiceImplTest {
   }
 
   @Test
-  void shouldReturnGroupsOfStaffPrimaryInstitution_whenListingThem() {
-    BddLogger.given("a logged-in staff belonging to a primary institution");
+  void shouldReturnGroupsOfStaffInstitution_whenListingThem() {
+    BddLogger.given("a logged-in staff attached to an institution");
     Group group =
         Group.create(
             UUID.randomUUID(),
@@ -673,19 +673,20 @@ class GroupServiceImplTest {
 
     BddLogger.when("listing the groups of its institution filtered by keyword and type");
     PagedResult<Group> result =
-        service.findAllOfStaffPrimaryInstitution("licence", EGroupType.PROGRAM, pageCriteria);
+        service.findAllOfStaffInstitution("licence", EGroupType.PROGRAM, pageCriteria);
 
     BddLogger.then("it should return the paged groups of that institution");
     assertEquals(expected, result);
   }
 
   @Test
-  void shouldTargetParentInstitution_whenStaffBelongsToASecondaryInstitution() {
-    BddLogger.given("a logged-in staff belonging to a secondary institution");
+  void shouldTargetTheSecondaryInstitution_whenStaffIsAttachedToIt() {
+    BddLogger.given("a logged-in staff attached to a secondary institution");
     String secondaryUAI = "0350002B";
+    UUID secondaryId = UUID.randomUUID();
     Institution secondary =
         Institution.create(
-            UUID.randomUUID(),
+            secondaryId,
             "Universite de Rennes - IUT",
             null,
             secondaryUAI,
@@ -695,14 +696,14 @@ class GroupServiceImplTest {
     PageCriteria pageCriteria = new PageCriteria(0, 8);
     when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff(secondaryUAI));
     when(institutionRepository.findByUai(secondaryUAI)).thenReturn(Optional.of(secondary));
-    when(groupRepository.findAll(institutionId, null, null, pageCriteria))
+    when(groupRepository.findAll(secondaryId, null, null, pageCriteria))
         .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
 
     BddLogger.when("listing the groups of its institution");
-    service.findAllOfStaffPrimaryInstitution(null, null, pageCriteria);
+    service.findAllOfStaffInstitution(null, null, pageCriteria);
 
-    BddLogger.then("it should list the groups of the primary institution it depends on");
-    verify(groupRepository).findAll(institutionId, null, null, pageCriteria);
+    BddLogger.then("it should list the groups of that secondary institution, not of its parent");
+    verify(groupRepository).findAll(secondaryId, null, null, pageCriteria);
   }
 
   @Test
@@ -717,7 +718,7 @@ class GroupServiceImplTest {
     BddLogger.then("it should fail with an institution not found error");
     assertThrows(
         InstitutionNotFoundException.class,
-        () -> service.findAllOfStaffPrimaryInstitution(null, null, pageCriteria));
+        () -> service.findAllOfStaffInstitution(null, null, pageCriteria));
   }
 
   @Test
