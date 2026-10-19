@@ -58,7 +58,7 @@ public class GroupQueryController {
 <span class="fc" id="L58">    PagedResult&lt;Group&gt; groups = groupService.findAllOfStaffInstitution(keyword, type, pageCriteria);</span>
 <span class="fc" id="L59">    List&lt;Group&gt; content = groups.content();</span>
 <span class="fc" id="L60">    Map&lt;UUID, Integer&gt; usersCounts =</span>
-<span class="fc" id="L61">        externalUserAffiliationService.countExternalUsersByGroupIds(</span>
+<span class="fc" id="L61">        externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(</span>
 <span class="fc" id="L62">            content.stream().map(Group::getId).toList());</span>
 
 <span class="fc" id="L64">    return ResponseEntity.ok(</span>
@@ -89,7 +89,7 @@ public class GroupQueryController {
 
 <span class="fc" id="L90">    List&lt;Group&gt; subGroups = groupService.findSubGroupsOf(id);</span>
 <span class="fc" id="L91">    Map&lt;UUID, Integer&gt; usersCounts =</span>
-<span class="fc" id="L92">        externalUserAffiliationService.countExternalUsersByGroupIds(</span>
+<span class="fc" id="L92">        externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(</span>
 <span class="fc" id="L93">            subGroups.stream().map(Group::getId).toList());</span>
 
 <span class="fc" id="L95">    return ResponseEntity.ok(</span>

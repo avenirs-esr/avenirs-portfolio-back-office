@@ -88,22 +88,22 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   }
 
   @Override
-  public Map&lt;UUID, Integer&gt; countExternalUsersByGroupIds(List&lt;UUID&gt; groupIds) {
-<span class="fc" id="L92">    return externalUserRepository.countAllByGroupIds(groupIds);</span>
+  public Map&lt;UUID, Integer&gt; countExternalUsersByGroupIdsWithSubGroups(List&lt;UUID&gt; groupIds) {
+<span class="fc" id="L92">    return externalUserRepository.countAllByGroupIdsWithSubGroups(groupIds);</span>
   }
 
   @Override
   public ExternalUserAffiliationImportSummary createAll(
       List&lt;ExternalUserAffiliationData&gt; affiliations) {
-<span class="nc" id="L98">    List&lt;ExternalUserAffiliation&gt; created = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L99">    List&lt;ExternalUserAffiliation&gt; existing = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L100">    List&lt;ExternalUserAffiliationImportFailure&gt; failed = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L98">    List&lt;ExternalUserAffiliation&gt; created = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L99">    List&lt;ExternalUserAffiliation&gt; existing = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L100">    List&lt;ExternalUserAffiliationImportFailure&gt; failed = new ArrayList&lt;&gt;();</span>
 
-<span class="nc bnc" id="L102" title="All 2 branches missed.">    for (ExternalUserAffiliationData data : affiliations) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">    for (ExternalUserAffiliationData data : affiliations) {</span>
       try {
-<span class="nc" id="L104">        UpsertResult result = upsertByNaturalKeys(data);</span>
-<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (result.created()) {</span>
-<span class="nc" id="L106">          created.add(result.affiliation());</span>
+<span class="fc" id="L104">        UpsertResult result = upsertByNaturalKeys(data);</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (result.created()) {</span>
+<span class="fc" id="L106">          created.add(result.affiliation());</span>
         } else {
 <span class="nc" id="L108">          existing.add(result.affiliation());</span>
         }
@@ -123,10 +123,10 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
 <span class="nc" id="L123">                data.groupIdSISco(),</span>
 <span class="nc" id="L124">                data.category(),</span>
 <span class="nc" id="L125">                e.getMessage()));</span>
-<span class="nc" id="L126">      }</span>
-<span class="nc" id="L127">    }</span>
+<span class="fc" id="L126">      }</span>
+<span class="fc" id="L127">    }</span>
 
-<span class="nc" id="L129">    return new ExternalUserAffiliationImportSummary(created, existing, failed);</span>
+<span class="fc" id="L129">    return new ExternalUserAffiliationImportSummary(created, existing, failed);</span>
   }
 
   @Override
@@ -268,22 +268,22 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
    * creates the affiliation.
    */
   private UpsertResult upsertByNaturalKeys(ExternalUserAffiliationData data) {
-<span class="nc" id="L271">    ExternalUser externalUser =</span>
+<span class="fc" id="L271">    ExternalUser externalUser =</span>
         externalUserRepository
-<span class="nc" id="L273">            .findByEppn(data.eppn())</span>
-<span class="nc" id="L274">            .orElseThrow(ExternalUserNotFoundException::new);</span>
-<span class="nc" id="L275">    Institution institution =</span>
+<span class="fc" id="L273">            .findByEppn(data.eppn())</span>
+<span class="fc" id="L274">            .orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="fc" id="L275">    Institution institution =</span>
         institutionRepository
-<span class="nc" id="L277">            .findByUai(data.institutionUAI())</span>
-<span class="nc" id="L278">            .orElseThrow(InstitutionNotFoundException::new);</span>
+<span class="fc" id="L277">            .findByUai(data.institutionUAI())</span>
+<span class="fc" id="L278">            .orElseThrow(InstitutionNotFoundException::new);</span>
     Group group =
-<span class="nc bnc" id="L280" title="All 2 branches missed.">        data.groupIdSISco() != null</span>
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">        data.groupIdSISco() != null</span>
             ? groupRepository
-<span class="nc" id="L282">                .findByIdSISco(data.groupIdSISco())</span>
-<span class="nc" id="L283">                .orElseThrow(GroupNotFoundException::new)</span>
-<span class="nc" id="L284">            : null;</span>
+<span class="fc" id="L282">                .findByIdSISco(data.groupIdSISco())</span>
+<span class="fc" id="L283">                .orElseThrow(GroupNotFoundException::new)</span>
+<span class="pc" id="L284">            : null;</span>
 
-<span class="nc" id="L286">    return findOrCreate(externalUser, institution, group, data.category());</span>
+<span class="fc" id="L286">    return findOrCreate(externalUser, institution, group, data.category());</span>
   }
 
   private UpsertResult findOrCreate(

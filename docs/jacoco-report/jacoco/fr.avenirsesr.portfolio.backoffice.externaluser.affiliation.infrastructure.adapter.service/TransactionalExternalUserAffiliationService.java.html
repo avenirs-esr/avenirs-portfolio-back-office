@@ -41,15 +41,15 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   }
 
   @Override
-  public Map&lt;UUID, Integer&gt; countExternalUsersByGroupIds(List&lt;UUID&gt; groupIds) {
-<span class="fc" id="L45">    return delegate.countExternalUsersByGroupIds(groupIds);</span>
+  public Map&lt;UUID, Integer&gt; countExternalUsersByGroupIdsWithSubGroups(List&lt;UUID&gt; groupIds) {
+<span class="fc" id="L45">    return delegate.countExternalUsersByGroupIdsWithSubGroups(groupIds);</span>
   }
 
   @Override
   @Transactional
   public ExternalUserAffiliationImportSummary createAll(
       List&lt;ExternalUserAffiliationData&gt; affiliations) {
-<span class="nc" id="L52">    return delegate.createAll(affiliations);</span>
+<span class="fc" id="L52">    return delegate.createAll(affiliations);</span>
   }
 
   @Override
