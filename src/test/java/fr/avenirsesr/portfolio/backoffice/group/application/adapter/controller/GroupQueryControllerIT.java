@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -10,8 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
@@ -43,9 +48,13 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
   private static final String SEEDED_PARENT_NAME = "Licence Informatique";
   private static final String SEEDED_INSTITUTION_ID = "14baa158-22f9-391a-bf7d-676022151b65";
   private static final String SEEDED_INSTITUTION_NAME = "Université de Rennes";
+  private static final String RENNES_UAI = "0350001A";
+  private static final String GROUPE_A_STUDENT_EPPN = "arthur.lambert@university.com";
+  private static final String UNGROUPED_STAFF_EPPN = "zoe.cousin@university.com";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private GroupRepository groupRepository;
+  @Autowired private ExternalUserAffiliationService externalUserAffiliationService;
 
   @Value("${security.authentication.api-key}")
   private String apiKeyValue;
@@ -57,6 +66,19 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
 
   private UUID groupIdOf(String idSISco) {
     return groupRepository.findByIdSISco(idSISco).orElseThrow().getId();
+  }
+
+  /**
+   * Adds affiliations for the duration of the test, which the enclosing transaction rolls back.
+   * Imports report their failures instead of throwing, so the summary is asserted: a rejected
+   * affiliation would otherwise leave the test asserting the untouched seeded counts.
+   */
+  private void affiliate(ExternalUserAffiliationData... affiliations) {
+    ExternalUserAffiliationImportSummary summary =
+        externalUserAffiliationService.createAll(List.of(affiliations));
+
+    assertThat(summary.failed()).isEmpty();
+    assertThat(summary.created()).hasSize(affiliations.length);
   }
 
   /** Authenticates the request as a logged-in staff granted the group read permission. */
@@ -99,7 +121,9 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
 
     @Test
     void thenItShouldReturnTheNumberOfAffiliatedUsersOfEachGroup() throws Exception {
-      BddLogger.given("a student group holding affiliated users and two groups holding none");
+      BddLogger.given(
+          "a student group holding affiliated users, below a program option itself below a"
+              + " program, neither holding any affiliated user of its own");
 
       BddLogger.when("calling GET /back-office/groups");
       mockMvc
@@ -107,10 +131,40 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.data[0].name", is("Groupe A")))
           .andExpect(jsonPath("$.data[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)))
-          .andExpect(jsonPath("$.data[1].usersCount", is(0)))
-          .andExpect(jsonPath("$.data[2].usersCount", is(0)));
+          .andExpect(jsonPath("$.data[1].name", is("Licence Informatique")))
+          .andExpect(jsonPath("$.data[1].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)))
+          .andExpect(jsonPath("$.data[2].name", is("Licence Informatique - Parcours IA")))
+          .andExpect(jsonPath("$.data[2].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
 
-      BddLogger.then("it should report the count of distinct users affiliated to each group");
+      BddLogger.then(
+          "it should report, for each group, the count of distinct users affiliated to it or to"
+              + " any of its descendants, however deep");
+    }
+
+    @Test
+    void thenItShouldCountSharedUsersOnce_whenAUserIsAffiliatedToAGroupAndItsAncestor()
+        throws Exception {
+      BddLogger.given(
+          "a student of Groupe A also affiliated to the program above it, and a staff affiliated"
+              + " to that program only");
+      affiliate(
+          new ExternalUserAffiliationData(
+              GROUPE_A_STUDENT_EPPN, RENNES_UAI, SEEDED_PROGRAM_ID_SI_SCO, EUserCategory.STUDENT),
+          new ExternalUserAffiliationData(
+              UNGROUPED_STAFF_EPPN, RENNES_UAI, SEEDED_PROGRAM_ID_SI_SCO, EUserCategory.STAFF));
+
+      BddLogger.when("calling GET /back-office/groups");
+      mockMvc
+          .perform(asStaffUser(get(BASE_PATH), STAFF_EPPN).accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[0].name", is("Groupe A")))
+          .andExpect(jsonPath("$.data[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)))
+          .andExpect(jsonPath("$.data[1].name", is("Licence Informatique")))
+          .andExpect(jsonPath("$.data[1].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT + 1)));
+
+      BddLogger.then(
+          "it should count the shared student once, so the program reports its sub-tree plus the"
+              + " staff only");
     }
 
     @Test
@@ -241,7 +295,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
             .andExpect(jsonPath("$.parentId", is(programId.toString())))
             .andExpect(jsonPath("$.parentName", is(SEEDED_PARENT_NAME)))
-            .andExpect(jsonPath("$.usersCount", is(0)));
+            .andExpect(jsonPath("$.usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
 
@@ -275,7 +329,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
             .andExpect(jsonPath("$.parentId", is(nullValue())))
             .andExpect(jsonPath("$.parentName", is(nullValue())))
-            .andExpect(jsonPath("$.usersCount", is(0)));
+            .andExpect(jsonPath("$.usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
 
@@ -367,7 +421,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
             .andExpect(jsonPath("$.parentId", is(nullValue())))
             .andExpect(jsonPath("$.parentName", is(nullValue())))
-            .andExpect(jsonPath("$.usersCount", is(0)));
+            .andExpect(jsonPath("$.usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
 
@@ -404,7 +458,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
             .andExpect(jsonPath("$.parentId", is(nullValue())))
             .andExpect(jsonPath("$.parentName", is(nullValue())))
-            .andExpect(jsonPath("$.usersCount", is(0)));
+            .andExpect(jsonPath("$.usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
 
@@ -488,7 +542,9 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
 
       @Test
       void thenItShouldReturnItsDirectChildrenOnly() throws Exception {
-        BddLogger.then("it should return the program option, not the student group below it");
+        BddLogger.then(
+            "it should list the program option only, not the student group below it, while still"
+                + " counting that student group's users in the program option count");
 
         response
             .andExpect(status().isOk())
@@ -497,7 +553,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$[0].name", is("Licence Informatique - Parcours IA")))
             .andExpect(jsonPath("$[0].type", is("PROGRAM_OPTION")))
             .andExpect(jsonPath("$[0].parentName", is(SEEDED_PARENT_NAME)))
-            .andExpect(jsonPath("$[0].usersCount", is(0)));
+            .andExpect(jsonPath("$[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
 

@@ -40,12 +40,12 @@ public class ExternalUserDatabaseRepository
   }
 
   @Override
-  public Map<UUID, Integer> countAllByGroupIds(Collection<UUID> groupIds) {
+  public Map<UUID, Integer> countAllByGroupIdsWithSubGroups(Collection<UUID> groupIds) {
     if (groupIds == null || groupIds.isEmpty()) {
       return Map.of();
     }
 
-    return jpaRepository.countAllByGroupIds(groupIds).stream()
+    return jpaRepository.countAllByGroupIdsWithSubGroups(groupIds).stream()
         .collect(
             Collectors.toMap(
                 GroupUsersCount::getGroupId, count -> Math.toIntExact(count.getUsersCount())));

@@ -19,5 +19,5 @@ public interface ExternalUserRepository extends GenericRepositoryPort<ExternalUs
 
   int countAll();
 
-  Map<UUID, Integer> countAllByGroupIds(Collection<UUID> groupIds);
+  Map<UUID, Integer> countAllByGroupIdsWithSubGroups(Collection<UUID> groupIds);
 }

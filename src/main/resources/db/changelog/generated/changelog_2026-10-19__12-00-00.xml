@@ -1,0 +1,25 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="iamgreendev" id="20261019120000-1">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_groups_parent_id" tableName="groups"/>
+            </not>
+        </preConditions>
+        <comment>Counting the users of a group walks its sub-tree down through parent_id, one join per level.</comment>
+        <createIndex indexName="idx_groups_parent_id" tableName="groups">
+            <column name="parent_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="iamgreendev" id="20261019120000-2">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_ext_user_affiliation_group_id" tableName="external_user_affiliation"/>
+            </not>
+        </preConditions>
+        <comment>That same count then joins the affiliations of every group of the sub-tree.</comment>
+        <createIndex indexName="idx_ext_user_affiliation_group_id" tableName="external_user_affiliation">
+            <column name="group_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
