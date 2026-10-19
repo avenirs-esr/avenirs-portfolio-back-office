@@ -64,7 +64,7 @@ public class GroupQueryController {
         groupService.findAllOfStaffInstitution(keyword, types, pageCriteria);
     List<Group> content = groups.content();
     Map<UUID, Integer> usersCounts =
-        externalUserAffiliationService.countExternalUsersByGroupIds(
+        externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(
             content.stream().map(Group::getId).toList());
 
     return ResponseEntity.ok(
@@ -85,7 +85,8 @@ public class GroupQueryController {
 
     Group group = groupService.findById(id);
     Map<UUID, Integer> usersCounts =
-        externalUserAffiliationService.countExternalUsersByGroupIds(List.of(group.getId()));
+        externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(
+            List.of(group.getId()));
     return ResponseEntity.ok(
         GroupApplicationMapper.toGroupDTO(group, usersCounts.getOrDefault(group.getId(), 0)));
   }
@@ -99,7 +100,7 @@ public class GroupQueryController {
 
     List<Group> subGroups = groupService.findSubGroupsOf(id);
     Map<UUID, Integer> usersCounts =
-        externalUserAffiliationService.countExternalUsersByGroupIds(
+        externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(
             subGroups.stream().map(Group::getId).toList());
 
     return ResponseEntity.ok(
@@ -118,7 +119,8 @@ public class GroupQueryController {
 
     Group program = groupService.findProgramOf(id);
     Map<UUID, Integer> usersCounts =
-        externalUserAffiliationService.countExternalUsersByGroupIds(List.of(program.getId()));
+        externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(
+            List.of(program.getId()));
 
     return ResponseEntity.ok(
         GroupApplicationMapper.toGroupDTO(program, usersCounts.getOrDefault(program.getId(), 0)));

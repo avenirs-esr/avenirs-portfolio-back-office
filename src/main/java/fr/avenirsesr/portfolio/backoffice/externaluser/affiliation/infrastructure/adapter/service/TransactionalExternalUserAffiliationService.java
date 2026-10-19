@@ -53,8 +53,8 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   }
 
   @Override
-  public Map<UUID, Integer> countExternalUsersByGroupIds(List<UUID> groupIds) {
-    return delegate.countExternalUsersByGroupIds(groupIds);
+  public Map<UUID, Integer> countExternalUsersByGroupIdsWithSubGroups(List<UUID> groupIds) {
+    return delegate.countExternalUsersByGroupIdsWithSubGroups(groupIds);
   }
 
   @Override

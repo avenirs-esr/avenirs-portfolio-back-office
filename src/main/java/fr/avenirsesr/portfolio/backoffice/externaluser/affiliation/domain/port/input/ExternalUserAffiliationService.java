@@ -29,7 +29,7 @@ public interface ExternalUserAffiliationService {
       List<UUID> groupIds,
       PageCriteria pageCriteria);
 
-  Map<UUID, Integer> countExternalUsersByGroupIds(List<UUID> groupIds);
+  Map<UUID, Integer> countExternalUsersByGroupIdsWithSubGroups(List<UUID> groupIds);
 
   ExternalUserAffiliationImportSummary createAll(List<ExternalUserAffiliationData> affiliations);
 
