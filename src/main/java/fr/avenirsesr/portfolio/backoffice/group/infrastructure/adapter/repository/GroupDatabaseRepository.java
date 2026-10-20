@@ -40,11 +40,11 @@ public class GroupDatabaseRepository extends GenericJpaRepositoryAdapter<Group, 
 
   @Override
   public PagedResult<Group> findAll(
-      UUID institutionId, String keyword, EGroupType type, PageCriteria pageCriteria) {
+      UUID institutionId, String keyword, List<EGroupType> types, PageCriteria pageCriteria) {
     Specification<GroupEntity> specification =
         Specification.where(GroupSpecification.withInstitutionId(institutionId))
             .and(GroupSpecification.withNameContaining(keyword))
-            .and(GroupSpecification.withType(type));
+            .and(GroupSpecification.withType(types));
     PageRequest pageRequest =
         PageRequest.of(
             pageCriteria.page(),

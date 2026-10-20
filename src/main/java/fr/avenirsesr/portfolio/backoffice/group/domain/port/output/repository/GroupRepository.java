@@ -16,7 +16,7 @@ public interface GroupRepository extends GenericRepositoryPort<Group> {
   Optional<Group> findByIdSISco(String idSISco);
 
   PagedResult<Group> findAll(
-      UUID institutionId, String keyword, EGroupType type, PageCriteria pageCriteria);
+      UUID institutionId, String keyword, List<EGroupType> types, PageCriteria pageCriteria);
 
   List<Group> findAllByParentIds(Collection<UUID> parentIds);
 }

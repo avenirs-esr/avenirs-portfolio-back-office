@@ -36,7 +36,7 @@ public interface GroupService {
   List<Group> updateAll(List<GroupData> groups);
 
   PagedResult<Group> findAllOfStaffInstitution(
-      String keyword, EGroupType type, PageCriteria pageCriteria);
+      String keyword, List<EGroupType> types, PageCriteria pageCriteria);
 
   Group findById(UUID id);
 

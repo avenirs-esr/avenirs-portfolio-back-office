@@ -152,7 +152,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
-                  .param("type", EGroupType.STUDENT_GROUP.name())
+                  .param("types", EGroupType.STUDENT_GROUP.name())
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.data", hasSize(1)))
