@@ -14,6 +14,9 @@ import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupDTO;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupOverviewDTO;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Read-only endpoints authenticated by login and guarded by permissions. Provisioning is exposed to
  * the institutions by {@link GroupProvisioningController}.
  */
-<span class="fc" id="L34">@Slf4j</span>
+<span class="fc" id="L37">@Slf4j</span>
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/groups&quot;)
@@ -45,83 +48,86 @@ public class GroupQueryController {
   @GetMapping
   public ResponseEntity&lt;PagedResponse&lt;GroupOverviewDTO&gt;&gt; getGroups(
       @RequestParam(required = false) String keyword,
-      @RequestParam(required = false) EGroupType type,
+      @Parameter(array = @ArraySchema(schema = @Schema(ref = &quot;#/components/schemas/EGroupType&quot;)))
+          @RequestParam(required = false)
+          List&lt;EGroupType&gt; types,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
-<span class="fc" id="L51">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
-<span class="fc" id="L52">    log.debug(</span>
-        &quot;Getting the groups of the logged-in staff institution (keyword: {}, type: {}) {}&quot;,
+<span class="fc" id="L56">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
+<span class="fc" id="L57">    log.debug(</span>
+        &quot;Getting the groups of the logged-in staff institution (keyword: {}, types: {}) {}&quot;,
         keyword,
-        type,
+        types,
         pageCriteria);
 
-<span class="fc" id="L58">    PagedResult&lt;Group&gt; groups = groupService.findAllOfStaffInstitution(keyword, type, pageCriteria);</span>
-<span class="fc" id="L59">    List&lt;Group&gt; content = groups.content();</span>
-<span class="fc" id="L60">    Map&lt;UUID, Integer&gt; usersCounts =</span>
-<span class="fc" id="L61">        externalUserAffiliationService.countExternalUsersByGroupIds(</span>
-<span class="fc" id="L62">            content.stream().map(Group::getId).toList());</span>
+<span class="fc" id="L63">    PagedResult&lt;Group&gt; groups =</span>
+<span class="fc" id="L64">        groupService.findAllOfStaffInstitution(keyword, types, pageCriteria);</span>
+<span class="fc" id="L65">    List&lt;Group&gt; content = groups.content();</span>
+<span class="fc" id="L66">    Map&lt;UUID, Integer&gt; usersCounts =</span>
+<span class="fc" id="L67">        externalUserAffiliationService.countExternalUsersByGroupIds(</span>
+<span class="fc" id="L68">            content.stream().map(Group::getId).toList());</span>
 
-<span class="fc" id="L64">    return ResponseEntity.ok(</span>
+<span class="fc" id="L70">    return ResponseEntity.ok(</span>
         new PagedResponse&lt;&gt;(
-<span class="fc" id="L66">            content.stream()</span>
-<span class="fc" id="L67">                .map(</span>
+<span class="fc" id="L72">            content.stream()</span>
+<span class="fc" id="L73">                .map(</span>
                     group -&gt;
-<span class="fc" id="L69">                        GroupApplicationMapper.toGroupOverviewDTO(</span>
-<span class="fc" id="L70">                            group, usersCounts.getOrDefault(group.getId(), 0)))</span>
-<span class="fc" id="L71">                .toList(),</span>
-<span class="fc" id="L72">            PageInfoDTO.fromDomain(groups.pageInfo())));</span>
+<span class="fc" id="L75">                        GroupApplicationMapper.toGroupOverviewDTO(</span>
+<span class="fc" id="L76">                            group, usersCounts.getOrDefault(group.getId(), 0)))</span>
+<span class="fc" id="L77">                .toList(),</span>
+<span class="fc" id="L78">            PageInfoDTO.fromDomain(groups.pageInfo())));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('group:read')&quot;)
   @GetMapping(&quot;/{id}&quot;)
   public ResponseEntity&lt;GroupDTO&gt; getGroupById(@PathVariable UUID id) {
-<span class="fc" id="L78">    log.debug(&quot;Getting group for id: {}&quot;, id);</span>
+<span class="fc" id="L84">    log.debug(&quot;Getting group for id: {}&quot;, id);</span>
 
-<span class="fc" id="L80">    return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findById(id)));</span>
+<span class="fc" id="L86">    return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findById(id)));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('group:read')&quot;)
   @GetMapping(&quot;/{id}/sub-groups&quot;)
   public ResponseEntity&lt;List&lt;GroupOverviewDTO&gt;&gt; getSubGroupsOfGroup(@PathVariable UUID id) {
-<span class="fc" id="L86">    log.debug(&quot;Getting sub-groups of group for id: {}&quot;, id);</span>
+<span class="fc" id="L92">    log.debug(&quot;Getting sub-groups of group for id: {}&quot;, id);</span>
 
-<span class="fc" id="L88">    requireAffiliationToInstitutionOf(groupService.findById(id));</span>
+<span class="fc" id="L94">    requireAffiliationToInstitutionOf(groupService.findById(id));</span>
 
-<span class="fc" id="L90">    List&lt;Group&gt; subGroups = groupService.findSubGroupsOf(id);</span>
-<span class="fc" id="L91">    Map&lt;UUID, Integer&gt; usersCounts =</span>
-<span class="fc" id="L92">        externalUserAffiliationService.countExternalUsersByGroupIds(</span>
-<span class="fc" id="L93">            subGroups.stream().map(Group::getId).toList());</span>
+<span class="fc" id="L96">    List&lt;Group&gt; subGroups = groupService.findSubGroupsOf(id);</span>
+<span class="fc" id="L97">    Map&lt;UUID, Integer&gt; usersCounts =</span>
+<span class="fc" id="L98">        externalUserAffiliationService.countExternalUsersByGroupIds(</span>
+<span class="fc" id="L99">            subGroups.stream().map(Group::getId).toList());</span>
 
-<span class="fc" id="L95">    return ResponseEntity.ok(</span>
-<span class="fc" id="L96">        subGroups.stream()</span>
-<span class="fc" id="L97">            .map(</span>
+<span class="fc" id="L101">    return ResponseEntity.ok(</span>
+<span class="fc" id="L102">        subGroups.stream()</span>
+<span class="fc" id="L103">            .map(</span>
                 subGroup -&gt;
-<span class="fc" id="L99">                    GroupApplicationMapper.toGroupOverviewDTO(</span>
-<span class="fc" id="L100">                        subGroup, usersCounts.getOrDefault(subGroup.getId(), 0)))</span>
-<span class="fc" id="L101">            .toList());</span>
+<span class="fc" id="L105">                    GroupApplicationMapper.toGroupOverviewDTO(</span>
+<span class="fc" id="L106">                        subGroup, usersCounts.getOrDefault(subGroup.getId(), 0)))</span>
+<span class="fc" id="L107">            .toList());</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('group:read')&quot;)
   @GetMapping(&quot;/{id}/program&quot;)
   public ResponseEntity&lt;GroupDTO&gt; getProgramOfGroup(@PathVariable UUID id) {
-<span class="fc" id="L107">    log.debug(&quot;Getting program of group for id: {}&quot;, id);</span>
+<span class="fc" id="L113">    log.debug(&quot;Getting program of group for id: {}&quot;, id);</span>
 
-<span class="fc" id="L109">    return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findProgramOf(id)));</span>
+<span class="fc" id="L115">    return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findProgramOf(id)));</span>
   }
 
   private void requireAffiliationToInstitutionOf(Group group) {
-<span class="fc" id="L113">    ExternalUser loggedInUser = loggedInExternalUserService.getLoggedInExternalUser();</span>
-<span class="fc" id="L114">    UUID institutionId = group.getInstitution().getId();</span>
+<span class="fc" id="L119">    ExternalUser loggedInUser = loggedInExternalUserService.getLoggedInExternalUser();</span>
+<span class="fc" id="L120">    UUID institutionId = group.getInstitution().getId();</span>
 
-<span class="fc bfc" id="L116" title="All 2 branches covered.">    if (!externalUserAffiliationService.isAffiliated(loggedInUser, institutionId)) {</span>
-<span class="fc" id="L117">      log.warn(</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">    if (!externalUserAffiliationService.isAffiliated(loggedInUser, institutionId)) {</span>
+<span class="fc" id="L123">      log.warn(</span>
           &quot;User {} is not affiliated to the institution {} holding the group {}&quot;,
-<span class="fc" id="L119">          loggedInUser.getId(),</span>
+<span class="fc" id="L125">          loggedInUser.getId(),</span>
           institutionId,
-<span class="fc" id="L121">          group.getId());</span>
-<span class="fc" id="L122">      throw new UserNotAuthorizedException(</span>
+<span class="fc" id="L127">          group.getId());</span>
+<span class="fc" id="L128">      throw new UserNotAuthorizedException(</span>
           &quot;The group does not belong to an institution the user is affiliated to&quot;);
     }
-<span class="fc" id="L125">  }</span>
+<span class="fc" id="L131">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -3,39 +3,40 @@
 import fr.avenirsesr.portfolio.backoffice.group.infrastructure.adapter.model.GroupEntity;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 
-<span class="nc" id="L9">public class GroupSpecification {</span>
+<span class="nc" id="L10">public class GroupSpecification {</span>
   public static Specification&lt;GroupEntity&gt; withInstitutionId(UUID institutionId) {
-<span class="pc bpc" id="L11" title="1 of 2 branches missed.">    if (institutionId == null) {</span>
-<span class="nc" id="L12">      return Specification.unrestricted();</span>
+<span class="pc bpc" id="L12" title="1 of 2 branches missed.">    if (institutionId == null) {</span>
+<span class="nc" id="L13">      return Specification.unrestricted();</span>
     }
-<span class="fc" id="L14">    return (root, query, criteriaBuilder) -&gt;</span>
-<span class="fc" id="L15">        criteriaBuilder.equal(root.get(&quot;institution&quot;).get(&quot;id&quot;), institutionId);</span>
+<span class="fc" id="L15">    return (root, query, criteriaBuilder) -&gt;</span>
+<span class="fc" id="L16">        criteriaBuilder.equal(root.get(&quot;institution&quot;).get(&quot;id&quot;), institutionId);</span>
   }
 
   public static Specification&lt;GroupEntity&gt; withParentIds(Collection&lt;UUID&gt; parentIds) {
-<span class="fc" id="L19">    return (root, query, criteriaBuilder) -&gt;</span>
-<span class="pc bpc" id="L20" title="2 of 4 branches missed.">        parentIds == null || parentIds.isEmpty()</span>
-<span class="nc" id="L21">            ? criteriaBuilder.disjunction()</span>
-<span class="fc" id="L22">            : root.get(&quot;parent&quot;).get(&quot;id&quot;).in(parentIds);</span>
+<span class="fc" id="L20">    return (root, query, criteriaBuilder) -&gt;</span>
+<span class="pc bpc" id="L21" title="2 of 4 branches missed.">        parentIds == null || parentIds.isEmpty()</span>
+<span class="nc" id="L22">            ? criteriaBuilder.disjunction()</span>
+<span class="fc" id="L23">            : root.get(&quot;parent&quot;).get(&quot;id&quot;).in(parentIds);</span>
   }
 
-  public static Specification&lt;GroupEntity&gt; withType(EGroupType type) {
-<span class="fc bfc" id="L26" title="All 2 branches covered.">    if (type == null) {</span>
-<span class="fc" id="L27">      return Specification.unrestricted();</span>
+  public static Specification&lt;GroupEntity&gt; withType(List&lt;EGroupType&gt; types) {
+<span class="pc bpc" id="L27" title="1 of 4 branches missed.">    if (types == null || types.isEmpty()) {</span>
+<span class="fc" id="L28">      return Specification.unrestricted();</span>
     }
-<span class="fc" id="L29">    return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;type&quot;), type);</span>
+<span class="fc" id="L30">    return (root, query, criteriaBuilder) -&gt; root.get(&quot;type&quot;).in(types);</span>
   }
 
   public static Specification&lt;GroupEntity&gt; withNameContaining(String keyword) {
-<span class="pc bpc" id="L33" title="1 of 4 branches missed.">    if (keyword == null || keyword.isBlank()) {</span>
-<span class="fc" id="L34">      return Specification.unrestricted();</span>
+<span class="pc bpc" id="L34" title="1 of 4 branches missed.">    if (keyword == null || keyword.isBlank()) {</span>
+<span class="fc" id="L35">      return Specification.unrestricted();</span>
     }
-<span class="fc" id="L36">    String pattern = &quot;%&quot; + keyword.trim().toLowerCase() + &quot;%&quot;;</span>
-<span class="fc" id="L37">    return (root, query, criteriaBuilder) -&gt;</span>
-<span class="fc" id="L38">        criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;name&quot;)), pattern);</span>
+<span class="fc" id="L37">    String pattern = &quot;%&quot; + keyword.trim().toLowerCase() + &quot;%&quot;;</span>
+<span class="fc" id="L38">    return (root, query, criteriaBuilder) -&gt;</span>
+<span class="fc" id="L39">        criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;name&quot;)), pattern);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

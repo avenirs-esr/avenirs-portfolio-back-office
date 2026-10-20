@@ -63,8 +63,8 @@ public class TransactionalGroupService implements GroupService {
 
   @Override
   public PagedResult&lt;Group&gt; findAllOfStaffInstitution(
-      String keyword, EGroupType type, PageCriteria pageCriteria) {
-<span class="fc" id="L67">    return delegate.findAllOfStaffInstitution(keyword, type, pageCriteria);</span>
+      String keyword, List&lt;EGroupType&gt; types, PageCriteria pageCriteria) {
+<span class="fc" id="L67">    return delegate.findAllOfStaffInstitution(keyword, types, pageCriteria);</span>
   }
 
   @Override

@@ -171,11 +171,11 @@ public class GroupServiceImpl implements GroupService {
 
   @Override
   public PagedResult&lt;Group&gt; findAllOfStaffInstitution(
-      String keyword, EGroupType type, PageCriteria pageCriteria) {
+      String keyword, List&lt;EGroupType&gt; types, PageCriteria pageCriteria) {
 <span class="fc" id="L175">    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();</span>
 <span class="fc" id="L176">    Institution institution = findInstitutionOrThrow(staff.getInstitutionUAI());</span>
 
-<span class="fc" id="L178">    return groupRepository.findAll(institution.getId(), keyword, type, pageCriteria);</span>
+<span class="fc" id="L178">    return groupRepository.findAll(institution.getId(), keyword, types, pageCriteria);</span>
   }
 
   @Override
