@@ -14,6 +14,9 @@ import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupDTO;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupOverviewDTO;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,17 +48,20 @@ public class GroupQueryController {
   @GetMapping
   public ResponseEntity<PagedResponse<GroupOverviewDTO>> getGroups(
       @RequestParam(required = false) String keyword,
-      @RequestParam(required = false) EGroupType type,
+      @Parameter(array = @ArraySchema(schema = @Schema(ref = "#/components/schemas/EGroupType")))
+          @RequestParam(required = false)
+          List<EGroupType> types,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
     log.debug(
-        "Getting the groups of the logged-in staff institution (keyword: {}, type: {}) {}",
+        "Getting the groups of the logged-in staff institution (keyword: {}, types: {}) {}",
         keyword,
-        type,
+        types,
         pageCriteria);
 
-    PagedResult<Group> groups = groupService.findAllOfStaffInstitution(keyword, type, pageCriteria);
+    PagedResult<Group> groups =
+        groupService.findAllOfStaffInstitution(keyword, types, pageCriteria);
     List<Group> content = groups.content();
     Map<UUID, Integer> usersCounts =
         externalUserAffiliationService.countExternalUsersByGroupIds(

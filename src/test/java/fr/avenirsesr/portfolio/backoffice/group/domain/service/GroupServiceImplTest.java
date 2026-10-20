@@ -668,12 +668,13 @@ class GroupServiceImplTest {
     PagedResult<Group> expected = new PagedResult<>(List.of(group), new PageInfo(0, 8, 1));
     when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff(institutionUAI));
     when(institutionRepository.findByUai(institutionUAI)).thenReturn(Optional.of(institution));
-    when(groupRepository.findAll(institutionId, "licence", EGroupType.PROGRAM, pageCriteria))
+    when(groupRepository.findAll(
+            institutionId, "licence", List.of(EGroupType.PROGRAM), pageCriteria))
         .thenReturn(expected);
 
     BddLogger.when("listing the groups of its institution filtered by keyword and type");
     PagedResult<Group> result =
-        service.findAllOfStaffInstitution("licence", EGroupType.PROGRAM, pageCriteria);
+        service.findAllOfStaffInstitution("licence", List.of(EGroupType.PROGRAM), pageCriteria);
 
     BddLogger.then("it should return the paged groups of that institution");
     assertEquals(expected, result);
