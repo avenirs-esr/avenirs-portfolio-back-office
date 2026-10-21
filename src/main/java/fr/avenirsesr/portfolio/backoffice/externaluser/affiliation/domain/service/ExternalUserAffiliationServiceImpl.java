@@ -23,6 +23,8 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
@@ -85,6 +87,17 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
     externalUserRepository.findById(externalUserId).orElseThrow(ExternalUserNotFoundException::new);
 
     return externalUserAffiliationRepository.findAllByExternalUserId(externalUserId);
+  }
+
+  @Override
+  public PagedResult<ExternalUserAffiliation> findAll(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds,
+      PageCriteria pageCriteria) {
+    return externalUserAffiliationRepository.findAll(
+        keyword, categories, institutionIds, groupIds, pageCriteria);
   }
 
   @Override

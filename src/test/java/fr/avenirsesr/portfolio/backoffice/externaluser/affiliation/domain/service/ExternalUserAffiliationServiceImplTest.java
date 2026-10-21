@@ -22,6 +22,9 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionService;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageInfo;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
@@ -502,5 +505,34 @@ class ExternalUserAffiliationServiceImplTest {
         cyberA.getId(),
         "Groupe CYBER-A",
         EAffiliationScopeNodeType.STUDENT_GROUP);
+  }
+
+  @Test
+  void shouldQueryTheRepositoryWithEveryFilter_whenFindingAllAffiliations() {
+    BddLogger.given("a keyword, a category, an institution and a group to filter on");
+    UUID institutionId = UUID.randomUUID();
+    UUID groupId = UUID.randomUUID();
+    PageCriteria pageCriteria = new PageCriteria(1, 20);
+    PagedResult<ExternalUserAffiliation> expected =
+        new PagedResult<>(List.of(), new PageInfo(1, 20, 0));
+    when(externalUserAffiliationRepository.findAll(
+            "tessier",
+            List.of(EUserCategory.STAFF),
+            List.of(institutionId),
+            List.of(groupId),
+            pageCriteria))
+        .thenReturn(expected);
+
+    BddLogger.when("finding all the affiliations");
+    PagedResult<ExternalUserAffiliation> result =
+        service.findAll(
+            "tessier",
+            List.of(EUserCategory.STAFF),
+            List.of(institutionId),
+            List.of(groupId),
+            pageCriteria);
+
+    BddLogger.then("it should forward every filter to the repository, without narrowing them");
+    assertSame(expected, result);
   }
 }
