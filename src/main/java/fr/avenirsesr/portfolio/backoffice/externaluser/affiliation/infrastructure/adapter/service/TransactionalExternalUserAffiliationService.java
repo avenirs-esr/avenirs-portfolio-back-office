@@ -7,6 +7,8 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,16 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Override
   public List<ExternalUserAffiliation> getAffiliations(UUID externalUserId) {
     return delegate.getAffiliations(externalUserId);
+  }
+
+  @Override
+  public PagedResult<ExternalUserAffiliation> findAll(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds,
+      PageCriteria pageCriteria) {
+    return delegate.findAll(keyword, categories, institutionIds, groupIds, pageCriteria);
   }
 
   @Override

@@ -5,11 +5,15 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.o
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.mapper.ExternalUserAffiliationMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.model.ExternalUserAffiliationEntity;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.specification.ExternalUserAffiliationSpecification;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +31,30 @@ public class ExternalUserAffiliationDatabaseRepository
         ExternalUserAffiliationEntity.class,
         ExternalUserAffiliationMapper.INSTANCE);
     this.jpaRepository = jpaRepository;
+  }
+
+  @Override
+  public PagedResult<ExternalUserAffiliation> findAll(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds,
+      PageCriteria pageCriteria) {
+    Specification<ExternalUserAffiliationEntity> specification =
+        Specification.where(
+                ExternalUserAffiliationSpecification.withExternalUserNameContaining(keyword))
+            .and(ExternalUserAffiliationSpecification.withCategories(categories))
+            .and(ExternalUserAffiliationSpecification.withInstitutionIds(institutionIds))
+            .and(ExternalUserAffiliationSpecification.withGroupIds(groupIds));
+    PageRequest pageRequest =
+        PageRequest.of(
+            pageCriteria.page(),
+            pageCriteria.pageSize(),
+            Sort.by(
+                Sort.Order.asc("externalUser.lastName").ignoreCase(),
+                Sort.Order.asc("externalUser.firstName").ignoreCase()));
+
+    return findAll(specification, pageRequest);
   }
 
   @Override
