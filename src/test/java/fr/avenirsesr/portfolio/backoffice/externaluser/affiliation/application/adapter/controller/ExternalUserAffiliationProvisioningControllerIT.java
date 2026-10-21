@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 class ExternalUserAffiliationProvisioningControllerIT extends ContainerConfigurationTest {
 
-  private static final String BASE_PATH = "/back-office/admin/external-user-affiliations";
+  private static final String BASE_PATH = "/back-office/admin/external-users/affiliations";
   private static final String EXTERNAL_USERS_PATH = "/back-office/admin/external-users";
   private static final String ADMIN_TOKEN_HEADER = "X-ADMIN-TOKEN";
   private static final String SEEDED_STAFF_EPPN = "ethan.perrin@university.com";
@@ -66,7 +66,7 @@ class ExternalUserAffiliationProvisioningControllerIT extends ContainerConfigura
   void shouldReturnForbidden_whenAdminTokenIsInvalid() throws Exception {
     BddLogger.given("an invalid admin token");
 
-    BddLogger.when("calling POST /back-office/admin/external-user-affiliations");
+    BddLogger.when("calling POST /back-office/admin/external-users/affiliations");
     mockMvc
         .perform(
             post(BASE_PATH)
@@ -90,7 +90,7 @@ class ExternalUserAffiliationProvisioningControllerIT extends ContainerConfigura
             new ExternalUserAffiliationData(
                 SEEDED_STUDENT_EPPN, SEEDED_RENNES_UAI, null, EUserCategory.STUDENT));
 
-    BddLogger.when("calling POST /back-office/admin/external-user-affiliations");
+    BddLogger.when("calling POST /back-office/admin/external-users/affiliations");
     mockMvc
         .perform(
             post(BASE_PATH)
@@ -121,7 +121,7 @@ class ExternalUserAffiliationProvisioningControllerIT extends ContainerConfigura
             new ExternalUserAffiliationData(
                 SEEDED_STUDENT_EPPN, SEEDED_RENNES_IUT_UAI, null, EUserCategory.STAFF));
 
-    BddLogger.when("calling POST /back-office/admin/external-user-affiliations");
+    BddLogger.when("calling POST /back-office/admin/external-users/affiliations");
     mockMvc
         .perform(
             post(BASE_PATH)
