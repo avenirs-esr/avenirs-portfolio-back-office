@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("back-office/admin")
+@RequestMapping("back-office/admin/external-users")
 public class ExternalUserAffiliationProvisioningController {
 
   private final ExternalUserAffiliationService externalUserAffiliationService;
@@ -45,7 +45,7 @@ public class ExternalUserAffiliationProvisioningController {
   private String adminToken;
 
   @PreAuthorize("hasAuthority('external-user-affiliation:import')")
-  @PostMapping("/external-user-affiliations")
+  @PostMapping("/affiliations")
   public ResponseEntity<ExternalUserAffiliationImportSummaryResponse> createAll(
       @RequestBody List<ExternalUserAffiliationData> affiliations,
       @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
@@ -67,7 +67,7 @@ public class ExternalUserAffiliationProvisioningController {
   }
 
   @PreAuthorize("hasAuthority('external-user:update')")
-  @PostMapping("/external-users/{externalUserId}/affiliations")
+  @PostMapping("/{externalUserId}/affiliations")
   public ResponseEntity<ExternalUserAffiliationDTO> addAffiliation(
       @PathVariable UUID externalUserId,
       @RequestBody AddExternalUserAffiliationRequest request,
@@ -92,7 +92,7 @@ public class ExternalUserAffiliationProvisioningController {
   }
 
   @PreAuthorize("hasAuthority('external-user:update')")
-  @DeleteMapping("/external-users/{externalUserId}/affiliations/{affiliationId}")
+  @DeleteMapping("/{externalUserId}/affiliations/{affiliationId}")
   public ResponseEntity<Void> removeAffiliation(
       @PathVariable UUID externalUserId,
       @PathVariable UUID affiliationId,

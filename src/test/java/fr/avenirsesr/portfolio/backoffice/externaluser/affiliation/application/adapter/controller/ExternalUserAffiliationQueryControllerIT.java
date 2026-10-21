@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTest {
 
-  private static final String BASE_PATH = "/back-office/external-user-affiliations";
+  private static final String BASE_PATH = "/back-office/external-users/affiliations";
   private static final String STAFF_EPPN = "ethan.perrin@university.com";
   private static final String SEEDED_STUDENT_EPPN = "lucas.tessier@university.com";
   private static final String SEEDED_RENNES_UAI = "0350001A";
@@ -87,7 +87,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     void thenItShouldReturnTheFirstPageSortedByLastNameThenFirstName() throws Exception {
       BddLogger.given("the seeded affiliations, the first last name alphabetically being AMU");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations");
+      BddLogger.when("calling GET /back-office/external-users/affiliations");
       mockMvc
           .perform(asStaffUser(get(BASE_PATH), STAFF_EPPN).accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
@@ -110,7 +110,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     void thenItShouldReturnTheIdentityOfTheAffiliatedUserAndTheLabelsOfItsScope() throws Exception {
       BddLogger.given("a student affiliated to a student group");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations filtered by group");
+      BddLogger.when("calling GET /back-office/external-users/affiliations filtered by group");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
@@ -134,7 +134,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     void thenItShouldReturnMatchingAffiliations_whenSearchingByLastName() throws Exception {
       BddLogger.given("two seeded users sharing the Tessier last name");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations with a keyword");
+      BddLogger.when("calling GET /back-office/external-users/affiliations with a keyword");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
@@ -153,7 +153,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     void thenItShouldReturnMatchingAffiliations_whenSearchingByFirstName() throws Exception {
       BddLogger.given("two seeded users sharing the Lucas first name");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations with a keyword");
+      BddLogger.when("calling GET /back-office/external-users/affiliations with a keyword");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
@@ -171,7 +171,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     void thenItShouldReturnOnlyStaffAffiliations_whenFilteringByCategory() throws Exception {
       BddLogger.given("the seeded affiliations, holding both staff and student ones");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations filtered by category");
+      BddLogger.when("calling GET /back-office/external-users/affiliations filtered by category");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
@@ -189,7 +189,8 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
         throws Exception {
       BddLogger.given("the seeded affiliations, spread over two institutions");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations filtered by institution");
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations filtered by institution");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
@@ -206,7 +207,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     void thenItShouldReturnOnlyTheAffiliationsOfThatGroup_whenFilteringByGroup() throws Exception {
       BddLogger.given("the seeded affiliations, some of them bound to no group at all");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations filtered by group");
+      BddLogger.when("calling GET /back-office/external-users/affiliations filtered by group");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
@@ -223,7 +224,8 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     void thenItShouldCumulateTheFilters_whenSearchingAndFilteringAtOnce() throws Exception {
       BddLogger.given("a Tessier user holding staff affiliations and another holding student ones");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations with keyword and filter");
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations with keyword and filter");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
@@ -243,7 +245,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
       BddLogger.given("six seeded affiliations matching the Tessier keyword");
 
       BddLogger.when(
-          "calling GET /back-office/external-user-affiliations with a page size of four");
+          "calling GET /back-office/external-users/affiliations with a page size of four");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
@@ -265,7 +267,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     void thenItShouldReturnForbidden_whenStaffMissesTheReadPermission() throws Exception {
       BddLogger.given("a logged-in staff without the external user read permission");
 
-      BddLogger.when("calling GET /back-office/external-user-affiliations");
+      BddLogger.when("calling GET /back-office/external-users/affiliations");
       mockMvc
           .perform(
               get(BASE_PATH)
