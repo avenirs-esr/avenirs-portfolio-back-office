@@ -32,13 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 <span class="fc" id="L32">@Slf4j</span>
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(&quot;back-office&quot;)
+@RequestMapping(&quot;back-office/external-users&quot;)
 public class ExternalUserAffiliationQueryController {
 
   private final ExternalUserAffiliationService externalUserAffiliationService;
 
   @PreAuthorize(&quot;hasAuthority('external-user:read')&quot;)
-  @GetMapping(&quot;/external-user-affiliations&quot;)
+  @GetMapping(&quot;/affiliations&quot;)
   public ResponseEntity&lt;PagedResponse&lt;ExternalUserAffiliationOverviewDTO&gt;&gt; getAffiliations(
       @RequestParam(required = false) String keyword,
       @Parameter(array = @ArraySchema(schema = @Schema(ref = &quot;#/components/schemas/EUserCategory&quot;)))
@@ -70,7 +70,7 @@ public class ExternalUserAffiliationQueryController {
   }
 
   @PreAuthorize(&quot;hasAuthority('external-user:read')&quot;)
-  @GetMapping(&quot;/external-users/{externalUserId}/affiliations&quot;)
+  @GetMapping(&quot;/{externalUserId}/affiliations&quot;)
   public ResponseEntity&lt;List&lt;ExternalUserAffiliationDTO&gt;&gt; getAffiliationsOfExternalUser(
       @PathVariable UUID externalUserId) {
 <span class="fc" id="L76">    log.debug(&quot;Getting affiliations for external user: {}&quot;, externalUserId);</span>
