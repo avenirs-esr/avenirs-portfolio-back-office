@@ -2,6 +2,7 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.servi
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationCategoryNotAllowedException;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationNotFoundException;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliationScopeNode;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.EAffiliationScopeNodeType;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
@@ -31,13 +32,17 @@ import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorize
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -91,7 +96,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   }
 
   @Override
-  public PagedResult<ExternalUserAffiliation> findAll(
+  public PagedResult<AffiliatedExternalUser> findAll(
       String keyword,
       List<EUserCategory> categories,
       List<UUID> institutionIds,
@@ -99,8 +104,62 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
       PageCriteria pageCriteria) {
     requireStaffAccessToFilters(institutionIds, groupIds);
 
-    return externalUserAffiliationRepository.findAll(
-        keyword, categories, institutionIds, groupIds, pageCriteria);
+    PagedResult<ExternalUser> externalUsers =
+        externalUserRepository.findAllAffiliated(
+            keyword, categories, institutionIds, groupIds, pageCriteria);
+    Map<UUID, List<ExternalUserAffiliation>> affiliationsByExternalUserId =
+        externalUserAffiliationRepository
+            .findAllByExternalUserIds(
+                externalUsers.content().stream().map(ExternalUser::getId).toList())
+            .stream()
+            .collect(Collectors.groupingBy(affiliation -> affiliation.getExternalUser().getId()));
+
+    return new PagedResult<>(
+        externalUsers.content().stream()
+            .map(
+                externalUser ->
+                    toAffiliatedExternalUser(
+                        externalUser,
+                        affiliationsByExternalUserId.getOrDefault(externalUser.getId(), List.of())))
+            .toList(),
+        externalUsers.pageInfo());
+  }
+
+  private static AffiliatedExternalUser toAffiliatedExternalUser(
+      ExternalUser externalUser, List<ExternalUserAffiliation> affiliations) {
+    Map<UUID, Institution> institutionsById = new LinkedHashMap<>();
+    affiliations.forEach(
+        affiliation ->
+            institutionsById.putIfAbsent(
+                affiliation.getInstitution().getId(), affiliation.getInstitution()));
+
+    return new AffiliatedExternalUser(
+        externalUser,
+        affiliations.stream()
+            .map(ExternalUserAffiliation::getCategory)
+            .distinct()
+            .sorted()
+            .toList(),
+        institutionsById.values().stream()
+            .sorted(Comparator.comparing(Institution::getName, String.CASE_INSENSITIVE_ORDER))
+            .toList(),
+        groupsWithAncestors(affiliations));
+  }
+
+  private static List<Group> groupsWithAncestors(List<ExternalUserAffiliation> affiliations) {
+    Map<UUID, Group> groupsById = new LinkedHashMap<>();
+
+    for (ExternalUserAffiliation affiliation : affiliations) {
+      Optional<Group> current = Optional.ofNullable(affiliation.getGroup());
+      while (current.isPresent()
+          && groupsById.putIfAbsent(current.get().getId(), current.get()) == null) {
+        current = current.get().getParent();
+      }
+    }
+
+    return groupsById.values().stream()
+        .sorted(Comparator.comparing(Group::getName, String.CASE_INSENSITIVE_ORDER))
+        .toList();
   }
 
   private void requireStaffAccessToFilters(List<UUID> institutionIds, List<UUID> groupIds) {

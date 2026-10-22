@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input;
 
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
@@ -22,7 +23,11 @@ public interface ExternalUserAffiliationService {
 
   List<ExternalUserAffiliation> getAffiliations(UUID externalUserId);
 
-  PagedResult<ExternalUserAffiliation> findAll(
+  /**
+   * Pages over the affiliated users matching the given filters, each of them reported once with
+   * every institution, category and group its affiliations attach it to.
+   */
+  PagedResult<AffiliatedExternalUser> findAll(
       String keyword,
       List<EUserCategory> categories,
       List<UUID> institutionIds,

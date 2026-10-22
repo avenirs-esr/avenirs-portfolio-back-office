@@ -6,6 +6,9 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.ma
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.model.ExternalUserEntity;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.repository.ExternalUserJpaRepository.GroupUsersCount;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.specification.ExternalUserSpecification;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import java.util.Collection;
 import java.util.List;
@@ -13,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -57,5 +62,26 @@ public class ExternalUserDatabaseRepository
         Specification.where(ExternalUserSpecification.withInstitutionId(institutionId))
             .and(ExternalUserSpecification.withGroupId(groupId));
     return findAll(specification);
+  }
+
+  @Override
+  public PagedResult<ExternalUser> findAllAffiliated(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds,
+      PageCriteria pageCriteria) {
+    Specification<ExternalUserEntity> specification =
+        Specification.where(ExternalUserSpecification.withNameContaining(keyword))
+            .and(
+                ExternalUserSpecification.affiliatedMatching(categories, institutionIds, groupIds));
+    PageRequest pageRequest =
+        PageRequest.of(
+            pageCriteria.page(),
+            pageCriteria.pageSize(),
+            Sort.by(
+                Sort.Order.asc("lastName").ignoreCase(), Sort.Order.asc("firstName").ignoreCase()));
+
+    return findAll(specification, pageRequest);
   }
 }
