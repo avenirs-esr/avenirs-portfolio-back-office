@@ -103,201 +103,197 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
         keyword, categories, institutionIds, groupIds, pageCriteria);
   }
 
-  /**
-   * A staff may only narrow the list down to an institution or a group it is affiliated to, be it
-   * one of its own or any of their descendants. Nothing is checked when no such filter is given.
-   */
   private void requireStaffAccessToFilters(List&lt;UUID&gt; institutionIds, List&lt;UUID&gt; groupIds) {
-<span class="fc bfc" id="L111" title="All 4 branches covered.">    if (isEmpty(institutionIds) &amp;&amp; isEmpty(groupIds)) {</span>
-<span class="fc" id="L112">      return;</span>
+<span class="fc bfc" id="L107" title="All 4 branches covered.">    if (isEmpty(institutionIds) &amp;&amp; isEmpty(groupIds)) {</span>
+<span class="fc" id="L108">      return;</span>
     }
 
-<span class="fc" id="L115">    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">    if (!staffHasAccess(staff.getEppn(), institutionIds, groupIds)) {</span>
-<span class="fc" id="L117">      log.warn(</span>
+<span class="fc" id="L111">    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">    if (!staffHasAccess(staff.getEppn(), institutionIds, groupIds)) {</span>
+<span class="fc" id="L113">      log.warn(</span>
           &quot;Staff {} is not affiliated to every filtered institution {} and group {}&quot;,
-<span class="fc" id="L119">          staff.getId(),</span>
+<span class="fc" id="L115">          staff.getId(),</span>
           institutionIds,
           groupIds);
-<span class="fc" id="L122">      throw new UserNotAuthorizedException(</span>
+<span class="fc" id="L118">      throw new UserNotAuthorizedException(</span>
           &quot;The filtered institutions and groups must be ones the user is affiliated to&quot;);
     }
-<span class="fc" id="L125">  }</span>
+<span class="fc" id="L121">  }</span>
 
   @Override
   public Map&lt;UUID, Integer&gt; countExternalUsersByGroupIds(List&lt;UUID&gt; groupIds) {
-<span class="fc" id="L129">    return externalUserRepository.countAllByGroupIds(groupIds);</span>
+<span class="fc" id="L125">    return externalUserRepository.countAllByGroupIds(groupIds);</span>
   }
 
   @Override
   public ExternalUserAffiliationImportSummary createAll(
       List&lt;ExternalUserAffiliationData&gt; affiliations) {
-<span class="fc" id="L135">    List&lt;ExternalUserAffiliation&gt; created = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L136">    List&lt;ExternalUserAffiliation&gt; existing = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L137">    List&lt;ExternalUserAffiliationImportFailure&gt; failed = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L131">    List&lt;ExternalUserAffiliation&gt; created = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L132">    List&lt;ExternalUserAffiliation&gt; existing = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L133">    List&lt;ExternalUserAffiliationImportFailure&gt; failed = new ArrayList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L139" title="All 2 branches covered.">    for (ExternalUserAffiliationData data : affiliations) {</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">    for (ExternalUserAffiliationData data : affiliations) {</span>
       try {
-<span class="fc" id="L141">        UpsertResult result = upsertByNaturalKeys(data);</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">        if (result.created()) {</span>
-<span class="fc" id="L143">          created.add(result.affiliation());</span>
+<span class="fc" id="L137">        UpsertResult result = upsertByNaturalKeys(data);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if (result.created()) {</span>
+<span class="fc" id="L139">          created.add(result.affiliation());</span>
         } else {
-<span class="fc" id="L145">          existing.add(result.affiliation());</span>
+<span class="fc" id="L141">          existing.add(result.affiliation());</span>
         }
-<span class="fc" id="L147">      } catch (BusinessException e) {</span>
-<span class="fc" id="L148">        log.warn(</span>
+<span class="fc" id="L143">      } catch (BusinessException e) {</span>
+<span class="fc" id="L144">        log.warn(</span>
             &quot;Failed to import affiliation for eppn {} / institution {} / group {} / category {}:&quot;
                 + &quot; {}&quot;,
-<span class="fc" id="L151">            data.eppn(),</span>
-<span class="fc" id="L152">            data.institutionUAI(),</span>
-<span class="fc" id="L153">            data.groupIdSISco(),</span>
-<span class="fc" id="L154">            data.category(),</span>
-<span class="fc" id="L155">            e.getMessage());</span>
-<span class="fc" id="L156">        failed.add(</span>
+<span class="fc" id="L147">            data.eppn(),</span>
+<span class="fc" id="L148">            data.institutionUAI(),</span>
+<span class="fc" id="L149">            data.groupIdSISco(),</span>
+<span class="fc" id="L150">            data.category(),</span>
+<span class="fc" id="L151">            e.getMessage());</span>
+<span class="fc" id="L152">        failed.add(</span>
             new ExternalUserAffiliationImportFailure(
-<span class="fc" id="L158">                data.eppn(),</span>
-<span class="fc" id="L159">                data.institutionUAI(),</span>
-<span class="fc" id="L160">                data.groupIdSISco(),</span>
-<span class="fc" id="L161">                data.category(),</span>
-<span class="fc" id="L162">                e.getMessage()));</span>
-<span class="fc" id="L163">      }</span>
-<span class="fc" id="L164">    }</span>
+<span class="fc" id="L154">                data.eppn(),</span>
+<span class="fc" id="L155">                data.institutionUAI(),</span>
+<span class="fc" id="L156">                data.groupIdSISco(),</span>
+<span class="fc" id="L157">                data.category(),</span>
+<span class="fc" id="L158">                e.getMessage()));</span>
+<span class="fc" id="L159">      }</span>
+<span class="fc" id="L160">    }</span>
 
-<span class="fc" id="L166">    return new ExternalUserAffiliationImportSummary(created, existing, failed);</span>
+<span class="fc" id="L162">    return new ExternalUserAffiliationImportSummary(created, existing, failed);</span>
   }
 
   @Override
   public boolean isAffiliated(ExternalUser externalUser, UUID institutionId) {
-<span class="pc bpc" id="L171" title="1 of 4 branches missed.">    if (externalUser == null || institutionId == null) {</span>
-<span class="fc" id="L172">      return false;</span>
+<span class="pc bpc" id="L167" title="1 of 4 branches missed.">    if (externalUser == null || institutionId == null) {</span>
+<span class="fc" id="L168">      return false;</span>
     }
 
-<span class="fc" id="L175">    return externalUserAffiliationRepository.findAllByExternalUserId(externalUser.getId()).stream()</span>
-<span class="fc" id="L176">        .map(ExternalUserAffiliation::getInstitution)</span>
-<span class="fc" id="L177">        .anyMatch(institution -&gt; institutionId.equals(institution.getId()));</span>
+<span class="fc" id="L171">    return externalUserAffiliationRepository.findAllByExternalUserId(externalUser.getId()).stream()</span>
+<span class="fc" id="L172">        .map(ExternalUserAffiliation::getInstitution)</span>
+<span class="fc" id="L173">        .anyMatch(institution -&gt; institutionId.equals(institution.getId()));</span>
   }
 
   @Override
   public boolean staffHasAccess(
       String eppn, List&lt;UUID&gt; targetInstitutionIds, List&lt;UUID&gt; targetGroupIds) {
-<span class="fc" id="L183">    ExternalUser externalUser =</span>
-<span class="fc" id="L184">        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="fc" id="L179">    ExternalUser externalUser =</span>
+<span class="fc" id="L180">        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);</span>
 
-<span class="fc" id="L186">    boolean institutionsOk =</span>
-<span class="fc bfc" id="L187" title="All 2 branches covered.">        isEmpty(targetInstitutionIds)</span>
-<span class="fc bfc" id="L188" title="All 2 branches covered.">            || institutionService.staffHasAccess(</span>
-<span class="fc" id="L189">                institutionIdsOf(externalUser.getId(), EUserCategory.STAFF), targetInstitutionIds);</span>
-<span class="fc" id="L190">    boolean groupsOk =</span>
-<span class="fc bfc" id="L191" title="All 2 branches covered.">        isEmpty(targetGroupIds)</span>
-<span class="fc bfc" id="L192" title="All 2 branches covered.">            || groupService.staffHasAccess(</span>
-<span class="fc" id="L193">                groupIdsOf(externalUser.getId(), EUserCategory.STAFF), targetGroupIds);</span>
+<span class="fc" id="L182">    boolean institutionsOk =</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        isEmpty(targetInstitutionIds)</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            || institutionService.staffHasAccess(</span>
+<span class="fc" id="L185">                institutionIdsOf(externalUser.getId(), EUserCategory.STAFF), targetInstitutionIds);</span>
+<span class="fc" id="L186">    boolean groupsOk =</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        isEmpty(targetGroupIds)</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            || groupService.staffHasAccess(</span>
+<span class="fc" id="L189">                groupIdsOf(externalUser.getId(), EUserCategory.STAFF), targetGroupIds);</span>
 
-<span class="fc bfc" id="L195" title="All 4 branches covered.">    return institutionsOk &amp;&amp; groupsOk;</span>
+<span class="fc bfc" id="L191" title="All 4 branches covered.">    return institutionsOk &amp;&amp; groupsOk;</span>
   }
 
   @Override
   public ExternalUserAffiliationScope studentScope(String eppn) {
-<span class="fc" id="L200">    ExternalUser externalUser =</span>
-<span class="fc" id="L201">        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="fc" id="L196">    ExternalUser externalUser =</span>
+<span class="fc" id="L197">        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);</span>
 
-<span class="fc" id="L203">    List&lt;UUID&gt; affiliatedInstitutionIds =</span>
-<span class="fc" id="L204">        institutionIdsOf(externalUser.getId(), EUserCategory.STUDENT);</span>
-<span class="fc" id="L205">    List&lt;UUID&gt; affiliatedGroupIds = groupIdsOf(externalUser.getId(), EUserCategory.STUDENT);</span>
+<span class="fc" id="L199">    List&lt;UUID&gt; affiliatedInstitutionIds =</span>
+<span class="fc" id="L200">        institutionIdsOf(externalUser.getId(), EUserCategory.STUDENT);</span>
+<span class="fc" id="L201">    List&lt;UUID&gt; affiliatedGroupIds = groupIdsOf(externalUser.getId(), EUserCategory.STUDENT);</span>
 
-<span class="fc" id="L207">    return new ExternalUserAffiliationScope(</span>
-<span class="fc" id="L208">        institutionService.studentAccessibleIds(affiliatedInstitutionIds),</span>
-<span class="fc" id="L209">        groupService.studentAccessibleIds(affiliatedGroupIds));</span>
+<span class="fc" id="L203">    return new ExternalUserAffiliationScope(</span>
+<span class="fc" id="L204">        institutionService.studentAccessibleIds(affiliatedInstitutionIds),</span>
+<span class="fc" id="L205">        groupService.studentAccessibleIds(affiliatedGroupIds));</span>
   }
 
   @Override
   public StaffAffiliationScope staffScope() {
-<span class="fc" id="L214">    ExternalUser externalUser = loggedInExternalUserService.getLoggedInExternalUser();</span>
+<span class="fc" id="L210">    ExternalUser externalUser = loggedInExternalUserService.getLoggedInExternalUser();</span>
 
-<span class="fc" id="L216">    List&lt;UUID&gt; affiliatedInstitutionIds =</span>
-<span class="fc" id="L217">        institutionIdsOf(externalUser.getId(), EUserCategory.STAFF);</span>
-<span class="fc" id="L218">    List&lt;UUID&gt; affiliatedGroupIds = groupIdsOf(externalUser.getId(), EUserCategory.STAFF);</span>
+<span class="fc" id="L212">    List&lt;UUID&gt; affiliatedInstitutionIds =</span>
+<span class="fc" id="L213">        institutionIdsOf(externalUser.getId(), EUserCategory.STAFF);</span>
+<span class="fc" id="L214">    List&lt;UUID&gt; affiliatedGroupIds = groupIdsOf(externalUser.getId(), EUserCategory.STAFF);</span>
 
-<span class="fc" id="L220">    return new StaffAffiliationScope(</span>
-<span class="fc" id="L221">        institutionRepository.findAllById(affiliatedInstitutionIds).stream()</span>
-<span class="fc" id="L222">            .map(this::toInstitutionItem)</span>
-<span class="fc" id="L223">            .map(root -&gt; toScopeTree(root, this::findInstitutionChildren))</span>
-<span class="fc" id="L224">            .toList(),</span>
-<span class="fc" id="L225">        groupRepository.findAllById(affiliatedGroupIds).stream()</span>
-<span class="fc" id="L226">            .map(this::toGroupItem)</span>
-<span class="fc" id="L227">            .map(root -&gt; toScopeTree(root, this::findGroupChildren))</span>
-<span class="fc" id="L228">            .toList());</span>
+<span class="fc" id="L216">    return new StaffAffiliationScope(</span>
+<span class="fc" id="L217">        institutionRepository.findAllById(affiliatedInstitutionIds).stream()</span>
+<span class="fc" id="L218">            .map(this::toInstitutionItem)</span>
+<span class="fc" id="L219">            .map(root -&gt; toScopeTree(root, this::findInstitutionChildren))</span>
+<span class="fc" id="L220">            .toList(),</span>
+<span class="fc" id="L221">        groupRepository.findAllById(affiliatedGroupIds).stream()</span>
+<span class="fc" id="L222">            .map(this::toGroupItem)</span>
+<span class="fc" id="L223">            .map(root -&gt; toScopeTree(root, this::findGroupChildren))</span>
+<span class="fc" id="L224">            .toList());</span>
   }
 
   private ScopeItem toInstitutionItem(Institution institution) {
-<span class="fc" id="L232">    return new ScopeItem(</span>
-<span class="fc" id="L233">        institution.getId(),</span>
-<span class="fc" id="L234">        institution.getName(),</span>
-<span class="fc" id="L235">        EAffiliationScopeNodeType.valueOf(institution.getType().name()),</span>
-<span class="fc" id="L236">        institution.getParent().map(Institution::getId).orElse(null));</span>
+<span class="fc" id="L228">    return new ScopeItem(</span>
+<span class="fc" id="L229">        institution.getId(),</span>
+<span class="fc" id="L230">        institution.getName(),</span>
+<span class="fc" id="L231">        EAffiliationScopeNodeType.valueOf(institution.getType().name()),</span>
+<span class="fc" id="L232">        institution.getParent().map(Institution::getId).orElse(null));</span>
   }
 
   private ScopeItem toGroupItem(Group group) {
-<span class="fc" id="L240">    return new ScopeItem(</span>
-<span class="fc" id="L241">        group.getId(),</span>
-<span class="fc" id="L242">        group.getName(),</span>
-<span class="fc" id="L243">        EAffiliationScopeNodeType.valueOf(group.getType().name()),</span>
-<span class="fc" id="L244">        group.getParent().map(Group::getId).orElse(null));</span>
+<span class="fc" id="L236">    return new ScopeItem(</span>
+<span class="fc" id="L237">        group.getId(),</span>
+<span class="fc" id="L238">        group.getName(),</span>
+<span class="fc" id="L239">        EAffiliationScopeNodeType.valueOf(group.getType().name()),</span>
+<span class="fc" id="L240">        group.getParent().map(Group::getId).orElse(null));</span>
   }
 
   private List&lt;ScopeItem&gt; findInstitutionChildren(Collection&lt;UUID&gt; parentIds) {
-<span class="fc" id="L248">    return institutionRepository.findAllByParentIds(parentIds).stream()</span>
-<span class="fc" id="L249">        .map(this::toInstitutionItem)</span>
-<span class="fc" id="L250">        .toList();</span>
+<span class="fc" id="L244">    return institutionRepository.findAllByParentIds(parentIds).stream()</span>
+<span class="fc" id="L245">        .map(this::toInstitutionItem)</span>
+<span class="fc" id="L246">        .toList();</span>
   }
 
   private List&lt;ScopeItem&gt; findGroupChildren(Collection&lt;UUID&gt; parentIds) {
-<span class="fc" id="L254">    return groupRepository.findAllByParentIds(parentIds).stream().map(this::toGroupItem).toList();</span>
+<span class="fc" id="L250">    return groupRepository.findAllByParentIds(parentIds).stream().map(this::toGroupItem).toList();</span>
   }
 
   private AffiliationScopeNode toScopeTree(
       ScopeItem root, Function&lt;Collection&lt;UUID&gt;, List&lt;ScopeItem&gt;&gt; childrenLoader) {
-<span class="fc" id="L259">    Map&lt;UUID, List&lt;ScopeItem&gt;&gt; childrenByParentId = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L260">    Set&lt;UUID&gt; visited = new HashSet&lt;&gt;(Set.of(root.id()));</span>
-<span class="fc" id="L261">    List&lt;UUID&gt; currentLevelIds = List.of(root.id());</span>
+<span class="fc" id="L255">    Map&lt;UUID, List&lt;ScopeItem&gt;&gt; childrenByParentId = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L256">    Set&lt;UUID&gt; visited = new HashSet&lt;&gt;(Set.of(root.id()));</span>
+<span class="fc" id="L257">    List&lt;UUID&gt; currentLevelIds = List.of(root.id());</span>
 
-<span class="fc bfc" id="L263" title="All 2 branches covered.">    while (!currentLevelIds.isEmpty()) {</span>
-<span class="fc" id="L264">      List&lt;ScopeItem&gt; children =</span>
-<span class="fc" id="L265">          childrenLoader.apply(currentLevelIds).stream()</span>
-<span class="fc" id="L266">              .filter(child -&gt; visited.add(child.id()))</span>
-<span class="fc" id="L267">              .toList();</span>
-<span class="fc" id="L268">      children.forEach(</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">    while (!currentLevelIds.isEmpty()) {</span>
+<span class="fc" id="L260">      List&lt;ScopeItem&gt; children =</span>
+<span class="fc" id="L261">          childrenLoader.apply(currentLevelIds).stream()</span>
+<span class="fc" id="L262">              .filter(child -&gt; visited.add(child.id()))</span>
+<span class="fc" id="L263">              .toList();</span>
+<span class="fc" id="L264">      children.forEach(</span>
           child -&gt;
               childrenByParentId
-<span class="fc" id="L271">                  .computeIfAbsent(child.parentId(), k -&gt; new ArrayList&lt;&gt;())</span>
-<span class="fc" id="L272">                  .add(child));</span>
-<span class="fc" id="L273">      currentLevelIds = children.stream().map(ScopeItem::id).toList();</span>
-<span class="fc" id="L274">    }</span>
+<span class="fc" id="L267">                  .computeIfAbsent(child.parentId(), k -&gt; new ArrayList&lt;&gt;())</span>
+<span class="fc" id="L268">                  .add(child));</span>
+<span class="fc" id="L269">      currentLevelIds = children.stream().map(ScopeItem::id).toList();</span>
+<span class="fc" id="L270">    }</span>
 
-<span class="fc" id="L276">    return toScopeNode(root, childrenByParentId);</span>
+<span class="fc" id="L272">    return toScopeNode(root, childrenByParentId);</span>
   }
 
   private AffiliationScopeNode toScopeNode(
       ScopeItem item, Map&lt;UUID, List&lt;ScopeItem&gt;&gt; childrenByParentId) {
-<span class="fc" id="L281">    List&lt;AffiliationScopeNode&gt; children =</span>
-<span class="fc" id="L282">        childrenByParentId.getOrDefault(item.id(), List.of()).stream()</span>
-<span class="fc" id="L283">            .map(child -&gt; toScopeNode(child, childrenByParentId))</span>
-<span class="fc" id="L284">            .toList();</span>
+<span class="fc" id="L277">    List&lt;AffiliationScopeNode&gt; children =</span>
+<span class="fc" id="L278">        childrenByParentId.getOrDefault(item.id(), List.of()).stream()</span>
+<span class="fc" id="L279">            .map(child -&gt; toScopeNode(child, childrenByParentId))</span>
+<span class="fc" id="L280">            .toList();</span>
 
-<span class="fc" id="L286">    return new AffiliationScopeNode(item.id(), item.name(), item.type(), children);</span>
+<span class="fc" id="L282">    return new AffiliationScopeNode(item.id(), item.name(), item.type(), children);</span>
   }
 
-<span class="fc" id="L289">  private record ScopeItem(UUID id, String name, EAffiliationScopeNodeType type, UUID parentId) {}</span>
+<span class="fc" id="L285">  private record ScopeItem(UUID id, String name, EAffiliationScopeNodeType type, UUID parentId) {}</span>
 
   private List&lt;UUID&gt; institutionIdsOf(UUID externalUserId, EUserCategory category) {
-<span class="fc" id="L292">    return externalUserAffiliationRepository.findDistinctInstitutionIds(externalUserId, category);</span>
+<span class="fc" id="L288">    return externalUserAffiliationRepository.findDistinctInstitutionIds(externalUserId, category);</span>
   }
 
   private List&lt;UUID&gt; groupIdsOf(UUID externalUserId, EUserCategory category) {
-<span class="fc" id="L296">    return externalUserAffiliationRepository.findDistinctGroupIds(externalUserId, category);</span>
+<span class="fc" id="L292">    return externalUserAffiliationRepository.findDistinctGroupIds(externalUserId, category);</span>
   }
 
   private static boolean isEmpty(List&lt;UUID&gt; ids) {
-<span class="fc bfc" id="L300" title="All 4 branches covered.">    return ids == null || ids.isEmpty();</span>
+<span class="fc bfc" id="L296" title="All 4 branches covered.">    return ids == null || ids.isEmpty();</span>
   }
 
   /**
@@ -305,48 +301,48 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
    * creates the affiliation.
    */
   private UpsertResult upsertByNaturalKeys(ExternalUserAffiliationData data) {
-<span class="fc" id="L308">    ExternalUser externalUser =</span>
+<span class="fc" id="L304">    ExternalUser externalUser =</span>
         externalUserRepository
-<span class="fc" id="L310">            .findByEppn(data.eppn())</span>
-<span class="fc" id="L311">            .orElseThrow(ExternalUserNotFoundException::new);</span>
-<span class="fc" id="L312">    Institution institution =</span>
+<span class="fc" id="L306">            .findByEppn(data.eppn())</span>
+<span class="fc" id="L307">            .orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="fc" id="L308">    Institution institution =</span>
         institutionRepository
-<span class="fc" id="L314">            .findByUai(data.institutionUAI())</span>
-<span class="fc" id="L315">            .orElseThrow(InstitutionNotFoundException::new);</span>
+<span class="fc" id="L310">            .findByUai(data.institutionUAI())</span>
+<span class="fc" id="L311">            .orElseThrow(InstitutionNotFoundException::new);</span>
     Group group =
-<span class="pc bpc" id="L317" title="1 of 2 branches missed.">        data.groupIdSISco() != null</span>
+<span class="pc bpc" id="L313" title="1 of 2 branches missed.">        data.groupIdSISco() != null</span>
             ? groupRepository
-<span class="nc" id="L319">                .findByIdSISco(data.groupIdSISco())</span>
-<span class="nc" id="L320">                .orElseThrow(GroupNotFoundException::new)</span>
-<span class="fc" id="L321">            : null;</span>
+<span class="nc" id="L315">                .findByIdSISco(data.groupIdSISco())</span>
+<span class="nc" id="L316">                .orElseThrow(GroupNotFoundException::new)</span>
+<span class="fc" id="L317">            : null;</span>
 
-<span class="fc" id="L323">    return findOrCreate(externalUser, institution, group, data.category());</span>
+<span class="fc" id="L319">    return findOrCreate(externalUser, institution, group, data.category());</span>
   }
 
   private UpsertResult findOrCreate(
       ExternalUser externalUser, Institution institution, Group group, EUserCategory category) {
-<span class="fc" id="L328">    requireCategoryAllowed(externalUser, category);</span>
+<span class="fc" id="L324">    requireCategoryAllowed(externalUser, category);</span>
 
-<span class="fc bfc" id="L330" title="All 2 branches covered.">    UUID groupId = group != null ? group.getId() : null;</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">    UUID groupId = group != null ? group.getId() : null;</span>
 
-<span class="fc" id="L332">    return externalUserAffiliationRepository</span>
-<span class="fc" id="L333">        .findByExternalUserIdAndInstitutionIdAndGroupIdAndCategory(</span>
-<span class="fc" id="L334">            externalUser.getId(), institution.getId(), groupId, category)</span>
-<span class="fc" id="L335">        .map(affiliation -&gt; new UpsertResult(affiliation, false))</span>
-<span class="fc" id="L336">        .orElseGet(</span>
+<span class="fc" id="L328">    return externalUserAffiliationRepository</span>
+<span class="fc" id="L329">        .findByExternalUserIdAndInstitutionIdAndGroupIdAndCategory(</span>
+<span class="fc" id="L330">            externalUser.getId(), institution.getId(), groupId, category)</span>
+<span class="fc" id="L331">        .map(affiliation -&gt; new UpsertResult(affiliation, false))</span>
+<span class="fc" id="L332">        .orElseGet(</span>
             () -&gt;
-<span class="fc" id="L338">                new UpsertResult(</span>
-<span class="fc" id="L339">                    externalUserAffiliationRepository.save(</span>
-<span class="fc" id="L340">                        ExternalUserAffiliation.create(externalUser, institution, group, category)),</span>
+<span class="fc" id="L334">                new UpsertResult(</span>
+<span class="fc" id="L335">                    externalUserAffiliationRepository.save(</span>
+<span class="fc" id="L336">                        ExternalUserAffiliation.create(externalUser, institution, group, category)),</span>
                     true));
   }
 
   private void requireCategoryAllowed(ExternalUser externalUser, EUserCategory category) {
-<span class="pc bpc" id="L345" title="1 of 4 branches missed.">    if (category == null || !externalUser.getCategories().contains(category)) {</span>
-<span class="fc" id="L346">      throw new ExternalUserAffiliationCategoryNotAllowedException();</span>
+<span class="pc bpc" id="L341" title="1 of 4 branches missed.">    if (category == null || !externalUser.getCategories().contains(category)) {</span>
+<span class="fc" id="L342">      throw new ExternalUserAffiliationCategoryNotAllowedException();</span>
     }
-<span class="fc" id="L348">  }</span>
+<span class="fc" id="L344">  }</span>
 
-<span class="fc" id="L350">  private record UpsertResult(ExternalUserAffiliation affiliation, boolean created) {}</span>
+<span class="fc" id="L346">  private record UpsertResult(ExternalUserAffiliation affiliation, boolean created) {}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
