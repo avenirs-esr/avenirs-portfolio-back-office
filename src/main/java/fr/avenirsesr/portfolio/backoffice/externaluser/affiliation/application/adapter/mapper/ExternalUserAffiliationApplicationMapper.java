@@ -33,8 +33,6 @@ public class ExternalUserAffiliationApplicationMapper {
 
     return new ExternalUserAffiliationOverviewDTO(
         affiliation.getId(),
-        externalUser.getId(),
-        externalUser.getEppn(),
         externalUser.getFirstName(),
         externalUser.getLastName(),
         externalUser.getEmail(),

@@ -135,7 +135,6 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.data", hasSize(1)))
-          .andExpect(jsonPath("$.data[0].eppn", is(SEEDED_STUDENT_EPPN)))
           .andExpect(jsonPath("$.data[0].firstName", is("Lucas")))
           .andExpect(jsonPath("$.data[0].lastName", is("Tessier")))
           .andExpect(jsonPath("$.data[0].category", is("STUDENT")))
@@ -298,7 +297,6 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.data", hasSize(1)))
-          .andExpect(jsonPath("$.data[0].eppn", is(SEEDED_STUDENT_EPPN)))
           .andExpect(jsonPath("$.data[0].hasConnected", is(true)))
           .andExpect(jsonPath("$.data[0].profilePictureId", is(profilePictureId.toString())));
 
