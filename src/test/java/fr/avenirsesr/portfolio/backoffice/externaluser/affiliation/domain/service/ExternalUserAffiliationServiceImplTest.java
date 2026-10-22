@@ -28,6 +28,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
+import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.Arrays;
@@ -509,12 +510,13 @@ class ExternalUserAffiliationServiceImplTest {
 
   @Test
   void shouldQueryTheRepositoryWithEveryFilter_whenFindingAllAffiliations() {
-    BddLogger.given("a keyword, a category, an institution and a group to filter on");
+    BddLogger.given("a keyword and filters the logged-in staff is affiliated to");
     UUID institutionId = UUID.randomUUID();
     UUID groupId = UUID.randomUUID();
     PageCriteria pageCriteria = new PageCriteria(1, 20);
     PagedResult<ExternalUserAffiliation> expected =
         new PagedResult<>(List.of(), new PageInfo(1, 20, 0));
+    grantLoggedInStaffAccessTo(List.of(institutionId), List.of(groupId), true);
     when(externalUserAffiliationRepository.findAll(
             "tessier",
             List.of(EUserCategory.STAFF),
@@ -534,5 +536,61 @@ class ExternalUserAffiliationServiceImplTest {
 
     BddLogger.then("it should forward every filter to the repository, without narrowing them");
     assertSame(expected, result);
+  }
+
+  @Test
+  void shouldRejectTheSearch_whenFilteringOnAScopeTheStaffIsNotAffiliatedTo() {
+    BddLogger.given("a logged-in staff not affiliated to the filtered group");
+    UUID groupId = UUID.randomUUID();
+    grantLoggedInStaffAccessTo(null, List.of(groupId), false);
+
+    BddLogger.when("finding all the affiliations filtered by that group");
+
+    BddLogger.then("it should reject the search without querying the affiliations");
+    assertThrows(
+        UserNotAuthorizedException.class,
+        () -> service.findAll(null, null, null, List.of(groupId), new PageCriteria(0, 8)));
+    verify(externalUserAffiliationRepository, never())
+        .findAll(any(), any(), any(), any(), any(PageCriteria.class));
+  }
+
+  @Test
+  void shouldNotCheckAnyScope_whenNoInstitutionNorGroupIsFiltered() {
+    BddLogger.given("a search narrowed by a keyword and a category only");
+    PageCriteria pageCriteria = new PageCriteria(0, 8);
+    PagedResult<ExternalUserAffiliation> expected =
+        new PagedResult<>(List.of(), new PageInfo(0, 8, 0));
+    when(externalUserAffiliationRepository.findAll(
+            "tessier", List.of(EUserCategory.STAFF), null, null, pageCriteria))
+        .thenReturn(expected);
+
+    BddLogger.when("finding all the affiliations");
+    PagedResult<ExternalUserAffiliation> result =
+        service.findAll("tessier", List.of(EUserCategory.STAFF), null, null, pageCriteria);
+
+    BddLogger.then("it should not resolve the logged-in staff at all");
+    assertSame(expected, result);
+    verifyNoInteractions(loggedInExternalUserService, institutionService, groupService);
+  }
+
+  /** Stubs the affiliation scope of the logged-in staff, as {@code staffHasAccess} reads it. */
+  private void grantLoggedInStaffAccessTo(
+      List<UUID> institutionIds, List<UUID> groupIds, boolean granted) {
+    ExternalUser staff = externalUser(EUserCategory.STAFF);
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff);
+    when(externalUserRepository.findByEppn(staff.getEppn())).thenReturn(Optional.of(staff));
+
+    if (institutionIds != null && !institutionIds.isEmpty()) {
+      when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+              staff.getId(), EUserCategory.STAFF))
+          .thenReturn(List.of());
+      when(institutionService.staffHasAccess(List.of(), institutionIds)).thenReturn(granted);
+    }
+    if (groupIds != null && !groupIds.isEmpty()) {
+      when(externalUserAffiliationRepository.findDistinctGroupIds(
+              staff.getId(), EUserCategory.STAFF))
+          .thenReturn(List.of());
+      when(groupService.staffHasAccess(List.of(), groupIds)).thenReturn(granted);
+    }
   }
 }

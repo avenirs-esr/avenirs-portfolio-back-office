@@ -27,6 +27,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
+import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -96,8 +97,27 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
       List<UUID> institutionIds,
       List<UUID> groupIds,
       PageCriteria pageCriteria) {
+    requireStaffAccessToFilters(institutionIds, groupIds);
+
     return externalUserAffiliationRepository.findAll(
         keyword, categories, institutionIds, groupIds, pageCriteria);
+  }
+
+  private void requireStaffAccessToFilters(List<UUID> institutionIds, List<UUID> groupIds) {
+    if (isEmpty(institutionIds) && isEmpty(groupIds)) {
+      return;
+    }
+
+    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();
+    if (!staffHasAccess(staff.getEppn(), institutionIds, groupIds)) {
+      log.warn(
+          "Staff {} is not affiliated to every filtered institution {} and group {}",
+          staff.getId(),
+          institutionIds,
+          groupIds);
+      throw new UserNotAuthorizedException(
+          "The filtered institutions and groups must be ones the user is affiliated to");
+    }
   }
 
   @Override

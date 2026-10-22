@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
@@ -42,7 +43,10 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
   private static final String STAFF_EPPN = "ethan.perrin@university.com";
   private static final String SEEDED_STUDENT_EPPN = "lucas.tessier@university.com";
   private static final String SEEDED_RENNES_UAI = "0350001A";
+  private static final String SEEDED_BORDEAUX_UAI = "0330001C";
+  private static final String SEEDED_PROGRAM_ID_SI_SCO = "10000001";
   private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
+  private static final String SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO = "10000005";
 
   /** Totals of the seeded fixtures, all categories and institutions taken together. */
   private static final int SEEDED_AFFILIATIONS_COUNT = 370;
@@ -56,6 +60,8 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
   @Autowired private ExternalUserRepository externalUserRepository;
   @Autowired private InstitutionRepository institutionRepository;
   @Autowired private GroupRepository groupRepository;
+
+  @Autowired private ExternalUserAffiliationService externalUserAffiliationService;
 
   @MockitoBean private CofolioProfileClient cofolioProfileClient;
 
@@ -80,6 +86,18 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
 
   private UUID groupIdOf(String idSISco) {
     return groupRepository.findByIdSISco(idSISco).orElseThrow().getId();
+  }
+
+  /**
+   * Scopes the staff to the seeded program, which covers the option and the student group below it.
+   * Rolled back with the test, so the other ones keep seeing a staff without any group.
+   */
+  private void affiliateStaffToSeededProgram() {
+    externalUserAffiliationService.addAffiliation(
+        externalUserIdOf(STAFF_EPPN),
+        institutionIdOf(SEEDED_RENNES_UAI),
+        groupIdOf(SEEDED_PROGRAM_ID_SI_SCO),
+        EUserCategory.STAFF);
   }
 
   /** Authenticates the request as a logged-in staff granted the external user read permission. */
@@ -125,6 +143,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     @Test
     void thenItShouldReturnTheIdentityOfTheAffiliatedUserAndTheLabelsOfItsScope() throws Exception {
       BddLogger.given("a student affiliated to a student group");
+      affiliateStaffToSeededProgram();
 
       BddLogger.when("calling GET /back-office/external-users/affiliations filtered by group");
       mockMvc
@@ -221,6 +240,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     @Test
     void thenItShouldReturnOnlyTheAffiliationsOfThatGroup_whenFilteringByGroup() throws Exception {
       BddLogger.given("the seeded affiliations, some of them bound to no group at all");
+      affiliateStaffToSeededProgram();
 
       BddLogger.when("calling GET /back-office/external-users/affiliations filtered by group");
       mockMvc
@@ -232,7 +252,9 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .andExpect(jsonPath("$.data[*].groupName", everyItem(is("Groupe A"))))
           .andExpect(jsonPath("$.page.totalElements", is(SEEDED_GROUPE_A_AFFILIATIONS_COUNT)));
 
-      BddLogger.then("it should return only the affiliations bound to that group");
+      BddLogger.then(
+          "it should return only the affiliations bound to that group, reachable through the"
+              + " program the staff is affiliated to");
     }
 
     @Test
@@ -281,6 +303,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     @Test
     void thenItShouldReportTheCofolioConnectionAndProfilePicture() throws Exception {
       BddLogger.given("a Tessier user who logged in to Cofolio and uploaded a profile picture");
+      affiliateStaffToSeededProgram();
       UUID profilePictureId = UUID.randomUUID();
       when(cofolioProfileClient.findByEppns(any()))
           .thenReturn(
@@ -306,6 +329,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     @Test
     void thenItShouldReportNoPicture_whenTheUserConnectedWithoutUploadingOne() throws Exception {
       BddLogger.given("a Tessier user who logged in to Cofolio without uploading a picture");
+      affiliateStaffToSeededProgram();
       when(cofolioProfileClient.findByEppns(any()))
           .thenReturn(
               Map.of(SEEDED_STUDENT_EPPN, new CofolioProfile(SEEDED_STUDENT_EPPN, true, null)));
@@ -341,6 +365,55 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .andExpect(jsonPath("$.data[*].profilePictureId", everyItem(is(nullValue()))));
 
       BddLogger.then("it should report them as never connected rather than failing");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenFilteringOnAGroupTheStaffIsNotAffiliatedTo()
+        throws Exception {
+      BddLogger.given("a staff affiliated to no group at all");
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations filtered by group");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("groupIds", groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403 rather than the members of that group");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenFilteringOnAnotherInstitution() throws Exception {
+      BddLogger.given("a staff of the Rennes institution");
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations filtered by another institution");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("institutionIds", institutionIdOf(SEEDED_BORDEAUX_UAI).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, the staff not being affiliated to that institution");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenOnlyOneOfTheFilteredGroupsIsReachable() throws Exception {
+      BddLogger.given("a staff affiliated to the Rennes program only");
+      affiliateStaffToSeededProgram();
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations with two groups");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("groupIds", groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO).toString())
+                  .param("groupIds", groupIdOf(SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, every filtered group having to be reachable");
     }
 
     @Test
