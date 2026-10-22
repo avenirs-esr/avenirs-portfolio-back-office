@@ -8,8 +8,6 @@ import java.util.UUID;
 @Schema(
     requiredProperties = {
       "id",
-      "externalUserId",
-      "eppn",
       "firstName",
       "lastName",
       "email",
@@ -20,8 +18,6 @@ import java.util.UUID;
     })
 public record ExternalUserAffiliationOverviewDTO(
     UUID id,
-    UUID externalUserId,
-    String eppn,
     String firstName,
     String lastName,
     String email,
