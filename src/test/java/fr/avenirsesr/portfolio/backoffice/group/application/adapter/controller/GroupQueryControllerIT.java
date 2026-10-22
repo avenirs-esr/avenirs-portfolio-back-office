@@ -109,7 +109,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
           .andExpect(jsonPath("$.data[1].name", is("Licence Informatique")))
           .andExpect(jsonPath("$.data[2].name", is("Licence Informatique - Parcours IA")))
           .andExpect(jsonPath("$.data[2].type", is("PROGRAM_OPTION")))
-          .andExpect(jsonPath("$.data[2].parentName", is(SEEDED_PARENT_NAME)))
+          .andExpect(jsonPath("$.data[2].parent.name", is(SEEDED_PARENT_NAME)))
           .andExpect(jsonPath("$.page.page", is(0)))
           .andExpect(jsonPath("$.page.totalElements", is(3)))
           .andExpect(jsonPath("$.page.totalPages", is(1)));
@@ -273,12 +273,10 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
         programOptionId = groupIdOf(SEEDED_PROGRAM_OPTION_ID_SI_SCO);
         programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
 
-        BddLogger.when("calling GET /back-office/groups/{id} with the api key only");
+        BddLogger.when("calling GET /back-office/groups/{id} as a staff of the institution");
         response =
             mockMvc.perform(
-                get(BASE_PATH + "/" + programOptionId)
-                    .principal(uuidPrincipal())
-                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                asStaffUser(get(BASE_PATH + "/" + programOptionId), STAFF_EPPN)
                     .accept(MediaType.APPLICATION_JSON));
       }
 
@@ -291,10 +289,11 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$.id", is(programOptionId.toString())))
             .andExpect(jsonPath("$.name", is("Licence Informatique - Parcours IA")))
             .andExpect(jsonPath("$.type", is("PROGRAM_OPTION")))
-            .andExpect(jsonPath("$.institutionId", is(SEEDED_INSTITUTION_ID)))
-            .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
-            .andExpect(jsonPath("$.parentId", is(programId.toString())))
-            .andExpect(jsonPath("$.parentName", is(SEEDED_PARENT_NAME)))
+            .andExpect(jsonPath("$.institution.id", is(SEEDED_INSTITUTION_ID)))
+            .andExpect(jsonPath("$.institution.name", is(SEEDED_INSTITUTION_NAME)))
+            .andExpect(jsonPath("$.parent.id", is(programId.toString())))
+            .andExpect(jsonPath("$.parent.name", is(SEEDED_PARENT_NAME)))
+            .andExpect(jsonPath("$.parent.type", is("PROGRAM")))
             .andExpect(jsonPath("$.usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
@@ -312,9 +311,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
         BddLogger.when("calling GET /back-office/groups/{id}");
         response =
             mockMvc.perform(
-                get(BASE_PATH + "/" + programId)
-                    .principal(uuidPrincipal())
-                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                asStaffUser(get(BASE_PATH + "/" + programId), STAFF_EPPN)
                     .accept(MediaType.APPLICATION_JSON));
       }
 
@@ -325,10 +322,9 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
         response
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.type", is("PROGRAM")))
-            .andExpect(jsonPath("$.institutionId", is(SEEDED_INSTITUTION_ID)))
-            .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
-            .andExpect(jsonPath("$.parentId", is(nullValue())))
-            .andExpect(jsonPath("$.parentName", is(nullValue())))
+            .andExpect(jsonPath("$.institution.id", is(SEEDED_INSTITUTION_ID)))
+            .andExpect(jsonPath("$.institution.name", is(SEEDED_INSTITUTION_NAME)))
+            .andExpect(jsonPath("$.parent", is(nullValue())))
             .andExpect(jsonPath("$.usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
@@ -346,9 +342,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
         BddLogger.when("calling GET /back-office/groups/{id}");
         response =
             mockMvc.perform(
-                get(BASE_PATH + "/" + unknownId)
-                    .principal(uuidPrincipal())
-                    .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)
+                asStaffUser(get(BASE_PATH + "/" + unknownId), STAFF_EPPN)
                     .accept(MediaType.APPLICATION_JSON));
       }
 
@@ -357,6 +351,31 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
         BddLogger.then("it should return 404");
 
         response.andExpect(status().isNotFound());
+      }
+    }
+
+    @Nested
+    class AndGroupIsOutOfTheStaffInstitution {
+
+      private ResultActions response;
+
+      @BeforeEach
+      void setupWhen() throws Exception {
+        BddLogger.given("a seeded Rennes group and a staff of the Bordeaux institution");
+        UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+
+        BddLogger.when("calling GET /back-office/groups/{id}");
+        response =
+            mockMvc.perform(
+                asStaffUser(get(BASE_PATH + "/" + programId), OTHER_STAFF_EPPN)
+                    .accept(MediaType.APPLICATION_JSON));
+      }
+
+      @Test
+      void thenItShouldReturnForbidden() throws Exception {
+        BddLogger.then("it should return 403");
+
+        response.andExpect(status().isForbidden());
       }
     }
 
@@ -417,10 +436,9 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$.id", is(programId.toString())))
             .andExpect(jsonPath("$.name", is("Licence Informatique")))
             .andExpect(jsonPath("$.type", is("PROGRAM")))
-            .andExpect(jsonPath("$.institutionId", is(SEEDED_INSTITUTION_ID)))
-            .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
-            .andExpect(jsonPath("$.parentId", is(nullValue())))
-            .andExpect(jsonPath("$.parentName", is(nullValue())))
+            .andExpect(jsonPath("$.institution.id", is(SEEDED_INSTITUTION_ID)))
+            .andExpect(jsonPath("$.institution.name", is(SEEDED_INSTITUTION_NAME)))
+            .andExpect(jsonPath("$.parent", is(nullValue())))
             .andExpect(jsonPath("$.usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
@@ -454,10 +472,9 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is(programId.toString())))
             .andExpect(jsonPath("$.type", is("PROGRAM")))
-            .andExpect(jsonPath("$.institutionId", is(SEEDED_INSTITUTION_ID)))
-            .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
-            .andExpect(jsonPath("$.parentId", is(nullValue())))
-            .andExpect(jsonPath("$.parentName", is(nullValue())))
+            .andExpect(jsonPath("$.institution.id", is(SEEDED_INSTITUTION_ID)))
+            .andExpect(jsonPath("$.institution.name", is(SEEDED_INSTITUTION_NAME)))
+            .andExpect(jsonPath("$.parent", is(nullValue())))
             .andExpect(jsonPath("$.usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }
@@ -552,7 +569,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$[0].id", is(programOptionId.toString())))
             .andExpect(jsonPath("$[0].name", is("Licence Informatique - Parcours IA")))
             .andExpect(jsonPath("$[0].type", is("PROGRAM_OPTION")))
-            .andExpect(jsonPath("$[0].parentName", is(SEEDED_PARENT_NAME)))
+            .andExpect(jsonPath("$[0].parent.name", is(SEEDED_PARENT_NAME)))
             .andExpect(jsonPath("$[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
       }
     }

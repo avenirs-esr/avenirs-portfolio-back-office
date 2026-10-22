@@ -3,6 +3,8 @@ package fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupDTO;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupOverviewDTO;
+import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupReferenceDTO;
+import fr.avenirsesr.portfolio.common.institution.application.adapter.dto.InstitutionReferenceDTO;
 
 public class GroupApplicationMapper {
 
@@ -13,10 +15,9 @@ public class GroupApplicationMapper {
         group.getId(),
         group.getName(),
         group.getType(),
-        group.getInstitution().getId(),
-        group.getInstitution().getName(),
-        group.getParent().map(Group::getId).orElse(null),
-        group.getParent().map(Group::getName).orElse(null),
+        new InstitutionReferenceDTO(
+            group.getInstitution().getId(), group.getInstitution().getName()),
+        toParentReference(group),
         externalUsersCount);
   }
 
@@ -26,7 +27,13 @@ public class GroupApplicationMapper {
         group.getName(),
         group.getType(),
         externalUsersCount,
-        group.getParent().map(Group::getId).orElse(null),
-        group.getParent().map(Group::getName).orElse(null));
+        toParentReference(group));
+  }
+
+  private static GroupReferenceDTO toParentReference(Group group) {
+    return group
+        .getParent()
+        .map(parent -> new GroupReferenceDTO(parent.getId(), parent.getName(), parent.getType()))
+        .orElse(null);
   }
 }
