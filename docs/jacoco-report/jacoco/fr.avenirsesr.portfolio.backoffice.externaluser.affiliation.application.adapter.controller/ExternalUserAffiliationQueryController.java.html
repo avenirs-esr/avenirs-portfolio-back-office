@@ -3,11 +3,10 @@
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationOverviewDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.mapper.ExternalUserAffiliationApplicationMapper;
-import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.common.data.application.adapter.dto.PageInfoDTO;
 import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
@@ -33,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Read-only endpoints authenticated by login and guarded by permissions. Provisioning is exposed to
  * the institutions by {@link ExternalUserAffiliationProvisioningController}.
  */
-<span class="fc" id="L36">@Slf4j</span>
+<span class="fc" id="L35">@Slf4j</span>
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/external-users&quot;)
@@ -53,58 +52,48 @@ public class ExternalUserAffiliationQueryController {
       @RequestParam(required = false) List&lt;UUID&gt; groupIds,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
-<span class="fc" id="L56">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
-<span class="fc" id="L57">    log.debug(</span>
-        &quot;Getting the affiliated users (keyword: {}, categories: {}, institutions: {}, groups: {})&quot;
-            + &quot; {}&quot;,
+<span class="fc" id="L55">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
+<span class="fc" id="L56">    log.debug(</span>
+        &quot;Getting the affiliations (keyword: {}, categories: {}, institutions: {}, groups: {}) {}&quot;,
         keyword,
         categories,
         institutionIds,
         groupIds,
         pageCriteria);
 
-<span class="fc" id="L66">    PagedResult&lt;AffiliatedExternalUser&gt; affiliatedExternalUsers =</span>
-<span class="fc" id="L67">        externalUserAffiliationService.findAll(</span>
+<span class="fc" id="L64">    PagedResult&lt;ExternalUserAffiliation&gt; affiliations =</span>
+<span class="fc" id="L65">        externalUserAffiliationService.findAll(</span>
             keyword, categories, institutionIds, groupIds, pageCriteria);
-<span class="fc" id="L69">    List&lt;AffiliatedExternalUser&gt; content = affiliatedExternalUsers.content();</span>
-<span class="fc" id="L70">    Map&lt;String, CofolioProfile&gt; cofolioProfiles =</span>
-<span class="fc" id="L71">        cofolioProfileClient.findByEppns(</span>
-<span class="fc" id="L72">            content.stream().map(user -&gt; user.externalUser().getEppn()).distinct().toList());</span>
-<span class="fc" id="L73">    Map&lt;UUID, Integer&gt; usersCountsByGroupId =</span>
-<span class="fc" id="L74">        externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(</span>
-<span class="fc" id="L75">            content.stream()</span>
-<span class="fc" id="L76">                .flatMap(user -&gt; user.groups().stream())</span>
-<span class="fc" id="L77">                .map(Group::getId)</span>
-<span class="fc" id="L78">                .distinct()</span>
-<span class="fc" id="L79">                .toList());</span>
+<span class="fc" id="L67">    List&lt;ExternalUserAffiliation&gt; content = affiliations.content();</span>
+<span class="fc" id="L68">    Map&lt;String, CofolioProfile&gt; cofolioProfiles =</span>
+<span class="fc" id="L69">        cofolioProfileClient.findByEppns(</span>
+<span class="fc" id="L70">            content.stream().map(a -&gt; a.getExternalUser().getEppn()).distinct().toList());</span>
 
-<span class="fc" id="L81">    return ResponseEntity.ok(</span>
+<span class="fc" id="L72">    return ResponseEntity.ok(</span>
         new PagedResponse&lt;&gt;(
-<span class="fc" id="L83">            content.stream()</span>
-<span class="fc" id="L84">                .map(</span>
-                    affiliatedExternalUser -&gt;
-<span class="fc" id="L86">                        ExternalUserAffiliationApplicationMapper</span>
-<span class="fc" id="L87">                            .toExternalUserAffiliationOverviewDTO(</span>
-                                affiliatedExternalUser,
-<span class="fc" id="L89">                                cofolioProfiles.get(</span>
-<span class="fc" id="L90">                                    affiliatedExternalUser.externalUser().getEppn()),</span>
-                                usersCountsByGroupId))
-<span class="fc" id="L92">                .toList(),</span>
-<span class="fc" id="L93">            PageInfoDTO.fromDomain(affiliatedExternalUsers.pageInfo())));</span>
+<span class="fc" id="L74">            content.stream()</span>
+<span class="fc" id="L75">                .map(</span>
+                    affiliation -&gt;
+<span class="fc" id="L77">                        ExternalUserAffiliationApplicationMapper</span>
+<span class="fc" id="L78">                            .toExternalUserAffiliationOverviewDTO(</span>
+                                affiliation,
+<span class="fc" id="L80">                                cofolioProfiles.get(affiliation.getExternalUser().getEppn())))</span>
+<span class="fc" id="L81">                .toList(),</span>
+<span class="fc" id="L82">            PageInfoDTO.fromDomain(affiliations.pageInfo())));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('external-user:read')&quot;)
   @GetMapping(&quot;/{externalUserId}/affiliations&quot;)
   public ResponseEntity&lt;List&lt;ExternalUserAffiliationDTO&gt;&gt; getAffiliationsOfExternalUser(
       @PathVariable UUID externalUserId) {
-<span class="fc" id="L100">    log.debug(&quot;Getting affiliations for external user: {}&quot;, externalUserId);</span>
+<span class="fc" id="L89">    log.debug(&quot;Getting affiliations for external user: {}&quot;, externalUserId);</span>
 
-<span class="fc" id="L102">    List&lt;ExternalUserAffiliationDTO&gt; affiliations =</span>
-<span class="fc" id="L103">        externalUserAffiliationService.getAffiliations(externalUserId).stream()</span>
-<span class="fc" id="L104">            .map(ExternalUserAffiliationApplicationMapper::toExternalUserAffiliationDTO)</span>
-<span class="fc" id="L105">            .toList();</span>
+<span class="fc" id="L91">    List&lt;ExternalUserAffiliationDTO&gt; affiliations =</span>
+<span class="fc" id="L92">        externalUserAffiliationService.getAffiliations(externalUserId).stream()</span>
+<span class="fc" id="L93">            .map(ExternalUserAffiliationApplicationMapper::toExternalUserAffiliationDTO)</span>
+<span class="fc" id="L94">            .toList();</span>
 
-<span class="fc" id="L107">    return ResponseEntity.ok(affiliations);</span>
+<span class="fc" id="L96">    return ResponseEntity.ok(affiliations);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
