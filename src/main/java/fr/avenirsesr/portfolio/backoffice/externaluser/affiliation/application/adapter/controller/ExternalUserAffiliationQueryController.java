@@ -5,6 +5,8 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.a
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.mapper.ExternalUserAffiliationApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
 import fr.avenirsesr.portfolio.common.data.application.adapter.dto.PageInfoDTO;
 import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExternalUserAffiliationQueryController {
 
   private final ExternalUserAffiliationService externalUserAffiliationService;
+  private final CofolioProfileClient cofolioProfileClient;
 
   @PreAuthorize("hasAuthority('external-user:read')")
   @GetMapping("/affiliations")
@@ -60,11 +64,20 @@ public class ExternalUserAffiliationQueryController {
     PagedResult<ExternalUserAffiliation> affiliations =
         externalUserAffiliationService.findAll(
             keyword, categories, institutionIds, groupIds, pageCriteria);
+    List<ExternalUserAffiliation> content = affiliations.content();
+    Map<String, CofolioProfile> cofolioProfiles =
+        cofolioProfileClient.findByEppns(
+            content.stream().map(a -> a.getExternalUser().getEppn()).distinct().toList());
 
     return ResponseEntity.ok(
         new PagedResponse<>(
-            affiliations.content().stream()
-                .map(ExternalUserAffiliationApplicationMapper::toExternalUserAffiliationOverviewDTO)
+            content.stream()
+                .map(
+                    affiliation ->
+                        ExternalUserAffiliationApplicationMapper
+                            .toExternalUserAffiliationOverviewDTO(
+                                affiliation,
+                                cofolioProfiles.get(affiliation.getExternalUser().getEppn())))
                 .toList(),
             PageInfoDTO.fromDomain(affiliations.pageInfo())));
   }

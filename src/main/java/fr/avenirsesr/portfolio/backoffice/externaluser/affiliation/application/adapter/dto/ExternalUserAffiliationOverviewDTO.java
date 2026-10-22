@@ -13,6 +13,7 @@ import java.util.UUID;
       "firstName",
       "lastName",
       "email",
+      "hasConnected",
       "category",
       "institutionId",
       "institutionName"
@@ -24,6 +25,8 @@ public record ExternalUserAffiliationOverviewDTO(
     String firstName,
     String lastName,
     String email,
+    boolean hasConnected,
+    UUID profilePictureId,
     @Schema(ref = "#/components/schemas/EUserCategory") EUserCategory category,
     UUID institutionId,
     String institutionName,

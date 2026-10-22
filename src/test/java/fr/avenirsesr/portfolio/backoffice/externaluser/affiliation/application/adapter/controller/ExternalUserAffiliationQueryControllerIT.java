@@ -3,12 +3,17 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
@@ -18,13 +23,16 @@ import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -49,9 +57,17 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
   @Autowired private InstitutionRepository institutionRepository;
   @Autowired private GroupRepository groupRepository;
 
+  @MockitoBean private CofolioProfileClient cofolioProfileClient;
+
   @BeforeAll
   void setup(@Autowired SeederRunner seederRunner) {
     seederRunner.run();
+  }
+
+  /** Nobody logged in to Cofolio unless a test says otherwise. */
+  @BeforeEach
+  void stubCofolioProfiles() {
+    when(cofolioProfileClient.findByEppns(any())).thenReturn(Map.of());
   }
 
   private UUID externalUserIdOf(String eppn) {
@@ -261,6 +277,72 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .andExpect(jsonPath("$.page.totalPages", is(2)));
 
       BddLogger.then("it should return the second page and its page information");
+    }
+
+    @Test
+    void thenItShouldReportTheCofolioConnectionAndProfilePicture() throws Exception {
+      BddLogger.given("a Tessier user who logged in to Cofolio and uploaded a profile picture");
+      UUID profilePictureId = UUID.randomUUID();
+      when(cofolioProfileClient.findByEppns(any()))
+          .thenReturn(
+              Map.of(
+                  SEEDED_STUDENT_EPPN,
+                  new CofolioProfile(SEEDED_STUDENT_EPPN, true, profilePictureId)));
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "tessier")
+                  .param("groupIds", groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data", hasSize(1)))
+          .andExpect(jsonPath("$.data[0].eppn", is(SEEDED_STUDENT_EPPN)))
+          .andExpect(jsonPath("$.data[0].hasConnected", is(true)))
+          .andExpect(jsonPath("$.data[0].profilePictureId", is(profilePictureId.toString())));
+
+      BddLogger.then("it should report the connection and the id of the picture");
+    }
+
+    @Test
+    void thenItShouldReportNoPicture_whenTheUserConnectedWithoutUploadingOne() throws Exception {
+      BddLogger.given("a Tessier user who logged in to Cofolio without uploading a picture");
+      when(cofolioProfileClient.findByEppns(any()))
+          .thenReturn(
+              Map.of(SEEDED_STUDENT_EPPN, new CofolioProfile(SEEDED_STUDENT_EPPN, true, null)));
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "tessier")
+                  .param("groupIds", groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[0].hasConnected", is(true)))
+          .andExpect(jsonPath("$.data[0].profilePictureId", is(nullValue())));
+
+      BddLogger.then("it should report the connection with no picture");
+    }
+
+    @Test
+    void thenItShouldReportNoConnection_whenTheApiKnowsNothingOfTheUser() throws Exception {
+      BddLogger.given("users the portfolio api reports nothing for");
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "tessier")
+                  .param("pageSize", "20")
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data", hasSize(SEEDED_TESSIER_AFFILIATIONS_COUNT)))
+          .andExpect(jsonPath("$.data[*].hasConnected", everyItem(is(false))))
+          .andExpect(jsonPath("$.data[*].profilePictureId", everyItem(is(nullValue()))));
+
+      BddLogger.then("it should report them as never connected rather than failing");
     }
 
     @Test
