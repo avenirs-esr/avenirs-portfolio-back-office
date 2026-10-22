@@ -84,6 +84,8 @@ public class GroupQueryController {
     log.debug("Getting group for id: {}", id);
 
     Group group = groupService.findById(id);
+    requireAffiliationToInstitutionOf(group);
+
     Map<UUID, Integer> usersCounts =
         externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(
             List.of(group.getId()));
