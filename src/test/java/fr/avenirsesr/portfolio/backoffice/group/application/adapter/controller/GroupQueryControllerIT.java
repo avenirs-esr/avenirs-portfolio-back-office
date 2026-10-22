@@ -40,6 +40,9 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
   private static final String SEEDED_PROGRAM_ID_SI_SCO = "10000001";
   private static final String SEEDED_PROGRAM_OPTION_ID_SI_SCO = "10000002";
   private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
+  private static final String SEEDED_PARENT_NAME = "Licence Informatique";
+  private static final String SEEDED_INSTITUTION_ID = "14baa158-22f9-391a-bf7d-676022151b65";
+  private static final String SEEDED_INSTITUTION_NAME = "Université de Rennes";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private GroupRepository groupRepository;
@@ -84,7 +87,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
           .andExpect(jsonPath("$.data[1].name", is("Licence Informatique")))
           .andExpect(jsonPath("$.data[2].name", is("Licence Informatique - Parcours IA")))
           .andExpect(jsonPath("$.data[2].type", is("PROGRAM_OPTION")))
-          .andExpect(jsonPath("$.data[2].parentName", is("Licence Informatique")))
+          .andExpect(jsonPath("$.data[2].parentName", is(SEEDED_PARENT_NAME)))
           .andExpect(jsonPath("$.page.page", is(0)))
           .andExpect(jsonPath("$.page.totalElements", is(3)))
           .andExpect(jsonPath("$.page.totalPages", is(1)));
@@ -234,7 +237,11 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$.id", is(programOptionId.toString())))
             .andExpect(jsonPath("$.name", is("Licence Informatique - Parcours IA")))
             .andExpect(jsonPath("$.type", is("PROGRAM_OPTION")))
-            .andExpect(jsonPath("$.parentId", is(programId.toString())));
+            .andExpect(jsonPath("$.institutionId", is(SEEDED_INSTITUTION_ID)))
+            .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
+            .andExpect(jsonPath("$.parentId", is(programId.toString())))
+            .andExpect(jsonPath("$.parentName", is(SEEDED_PARENT_NAME)))
+            .andExpect(jsonPath("$.usersCount", is(0)));
       }
     }
 
@@ -264,7 +271,11 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
         response
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.type", is("PROGRAM")))
-            .andExpect(jsonPath("$.parentId", is(nullValue())));
+            .andExpect(jsonPath("$.institutionId", is(SEEDED_INSTITUTION_ID)))
+            .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
+            .andExpect(jsonPath("$.parentId", is(nullValue())))
+            .andExpect(jsonPath("$.parentName", is(nullValue())))
+            .andExpect(jsonPath("$.usersCount", is(0)));
       }
     }
 
@@ -352,7 +363,11 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$.id", is(programId.toString())))
             .andExpect(jsonPath("$.name", is("Licence Informatique")))
             .andExpect(jsonPath("$.type", is("PROGRAM")))
-            .andExpect(jsonPath("$.parentId", is(nullValue())));
+            .andExpect(jsonPath("$.institutionId", is(SEEDED_INSTITUTION_ID)))
+            .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
+            .andExpect(jsonPath("$.parentId", is(nullValue())))
+            .andExpect(jsonPath("$.parentName", is(nullValue())))
+            .andExpect(jsonPath("$.usersCount", is(0)));
       }
     }
 
@@ -384,7 +399,12 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
         response
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is(programId.toString())))
-            .andExpect(jsonPath("$.type", is("PROGRAM")));
+            .andExpect(jsonPath("$.type", is("PROGRAM")))
+            .andExpect(jsonPath("$.institutionId", is(SEEDED_INSTITUTION_ID)))
+            .andExpect(jsonPath("$.institutionName", is(SEEDED_INSTITUTION_NAME)))
+            .andExpect(jsonPath("$.parentId", is(nullValue())))
+            .andExpect(jsonPath("$.parentName", is(nullValue())))
+            .andExpect(jsonPath("$.usersCount", is(0)));
       }
     }
 
@@ -476,7 +496,7 @@ class GroupQueryControllerIT extends ContainerConfigurationTest {
             .andExpect(jsonPath("$[0].id", is(programOptionId.toString())))
             .andExpect(jsonPath("$[0].name", is("Licence Informatique - Parcours IA")))
             .andExpect(jsonPath("$[0].type", is("PROGRAM_OPTION")))
-            .andExpect(jsonPath("$[0].parentName", is("Licence Informatique")))
+            .andExpect(jsonPath("$[0].parentName", is(SEEDED_PARENT_NAME)))
             .andExpect(jsonPath("$[0].usersCount", is(0)));
       }
     }

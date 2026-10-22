@@ -83,7 +83,11 @@ public class GroupQueryController {
   public ResponseEntity<GroupDTO> getGroupById(@PathVariable UUID id) {
     log.debug("Getting group for id: {}", id);
 
-    return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findById(id)));
+    Group group = groupService.findById(id);
+    Map<UUID, Integer> usersCounts =
+        externalUserAffiliationService.countExternalUsersByGroupIds(List.of(group.getId()));
+    return ResponseEntity.ok(
+        GroupApplicationMapper.toGroupDTO(group, usersCounts.getOrDefault(group.getId(), 0)));
   }
 
   @PreAuthorize("hasAuthority('group:read')")
@@ -112,7 +116,12 @@ public class GroupQueryController {
   public ResponseEntity<GroupDTO> getProgramOfGroup(@PathVariable UUID id) {
     log.debug("Getting program of group for id: {}", id);
 
-    return ResponseEntity.ok(GroupApplicationMapper.toGroupDTO(groupService.findProgramOf(id)));
+    Group program = groupService.findProgramOf(id);
+    Map<UUID, Integer> usersCounts =
+        externalUserAffiliationService.countExternalUsersByGroupIds(List.of(program.getId()));
+
+    return ResponseEntity.ok(
+        GroupApplicationMapper.toGroupDTO(program, usersCounts.getOrDefault(program.getId(), 0)));
   }
 
   private void requireAffiliationToInstitutionOf(Group group) {
