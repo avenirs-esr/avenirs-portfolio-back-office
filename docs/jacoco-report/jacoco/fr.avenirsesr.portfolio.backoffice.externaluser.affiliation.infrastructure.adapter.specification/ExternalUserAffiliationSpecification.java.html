@@ -2,72 +2,31 @@
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.model.ExternalUserAffiliationEntity;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
-import jakarta.persistence.criteria.Path;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 
-<span class="nc" id="L11">public class ExternalUserAffiliationSpecification {</span>
+<span class="nc" id="L8">public class ExternalUserAffiliationSpecification {</span>
 
   public static Specification&lt;ExternalUserAffiliationEntity&gt; withExternalUserId(
       UUID externalUserId) {
-<span class="fc" id="L15">    return (root, query, criteriaBuilder) -&gt;</span>
-<span class="fc" id="L16">        criteriaBuilder.equal(root.get(&quot;externalUser&quot;).get(&quot;id&quot;), externalUserId);</span>
+<span class="fc" id="L12">    return (root, query, criteriaBuilder) -&gt;</span>
+<span class="fc" id="L13">        criteriaBuilder.equal(root.get(&quot;externalUser&quot;).get(&quot;id&quot;), externalUserId);</span>
   }
 
   public static Specification&lt;ExternalUserAffiliationEntity&gt; withInstitutionId(UUID institutionId) {
-<span class="fc" id="L20">    return (root, query, criteriaBuilder) -&gt;</span>
-<span class="fc" id="L21">        criteriaBuilder.equal(root.get(&quot;institution&quot;).get(&quot;id&quot;), institutionId);</span>
+<span class="fc" id="L17">    return (root, query, criteriaBuilder) -&gt;</span>
+<span class="fc" id="L18">        criteriaBuilder.equal(root.get(&quot;institution&quot;).get(&quot;id&quot;), institutionId);</span>
   }
 
   public static Specification&lt;ExternalUserAffiliationEntity&gt; withGroupId(UUID groupId) {
-<span class="fc" id="L25">    return (root, query, criteriaBuilder) -&gt;</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        groupId == null</span>
-<span class="fc" id="L27">            ? criteriaBuilder.isNull(root.get(&quot;group&quot;))</span>
-<span class="fc" id="L28">            : criteriaBuilder.equal(root.get(&quot;group&quot;).get(&quot;id&quot;), groupId);</span>
+<span class="fc" id="L22">    return (root, query, criteriaBuilder) -&gt;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        groupId == null</span>
+<span class="fc" id="L24">            ? criteriaBuilder.isNull(root.get(&quot;group&quot;))</span>
+<span class="fc" id="L25">            : criteriaBuilder.equal(root.get(&quot;group&quot;).get(&quot;id&quot;), groupId);</span>
   }
 
   public static Specification&lt;ExternalUserAffiliationEntity&gt; withCategory(EUserCategory category) {
-<span class="fc" id="L32">    return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;category&quot;), category);</span>
-  }
-
-  public static Specification&lt;ExternalUserAffiliationEntity&gt; withCategories(
-      List&lt;EUserCategory&gt; categories) {
-<span class="pc bpc" id="L37" title="1 of 4 branches missed.">    if (categories == null || categories.isEmpty()) {</span>
-<span class="fc" id="L38">      return Specification.unrestricted();</span>
-    }
-<span class="fc" id="L40">    return (root, query, criteriaBuilder) -&gt; root.get(&quot;category&quot;).in(categories);</span>
-  }
-
-  public static Specification&lt;ExternalUserAffiliationEntity&gt; withInstitutionIds(
-      Collection&lt;UUID&gt; institutionIds) {
-<span class="pc bpc" id="L45" title="1 of 4 branches missed.">    if (institutionIds == null || institutionIds.isEmpty()) {</span>
-<span class="fc" id="L46">      return Specification.unrestricted();</span>
-    }
-<span class="fc" id="L48">    return (root, query, criteriaBuilder) -&gt; root.get(&quot;institution&quot;).get(&quot;id&quot;).in(institutionIds);</span>
-  }
-
-  public static Specification&lt;ExternalUserAffiliationEntity&gt; withGroupIds(
-      Collection&lt;UUID&gt; groupIds) {
-<span class="pc bpc" id="L53" title="1 of 4 branches missed.">    if (groupIds == null || groupIds.isEmpty()) {</span>
-<span class="fc" id="L54">      return Specification.unrestricted();</span>
-    }
-<span class="fc" id="L56">    return (root, query, criteriaBuilder) -&gt; root.get(&quot;group&quot;).get(&quot;id&quot;).in(groupIds);</span>
-  }
-
-  public static Specification&lt;ExternalUserAffiliationEntity&gt; withExternalUserNameContaining(
-      String keyword) {
-<span class="pc bpc" id="L61" title="1 of 4 branches missed.">    if (keyword == null || keyword.isBlank()) {</span>
-<span class="fc" id="L62">      return Specification.unrestricted();</span>
-    }
-<span class="fc" id="L64">    String pattern = &quot;%&quot; + keyword.trim().toLowerCase() + &quot;%&quot;;</span>
-<span class="fc" id="L65">    return (root, query, criteriaBuilder) -&gt; {</span>
-<span class="fc" id="L66">      Path&lt;?&gt; externalUser = root.get(&quot;externalUser&quot;);</span>
-<span class="fc" id="L67">      return criteriaBuilder.or(</span>
-<span class="fc" id="L68">          criteriaBuilder.like(criteriaBuilder.lower(externalUser.get(&quot;firstName&quot;)), pattern),</span>
-<span class="fc" id="L69">          criteriaBuilder.like(criteriaBuilder.lower(externalUser.get(&quot;lastName&quot;)), pattern));</span>
-    };
+<span class="fc" id="L29">    return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;category&quot;), category);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
