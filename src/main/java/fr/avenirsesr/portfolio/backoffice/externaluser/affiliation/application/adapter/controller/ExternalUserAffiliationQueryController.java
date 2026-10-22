@@ -3,10 +3,11 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationOverviewDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.mapper.ExternalUserAffiliationApplicationMapper;
-import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
+import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.common.data.application.adapter.dto.PageInfoDTO;
 import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
@@ -54,32 +55,42 @@ public class ExternalUserAffiliationQueryController {
       @RequestParam(required = false) Integer pageSize) {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
     log.debug(
-        "Getting the affiliations (keyword: {}, categories: {}, institutions: {}, groups: {}) {}",
+        "Getting the affiliated users (keyword: {}, categories: {}, institutions: {}, groups: {})"
+            + " {}",
         keyword,
         categories,
         institutionIds,
         groupIds,
         pageCriteria);
 
-    PagedResult<ExternalUserAffiliation> affiliations =
+    PagedResult<AffiliatedExternalUser> affiliatedExternalUsers =
         externalUserAffiliationService.findAll(
             keyword, categories, institutionIds, groupIds, pageCriteria);
-    List<ExternalUserAffiliation> content = affiliations.content();
+    List<AffiliatedExternalUser> content = affiliatedExternalUsers.content();
     Map<String, CofolioProfile> cofolioProfiles =
         cofolioProfileClient.findByEppns(
-            content.stream().map(a -> a.getExternalUser().getEppn()).distinct().toList());
+            content.stream().map(user -> user.externalUser().getEppn()).distinct().toList());
+    Map<UUID, Integer> usersCountsByGroupId =
+        externalUserAffiliationService.countExternalUsersByGroupIdsWithSubGroups(
+            content.stream()
+                .flatMap(user -> user.groups().stream())
+                .map(Group::getId)
+                .distinct()
+                .toList());
 
     return ResponseEntity.ok(
         new PagedResponse<>(
             content.stream()
                 .map(
-                    affiliation ->
+                    affiliatedExternalUser ->
                         ExternalUserAffiliationApplicationMapper
                             .toExternalUserAffiliationOverviewDTO(
-                                affiliation,
-                                cofolioProfiles.get(affiliation.getExternalUser().getEppn())))
+                                affiliatedExternalUser,
+                                cofolioProfiles.get(
+                                    affiliatedExternalUser.externalUser().getEppn()),
+                                usersCountsByGroupId))
                 .toList(),
-            PageInfoDTO.fromDomain(affiliations.pageInfo())));
+            PageInfoDTO.fromDomain(affiliatedExternalUsers.pageInfo())));
   }
 
   @PreAuthorize("hasAuthority('external-user:read')")

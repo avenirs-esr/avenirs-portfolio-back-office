@@ -2,10 +2,14 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationOverviewDTO;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
-import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
+import fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper.GroupApplicationMapper;
+import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.mapper.InstitutionApplicationMapper;
+import java.util.Map;
+import java.util.UUID;
 
 public class ExternalUserAffiliationApplicationMapper {
 
@@ -23,26 +27,32 @@ public class ExternalUserAffiliationApplicationMapper {
   }
 
   /**
-   * Builds the overview of an affiliation. A null {@code cofolioProfile} is read as somebody who
-   * never logged in, which is what the api reports for an eppn it does not know.
+   * Builds the overview of an affiliated user. A null {@code cofolioProfile} is read as somebody
+   * who never logged in, which is what the api reports for an eppn it does not know. A group
+   * missing from {@code usersCountsByGroupId} is read as an empty one.
    */
   public static ExternalUserAffiliationOverviewDTO toExternalUserAffiliationOverviewDTO(
-      ExternalUserAffiliation affiliation, CofolioProfile cofolioProfile) {
-    ExternalUser externalUser = affiliation.getExternalUser();
-    Group group = affiliation.getGroup();
+      AffiliatedExternalUser affiliatedExternalUser,
+      CofolioProfile cofolioProfile,
+      Map<UUID, Integer> usersCountsByGroupId) {
+    ExternalUser externalUser = affiliatedExternalUser.externalUser();
 
     return new ExternalUserAffiliationOverviewDTO(
-        affiliation.getId(),
+        externalUser.getId(),
         externalUser.getFirstName(),
         externalUser.getLastName(),
         externalUser.getEmail(),
         cofolioProfile != null && cofolioProfile.hasConnected(),
         cofolioProfile == null ? null : cofolioProfile.profilePictureId(),
-        affiliation.getCategory(),
-        affiliation.getInstitution().getId(),
-        affiliation.getInstitution().getName(),
-        group != null ? group.getId() : null,
-        group != null ? group.getName() : null,
-        group != null ? group.getType() : null);
+        affiliatedExternalUser.categories(),
+        affiliatedExternalUser.institutions().stream()
+            .map(InstitutionApplicationMapper::toInstitutionDTO)
+            .toList(),
+        affiliatedExternalUser.groups().stream()
+            .map(
+                group ->
+                    GroupApplicationMapper.toGroupOverviewDTO(
+                        group, usersCountsByGroupId.getOrDefault(group.getId(), 0)))
+            .toList());
   }
 }

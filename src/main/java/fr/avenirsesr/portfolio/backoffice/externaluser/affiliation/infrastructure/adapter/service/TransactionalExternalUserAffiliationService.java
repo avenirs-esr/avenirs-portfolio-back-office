@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.service;
 
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
@@ -18,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Wraps the domain {@link ExternalUserAffiliationService} to add transaction boundaries around the
- * find-or-create logic, keeping the Spring transaction dependency out of the domain layer.
+ * find-or-create logic and the multi-query reads, keeping the Spring transaction dependency out of
+ * the domain layer.
  */
 @AllArgsConstructor
 public class TransactionalExternalUserAffiliationService implements ExternalUserAffiliationService {
@@ -43,7 +45,8 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   }
 
   @Override
-  public PagedResult<ExternalUserAffiliation> findAll(
+  @Transactional(readOnly = true)
+  public PagedResult<AffiliatedExternalUser> findAll(
       String keyword,
       List<EUserCategory> categories,
       List<UUID> institutionIds,

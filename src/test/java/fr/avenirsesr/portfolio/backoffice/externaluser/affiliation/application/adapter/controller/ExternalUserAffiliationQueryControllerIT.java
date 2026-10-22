@@ -1,6 +1,9 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.controller;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -48,13 +51,16 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
   private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
   private static final String SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO = "10000005";
 
-  /** Totals of the seeded fixtures, all categories and institutions taken together. */
-  private static final int SEEDED_AFFILIATIONS_COUNT = 370;
+  /**
+   * Counts of the seeded fixtures in affiliated users, each of them counted once however many
+   * affiliations it holds, all categories and institutions taken together.
+   */
+  private static final int SEEDED_AFFILIATED_USERS_COUNT = 213;
 
-  private static final int SEEDED_STAFF_AFFILIATIONS_COUNT = 60;
-  private static final int SEEDED_RENNES_AFFILIATIONS_COUNT = 188;
-  private static final int SEEDED_GROUPE_A_AFFILIATIONS_COUNT = 80;
-  private static final int SEEDED_TESSIER_AFFILIATIONS_COUNT = 6;
+  private static final int SEEDED_STAFF_USERS_COUNT = 59;
+  private static final int SEEDED_RENNES_USERS_COUNT = 108;
+  private static final int SEEDED_GROUPE_A_USERS_COUNT = 80;
+  private static final int SEEDED_TESSIER_USERS_COUNT = 2;
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ExternalUserRepository externalUserRepository;
@@ -135,14 +141,15 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .andExpect(jsonPath("$.data[3].lastName", is("Arnaud")))
           .andExpect(jsonPath("$.page.page", is(0)))
           .andExpect(jsonPath("$.page.pageSize", is(8)))
-          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_AFFILIATIONS_COUNT)));
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_AFFILIATED_USERS_COUNT)));
 
       BddLogger.then("it should return the default page, ordered by last name then first name");
     }
 
     @Test
     void thenItShouldReturnTheIdentityOfTheAffiliatedUserAndTheLabelsOfItsScope() throws Exception {
-      BddLogger.given("a student affiliated to a student group");
+      BddLogger.given(
+          "a student affiliated to two institutions and to a student group of each of them");
       affiliateStaffToSeededProgram();
 
       BddLogger.when("calling GET /back-office/external-users/affiliations filtered by group");
@@ -154,14 +161,31 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.data", hasSize(1)))
+          .andExpect(jsonPath("$.data[0].id", is(externalUserIdOf(SEEDED_STUDENT_EPPN).toString())))
           .andExpect(jsonPath("$.data[0].firstName", is("Lucas")))
           .andExpect(jsonPath("$.data[0].lastName", is("Tessier")))
-          .andExpect(jsonPath("$.data[0].category", is("STUDENT")))
-          .andExpect(jsonPath("$.data[0].institutionName", is("Université de Rennes")))
-          .andExpect(jsonPath("$.data[0].groupName", is("Groupe A")))
-          .andExpect(jsonPath("$.data[0].groupType", is("STUDENT_GROUP")));
+          .andExpect(jsonPath("$.data[0].categories", contains("STUDENT")))
+          .andExpect(
+              jsonPath(
+                  "$.data[0].institutions[*].name",
+                  contains("Université de Bordeaux", "Université de Rennes")))
+          .andExpect(
+              jsonPath(
+                  "$.data[0].groups[*].name",
+                  contains(
+                      "Groupe A",
+                      "Groupe B",
+                      "Licence Informatique",
+                      "Licence Informatique - Parcours IA",
+                      "Licence Mathematiques")))
+          .andExpect(jsonPath("$.data[0].groups[0].type", is("STUDENT_GROUP")))
+          .andExpect(
+              jsonPath("$.data[0].groups[0].parentName", is("Licence Informatique - Parcours IA")))
+          .andExpect(jsonPath("$.data[0].groups[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
 
-      BddLogger.then("it should return the user identity along with the institution and group");
+      BddLogger.then(
+          "it should return the user identity once, with every institution it is affiliated to and"
+              + " every group it belongs to, the ancestors of the hierarchy included");
     }
 
     @Test
@@ -176,11 +200,11 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .param("pageSize", "20")
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data", hasSize(SEEDED_TESSIER_AFFILIATIONS_COUNT)))
+          .andExpect(jsonPath("$.data", hasSize(SEEDED_TESSIER_USERS_COUNT)))
           .andExpect(jsonPath("$.data[*].lastName", everyItem(is("Tessier"))))
-          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_TESSIER_AFFILIATIONS_COUNT)));
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_TESSIER_USERS_COUNT)));
 
-      BddLogger.then("it should return their affiliations, the search ignoring the case");
+      BddLogger.then("it should return both of them, the search ignoring the case");
     }
 
     @Test
@@ -195,7 +219,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .param("pageSize", "20")
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data", hasSize(SEEDED_TESSIER_AFFILIATIONS_COUNT)))
+          .andExpect(jsonPath("$.data", hasSize(SEEDED_TESSIER_USERS_COUNT)))
           .andExpect(jsonPath("$.data[*].firstName", everyItem(is("Lucas"))));
 
       BddLogger.then("it should match the first name as well as the last name");
@@ -212,10 +236,10 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .param("categories", EUserCategory.STAFF.name())
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data[*].category", everyItem(is("STAFF"))))
-          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_STAFF_AFFILIATIONS_COUNT)));
+          .andExpect(jsonPath("$.data[*].categories[*]", everyItem(is("STAFF"))))
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_STAFF_USERS_COUNT)));
 
-      BddLogger.then("it should return only the affiliations held with that category");
+      BddLogger.then("it should return only the users holding an affiliation of that category");
     }
 
     @Test
@@ -231,10 +255,12 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .param("institutionIds", institutionIdOf(SEEDED_RENNES_UAI).toString())
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data[*].institutionName", everyItem(is("Université de Rennes"))))
-          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_RENNES_AFFILIATIONS_COUNT)));
+          .andExpect(
+              jsonPath("$.data[*].institutions")
+                  .value(everyItem(hasItem(hasEntry("name", "Université de Rennes")))))
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_RENNES_USERS_COUNT)));
 
-      BddLogger.then("it should return only the affiliations held with that institution");
+      BddLogger.then("it should return only the users affiliated to that institution");
     }
 
     @Test
@@ -249,12 +275,13 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .param("groupIds", groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO).toString())
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data[*].groupName", everyItem(is("Groupe A"))))
-          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_GROUPE_A_AFFILIATIONS_COUNT)));
+          .andExpect(
+              jsonPath("$.data[*].groups").value(everyItem(hasItem(hasEntry("name", "Groupe A")))))
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_GROUPE_A_USERS_COUNT)));
 
       BddLogger.then(
-          "it should return only the affiliations bound to that group, reachable through the"
-              + " program the staff is affiliated to");
+          "it should return only the users bound to that group, reachable through the program the"
+              + " staff is affiliated to");
     }
 
     @Test
@@ -270,31 +297,32 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .param("categories", EUserCategory.STAFF.name())
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data", hasSize(2)))
-          .andExpect(jsonPath("$.data[*].category", everyItem(is("STAFF"))))
-          .andExpect(jsonPath("$.page.totalElements", is(2)));
+          .andExpect(jsonPath("$.data", hasSize(1)))
+          .andExpect(jsonPath("$.data[*].categories[*]", everyItem(is("STAFF"))))
+          .andExpect(jsonPath("$.page.totalElements", is(1)));
 
-      BddLogger.then("it should return only the affiliations matching both the search and filter");
+      BddLogger.then("it should return only the user matching both the search and the filter");
     }
 
     @Test
     void thenItShouldReturnTheRequestedPage_whenPaginating() throws Exception {
-      BddLogger.given("six seeded affiliations matching the Tessier keyword");
+      BddLogger.given("two seeded users matching the Tessier keyword");
 
       BddLogger.when(
-          "calling GET /back-office/external-users/affiliations with a page size of four");
+          "calling GET /back-office/external-users/affiliations with a page size of one");
       mockMvc
           .perform(
               asStaffUser(get(BASE_PATH), STAFF_EPPN)
                   .param("keyword", "tessier")
                   .param("page", "1")
-                  .param("pageSize", "4")
+                  .param("pageSize", "1")
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data", hasSize(2)))
+          .andExpect(jsonPath("$.data", hasSize(1)))
+          .andExpect(jsonPath("$.data[*].lastName", everyItem(is("Tessier"))))
           .andExpect(jsonPath("$.page.page", is(1)))
-          .andExpect(jsonPath("$.page.pageSize", is(4)))
-          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_TESSIER_AFFILIATIONS_COUNT)))
+          .andExpect(jsonPath("$.page.pageSize", is(1)))
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_TESSIER_USERS_COUNT)))
           .andExpect(jsonPath("$.page.totalPages", is(2)));
 
       BddLogger.then("it should return the second page and its page information");
@@ -360,7 +388,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .param("pageSize", "20")
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data", hasSize(SEEDED_TESSIER_AFFILIATIONS_COUNT)))
+          .andExpect(jsonPath("$.data", hasSize(SEEDED_TESSIER_USERS_COUNT)))
           .andExpect(jsonPath("$.data[*].hasConnected", everyItem(is(false))))
           .andExpect(jsonPath("$.data[*].profilePictureId", everyItem(is(nullValue()))));
 
