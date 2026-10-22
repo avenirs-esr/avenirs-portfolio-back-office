@@ -59,7 +59,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.inf
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.service,TransactionalInstitutionService,21,36,0,0,3,7,3,6,3,6
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill.application.controller,AdditionalSkillConfigController,57,4,0,0,18,1,5,1,5,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl,9,656,3,39,2,149,3,52,0,34
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl,0,665,2,40,0,151,2,53,0,34
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl.ScopeItem,0,15,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils.infrastructure.adapter.util,TestResourceUtils,26,0,2,0,5,0,3,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.specification,ExternalUserAffiliationSpecification,3,144,4,14,1,26,5,21,1,16
@@ -67,7 +67,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.af
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.cgu.application.adapter.controller,CguController,0,34,0,0,0,8,0,3,0,3
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.file.application.adapter,MultipartFileReader,7,3,0,0,2,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils,BddLogger,0,22,0,0,0,10,0,5,0,5
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller,GroupQueryController,0,175,0,2,0,40,0,9,0,8
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller,GroupQueryController,0,209,0,2,0,50,0,9,0,8
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller,GroupProvisioningController,10,108,4,8,3,24,4,7,0,5
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller,WebsiteContentController,66,4,0,0,19,1,5,1,5,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.domain.service,ExternalUserServiceImpl,83,196,5,9,25,57,6,15,2,12

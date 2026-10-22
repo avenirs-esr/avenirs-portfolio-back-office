@@ -121,8 +121,8 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
 <span class="fc" id="L121">  }</span>
 
   @Override
-  public Map&lt;UUID, Integer&gt; countExternalUsersByGroupIds(List&lt;UUID&gt; groupIds) {
-<span class="fc" id="L125">    return externalUserRepository.countAllByGroupIds(groupIds);</span>
+  public Map&lt;UUID, Integer&gt; countExternalUsersByGroupIdsWithSubGroups(List&lt;UUID&gt; groupIds) {
+<span class="fc" id="L125">    return externalUserRepository.countAllByGroupIdsWithSubGroups(groupIds);</span>
   }
 
   @Override
@@ -310,10 +310,10 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
 <span class="fc" id="L310">            .findByUai(data.institutionUAI())</span>
 <span class="fc" id="L311">            .orElseThrow(InstitutionNotFoundException::new);</span>
     Group group =
-<span class="pc bpc" id="L313" title="1 of 2 branches missed.">        data.groupIdSISco() != null</span>
+<span class="fc bfc" id="L313" title="All 2 branches covered.">        data.groupIdSISco() != null</span>
             ? groupRepository
-<span class="nc" id="L315">                .findByIdSISco(data.groupIdSISco())</span>
-<span class="nc" id="L316">                .orElseThrow(GroupNotFoundException::new)</span>
+<span class="fc" id="L315">                .findByIdSISco(data.groupIdSISco())</span>
+<span class="fc" id="L316">                .orElseThrow(GroupNotFoundException::new)</span>
 <span class="fc" id="L317">            : null;</span>
 
 <span class="fc" id="L319">    return findOrCreate(externalUser, institution, group, data.category());</span>
