@@ -27,7 +27,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.language.infrastruc
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.domain.service,InstitutionServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.domain.service,InstitutionServiceImpl,0,373,0,28,0,83,0,30,0,16
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.domain.service,InstitutionConfigServiceImpl,0,26,0,2,0,7,0,4,0,3
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.specification,ExternalUserSpecification,103,0,4,0,21,0,7,0,5,0
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.specification,ExternalUserSpecification,103,126,6,12,21,23,9,11,5,6
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.domain.service,GroupServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.domain.service,GroupServiceImpl,0,528,1,40,0,126,1,40,0,20
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.trace.infrastructure.service,TraceConfigurationServiceConfig,0,16,0,0,0,5,0,3,0,3
@@ -49,7 +49,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionConfigController,0,16,0,0,0,4,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionController,0,15,0,0,0,4,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionAdminController,46,114,8,8,11,26,8,7,1,6
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.repository,ExternalUserDatabaseRepository,16,45,1,3,5,11,3,5,2,4
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.repository,ExternalUserDatabaseRepository,16,82,1,3,5,22,3,6,2,5
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseOpenApiConfiguration,22,0,0,0,9,0,2,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter,BaseSwaggerSchema,91,0,0,0,25,0,3,0,3,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.service,ExternalUserAffiliationServiceConfig,0,21,0,0,0,1,0,1,0,1
@@ -59,11 +59,11 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.inf
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.service,TransactionalInstitutionService,21,36,0,0,3,7,3,6,3,6
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill.application.controller,AdditionalSkillConfigController,57,4,0,0,18,1,5,1,5,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl,0,665,2,40,0,151,2,53,0,34
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl,0,792,2,46,0,188,2,61,0,39
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl.ScopeItem,0,15,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils.infrastructure.adapter.util,TestResourceUtils,26,0,2,0,5,0,3,0,2,0
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.specification,ExternalUserAffiliationSpecification,3,144,4,14,1,26,5,21,1,16
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.repository,ExternalUserAffiliationDatabaseRepository,11,87,0,0,4,26,1,6,1,6
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.specification,ExternalUserAffiliationSpecification,3,65,0,2,1,10,1,11,1,10
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.repository,ExternalUserAffiliationDatabaseRepository,13,56,2,2,5,14,3,6,1,6
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.cgu.application.adapter.controller,CguController,0,34,0,0,0,8,0,3,0,3
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.file.application.adapter,MultipartFileReader,7,3,0,0,2,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils,BddLogger,0,22,0,0,0,10,0,5,0,5
@@ -88,7 +88,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.in
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.infrastructure.service,WebsiteContentConfigurationServiceConfig,0,17,0,0,0,5,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio,BackOfficeApplication,5,3,0,0,2,1,1,1,1,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.specification,InstitutionSpecification,36,16,6,2,9,3,9,2,5,2
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.controller,ExternalUserAffiliationQueryController,0,100,0,0,0,23,0,5,0,5
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.controller,ExternalUserAffiliationQueryController,0,118,0,0,0,31,0,6,0,6
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.controller,AccessController,52,41,0,0,11,10,2,4,2,4
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.controller,ExternalUserAffiliationProvisioningController,6,136,3,9,2,32,3,8,0,5
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.client,ApiCofolioProfileClient.UserProfileResponse,15,0,0,0,1,0,1,0,1,0

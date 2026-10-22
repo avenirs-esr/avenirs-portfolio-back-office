@@ -2,39 +2,87 @@
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.model.ExternalUserAffiliationEntity;
 import fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.model.ExternalUserEntity;
+import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 
-<span class="nc" id="L9">public class ExternalUserSpecification {</span>
+<span class="nc" id="L15">public class ExternalUserSpecification {</span>
   public static Specification&lt;ExternalUserEntity&gt; withInstitutionId(UUID institutionId) {
-<span class="nc bnc" id="L11" title="All 2 branches missed.">    if (institutionId == null) {</span>
-<span class="nc" id="L12">      return Specification.unrestricted();</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">    if (institutionId == null) {</span>
+<span class="nc" id="L18">      return Specification.unrestricted();</span>
     }
-<span class="nc" id="L14">    return (root, query, criteriaBuilder) -&gt; {</span>
-<span class="nc" id="L15">      Subquery&lt;UUID&gt; subquery = query.subquery(UUID.class);</span>
-<span class="nc" id="L16">      var affiliationRoot = subquery.from(ExternalUserAffiliationEntity.class);</span>
-<span class="nc" id="L17">      subquery.select(affiliationRoot.get(&quot;id&quot;));</span>
-<span class="nc" id="L18">      subquery.where(</span>
-<span class="nc" id="L19">          criteriaBuilder.equal(affiliationRoot.get(&quot;externalUser&quot;), root),</span>
-<span class="nc" id="L20">          criteriaBuilder.equal(affiliationRoot.get(&quot;institution&quot;).get(&quot;id&quot;), institutionId));</span>
-<span class="nc" id="L21">      return criteriaBuilder.exists(subquery);</span>
+<span class="nc" id="L20">    return (root, query, criteriaBuilder) -&gt; {</span>
+<span class="nc" id="L21">      Subquery&lt;UUID&gt; subquery = query.subquery(UUID.class);</span>
+<span class="nc" id="L22">      var affiliationRoot = subquery.from(ExternalUserAffiliationEntity.class);</span>
+<span class="nc" id="L23">      subquery.select(affiliationRoot.get(&quot;id&quot;));</span>
+<span class="nc" id="L24">      subquery.where(</span>
+<span class="nc" id="L25">          criteriaBuilder.equal(affiliationRoot.get(&quot;externalUser&quot;), root),</span>
+<span class="nc" id="L26">          criteriaBuilder.equal(affiliationRoot.get(&quot;institution&quot;).get(&quot;id&quot;), institutionId));</span>
+<span class="nc" id="L27">      return criteriaBuilder.exists(subquery);</span>
     };
   }
 
   public static Specification&lt;ExternalUserEntity&gt; withGroupId(UUID groupId) {
-<span class="nc bnc" id="L26" title="All 2 branches missed.">    if (groupId == null) {</span>
-<span class="nc" id="L27">      return Specification.unrestricted();</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">    if (groupId == null) {</span>
+<span class="nc" id="L33">      return Specification.unrestricted();</span>
     }
-<span class="nc" id="L29">    return (root, query, criteriaBuilder) -&gt; {</span>
-<span class="nc" id="L30">      Subquery&lt;UUID&gt; subquery = query.subquery(UUID.class);</span>
-<span class="nc" id="L31">      var affiliationRoot = subquery.from(ExternalUserAffiliationEntity.class);</span>
-<span class="nc" id="L32">      subquery.select(affiliationRoot.get(&quot;id&quot;));</span>
-<span class="nc" id="L33">      subquery.where(</span>
-<span class="nc" id="L34">          criteriaBuilder.equal(affiliationRoot.get(&quot;externalUser&quot;), root),</span>
-<span class="nc" id="L35">          criteriaBuilder.equal(affiliationRoot.get(&quot;group&quot;).get(&quot;id&quot;), groupId));</span>
-<span class="nc" id="L36">      return criteriaBuilder.exists(subquery);</span>
+<span class="nc" id="L35">    return (root, query, criteriaBuilder) -&gt; {</span>
+<span class="nc" id="L36">      Subquery&lt;UUID&gt; subquery = query.subquery(UUID.class);</span>
+<span class="nc" id="L37">      var affiliationRoot = subquery.from(ExternalUserAffiliationEntity.class);</span>
+<span class="nc" id="L38">      subquery.select(affiliationRoot.get(&quot;id&quot;));</span>
+<span class="nc" id="L39">      subquery.where(</span>
+<span class="nc" id="L40">          criteriaBuilder.equal(affiliationRoot.get(&quot;externalUser&quot;), root),</span>
+<span class="nc" id="L41">          criteriaBuilder.equal(affiliationRoot.get(&quot;group&quot;).get(&quot;id&quot;), groupId));</span>
+<span class="nc" id="L42">      return criteriaBuilder.exists(subquery);</span>
     };
+  }
+
+  public static Specification&lt;ExternalUserEntity&gt; withNameContaining(String keyword) {
+<span class="pc bpc" id="L47" title="1 of 4 branches missed.">    if (keyword == null || keyword.isBlank()) {</span>
+<span class="fc" id="L48">      return Specification.unrestricted();</span>
+    }
+<span class="fc" id="L50">    String pattern = &quot;%&quot; + keyword.trim().toLowerCase() + &quot;%&quot;;</span>
+<span class="fc" id="L51">    return (root, query, criteriaBuilder) -&gt;</span>
+<span class="fc" id="L52">        criteriaBuilder.or(</span>
+<span class="fc" id="L53">            criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;firstName&quot;)), pattern),</span>
+<span class="fc" id="L54">            criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;lastName&quot;)), pattern));</span>
+  }
+
+  public static Specification&lt;ExternalUserEntity&gt; affiliatedMatching(
+      Collection&lt;EUserCategory&gt; categories,
+      Collection&lt;UUID&gt; institutionIds,
+      Collection&lt;UUID&gt; groupIds) {
+<span class="fc" id="L61">    return (root, query, criteriaBuilder) -&gt; {</span>
+<span class="fc" id="L62">      Subquery&lt;UUID&gt; subquery = query.subquery(UUID.class);</span>
+<span class="fc" id="L63">      Root&lt;ExternalUserAffiliationEntity&gt; affiliationRoot =</span>
+<span class="fc" id="L64">          subquery.from(ExternalUserAffiliationEntity.class);</span>
+<span class="fc" id="L65">      subquery.select(affiliationRoot.get(&quot;id&quot;));</span>
+
+<span class="fc" id="L67">      List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L68">      predicates.add(criteriaBuilder.equal(affiliationRoot.get(&quot;externalUser&quot;), root));</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">      if (!isEmpty(categories)) {</span>
+<span class="fc" id="L70">        predicates.add(affiliationRoot.get(&quot;category&quot;).in(categories));</span>
+      }
+<span class="fc bfc" id="L72" title="All 2 branches covered.">      if (!isEmpty(institutionIds)) {</span>
+<span class="fc" id="L73">        predicates.add(affiliationRoot.get(&quot;institution&quot;).get(&quot;id&quot;).in(institutionIds));</span>
+      }
+<span class="fc bfc" id="L75" title="All 2 branches covered.">      if (!isEmpty(groupIds)) {</span>
+<span class="fc" id="L76">        predicates.add(affiliationRoot.get(&quot;group&quot;).get(&quot;id&quot;).in(groupIds));</span>
+      }
+<span class="fc" id="L78">      subquery.where(predicates.toArray(Predicate[]::new));</span>
+
+<span class="fc" id="L80">      return criteriaBuilder.exists(subquery);</span>
+    };
+  }
+
+  private static boolean isEmpty(Collection&lt;?&gt; values) {
+<span class="pc bpc" id="L85" title="1 of 4 branches missed.">    return values == null || values.isEmpty();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
