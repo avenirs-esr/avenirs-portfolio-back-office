@@ -5,6 +5,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
@@ -22,6 +23,8 @@ public interface ExternalUserAffiliationService {
   void removeAffiliation(UUID externalUserId, UUID affiliationId);
 
   List<ExternalUserAffiliation> getAffiliations(UUID externalUserId);
+
+  ExternalUserDetail getExternalUserDetail(UUID externalUserId);
 
   /**
    * Pages over the affiliated users matching the given filters, each of them reported once with

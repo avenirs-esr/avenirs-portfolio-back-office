@@ -2,12 +2,16 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationOverviewDTO;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserDetailDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper.GroupApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.mapper.InstitutionApplicationMapper;
+import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupReferenceDTO;
+import fr.avenirsesr.portfolio.common.institution.application.adapter.dto.InstitutionReferenceDTO;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,6 +28,22 @@ public class ExternalUserAffiliationApplicationMapper {
         affiliation.getGroup() != null ? affiliation.getGroup().getId() : null,
         affiliation.getCategory(),
         affiliation.getCreatedAt());
+  }
+
+  public static ExternalUserDetailDTO toExternalUserDetailDTO(
+      ExternalUserDetail detail, CofolioProfile cofolioProfile) {
+    ExternalUser externalUser = detail.externalUser();
+
+    return new ExternalUserDetailDTO(
+        externalUser.getId(),
+        externalUser.getFirstName(),
+        externalUser.getLastName(),
+        externalUser.getEmail(),
+        cofolioProfile == null ? null : cofolioProfile.profilePictureId(),
+        new InstitutionReferenceDTO(detail.institution().getId(), detail.institution().getName()),
+        detail.groups().stream()
+            .map(group -> new GroupReferenceDTO(group.getId(), group.getName(), group.getType()))
+            .toList());
   }
 
   /**

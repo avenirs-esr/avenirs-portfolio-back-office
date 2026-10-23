@@ -10,6 +10,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportFailure;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
@@ -93,6 +94,56 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
     externalUserRepository.findById(externalUserId).orElseThrow(ExternalUserNotFoundException::new);
 
     return externalUserAffiliationRepository.findAllByExternalUserId(externalUserId);
+  }
+
+  @Override
+  public ExternalUserDetail getExternalUserDetail(UUID externalUserId) {
+    ExternalUser externalUser =
+        externalUserRepository
+            .findById(externalUserId)
+            .orElseThrow(ExternalUserNotFoundException::new);
+    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();
+    List<UUID> staffInstitutionIds = institutionIdsOf(staff.getId(), EUserCategory.STAFF);
+
+    List<ExternalUserAffiliation> affiliations =
+        externalUserAffiliationRepository.findAllByExternalUserId(externalUserId);
+    Set<UUID> accessibleInstitutionIds = new HashSet<>();
+    affiliations.stream()
+        .map(affiliation -> affiliation.getInstitution().getId())
+        .distinct()
+        .filter(id -> institutionService.staffHasAccess(staffInstitutionIds, List.of(id)))
+        .forEach(accessibleInstitutionIds::add);
+
+    Institution institution =
+        affiliations.stream()
+            .map(ExternalUserAffiliation::getInstitution)
+            .filter(i -> accessibleInstitutionIds.contains(i.getId()))
+            .findFirst()
+            .orElseThrow(
+                () -> {
+                  log.warn(
+                      "Staff {} has no access to any institution of external user {}",
+                      staff.getId(),
+                      externalUserId);
+                  return new UserNotAuthorizedException(
+                      "The external user does not belong to an institution the user is affiliated"
+                          + " to");
+                });
+
+    Map<UUID, Group> groupsById = new LinkedHashMap<>();
+    affiliations.stream()
+        .filter(affiliation -> affiliation.getGroup() != null)
+        .filter(affiliation -> institution.getId().equals(affiliation.getInstitution().getId()))
+        .forEach(
+            affiliation -> {
+              Optional<Group> current = Optional.of(affiliation.getGroup());
+              while (current.isPresent() && !groupsById.containsKey(current.get().getId())) {
+                groupsById.put(current.get().getId(), current.get());
+                current = current.get().getParent();
+              }
+            });
+
+    return new ExternalUserDetail(externalUser, institution, List.copyOf(groupsById.values()));
   }
 
   @Override
