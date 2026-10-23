@@ -2,8 +2,10 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationOverviewDTO;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserDetailDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.mapper.ExternalUserAffiliationApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
@@ -91,6 +93,22 @@ public class ExternalUserAffiliationQueryController {
                                 usersCountsByGroupId))
                 .toList(),
             PageInfoDTO.fromDomain(affiliatedExternalUsers.pageInfo())));
+  }
+
+  @PreAuthorize("hasAuthority('external-user:read')")
+  @GetMapping("/{externalUserId}/detail")
+  public ResponseEntity<ExternalUserDetailDTO> getExternalUser(@PathVariable UUID externalUserId) {
+    log.debug("Getting the detail of external user: {}", externalUserId);
+
+    ExternalUserDetail detail =
+        externalUserAffiliationService.getExternalUserDetail(externalUserId);
+    CofolioProfile cofolioProfile =
+        cofolioProfileClient
+            .findByEppns(List.of(detail.externalUser().getEppn()))
+            .get(detail.externalUser().getEppn());
+
+    return ResponseEntity.ok(
+        ExternalUserAffiliationApplicationMapper.toExternalUserDetailDTO(detail, cofolioProfile));
   }
 
   @PreAuthorize("hasAuthority('external-user:read')")
