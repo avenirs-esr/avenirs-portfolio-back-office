@@ -11,6 +11,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.EAffiliationScopeNodeType;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
@@ -31,6 +32,7 @@ import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.Arrays;
 import java.util.Collection;
@@ -611,6 +613,77 @@ class ExternalUserAffiliationServiceImplTest {
     assertEquals(List.of(), result.content());
     assertEquals(expectedPageInfo, result.pageInfo());
     verifyNoInteractions(loggedInExternalUserService, institutionService, groupService);
+  }
+
+  @Test
+  void shouldReturnGroupsWithTheirParentsOnce_whenGettingExternalUserDetail() {
+    BddLogger.given("a student in two groups of the same program, within the staff scope");
+    ExternalUser staff = externalUser(EUserCategory.STAFF);
+    ExternalUser student = externalUser(EUserCategory.STUDENT);
+    Institution institution = institution(UUID.randomUUID());
+    Group program = group(UUID.randomUUID(), "BUT Informatique", EGroupType.PROGRAM, null);
+    Group option = group(UUID.randomUUID(), "Cybersécurité", EGroupType.PROGRAM_OPTION, program);
+    Group studentGroup = group(UUID.randomUUID(), "TD1", EGroupType.STUDENT_GROUP, program);
+    when(externalUserRepository.findById(student.getId())).thenReturn(Optional.of(student));
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff);
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            staff.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of(institution.getId()));
+    when(externalUserAffiliationRepository.findAllByExternalUserId(student.getId()))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(student, institution, option, EUserCategory.STUDENT),
+                ExternalUserAffiliation.create(
+                    student, institution, studentGroup, EUserCategory.STUDENT)));
+    when(institutionService.staffHasAccess(
+            List.of(institution.getId()), List.of(institution.getId())))
+        .thenReturn(true);
+
+    BddLogger.when("getting the external user detail");
+    ExternalUserDetail detail = service.getExternalUserDetail(student.getId());
+
+    BddLogger.then("it should list each group and the shared program once");
+    assertSame(institution, detail.institution());
+    assertEquals(
+        List.of(option.getId(), program.getId(), studentGroup.getId()),
+        detail.groups().stream().map(Group::getId).toList());
+  }
+
+  @Test
+  void shouldRejectExternalUserDetail_whenNoInstitutionOfTheUserIsInTheStaffScope() {
+    BddLogger.given("a student affiliated to an institution outside the staff scope");
+    ExternalUser staff = externalUser(EUserCategory.STAFF);
+    ExternalUser student = externalUser(EUserCategory.STUDENT);
+    Institution institution = institution(UUID.randomUUID());
+    when(externalUserRepository.findById(student.getId())).thenReturn(Optional.of(student));
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff);
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            staff.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of());
+    when(externalUserAffiliationRepository.findAllByExternalUserId(student.getId()))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(student, institution, null, EUserCategory.STUDENT)));
+    when(institutionService.staffHasAccess(List.of(), List.of(institution.getId())))
+        .thenReturn(false);
+
+    BddLogger.when("getting the external user detail");
+
+    BddLogger.then("it should be refused");
+    assertThrows(
+        UserNotAuthorizedException.class, () -> service.getExternalUserDetail(student.getId()));
+  }
+
+  @Test
+  void shouldThrowNotFound_whenGettingDetailOfUnknownExternalUser() {
+    BddLogger.given("an unknown external user id");
+    UUID id = UUID.randomUUID();
+    when(externalUserRepository.findById(id)).thenReturn(Optional.empty());
+
+    BddLogger.when("getting the external user detail");
+
+    BddLogger.then("it should be refused");
+    assertThrows(ExternalUserNotFoundException.class, () -> service.getExternalUserDetail(id));
   }
 
   /** Stubs the affiliation scope of the logged-in staff, as {@code staffHasAccess} reads it. */

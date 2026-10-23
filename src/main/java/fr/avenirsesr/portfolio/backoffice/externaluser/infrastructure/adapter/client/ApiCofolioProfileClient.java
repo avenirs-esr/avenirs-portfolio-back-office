@@ -22,6 +22,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class ApiCofolioProfileClient implements CofolioProfileClient {
 
+  private static final String DEV_EPPN_HEADER = "eppn";
+
   private static final ParameterizedTypeReference<List<UserProfileResponse>> PROFILE_LIST =
       new ParameterizedTypeReference<>() {};
 
@@ -76,6 +78,7 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
   private void forwardLoggedInUser(HttpHeaders headers) {
     copyHeader(headers, AvenirsSecurityHeaders.SIGNED_CONTEXT);
     copyHeader(headers, AvenirsSecurityHeaders.CONTEXT_SIGNATURE);
+    copyHeader(headers, DEV_EPPN_HEADER);
   }
 
   private void copyHeader(HttpHeaders headers, String name) {

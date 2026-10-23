@@ -20,6 +20,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class ApiFileClient implements FileClient {
 
+  private static final String DEV_EPPN_HEADER = "eppn";
+
   private final WebClient webClient;
   private final HttpServletRequest currentRequest;
 
@@ -96,6 +98,7 @@ public class ApiFileClient implements FileClient {
   private void forwardLoggedInUser(HttpHeaders headers) {
     copyHeader(headers, AvenirsSecurityHeaders.SIGNED_CONTEXT);
     copyHeader(headers, AvenirsSecurityHeaders.CONTEXT_SIGNATURE);
+    copyHeader(headers, DEV_EPPN_HEADER);
   }
 
   private void copyHeader(HttpHeaders headers, String name) {

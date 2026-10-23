@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.controller;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
@@ -43,11 +44,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTest {
 
   private static final String BASE_PATH = "/back-office/external-users/affiliations";
+  private static final String EXTERNAL_USERS_PATH = "/back-office/external-users/";
   private static final String STAFF_EPPN = "ethan.perrin@university.com";
   private static final String SEEDED_STUDENT_EPPN = "lucas.tessier@university.com";
   private static final String SEEDED_RENNES_UAI = "0350001A";
   private static final String SEEDED_BORDEAUX_UAI = "0330001C";
   private static final String SEEDED_PROGRAM_ID_SI_SCO = "10000001";
+  private static final String SEEDED_BORDEAUX_STUDENT_EPPN = "sophie.charpentier@university.com";
+  private static final String SEEDED_OPTION_ID_SI_SCO = "10000002";
   private static final String SEEDED_STUDENT_GROUP_ID_SI_SCO = "10000003";
   private static final String SEEDED_OTHER_STUDENT_GROUP_ID_SI_SCO = "10000005";
 
@@ -180,7 +184,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                       "Licence Mathematiques")))
           .andExpect(jsonPath("$.data[0].groups[0].type", is("STUDENT_GROUP")))
           .andExpect(
-              jsonPath("$.data[0].groups[0].parentName", is("Licence Informatique - Parcours IA")))
+              jsonPath("$.data[0].groups[0].parent.name", is("Licence Informatique - Parcours IA")))
           .andExpect(jsonPath("$.data[0].groups[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
 
       BddLogger.then(
@@ -452,6 +456,91 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
       mockMvc
           .perform(
               get(BASE_PATH)
+                  .header("X-Forwarded-For", "203.0.113.10")
+                  .with(authentication(new HmacAuthenticationToken(STAFF_EPPN)))
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403");
+    }
+  }
+
+  @Nested
+  class WhenGettingExternalUser {
+
+    @Test
+    void thenItShouldReturnTheIdentityTheInstitutionAndTheGroupsWithTheirParents()
+        throws Exception {
+      BddLogger.given("a student of Rennes and Bordeaux, seen by a staff of Rennes");
+      UUID externalUserId = externalUserIdOf(SEEDED_STUDENT_EPPN);
+      UUID profilePictureId = UUID.randomUUID();
+      when(cofolioProfileClient.findByEppns(any()))
+          .thenReturn(
+              Map.of(
+                  SEEDED_STUDENT_EPPN,
+                  new CofolioProfile(SEEDED_STUDENT_EPPN, true, profilePictureId)));
+
+      BddLogger.when("calling GET /back-office/external-users/{externalUserId}/detail");
+      mockMvc
+          .perform(
+              asStaffUser(get(EXTERNAL_USERS_PATH + externalUserId + "/detail"), STAFF_EPPN)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.id", is(externalUserId.toString())))
+          .andExpect(jsonPath("$.firstName", is("Lucas")))
+          .andExpect(jsonPath("$.lastName", is("Tessier")))
+          .andExpect(jsonPath("$.profilePictureId", is(profilePictureId.toString())))
+          .andExpect(
+              jsonPath("$.institution.id", is(institutionIdOf(SEEDED_RENNES_UAI).toString())))
+          .andExpect(
+              jsonPath(
+                  "$.groups[*].id",
+                  containsInAnyOrder(
+                      groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO).toString(),
+                      groupIdOf(SEEDED_OPTION_ID_SI_SCO).toString(),
+                      groupIdOf(SEEDED_PROGRAM_ID_SI_SCO).toString())));
+
+      BddLogger.then("it should hide the Bordeaux group and list the Rennes ones with parents");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheUserIsOutsideTheStaffScope() throws Exception {
+      BddLogger.given("a student affiliated to Bordeaux only, seen by a staff of Rennes");
+      UUID externalUserId = externalUserIdOf(SEEDED_BORDEAUX_STUDENT_EPPN);
+
+      BddLogger.when("calling GET /back-office/external-users/{externalUserId}/detail");
+      mockMvc
+          .perform(
+              asStaffUser(get(EXTERNAL_USERS_PATH + externalUserId + "/detail"), STAFF_EPPN)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403");
+    }
+
+    @Test
+    void thenItShouldReturnNotFound_whenExternalUserDoesNotExist() throws Exception {
+      BddLogger.given("a random external user id that does not exist");
+
+      BddLogger.when("calling GET /back-office/external-users/{externalUserId}/detail");
+      mockMvc
+          .perform(
+              asStaffUser(get(EXTERNAL_USERS_PATH + UUID.randomUUID() + "/detail"), STAFF_EPPN)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isNotFound());
+
+      BddLogger.then("it should return 404");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenStaffMissesTheReadPermission() throws Exception {
+      BddLogger.given("a logged-in staff without the external user read permission");
+      UUID externalUserId = externalUserIdOf(SEEDED_STUDENT_EPPN);
+
+      BddLogger.when("calling GET /back-office/external-users/{externalUserId}/detail");
+      mockMvc
+          .perform(
+              get(EXTERNAL_USERS_PATH + externalUserId + "/detail")
                   .header("X-Forwarded-For", "203.0.113.10")
                   .with(authentication(new HmacAuthenticationToken(STAFF_EPPN)))
                   .accept(MediaType.APPLICATION_JSON))
