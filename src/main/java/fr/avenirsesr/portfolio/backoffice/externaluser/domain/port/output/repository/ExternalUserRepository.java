@@ -23,6 +23,9 @@ public interface ExternalUserRepository extends GenericRepositoryPort<ExternalUs
   /**
    * Pages over the users holding at least one affiliation matching the given filters, each of them
    * reported once however many affiliations it holds, sorted by last name then first name.
+   *
+   * <p>The keyword is searched in the last name, the first name and the email, ignoring the case. A
+   * filtered group also matches the affiliations to any of its descendants.
    */
   PagedResult<ExternalUser> findAllAffiliated(
       String keyword,

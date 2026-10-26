@@ -14,19 +14,16 @@ public interface ExternalUserJpaRepository
   ExternalUserEntity findByEppn(String eppn);
 
   /**
-   * Counts, for each requested group, the users affiliated to it or to any of its descendants.
-   *
-   * <p>The {@code subTrees} CTE walks the group hierarchy down from each requested group and pairs
-   * it with every node of its sub-tree, itself included. Counting distinct users over those pairs
-   * dedupes a user affiliated to several groups of the same sub-tree, which a count per group then
-   * summed would double.
+   * Walks the group hierarchy down from each requested group and pairs it with every node of its
+   * sub-tree, itself included. Shared by the queries below, so that a group lists exactly the users
+   * it counts.
    *
    * <p>The depth cap only stops the recursion should a {@code parent_id} chain ever cycle, as
    * nothing in the schema forbids it. It sits well above the three levels the group types allow, so
-   * it never truncates a legitimate hierarchy, and distinct counting makes the nodes a cycle
-   * revisits harmless anyway.
+   * it never truncates a legitimate hierarchy, and the queries below dedupe the nodes a cycle
+   * revisits.
    */
-  @Query(
+  String SUB_TREES_CTE =
       "with subTrees as ("
           + "   select root.id as rootId, root.id as nodeId, 0 as depth"
           + "   from GroupEntity root"
@@ -36,13 +33,25 @@ public interface ExternalUserJpaRepository
           + "   from subTrees parent"
           + "   join GroupEntity child on child.parent.id = parent.nodeId"
           + "   where parent.depth < 10"
-          + " )"
+          + " )";
+
+  /**
+   * Counts, for each requested group, the users affiliated to it or to any of its descendants.
+   * Counting distinct users over the {@link #SUB_TREES_CTE} pairs dedupes a user affiliated to
+   * several groups of the same sub-tree, which a count per group then summed would double.
+   */
+  @Query(
+      SUB_TREES_CTE
           + " select subTree.rootId as groupId, count(distinct a.externalUser.id) as usersCount"
           + " from subTrees subTree"
           + " join ExternalUserAffiliationEntity a on a.group.id = subTree.nodeId"
           + " group by subTree.rootId")
   List<GroupUsersCount> countAllByGroupIdsWithSubGroups(
       @Param("groupIds") Collection<UUID> groupIds);
+
+  /** Lists the requested groups and every group below them, the sub-trees counted above. */
+  @Query(SUB_TREES_CTE + " select distinct subTree.nodeId from subTrees subTree")
+  List<UUID> findAllGroupIdsWithSubGroups(@Param("groupIds") Collection<UUID> groupIds);
 
   interface GroupUsersCount {
     UUID getGroupId();
