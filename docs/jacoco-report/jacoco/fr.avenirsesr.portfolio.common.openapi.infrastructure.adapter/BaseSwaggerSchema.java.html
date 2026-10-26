@@ -4,48 +4,62 @@ import fr.avenirsesr.portfolio.common.data.domain.model.enums.ESortField;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.ESortOrder;
 import fr.avenirsesr.portfolio.common.error.domain.model.enums.EErrorCode;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import fr.avenirsesr.portfolio.common.temporal.domain.model.enums.EDurationUnit;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import java.util.Arrays;
 
-<span class="nc" id="L12">public class BaseSwaggerSchema {</span>
+<span class="nc" id="L14">public class BaseSwaggerSchema {</span>
 
-<span class="nc" id="L14">  public static final Schema&lt;String&gt; errorCodeSchema =</span>
+<span class="nc" id="L16">  public static final Schema&lt;String&gt; errorCodeSchema =</span>
       new StringSchema()
-<span class="nc" id="L16">          .name(&quot;EErrorCode&quot;)</span>
-<span class="nc" id="L17">          ._enum(Arrays.stream(EErrorCode.values()).map(Enum::name).toList())</span>
-<span class="nc" id="L18">          .description(&quot;Enum for error codes&quot;);</span>
+<span class="nc" id="L18">          .name(&quot;EErrorCode&quot;)</span>
+<span class="nc" id="L19">          ._enum(Arrays.stream(EErrorCode.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L20">          .description(&quot;Enum for error codes&quot;);</span>
 
-<span class="nc" id="L20">  public static final Schema&lt;String&gt; languageSchema =</span>
+<span class="nc" id="L22">  public static final Schema&lt;String&gt; languageSchema =</span>
       new StringSchema()
-<span class="nc" id="L22">          .name(&quot;ELanguage&quot;)</span>
-<span class="nc" id="L23">          ._enum(Arrays.stream(ELanguage.values()).map(Enum::name).toList())</span>
-<span class="nc" id="L24">          .description(&quot;Enum for languages&quot;);</span>
+<span class="nc" id="L24">          .name(&quot;ELanguage&quot;)</span>
+<span class="nc" id="L25">          ._enum(Arrays.stream(ELanguage.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L26">          .description(&quot;Enum for languages&quot;);</span>
 
-<span class="nc" id="L26">  public static final Schema&lt;String&gt; sortFieldSchema =</span>
+<span class="nc" id="L28">  public static final Schema&lt;String&gt; sortFieldSchema =</span>
       new StringSchema()
-<span class="nc" id="L28">          .name(&quot;ESortField&quot;)</span>
-<span class="nc" id="L29">          ._enum(Arrays.stream(ESortField.values()).map(Enum::name).toList())</span>
-<span class="nc" id="L30">          .description(&quot;Enum for sort fields&quot;);</span>
+<span class="nc" id="L30">          .name(&quot;ESortField&quot;)</span>
+<span class="nc" id="L31">          ._enum(Arrays.stream(ESortField.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L32">          .description(&quot;Enum for sort fields&quot;);</span>
 
-<span class="nc" id="L32">  public static final Schema&lt;String&gt; sortOrderSchema =</span>
+<span class="nc" id="L34">  public static final Schema&lt;String&gt; sortOrderSchema =</span>
       new StringSchema()
-<span class="nc" id="L34">          .name(&quot;ESortOrder&quot;)</span>
-<span class="nc" id="L35">          ._enum(Arrays.stream(ESortOrder.values()).map(Enum::name).toList())</span>
-<span class="nc" id="L36">          .description(&quot;Enum for sort orders&quot;);</span>
+<span class="nc" id="L36">          .name(&quot;ESortOrder&quot;)</span>
+<span class="nc" id="L37">          ._enum(Arrays.stream(ESortOrder.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L38">          .description(&quot;Enum for sort orders&quot;);</span>
 
-<span class="nc" id="L38">  public static final Schema&lt;String&gt; durationUnitSchema =</span>
+<span class="nc" id="L40">  public static final Schema&lt;String&gt; durationUnitSchema =</span>
       new StringSchema()
-<span class="nc" id="L40">          .name(&quot;EDurationUnit&quot;)</span>
-<span class="nc" id="L41">          ._enum(Arrays.stream(EDurationUnit.values()).map(Enum::name).toList())</span>
-<span class="nc" id="L42">          .description(&quot;Enum for duration units&quot;);</span>
+<span class="nc" id="L42">          .name(&quot;EDurationUnit&quot;)</span>
+<span class="nc" id="L43">          ._enum(Arrays.stream(EDurationUnit.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L44">          .description(&quot;Enum for duration units&quot;);</span>
+
+<span class="nc" id="L46">  public static final Schema&lt;String&gt; roleSchema =</span>
+      new StringSchema()
+<span class="nc" id="L48">          .name(&quot;ERole&quot;)</span>
+<span class="nc" id="L49">          ._enum(Arrays.stream(ERole.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L50">          .description(&quot;Enum for user role&quot;);</span>
+
+<span class="nc" id="L52">  public static final Schema&lt;String&gt; universeSchema =</span>
+      new StringSchema()
+<span class="nc" id="L54">          .name(&quot;EUniverse&quot;)</span>
+<span class="nc" id="L55">          ._enum(Arrays.stream(EUniverse.values()).map(Enum::name).toList())</span>
+<span class="nc" id="L56">          .description(&quot;Enum for universe&quot;);</span>
 
   static Schema&lt;String&gt; createEnumSchema(Class&lt;? extends Enum&lt;?&gt;&gt; enumClass, String description) {
-<span class="nc" id="L45">    return new StringSchema()</span>
-<span class="nc" id="L46">        .name(enumClass.getSimpleName())</span>
-<span class="nc" id="L47">        ._enum(Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).toList())</span>
-<span class="nc" id="L48">        .description(description);</span>
+<span class="nc" id="L59">    return new StringSchema()</span>
+<span class="nc" id="L60">        .name(enumClass.getSimpleName())</span>
+<span class="nc" id="L61">        ._enum(Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).toList())</span>
+<span class="nc" id="L62">        .description(description);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
