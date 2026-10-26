@@ -11,9 +11,11 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.data.infrastructure.adapter.repository.GenericJpaRepositoryAdapter;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
@@ -72,9 +74,10 @@ public class ExternalUserDatabaseRepository
       List<UUID> groupIds,
       PageCriteria pageCriteria) {
     Specification<ExternalUserEntity> specification =
-        Specification.where(ExternalUserSpecification.withNameContaining(keyword))
+        Specification.where(ExternalUserSpecification.withNameOrEmailContaining(keyword))
             .and(
-                ExternalUserSpecification.affiliatedMatching(categories, institutionIds, groupIds));
+                ExternalUserSpecification.affiliatedMatching(
+                    categories, institutionIds, withSubGroups(groupIds)));
     PageRequest pageRequest =
         PageRequest.of(
             pageCriteria.page(),
@@ -83,5 +86,15 @@ public class ExternalUserDatabaseRepository
                 Sort.Order.asc("lastName").ignoreCase(), Sort.Order.asc("firstName").ignoreCase()));
 
     return findAll(specification, pageRequest);
+  }
+
+  private List<UUID> withSubGroups(List<UUID> groupIds) {
+    if (groupIds == null || groupIds.isEmpty()) {
+      return groupIds;
+    }
+
+    Set<UUID> groupIdsWithSubGroups = new LinkedHashSet<>(groupIds);
+    groupIdsWithSubGroups.addAll(jpaRepository.findAllGroupIdsWithSubGroups(groupIds));
+    return List.copyOf(groupIdsWithSubGroups);
   }
 }

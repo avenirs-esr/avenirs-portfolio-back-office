@@ -54,6 +54,21 @@ public class ExternalUserSpecification {
             criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), pattern));
   }
 
+  public static Specification<ExternalUserEntity> withEmailContaining(String keyword) {
+    return (root, query, criteriaBuilder) -> {
+      if (keyword == null || keyword.isBlank()) {
+        return null;
+      }
+
+      return criteriaBuilder.like(
+          criteriaBuilder.lower(root.get("email")), containsPattern(keyword), '\\');
+    };
+  }
+
+  public static Specification<ExternalUserEntity> withNameOrEmailContaining(String keyword) {
+    return Specification.where(withNameContaining(keyword)).or(withEmailContaining(keyword));
+  }
+
   public static Specification<ExternalUserEntity> affiliatedMatching(
       Collection<EUserCategory> categories,
       Collection<UUID> institutionIds,
@@ -83,5 +98,11 @@ public class ExternalUserSpecification {
 
   private static boolean isEmpty(Collection<?> values) {
     return values == null || values.isEmpty();
+  }
+
+  private static String containsPattern(String keyword) {
+    String escaped =
+        keyword.trim().toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+    return "%" + escaped + "%";
   }
 }

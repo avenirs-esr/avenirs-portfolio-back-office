@@ -115,6 +115,15 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
         EUserCategory.STAFF);
   }
 
+  /** Binds the seeded student to the program too, on top of Groupe A two levels below it. */
+  private void affiliateStudentToSeededProgram() {
+    externalUserAffiliationService.addAffiliation(
+        externalUserIdOf(SEEDED_STUDENT_EPPN),
+        institutionIdOf(SEEDED_RENNES_UAI),
+        groupIdOf(SEEDED_PROGRAM_ID_SI_SCO),
+        EUserCategory.STUDENT);
+  }
+
   /** Authenticates the request as a logged-in staff granted the external user read permission. */
   private static MockHttpServletRequestBuilder asStaffUser(
       MockHttpServletRequestBuilder builder, String eppn) {
@@ -235,6 +244,49 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     }
 
     @Test
+    void thenItShouldReturnMatchingAffiliations_whenSearchingByEmail() throws Exception {
+      BddLogger.given("the email of the seeded student, shared by both Lucas Tessier accounts");
+      String email =
+          externalUserRepository.findByEppn(SEEDED_STUDENT_EPPN).orElseThrow().getEmail();
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations with it in upper case");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", email.toUpperCase())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data", hasSize(SEEDED_TESSIER_USERS_COUNT)))
+          .andExpect(
+              jsonPath("$.data[*].id", hasItem(externalUserIdOf(SEEDED_STUDENT_EPPN).toString())))
+          .andExpect(jsonPath("$.data[*].lastName", everyItem(is("Tessier"))));
+
+      BddLogger.then("it should match the email as well as the names, ignoring the case");
+    }
+
+    @Test
+    void thenItShouldMatchTheSpecialCharactersLiterally_whenSearchingByEmail() throws Exception {
+      BddLogger.given("a seeded email whose dots are turned into underscores");
+      String keyword =
+          externalUserRepository
+              .findByEppn(SEEDED_STUDENT_EPPN)
+              .orElseThrow()
+              .getEmail()
+              .replace('.', '_');
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations with that keyword");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", keyword)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.page.totalElements", is(0)));
+
+      BddLogger.then("it should find nobody, the underscore matching itself only");
+    }
+
+    @Test
     void thenItShouldReturnOnlyStaffAffiliations_whenFilteringByCategory() throws Exception {
       BddLogger.given("the seeded affiliations, holding both staff and student ones");
 
@@ -291,6 +343,82 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
       BddLogger.then(
           "it should return only the users bound to that group, reachable through the program the"
               + " staff is affiliated to");
+    }
+
+    @Test
+    void thenItShouldReturnTheUsersOfTheDescendantGroups_whenFilteringByAProgram()
+        throws Exception {
+      BddLogger.given(
+          "a student bound to Groupe A, two levels below the program the staff is affiliated to,"
+              + " but not to the program itself");
+      affiliateStaffToSeededProgram();
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations filtered by the program");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "tessier")
+                  .param("groupIds", groupIdOf(SEEDED_PROGRAM_ID_SI_SCO).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(
+              jsonPath("$.data[*].id", hasItem(externalUserIdOf(SEEDED_STUDENT_EPPN).toString())))
+          .andExpect(
+              jsonPath("$.data[*].groups")
+                  .value(everyItem(hasItem(hasEntry("name", "Licence Informatique")))));
+
+      BddLogger.then(
+          "it should return that student, the composition of a group including its descendants");
+    }
+
+    @Test
+    void thenItShouldReturnTheUserOnce_whenItBelongsToSeveralLevelsOfTheFilteredGroup()
+        throws Exception {
+      BddLogger.given("a student bound both to the program and to Groupe A below it");
+      affiliateStaffToSeededProgram();
+      affiliateStudentToSeededProgram();
+      String studentId = externalUserIdOf(SEEDED_STUDENT_EPPN).toString();
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations filtered by the program");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "tessier")
+                  .param("groupIds", groupIdOf(SEEDED_PROGRAM_ID_SI_SCO).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[?(@.id == '" + studentId + "')]", hasSize(1)));
+
+      BddLogger.then("it should list the student once, however many of its affiliations match");
+    }
+
+    @Test
+    void thenItShouldListAsManyUsersAsTheGroupCounts_whenFilteringByAProgram() throws Exception {
+      BddLogger.given(
+          "a student bound both to the program and to Groupe A below it, and the users counted for"
+              + " the program");
+      affiliateStaffToSeededProgram();
+      affiliateStudentToSeededProgram();
+      UUID programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO);
+      int programUsersCount =
+          externalUserAffiliationService
+              .countExternalUsersByGroupIdsWithSubGroups(List.of(programId))
+              .get(programId);
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations filtered by the program");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("groupIds", programId.toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.page.totalElements", is(programUsersCount)));
+
+      BddLogger.then(
+          "the composition should hold exactly the users counted for the program, each once");
     }
 
     @Test
