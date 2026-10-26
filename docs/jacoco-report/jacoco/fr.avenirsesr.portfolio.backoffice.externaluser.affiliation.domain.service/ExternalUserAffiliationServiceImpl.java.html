@@ -62,7 +62,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   private final InstitutionService institutionService;
   private final GroupService groupService;
   private final LoggedInExternalUserService loggedInExternalUserService;
-  private final SecurityClient securityRoleClient;
+  private final SecurityClient securityClient;
 
   @Override
   public ExternalUserAffiliation addAffiliation(
@@ -155,7 +155,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   public ExternalUserGlobalAuthorization getExternalUserGlobalAuthorization(UUID externalUserId) {
 <span class="fc" id="L156">    ExternalUser externalUser = getExternalUserDetail(externalUserId).externalUser();</span>
 
-<span class="fc" id="L158">    Set&lt;ERole&gt; roles = securityRoleClient.findRolesByLogin(externalUser.getEppn());</span>
+<span class="fc" id="L158">    Set&lt;ERole&gt; roles = securityClient.findRolesByLogin(externalUser.getEppn());</span>
 
 <span class="fc" id="L160">    return new ExternalUserGlobalAuthorization(roles, EUniverse.of(roles));</span>
   }

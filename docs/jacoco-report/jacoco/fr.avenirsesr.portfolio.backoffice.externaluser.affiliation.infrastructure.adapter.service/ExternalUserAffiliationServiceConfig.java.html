@@ -24,7 +24,7 @@ public class ExternalUserAffiliationServiceConfig {
   private final InstitutionService institutionService;
   private final GroupService groupService;
   private final LoggedInExternalUserService loggedInExternalUserService;
-  private final SecurityClient securityRoleClient;
+  private final SecurityClient securityClient;
 
   @Bean
   public ExternalUserAffiliationService externalUserAffiliationService() {
@@ -37,7 +37,7 @@ public class ExternalUserAffiliationServiceConfig {
             institutionService,
             groupService,
             loggedInExternalUserService,
-            securityRoleClient));
+            securityClient));
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
