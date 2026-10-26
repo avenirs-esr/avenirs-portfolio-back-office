@@ -3,8 +3,6 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.o
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalUserRole;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
-import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
-import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -36,16 +34,4 @@ public final class SwaggerSchema {
           .name("EUserStatus")
           ._enum(Arrays.stream(EUserStatus.values()).map(Enum::name).toList())
           .description("Enum for external user status");
-
-  public static final Schema<String> roleSchema =
-      new StringSchema()
-          .name("ERole")
-          ._enum(Arrays.stream(ERole.values()).map(Enum::name).toList())
-          .description("Enum for the roles of a user");
-
-  public static final Schema<String> universeSchema =
-      new StringSchema()
-          .name("EUniverse")
-          ._enum(Arrays.stream(EUniverse.values()).map(Enum::name).toList())
-          .description("Enum for the universes a user can access");
 }

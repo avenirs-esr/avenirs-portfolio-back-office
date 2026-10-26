@@ -1,5 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.openapi;
 
+import fr.avenirsesr.portfolio.common.openapi.infrastructure.adapter.BaseSwaggerSchema;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,8 @@ public class OpenApiUserEnumConfiguration {
           .addSchemas("EUserCategory", SwaggerSchema.userCategorySchema)
           .addSchemas("EExternalUserRole", SwaggerSchema.externalUserRoleSchema)
           .addSchemas("EUserStatus", SwaggerSchema.externalUserStatusSchema)
-          .addSchemas("ERole", SwaggerSchema.roleSchema)
-          .addSchemas("EUniverse", SwaggerSchema.universeSchema);
+          .addSchemas("ERole", BaseSwaggerSchema.roleSchema)
+          .addSchemas("EUniverse", BaseSwaggerSchema.universeSchema);
     };
   }
 }
