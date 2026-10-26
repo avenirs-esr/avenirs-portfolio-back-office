@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -19,16 +20,19 @@ import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,6 +78,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
   @Autowired private ExternalUserAffiliationService externalUserAffiliationService;
 
   @MockitoBean private CofolioProfileClient cofolioProfileClient;
+  @MockitoBean private SecurityClient securityClient;
 
   @BeforeAll
   void setup(@Autowired SeederRunner seederRunner) {
@@ -541,6 +546,86 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
       mockMvc
           .perform(
               get(EXTERNAL_USERS_PATH + externalUserId + "/detail")
+                  .header("X-Forwarded-For", "203.0.113.10")
+                  .with(authentication(new HmacAuthenticationToken(STAFF_EPPN)))
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403");
+    }
+  }
+
+  @Nested
+  class WhenGettingGlobalAuthorizationOfExternalUser {
+
+    @Test
+    void thenItShouldReturnTheRolesAndTheUniversesOfTheUser() throws Exception {
+      BddLogger.given("a student also holding the staff role, seen by a staff of Rennes");
+      UUID externalUserId = externalUserIdOf(SEEDED_STUDENT_EPPN);
+      when(securityClient.findRolesByLogin(SEEDED_STUDENT_EPPN))
+          .thenReturn(Set.of(ERole.ROLE_STUDENT, ERole.ROLE_STAFF));
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/{externalUserId}/global-authorization");
+      mockMvc
+          .perform(
+              asStaffUser(
+                      get(EXTERNAL_USERS_PATH + externalUserId + "/global-authorization"),
+                      STAFF_EPPN)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.roles", containsInAnyOrder("ROLE_STUDENT", "ROLE_STAFF")))
+          .andExpect(jsonPath("$.universes", containsInAnyOrder("STUDENT", "STAFF")));
+
+      BddLogger.then("it should return the roles and both universes");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheUserIsOutsideTheStaffScope() throws Exception {
+      BddLogger.given("a student affiliated to Bordeaux only, seen by a staff of Rennes");
+      UUID externalUserId = externalUserIdOf(SEEDED_BORDEAUX_STUDENT_EPPN);
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/{externalUserId}/global-authorization");
+      mockMvc
+          .perform(
+              asStaffUser(
+                      get(EXTERNAL_USERS_PATH + externalUserId + "/global-authorization"),
+                      STAFF_EPPN)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403 without asking the security service");
+      verifyNoInteractions(securityClient);
+    }
+
+    @Test
+    void thenItShouldReturnNotFound_whenExternalUserDoesNotExist() throws Exception {
+      BddLogger.given("a random external user id that does not exist");
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/{externalUserId}/global-authorization");
+      mockMvc
+          .perform(
+              asStaffUser(
+                      get(EXTERNAL_USERS_PATH + UUID.randomUUID() + "/global-authorization"),
+                      STAFF_EPPN)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isNotFound());
+
+      BddLogger.then("it should return 404");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenStaffMissesTheReadPermission() throws Exception {
+      BddLogger.given("a logged-in staff without the external user read permission");
+      UUID externalUserId = externalUserIdOf(SEEDED_STUDENT_EPPN);
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/{externalUserId}/global-authorization");
+      mockMvc
+          .perform(
+              get(EXTERNAL_USERS_PATH + externalUserId + "/global-authorization")
                   .header("X-Forwarded-For", "203.0.113.10")
                   .with(authentication(new HmacAuthenticationToken(STAFF_EPPN)))
                   .accept(MediaType.APPLICATION_JSON))

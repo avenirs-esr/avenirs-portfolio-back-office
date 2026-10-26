@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationOverviewDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserDetailDTO;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserGlobalAuthorizationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.mapper.ExternalUserAffiliationApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
@@ -109,6 +110,17 @@ public class ExternalUserAffiliationQueryController {
 
     return ResponseEntity.ok(
         ExternalUserAffiliationApplicationMapper.toExternalUserDetailDTO(detail, cofolioProfile));
+  }
+
+  @PreAuthorize("hasAuthority('external-user:read')")
+  @GetMapping("/{externalUserId}/global-authorization")
+  public ResponseEntity<ExternalUserGlobalAuthorizationDTO> getGlobalAuthorizationOfExternalUser(
+      @PathVariable UUID externalUserId) {
+    log.debug("Getting the global authorization of external user: {}", externalUserId);
+
+    return ResponseEntity.ok(
+        ExternalUserAffiliationApplicationMapper.toExternalUserGlobalAuthorizationDTO(
+            externalUserAffiliationService.getExternalUserGlobalAuthorization(externalUserId)));
   }
 
   @PreAuthorize("hasAuthority('external-user:read')")

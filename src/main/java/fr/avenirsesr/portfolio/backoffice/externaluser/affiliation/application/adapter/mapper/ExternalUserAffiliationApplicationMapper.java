@@ -3,9 +3,11 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationOverviewDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserDetailDTO;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserGlobalAuthorizationDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserGlobalAuthorization;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper.GroupApplicationMapper;
@@ -44,6 +46,11 @@ public class ExternalUserAffiliationApplicationMapper {
         detail.groups().stream()
             .map(group -> new GroupReferenceDTO(group.getId(), group.getName(), group.getType()))
             .toList());
+  }
+
+  public static ExternalUserGlobalAuthorizationDTO toExternalUserGlobalAuthorizationDTO(
+      ExternalUserGlobalAuthorization authorization) {
+    return new ExternalUserGlobalAuthorizationDTO(authorization.roles(), authorization.universes());
   }
 
   /**

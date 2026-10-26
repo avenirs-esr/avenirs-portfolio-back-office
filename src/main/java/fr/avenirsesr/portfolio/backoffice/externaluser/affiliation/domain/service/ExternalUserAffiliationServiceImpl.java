@@ -11,10 +11,12 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserGlobalAuthorization;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
@@ -29,6 +31,8 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
 import java.util.ArrayList;
@@ -58,6 +62,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   private final InstitutionService institutionService;
   private final GroupService groupService;
   private final LoggedInExternalUserService loggedInExternalUserService;
+  private final SecurityClient securityClient;
 
   @Override
   public ExternalUserAffiliation addAffiliation(
@@ -144,6 +149,15 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             });
 
     return new ExternalUserDetail(externalUser, institution, List.copyOf(groupsById.values()));
+  }
+
+  @Override
+  public ExternalUserGlobalAuthorization getExternalUserGlobalAuthorization(UUID externalUserId) {
+    ExternalUser externalUser = getExternalUserDetail(externalUserId).externalUser();
+
+    Set<ERole> roles = securityClient.findRolesByLogin(externalUser.getEppn());
+
+    return new ExternalUserGlobalAuthorization(roles, EUniverse.of(roles));
   }
 
   @Override

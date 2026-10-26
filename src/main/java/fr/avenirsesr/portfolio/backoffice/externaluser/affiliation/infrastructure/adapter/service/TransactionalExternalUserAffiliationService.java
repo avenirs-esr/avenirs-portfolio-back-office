@@ -6,6 +6,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserGlobalAuthorization;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
@@ -48,6 +49,11 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Override
   public ExternalUserDetail getExternalUserDetail(UUID externalUserId) {
     return delegate.getExternalUserDetail(externalUserId);
+  }
+
+  @Override
+  public ExternalUserGlobalAuthorization getExternalUserGlobalAuthorization(UUID externalUserId) {
+    return delegate.getExternalUserGlobalAuthorization(externalUserId);
   }
 
   @Override

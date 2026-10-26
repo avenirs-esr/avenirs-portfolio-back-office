@@ -12,10 +12,12 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserGlobalAuthorization;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
@@ -30,6 +32,8 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.group.domain.model.enums.EGroupType;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
@@ -56,6 +60,7 @@ class ExternalUserAffiliationServiceImplTest {
   @Mock private InstitutionService institutionService;
   @Mock private GroupService groupService;
   @Mock private LoggedInExternalUserService loggedInExternalUserService;
+  @Mock private SecurityClient securityClient;
 
   @InjectMocks private ExternalUserAffiliationServiceImpl service;
 
@@ -684,6 +689,62 @@ class ExternalUserAffiliationServiceImplTest {
 
     BddLogger.then("it should be refused");
     assertThrows(ExternalUserNotFoundException.class, () -> service.getExternalUserDetail(id));
+  }
+
+  @Test
+  void shouldReturnRolesAndUniverses_whenTheUserIsInTheStaffScope() {
+    BddLogger.given("a student in the staff scope holding the student and staff roles");
+    ExternalUser staff = externalUser(EUserCategory.STAFF);
+    ExternalUser student = externalUser(EUserCategory.STUDENT);
+    Institution institution = institution(UUID.randomUUID());
+    when(externalUserRepository.findById(student.getId())).thenReturn(Optional.of(student));
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff);
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            staff.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of());
+    when(externalUserAffiliationRepository.findAllByExternalUserId(student.getId()))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(student, institution, null, EUserCategory.STUDENT)));
+    when(institutionService.staffHasAccess(List.of(), List.of(institution.getId())))
+        .thenReturn(true);
+    when(securityClient.findRolesByLogin(student.getEppn()))
+        .thenReturn(Set.of(ERole.ROLE_STUDENT, ERole.ROLE_STAFF));
+
+    BddLogger.when("getting the global authorization of the external user");
+    ExternalUserGlobalAuthorization authorization =
+        service.getExternalUserGlobalAuthorization(student.getId());
+
+    BddLogger.then("it should report the roles and both universes");
+    assertEquals(Set.of(ERole.ROLE_STUDENT, ERole.ROLE_STAFF), authorization.roles());
+    assertEquals(Set.of(EUniverse.STUDENT, EUniverse.STAFF), authorization.universes());
+  }
+
+  @Test
+  void shouldNotAskTheSecurityService_whenTheUserIsOutsideTheStaffScope() {
+    BddLogger.given("a student affiliated to an institution outside the staff scope");
+    ExternalUser staff = externalUser(EUserCategory.STAFF);
+    ExternalUser student = externalUser(EUserCategory.STUDENT);
+    Institution institution = institution(UUID.randomUUID());
+    when(externalUserRepository.findById(student.getId())).thenReturn(Optional.of(student));
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff);
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            staff.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of());
+    when(externalUserAffiliationRepository.findAllByExternalUserId(student.getId()))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(student, institution, null, EUserCategory.STUDENT)));
+    when(institutionService.staffHasAccess(List.of(), List.of(institution.getId())))
+        .thenReturn(false);
+
+    BddLogger.when("getting the global authorization of the external user");
+
+    BddLogger.then("it should be refused before any role lookup");
+    assertThrows(
+        UserNotAuthorizedException.class,
+        () -> service.getExternalUserGlobalAuthorization(student.getId()));
+    verifyNoInteractions(securityClient);
   }
 
   /** Stubs the affiliation scope of the logged-in staff, as {@code staffHasAccess} reads it. */
