@@ -14,7 +14,9 @@ public class OpenApiUserEnumConfiguration {
           .addSchemas("EExternalSource", SwaggerSchema.userExternalSourceSchema)
           .addSchemas("EUserCategory", SwaggerSchema.userCategorySchema)
           .addSchemas("EExternalUserRole", SwaggerSchema.externalUserRoleSchema)
-          .addSchemas("EUserStatus", SwaggerSchema.externalUserStatusSchema);
+          .addSchemas("EUserStatus", SwaggerSchema.externalUserStatusSchema)
+          .addSchemas("ERole", SwaggerSchema.roleSchema)
+          .addSchemas("EUniverse", SwaggerSchema.universeSchema);
     };
   }
 }

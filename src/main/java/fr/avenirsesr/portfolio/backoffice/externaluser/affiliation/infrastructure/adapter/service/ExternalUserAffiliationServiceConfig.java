@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructu
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service.ExternalUserAffiliationServiceImpl;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.input.GroupService;
 import fr.avenirsesr.portfolio.backoffice.group.domain.port.output.repository.GroupRepository;
@@ -23,6 +24,7 @@ public class ExternalUserAffiliationServiceConfig {
   private final InstitutionService institutionService;
   private final GroupService groupService;
   private final LoggedInExternalUserService loggedInExternalUserService;
+  private final SecurityClient securityClient;
 
   @Bean
   public ExternalUserAffiliationService externalUserAffiliationService() {
@@ -34,6 +36,7 @@ public class ExternalUserAffiliationServiceConfig {
             groupRepository,
             institutionService,
             groupService,
-            loggedInExternalUserService));
+            loggedInExternalUserService,
+            securityClient));
   }
 }
