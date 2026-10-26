@@ -13,7 +13,7 @@ public class OpenApiUserEnumConfiguration {
       openApi
           .getComponents()
           .addSchemas("EExternalSource", SwaggerSchema.userExternalSourceSchema)
-          .addSchemas("EUserCategory", SwaggerSchema.userCategorySchema)
+          .addSchemas("EUserCategory", BaseSwaggerSchema.userCategorySchema)
           .addSchemas("EExternalUserRole", SwaggerSchema.externalUserRoleSchema)
           .addSchemas("EUserStatus", SwaggerSchema.externalUserStatusSchema)
           .addSchemas("ERole", BaseSwaggerSchema.roleSchema)
