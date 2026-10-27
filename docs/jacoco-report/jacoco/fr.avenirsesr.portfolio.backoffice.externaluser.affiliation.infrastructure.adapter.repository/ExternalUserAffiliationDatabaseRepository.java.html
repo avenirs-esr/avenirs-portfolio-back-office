@@ -47,8 +47,8 @@ public class ExternalUserAffiliationDatabaseRepository
 
   @Override
   public List&lt;ExternalUserAffiliation&gt; findAllByExternalUserIds(Collection&lt;UUID&gt; externalUserIds) {
-<span class="pc bpc" id="L50" title="2 of 4 branches missed.">    if (externalUserIds == null || externalUserIds.isEmpty()) {</span>
-<span class="nc" id="L51">      return List.of();</span>
+<span class="pc bpc" id="L50" title="1 of 4 branches missed.">    if (externalUserIds == null || externalUserIds.isEmpty()) {</span>
+<span class="fc" id="L51">      return List.of();</span>
     }
 
 <span class="fc" id="L54">    return findAll(ExternalUserAffiliationSpecification.withExternalUserIds(externalUserIds));</span>
