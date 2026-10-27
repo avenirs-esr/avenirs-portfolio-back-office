@@ -1,15 +1,13 @@
 package fr.avenirsesr.portfolio.backoffice.file.infrastructure.adapter.client;
 
+import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.client.LoggedInUserHeadersForwarder;
 import fr.avenirsesr.portfolio.common.file.application.adapter.client.FileClient;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.application.adapter.request.FileUploadRequest;
-import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Component;
@@ -20,10 +18,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class ApiFileClient implements FileClient {
 
-  private static final String DEV_EPPN_HEADER = "eppn";
-
   private final WebClient webClient;
-  private final HttpServletRequest currentRequest;
+  private final LoggedInUserHeadersForwarder headersForwarder;
 
   @Value("${avenirs.api.file.endpoint}")
   private String fileEndpoint;
@@ -31,9 +27,9 @@ public class ApiFileClient implements FileClient {
   @Value("${avenirs.api.storage.endpoint}")
   private String storageEndpoint;
 
-  public ApiFileClient(WebClient webClient, HttpServletRequest currentRequest) {
+  public ApiFileClient(WebClient webClient, LoggedInUserHeadersForwarder headersForwarder) {
     this.webClient = webClient;
-    this.currentRequest = currentRequest;
+    this.headersForwarder = headersForwarder;
   }
 
   @Override
@@ -49,7 +45,7 @@ public class ApiFileClient implements FileClient {
     return webClient
         .post()
         .uri(fileEndpoint)
-        .headers(this::forwardLoggedInUser)
+        .headers(headersForwarder::forward)
         .contentType(MediaType.MULTIPART_FORM_DATA)
         .body(BodyInserters.fromMultipartData(body.build()))
         .retrieve()
@@ -64,7 +60,7 @@ public class ApiFileClient implements FileClient {
     return webClient
         .get()
         .uri(fileEndpoint + "/" + fileId)
-        .headers(this::forwardLoggedInUser)
+        .headers(headersForwarder::forward)
         .retrieve()
         .bodyToMono(FileDTO.class)
         .block();
@@ -89,22 +85,9 @@ public class ApiFileClient implements FileClient {
     webClient
         .delete()
         .uri(fileEndpoint + "/" + fileId)
-        .headers(this::forwardLoggedInUser)
+        .headers(headersForwarder::forward)
         .retrieve()
         .toBodilessEntity()
         .block();
-  }
-
-  private void forwardLoggedInUser(HttpHeaders headers) {
-    copyHeader(headers, AvenirsSecurityHeaders.SIGNED_CONTEXT);
-    copyHeader(headers, AvenirsSecurityHeaders.CONTEXT_SIGNATURE);
-    copyHeader(headers, DEV_EPPN_HEADER);
-  }
-
-  private void copyHeader(HttpHeaders headers, String name) {
-    String value = currentRequest.getHeader(name);
-    if (value != null) {
-      headers.set(name, value);
-    }
   }
 }

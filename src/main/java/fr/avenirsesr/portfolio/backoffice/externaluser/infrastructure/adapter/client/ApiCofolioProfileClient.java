@@ -2,8 +2,7 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.c
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
-import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
-import jakarta.servlet.http.HttpServletRequest;
+import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.client.LoggedInUserHeadersForwarder;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,20 +20,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class ApiCofolioProfileClient implements CofolioProfileClient {
 
-  private static final String DEV_EPPN_HEADER = "eppn";
-
   private static final ParameterizedTypeReference<List<UserProfileResponse>> PROFILE_LIST =
       new ParameterizedTypeReference<>() {};
 
   private final WebClient webClient;
-  private final HttpServletRequest currentRequest;
+  private final LoggedInUserHeadersForwarder headersForwarder;
 
   @Value("${avenirs.api.user-profiles.endpoint}")
   private String userProfilesEndpoint;
 
-  public ApiCofolioProfileClient(WebClient webClient, HttpServletRequest currentRequest) {
+  public ApiCofolioProfileClient(
+      WebClient webClient, LoggedInUserHeadersForwarder headersForwarder) {
     this.webClient = webClient;
-    this.currentRequest = currentRequest;
+    this.headersForwarder = headersForwarder;
   }
 
   @Override
@@ -53,7 +50,7 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
         webClient
             .post()
             .uri(userProfilesEndpoint)
-            .headers(this::forwardLoggedInUser)
+            .headers(headersForwarder::forward)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(new UserProfileLookupBody(requestedEppns))
             .retrieve()
@@ -73,19 +70,6 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
                     response.eppn(), response.hasConnected(), response.profilePictureId())));
 
     return profilesByEppn;
-  }
-
-  private void forwardLoggedInUser(HttpHeaders headers) {
-    copyHeader(headers, AvenirsSecurityHeaders.SIGNED_CONTEXT);
-    copyHeader(headers, AvenirsSecurityHeaders.CONTEXT_SIGNATURE);
-    copyHeader(headers, DEV_EPPN_HEADER);
-  }
-
-  private void copyHeader(HttpHeaders headers, String name) {
-    String value = currentRequest.getHeader(name);
-    if (value != null) {
-      headers.set(name, value);
-    }
   }
 
   private record UserProfileLookupBody(List<String> eppns) {}
