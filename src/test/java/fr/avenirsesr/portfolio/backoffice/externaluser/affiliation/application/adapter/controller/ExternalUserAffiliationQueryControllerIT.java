@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.jayway.jsonpath.JsonPath;
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
@@ -43,6 +44,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTest {
@@ -61,11 +63,10 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
 
   /**
    * Counts of the seeded fixtures in affiliated users, each of them counted once however many
-   * affiliations it holds, all categories and institutions taken together.
+   * affiliations it holds. Without filter, the listing is scoped to the institution of the staff.
    */
-  private static final int SEEDED_AFFILIATED_USERS_COUNT = 213;
+  private static final int SEEDED_RENNES_STAFF_USERS_COUNT = 28;
 
-  private static final int SEEDED_STAFF_USERS_COUNT = 59;
   private static final int SEEDED_RENNES_USERS_COUNT = 108;
   private static final int SEEDED_GROUPE_A_USERS_COUNT = 80;
   private static final int SEEDED_TESSIER_USERS_COUNT = 2;
@@ -124,6 +125,10 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
         EUserCategory.STUDENT);
   }
 
+  private static int totalElementsOf(MvcResult result) throws Exception {
+    return JsonPath.read(result.getResponse().getContentAsString(), "$.page.totalElements");
+  }
+
   /** Authenticates the request as a logged-in staff granted the external user read permission. */
   private static MockHttpServletRequestBuilder asStaffUser(
       MockHttpServletRequestBuilder builder, String eppn) {
@@ -143,7 +148,9 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
 
     @Test
     void thenItShouldReturnTheFirstPageSortedByLastNameThenFirstName() throws Exception {
-      BddLogger.given("the seeded affiliations, the first last name alphabetically being AMU");
+      BddLogger.given(
+          "the seeded affiliations of the staff institution, the first last name alphabetically"
+              + " being AMU");
 
       BddLogger.when("calling GET /back-office/external-users/affiliations");
       mockMvc
@@ -153,15 +160,157 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .andExpect(jsonPath("$.data[0].lastName", is("AMU")))
           .andExpect(jsonPath("$.data[0].firstName", is("Ens1")))
           .andExpect(jsonPath("$.data[1].lastName", is("AMU")))
-          .andExpect(jsonPath("$.data[1].firstName", is("Ens2")))
-          .andExpect(jsonPath("$.data[2].lastName", is("AMU")))
-          .andExpect(jsonPath("$.data[2].firstName", is("Ens3")))
-          .andExpect(jsonPath("$.data[3].lastName", is("Arnaud")))
+          .andExpect(jsonPath("$.data[1].firstName", is("Ens3")))
           .andExpect(jsonPath("$.page.page", is(0)))
           .andExpect(jsonPath("$.page.pageSize", is(8)))
-          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_AFFILIATED_USERS_COUNT)));
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_RENNES_USERS_COUNT)));
 
-      BddLogger.then("it should return the default page, ordered by last name then first name");
+      BddLogger.then(
+          "it should return the default page, ordered by last name then first name, limited to the"
+              + " staff scope");
+    }
+
+    @Test
+    void thenItShouldOnlyReturnTheUsersOfTheStaffScope_whenNoInstitutionNorGroupIsFiltered()
+        throws Exception {
+      BddLogger.given("a staff affiliated to Rennes and a seeded student affiliated to Bordeaux");
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations without any filter");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("pageSize", "100")
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(
+              jsonPath("$.data[*].institutions")
+                  .value(everyItem(hasItem(hasEntry("name", "Université de Rennes")))));
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "charpentier")
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.page.totalElements", is(0)));
+
+      BddLogger.then("it should not return the users the staff has no right on");
+    }
+
+    @Test
+    void thenItShouldReturnTheSameUsersAsTheStaffInstitution_whenNoInstitutionNorGroupIsFiltered()
+        throws Exception {
+      BddLogger.given("a staff affiliated to Rennes only");
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations with and without the institution");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("institutionIds", institutionIdOf(SEEDED_RENNES_UAI).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_RENNES_USERS_COUNT)));
+      mockMvc
+          .perform(asStaffUser(get(BASE_PATH), STAFF_EPPN).accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_RENNES_USERS_COUNT)));
+
+      BddLogger.then("it should return the same number of users");
+    }
+
+    @Test
+    void thenItShouldStayWithinTheStaffScope_whenTheStaffIsAlsoAffiliatedToAGroup()
+        throws Exception {
+      BddLogger.given("a staff affiliated to Rennes and to a seeded program");
+      affiliateStaffToSeededProgram();
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations without any filter");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("pageSize", "100")
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(
+              jsonPath("$.data[*].institutions")
+                  .value(everyItem(hasItem(hasEntry("name", "Université de Rennes")))));
+
+      BddLogger.then("it should only return users of the institution of the staff");
+    }
+
+    @Test
+    void thenItShouldDefaultTheGroupsToTheStaffOnes_whenOnlyTheInstitutionIsFiltered()
+        throws Exception {
+      BddLogger.given("a staff affiliated to Rennes and to a seeded program");
+      affiliateStaffToSeededProgram();
+      String rennesId = institutionIdOf(SEEDED_RENNES_UAI).toString();
+      String programId = groupIdOf(SEEDED_PROGRAM_ID_SI_SCO).toString();
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations with and without the program");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("institutionIds", rennesId)
+                  .param("groupIds", programId)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andDo(
+              explicit ->
+                  mockMvc
+                      .perform(
+                          asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                              .param("institutionIds", rennesId)
+                              .accept(MediaType.APPLICATION_JSON))
+                      .andExpect(status().isOk())
+                      .andExpect(jsonPath("$.page.totalElements", is(totalElementsOf(explicit)))));
+
+      BddLogger.then("it should return the same users as when filtering on the staff groups");
+    }
+
+    @Test
+    void thenItShouldDefaultTheInstitutionsToTheStaffOnes_whenOnlyTheGroupIsFiltered()
+        throws Exception {
+      BddLogger.given("a staff affiliated to Rennes and to a seeded program");
+      affiliateStaffToSeededProgram();
+      String rennesId = institutionIdOf(SEEDED_RENNES_UAI).toString();
+      String groupId = groupIdOf(SEEDED_STUDENT_GROUP_ID_SI_SCO).toString();
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations with and without the institution");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("institutionIds", rennesId)
+                  .param("groupIds", groupId)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andDo(
+              explicit ->
+                  mockMvc
+                      .perform(
+                          asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                              .param("groupIds", groupId)
+                              .accept(MediaType.APPLICATION_JSON))
+                      .andExpect(status().isOk())
+                      .andExpect(jsonPath("$.page.totalElements", is(totalElementsOf(explicit)))));
+
+      BddLogger.then("it should return the same users as when filtering on the staff institutions");
+    }
+
+    @Test
+    void thenItShouldNotNarrowTheSearch_whenNoFilterIsGivenAndTheUserHasNoStaffAffiliation()
+        throws Exception {
+      BddLogger.given("a logged-in user holding the permission but no staff affiliation");
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations without any filter");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), SEEDED_STUDENT_EPPN).accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data", hasSize(8)));
+
+      BddLogger.then("it should return the default page, as no scope is defined for that user");
     }
 
     @Test
@@ -298,9 +447,11 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                   .accept(MediaType.APPLICATION_JSON))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.data[*].categories[*]", everyItem(is("STAFF"))))
-          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_STAFF_USERS_COUNT)));
+          .andExpect(jsonPath("$.page.totalElements", is(SEEDED_RENNES_STAFF_USERS_COUNT)));
 
-      BddLogger.then("it should return only the users holding an affiliation of that category");
+      BddLogger.then(
+          "it should return only the users holding an affiliation of that category, within the"
+              + " scope of the staff");
     }
 
     @Test
