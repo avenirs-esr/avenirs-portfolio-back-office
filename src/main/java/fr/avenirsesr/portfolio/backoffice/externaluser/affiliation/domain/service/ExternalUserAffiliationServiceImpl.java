@@ -169,9 +169,17 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
       PageCriteria pageCriteria) {
     requireStaffAccessToFilters(institutionIds, groupIds);
 
+    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();
+    List<UUID> scopedInstitutionIds =
+        isEmpty(institutionIds)
+            ? institutionIdsOf(staff.getId(), EUserCategory.STAFF)
+            : institutionIds;
+    List<UUID> scopedGroupIds =
+        isEmpty(groupIds) ? groupIdsOf(staff.getId(), EUserCategory.STAFF) : groupIds;
+
     PagedResult<ExternalUser> externalUsers =
         externalUserRepository.findAllAffiliated(
-            keyword, categories, institutionIds, groupIds, pageCriteria);
+            keyword, categories, scopedInstitutionIds, scopedGroupIds, pageCriteria);
     Map<UUID, List<ExternalUserAffiliation>> affiliationsByExternalUserId =
         externalUserAffiliationRepository
             .findAllByExternalUserIds(
