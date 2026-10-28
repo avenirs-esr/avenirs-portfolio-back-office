@@ -30,7 +30,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.language.infrastruc
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.domain.service,InstitutionServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.domain.service,InstitutionServiceImpl,0,373,0,28,0,83,0,30,0,16
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.domain.service,InstitutionConfigServiceImpl,0,26,0,2,0,7,0,4,0,3
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.specification,ExternalUserSpecification,103,170,7,15,21,32,10,16,5,10
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.specification,ExternalUserSpecification,103,170,6,16,21,32,9,17,5,10
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.domain.service,GroupServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.domain.service,GroupServiceImpl,0,528,1,40,0,126,1,40,0,20
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.trace.infrastructure.service,TraceConfigurationServiceConfig,0,16,0,0,0,5,0,3,0,3
@@ -64,7 +64,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.additionalskill
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.contextualauthorization.domain.service,ExternalUserContextualAuthorizationServiceImpl,0,133,0,4,0,32,0,12,0,10
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.contextualauthorization.domain.service,ExternalUserContextualAuthorizationServiceImpl.Scope,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl,0,961,2,52,0,224,2,73,0,48
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl,0,987,2,56,0,229,2,75,0,48
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service,ExternalUserAffiliationServiceImpl.ScopeItem,0,15,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils.infrastructure.adapter.util,TestResourceUtils,26,0,2,0,5,0,3,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.specification,ExternalUserAffiliationSpecification,3,65,0,2,1,10,1,11,1,10

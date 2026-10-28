@@ -10,7 +10,10 @@ import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedRes
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-<span class="fc" id="L27">@Slf4j</span>
+<span class="fc" id="L30">@Slf4j</span>
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/external-users/{externalUserId}/contextual-authorizations&quot;)
@@ -34,13 +37,20 @@ public class ExternalUserContextualAuthorizationQueryController {
 
   @PreAuthorize(&quot;hasAuthority('external-user:read')&quot;)
   @GetMapping(&quot;/types&quot;)
-  public ResponseEntity&lt;List&lt;EAuthorizationEntityType&gt;&gt; getAvailableTypes(
+  @ApiResponse(
+      responseCode = &quot;200&quot;,
+      content =
+          @Content(
+              array =
+                  @ArraySchema(
+                      schema = @Schema(ref = &quot;#/components/schemas/EAuthorizationEntityType&quot;))))
+  public ResponseEntity&lt;List&lt;EAuthorizationEntityType&gt;&gt; getExternalUserAuthorizationTypes(
       @PathVariable UUID externalUserId) {
-<span class="fc" id="L39">    log.debug(&quot;Getting the contextual authorization types of external user: {}&quot;, externalUserId);</span>
+<span class="fc" id="L49">    log.debug(&quot;Getting the contextual authorization types of external user: {}&quot;, externalUserId);</span>
 
-<span class="fc" id="L41">    return ResponseEntity.ok()</span>
-<span class="fc" id="L42">        .cacheControl(CacheControl.noStore())</span>
-<span class="fc" id="L43">        .body(contextualAuthorizationService.getAvailableTypes(externalUserId));</span>
+<span class="fc" id="L51">    return ResponseEntity.ok()</span>
+<span class="fc" id="L52">        .cacheControl(CacheControl.noStore())</span>
+<span class="fc" id="L53">        .body(contextualAuthorizationService.getAvailableTypes(externalUserId));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('external-user:read')&quot;)
@@ -52,24 +62,24 @@ public class ExternalUserContextualAuthorizationQueryController {
           EAuthorizationEntityType entityType,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
-<span class="fc" id="L55">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
-<span class="fc" id="L56">    log.debug(</span>
+<span class="fc" id="L65">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
+<span class="fc" id="L66">    log.debug(</span>
         &quot;Getting the {} contextual authorizations of external user: {} {}&quot;,
         entityType,
         externalUserId,
         pageCriteria);
 
-<span class="fc" id="L62">    PagedResult&lt;ContextualAuthorization&gt; authorizations =</span>
-<span class="fc" id="L63">        contextualAuthorizationService.getAuthorizations(externalUserId, entityType, pageCriteria);</span>
+<span class="fc" id="L72">    PagedResult&lt;ContextualAuthorization&gt; authorizations =</span>
+<span class="fc" id="L73">        contextualAuthorizationService.getAuthorizations(externalUserId, entityType, pageCriteria);</span>
 
-<span class="fc" id="L65">    return ResponseEntity.ok()</span>
-<span class="fc" id="L66">        .cacheControl(CacheControl.noStore())</span>
-<span class="fc" id="L67">        .body(</span>
+<span class="fc" id="L75">    return ResponseEntity.ok()</span>
+<span class="fc" id="L76">        .cacheControl(CacheControl.noStore())</span>
+<span class="fc" id="L77">        .body(</span>
             new PagedResponse&lt;&gt;(
-<span class="fc" id="L69">                authorizations.content().stream()</span>
-<span class="fc" id="L70">                    .map(ContextualAuthorizationApplicationMapper::toContextualAuthorizationDTO)</span>
-<span class="fc" id="L71">                    .toList(),</span>
-<span class="fc" id="L72">                PageInfoDTO.fromDomain(authorizations.pageInfo())));</span>
+<span class="fc" id="L79">                authorizations.content().stream()</span>
+<span class="fc" id="L80">                    .map(ContextualAuthorizationApplicationMapper::toContextualAuthorizationDTO)</span>
+<span class="fc" id="L81">                    .toList(),</span>
+<span class="fc" id="L82">                PageInfoDTO.fromDomain(authorizations.pageInfo())));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
