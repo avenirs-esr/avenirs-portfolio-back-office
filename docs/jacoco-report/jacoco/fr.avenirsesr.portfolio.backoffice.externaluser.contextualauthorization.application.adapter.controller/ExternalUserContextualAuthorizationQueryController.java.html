@@ -45,7 +45,7 @@ public class ExternalUserContextualAuthorizationQueryController {
 
   @PreAuthorize(&quot;hasAuthority('external-user:read')&quot;)
   @GetMapping
-  public ResponseEntity&lt;PagedResponse&lt;ContextualAuthorizationDTO&gt;&gt; getAuthorizations(
+  public ResponseEntity&lt;PagedResponse&lt;ContextualAuthorizationDTO&gt;&gt; getExternalUserAuthorizations(
       @PathVariable UUID externalUserId,
       @Parameter(schema = @Schema(ref = &quot;#/components/schemas/EAuthorizationEntityType&quot;))
           @RequestParam
