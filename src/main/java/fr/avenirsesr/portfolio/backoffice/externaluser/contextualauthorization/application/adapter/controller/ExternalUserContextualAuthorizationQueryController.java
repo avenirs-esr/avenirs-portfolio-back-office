@@ -10,7 +10,10 @@ import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedRes
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +37,14 @@ public class ExternalUserContextualAuthorizationQueryController {
 
   @PreAuthorize("hasAuthority('external-user:read')")
   @GetMapping("/types")
-  public ResponseEntity<List<EAuthorizationEntityType>> getAvailableTypes(
+  @ApiResponse(
+      responseCode = "200",
+      content =
+          @Content(
+              array =
+                  @ArraySchema(
+                      schema = @Schema(ref = "#/components/schemas/EAuthorizationEntityType"))))
+  public ResponseEntity<List<EAuthorizationEntityType>> getExternalUserAuthorizationTypes(
       @PathVariable UUID externalUserId) {
     log.debug("Getting the contextual authorization types of external user: {}", externalUserId);
 
