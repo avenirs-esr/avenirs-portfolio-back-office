@@ -30,6 +30,7 @@ import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.S
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.util.List;
@@ -628,7 +629,12 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .thenReturn(
               Map.of(
                   SEEDED_STUDENT_EPPN,
-                  new CofolioProfile(SEEDED_STUDENT_EPPN, true, profilePictureId)));
+                  new CofolioProfile(
+                      SEEDED_STUDENT_EPPN,
+                      true,
+                      UUID.randomUUID(),
+                      profilePictureId,
+                      Set.of(EUniverse.STUDENT))));
 
       BddLogger.when("calling GET /back-office/external-users/affiliations");
       mockMvc
@@ -646,12 +652,51 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     }
 
     @Test
+    void thenItShouldOnlyReturnTheStudentsOfCofolio_whenFilteringOnCofolioStudent()
+        throws Exception {
+      BddLogger.given("a Tessier student who logged in to Cofolio, the others never did");
+      affiliateStaffToSeededProgram();
+      when(cofolioProfileClient.findByEppns(any()))
+          .thenReturn(
+              Map.of(
+                  SEEDED_STUDENT_EPPN,
+                  new CofolioProfile(
+                      SEEDED_STUDENT_EPPN,
+                      true,
+                      UUID.randomUUID(),
+                      null,
+                      Set.of(EUniverse.STUDENT))));
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/affiliations?cofolioUniverses=STUDENT");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "tessier")
+                  .param("cofolioUniverses", "STUDENT")
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data", hasSize(1)))
+          .andExpect(jsonPath("$.data[0].universes[0]", is("STUDENT")))
+          .andExpect(jsonPath("$.page.totalElements", is(1)));
+
+      BddLogger.then("it should only return the user owning a student profile");
+    }
+
+    @Test
     void thenItShouldReportNoPicture_whenTheUserConnectedWithoutUploadingOne() throws Exception {
       BddLogger.given("a Tessier user who logged in to Cofolio without uploading a picture");
       affiliateStaffToSeededProgram();
       when(cofolioProfileClient.findByEppns(any()))
           .thenReturn(
-              Map.of(SEEDED_STUDENT_EPPN, new CofolioProfile(SEEDED_STUDENT_EPPN, true, null)));
+              Map.of(
+                  SEEDED_STUDENT_EPPN,
+                  new CofolioProfile(
+                      SEEDED_STUDENT_EPPN,
+                      true,
+                      UUID.randomUUID(),
+                      null,
+                      Set.of(EUniverse.STUDENT))));
 
       BddLogger.when("calling GET /back-office/external-users/affiliations");
       mockMvc
@@ -765,7 +810,12 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .thenReturn(
               Map.of(
                   SEEDED_STUDENT_EPPN,
-                  new CofolioProfile(SEEDED_STUDENT_EPPN, true, profilePictureId)));
+                  new CofolioProfile(
+                      SEEDED_STUDENT_EPPN,
+                      true,
+                      UUID.randomUUID(),
+                      profilePictureId,
+                      Set.of(EUniverse.STUDENT))));
 
       BddLogger.when("calling GET /back-office/external-users/{externalUserId}/detail");
       mockMvc

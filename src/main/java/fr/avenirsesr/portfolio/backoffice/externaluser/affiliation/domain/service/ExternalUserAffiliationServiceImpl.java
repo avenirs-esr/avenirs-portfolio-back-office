@@ -15,7 +15,9 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupNotFoundException;
@@ -28,6 +30,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.Institut
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageInfo;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
@@ -63,6 +66,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   private final GroupService groupService;
   private final LoggedInExternalUserService loggedInExternalUserService;
   private final SecurityClient securityClient;
+  private final CofolioProfileClient cofolioProfileClient;
 
   @Override
   public ExternalUserAffiliation addAffiliation(
@@ -166,6 +170,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
       List<EUserCategory> categories,
       List<UUID> institutionIds,
       List<UUID> groupIds,
+      List<EUniverse> cofolioUniverses,
       PageCriteria pageCriteria) {
     requireStaffAccessToFilters(institutionIds, groupIds);
 
@@ -175,25 +180,71 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             ? institutionIdsOf(staff.getId(), EUserCategory.STAFF)
             : institutionIds;
 
+    if (isEmpty(cofolioUniverses)) {
+      return findPage(keyword, categories, scopedInstitutionIds, groupIds, pageCriteria);
+    }
+
+    return findWithCofolioProfile(
+        keyword, categories, scopedInstitutionIds, groupIds, cofolioUniverses, pageCriteria);
+  }
+
+  private PagedResult<AffiliatedExternalUser> findPage(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds,
+      PageCriteria pageCriteria) {
     PagedResult<ExternalUser> externalUsers =
         externalUserRepository.findAllAffiliated(
-            keyword, categories, scopedInstitutionIds, groupIds, pageCriteria);
+            keyword, categories, institutionIds, groupIds, pageCriteria);
+
+    return new PagedResult<>(withAffiliations(externalUsers.content()), externalUsers.pageInfo());
+  }
+
+  private List<AffiliatedExternalUser> withAffiliations(List<ExternalUser> externalUsers) {
     Map<UUID, List<ExternalUserAffiliation>> affiliationsByExternalUserId =
         externalUserAffiliationRepository
-            .findAllByExternalUserIds(
-                externalUsers.content().stream().map(ExternalUser::getId).toList())
+            .findAllByExternalUserIds(externalUsers.stream().map(ExternalUser::getId).toList())
             .stream()
             .collect(Collectors.groupingBy(affiliation -> affiliation.getExternalUser().getId()));
 
+    return externalUsers.stream()
+        .map(
+            externalUser ->
+                toAffiliatedExternalUser(
+                    externalUser,
+                    affiliationsByExternalUserId.getOrDefault(externalUser.getId(), List.of())))
+        .toList();
+  }
+
+  private PagedResult<AffiliatedExternalUser> findWithCofolioProfile(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds,
+      List<EUniverse> cofolioUniverses,
+      PageCriteria pageCriteria) {
+    List<ExternalUser> affiliated =
+        externalUserRepository.findAllAffiliated(keyword, categories, institutionIds, groupIds);
+    Map<String, CofolioProfile> profiles =
+        cofolioProfileClient.findByEppns(
+            affiliated.stream().map(ExternalUser::getEppn).distinct().toList());
+    List<ExternalUser> matching =
+        affiliated.stream()
+            .filter(user -> matches(profiles.get(user.getEppn()), cofolioUniverses))
+            .toList();
+
+    int from = Math.min(pageCriteria.page() * pageCriteria.pageSize(), matching.size());
+    int to = Math.min(from + pageCriteria.pageSize(), matching.size());
     return new PagedResult<>(
-        externalUsers.content().stream()
-            .map(
-                externalUser ->
-                    toAffiliatedExternalUser(
-                        externalUser,
-                        affiliationsByExternalUserId.getOrDefault(externalUser.getId(), List.of())))
-            .toList(),
-        externalUsers.pageInfo());
+        withAffiliations(matching.subList(from, to)),
+        new PageInfo(pageCriteria.page(), pageCriteria.pageSize(), matching.size()));
+  }
+
+  private static boolean matches(CofolioProfile profile, List<EUniverse> universes) {
+    return profile != null
+        && profile.userId() != null
+        && universes.stream().anyMatch(profile.universes()::contains);
   }
 
   private static AffiliatedExternalUser toAffiliatedExternalUser(
@@ -422,8 +473,8 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
     return externalUserAffiliationRepository.findDistinctGroupIds(externalUserId, category);
   }
 
-  private static boolean isEmpty(List<UUID> ids) {
-    return ids == null || ids.isEmpty();
+  private static boolean isEmpty(List<?> values) {
+    return values == null || values.isEmpty();
   }
 
   /**

@@ -12,6 +12,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,13 +32,16 @@ public interface ExternalUserAffiliationService {
 
   /**
    * Pages over the affiliated users matching the given filters, each of them reported once with
-   * every institution, category and group its affiliations attach it to.
+   * every institution, category and group its affiliations attach it to. A non-empty {@code
+   * cofolioUniverses} keeps only the users whose Cofolio account owns the record of at least one of
+   * those universes.
    */
   PagedResult<AffiliatedExternalUser> findAll(
       String keyword,
       List<EUserCategory> categories,
       List<UUID> institutionIds,
       List<UUID> groupIds,
+      List<EUniverse> cofolioUniverses,
       PageCriteria pageCriteria);
 
   Map<UUID, Integer> countExternalUsersByGroupIdsWithSubGroups(List<UUID> groupIds);

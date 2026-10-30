@@ -34,6 +34,16 @@ public interface ExternalUserRepository extends GenericRepositoryPort<ExternalUs
       List<UUID> groupIds,
       PageCriteria pageCriteria);
 
+  /**
+   * Same filters and order as the paged variant, for the callers that must filter the users on data
+   * the database does not hold before paging them.
+   */
+  List<ExternalUser> findAllAffiliated(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds);
+
   int countAll();
 
   Map<UUID, Integer> countAllByGroupIdsWithSubGroups(Collection<UUID> groupIds);

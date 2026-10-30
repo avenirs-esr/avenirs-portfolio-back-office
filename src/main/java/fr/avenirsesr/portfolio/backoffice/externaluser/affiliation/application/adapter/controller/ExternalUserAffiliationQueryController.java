@@ -16,6 +16,7 @@ import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedRes
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -54,21 +55,25 @@ public class ExternalUserAffiliationQueryController {
           List<EUserCategory> categories,
       @RequestParam(required = false) List<UUID> institutionIds,
       @RequestParam(required = false) List<UUID> groupIds,
+      @Parameter(array = @ArraySchema(schema = @Schema(ref = "#/components/schemas/EUniverse")))
+          @RequestParam(required = false)
+          List<EUniverse> cofolioUniverses,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
     log.debug(
-        "Getting the affiliated users (keyword: {}, categories: {}, institutions: {}, groups: {})"
-            + " {}",
+        "Getting the affiliated users (keyword: {}, categories: {}, institutions: {}, groups: {},"
+            + " cofolioUniverses: {}) {}",
         keyword,
         categories,
         institutionIds,
         groupIds,
+        cofolioUniverses,
         pageCriteria);
 
     PagedResult<AffiliatedExternalUser> affiliatedExternalUsers =
         externalUserAffiliationService.findAll(
-            keyword, categories, institutionIds, groupIds, pageCriteria);
+            keyword, categories, institutionIds, groupIds, cofolioUniverses, pageCriteria);
     List<AffiliatedExternalUser> content = affiliatedExternalUsers.content();
     Map<String, CofolioProfile> cofolioProfiles =
         cofolioProfileClient.findByEppns(
