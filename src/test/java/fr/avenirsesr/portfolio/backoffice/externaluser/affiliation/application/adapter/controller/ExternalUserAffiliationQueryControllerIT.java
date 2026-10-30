@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
@@ -239,8 +240,7 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     }
 
     @Test
-    void thenItShouldDefaultTheGroupsToTheStaffOnes_whenOnlyTheInstitutionIsFiltered()
-        throws Exception {
+    void thenItShouldNotNarrowTheGroups_whenOnlyTheInstitutionIsFiltered() throws Exception {
       BddLogger.given("a staff affiliated to Rennes and to a seeded program");
       affiliateStaffToSeededProgram();
       String rennesId = institutionIdOf(SEEDED_RENNES_UAI).toString();
@@ -263,9 +263,12 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                               .param("institutionIds", rennesId)
                               .accept(MediaType.APPLICATION_JSON))
                       .andExpect(status().isOk())
-                      .andExpect(jsonPath("$.page.totalElements", is(totalElementsOf(explicit)))));
+                      .andExpect(
+                          jsonPath(
+                              "$.page.totalElements", greaterThan(totalElementsOf(explicit)))));
 
-      BddLogger.then("it should return the same users as when filtering on the staff groups");
+      BddLogger.then(
+          "it should not narrow the search on any group, unlike when filtering on the program");
     }
 
     @Test

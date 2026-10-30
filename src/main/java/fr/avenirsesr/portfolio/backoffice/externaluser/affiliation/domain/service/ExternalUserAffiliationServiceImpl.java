@@ -174,12 +174,10 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
         isEmpty(institutionIds)
             ? institutionIdsOf(staff.getId(), EUserCategory.STAFF)
             : institutionIds;
-    List<UUID> scopedGroupIds =
-        isEmpty(groupIds) ? groupIdsOf(staff.getId(), EUserCategory.STAFF) : groupIds;
 
     PagedResult<ExternalUser> externalUsers =
         externalUserRepository.findAllAffiliated(
-            keyword, categories, scopedInstitutionIds, scopedGroupIds, pageCriteria);
+            keyword, categories, scopedInstitutionIds, groupIds, pageCriteria);
     Map<UUID, List<ExternalUserAffiliation>> affiliationsByExternalUserId =
         externalUserAffiliationRepository
             .findAllByExternalUserIds(

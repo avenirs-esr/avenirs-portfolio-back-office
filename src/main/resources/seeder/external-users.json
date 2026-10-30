@@ -10,16 +10,6 @@
     "status": "ACTIVE"
   },
   {
-    "eppn": "lucas.tessier.staff@university.com",
-    "firstName": "Lucas",
-    "lastName": "Tessier",
-    "email": "lucas.tessier@university.com",
-    "categories": ["STAFF"],
-    "externalId": "TEACH-AG-83",
-    "institutionUAI": "0330002D",
-    "status": "ACTIVE"
-  },
-  {
     "eppn": "arthur.lambert@university.com",
     "firstName": "Arthur",
     "lastName": "Lambert",

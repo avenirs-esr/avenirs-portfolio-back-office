@@ -12,12 +12,6 @@
     "groupIdSIScos": ["10000004", "10000005"]
   },
   {
-    "eppn": "lucas.tessier.staff@university.com",
-    "category": "STAFF",
-    "institutionUAIs": ["0330001C", "0350001A"],
-    "groupIdSIScos": ["10000001", "10000004"]
-  },
-  {
     "eppn": "arthur.lambert@university.com",
     "category": "STUDENT",
     "institutionUAIs": ["0350001A"],
