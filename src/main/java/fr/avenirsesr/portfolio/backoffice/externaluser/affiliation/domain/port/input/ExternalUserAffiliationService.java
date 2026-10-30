@@ -31,13 +31,17 @@ public interface ExternalUserAffiliationService {
 
   /**
    * Pages over the affiliated users matching the given filters, each of them reported once with
-   * every institution, category and group its affiliations attach it to.
+   * every institution, category and group its affiliations attach it to. {@code cofolioStaff} and
+   * {@code cofolioStudent} keep only the users whose Cofolio account owns the matching record,
+   * either of them being enough when both are set.
    */
   PagedResult<AffiliatedExternalUser> findAll(
       String keyword,
       List<EUserCategory> categories,
       List<UUID> institutionIds,
       List<UUID> groupIds,
+      boolean cofolioStaff,
+      boolean cofolioStudent,
       PageCriteria pageCriteria);
 
   Map<UUID, Integer> countExternalUsersByGroupIdsWithSubGroups(List<UUID> groupIds);

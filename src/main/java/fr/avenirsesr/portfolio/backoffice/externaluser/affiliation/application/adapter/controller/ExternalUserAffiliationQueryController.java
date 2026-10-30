@@ -54,21 +54,31 @@ public class ExternalUserAffiliationQueryController {
           List<EUserCategory> categories,
       @RequestParam(required = false) List<UUID> institutionIds,
       @RequestParam(required = false) List<UUID> groupIds,
+      @RequestParam(required = false) Boolean cofolioStaff,
+      @RequestParam(required = false) Boolean cofolioStudent,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
     log.debug(
-        "Getting the affiliated users (keyword: {}, categories: {}, institutions: {}, groups: {})"
-            + " {}",
+        "Getting the affiliated users (keyword: {}, categories: {}, institutions: {}, groups: {},"
+            + " cofolioStaff: {}, cofolioStudent: {}) {}",
         keyword,
         categories,
         institutionIds,
         groupIds,
+        cofolioStaff,
+        cofolioStudent,
         pageCriteria);
 
     PagedResult<AffiliatedExternalUser> affiliatedExternalUsers =
         externalUserAffiliationService.findAll(
-            keyword, categories, institutionIds, groupIds, pageCriteria);
+            keyword,
+            categories,
+            institutionIds,
+            groupIds,
+            Boolean.TRUE.equals(cofolioStaff),
+            Boolean.TRUE.equals(cofolioStudent),
+            pageCriteria);
     List<AffiliatedExternalUser> content = affiliatedExternalUsers.content();
     Map<String, CofolioProfile> cofolioProfiles =
         cofolioProfileClient.findByEppns(

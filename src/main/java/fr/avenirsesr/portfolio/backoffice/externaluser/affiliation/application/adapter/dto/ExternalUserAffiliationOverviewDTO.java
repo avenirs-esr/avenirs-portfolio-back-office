@@ -15,6 +15,8 @@ import java.util.UUID;
       "lastName",
       "email",
       "hasConnected",
+      "staff",
+      "student",
       "categories",
       "institutions",
       "groups"
@@ -25,6 +27,9 @@ public record ExternalUserAffiliationOverviewDTO(
     String lastName,
     String email,
     boolean hasConnected,
+    UUID userId,
+    boolean staff,
+    boolean student,
     UUID profilePictureId,
     @ArraySchema(schema = @Schema(ref = "#/components/schemas/EUserCategory"))
         List<EUserCategory> categories,

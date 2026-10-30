@@ -67,7 +67,12 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
             profilesByEppn.put(
                 response.eppn(),
                 new CofolioProfile(
-                    response.eppn(), response.hasConnected(), response.profilePictureId())));
+                    response.eppn(),
+                    response.hasConnected(),
+                    response.userId(),
+                    response.profilePictureId(),
+                    response.staff(),
+                    response.student())));
 
     return profilesByEppn;
   }
@@ -75,5 +80,10 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
   private record UserProfileLookupBody(List<String> eppns) {}
 
   private record UserProfileResponse(
-      String eppn, boolean hasConnected, UUID userId, UUID profilePictureId) {}
+      String eppn,
+      boolean hasConnected,
+      UUID userId,
+      UUID profilePictureId,
+      boolean staff,
+      boolean student) {}
 }

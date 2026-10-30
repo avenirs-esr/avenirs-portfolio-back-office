@@ -12,6 +12,7 @@ public record ExternalUserDetailDTO(
     String firstName,
     String lastName,
     String email,
+    UUID userId,
     UUID profilePictureId,
     InstitutionReferenceDTO institution,
     List<GroupReferenceDTO> groups) {}
