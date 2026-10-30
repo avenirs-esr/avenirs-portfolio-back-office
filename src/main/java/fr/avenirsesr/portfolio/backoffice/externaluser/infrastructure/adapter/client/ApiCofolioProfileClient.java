@@ -3,11 +3,13 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.c
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.client.LoggedInUserHeadersForwarder;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,7 +69,11 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
             profilesByEppn.put(
                 response.eppn(),
                 new CofolioProfile(
-                    response.eppn(), response.hasConnected(), response.profilePictureId())));
+                    response.eppn(),
+                    response.hasConnected(),
+                    response.userId(),
+                    response.profilePictureId(),
+                    response.universes() == null ? Set.of() : Set.copyOf(response.universes()))));
 
     return profilesByEppn;
   }
@@ -75,5 +81,9 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
   private record UserProfileLookupBody(List<String> eppns) {}
 
   private record UserProfileResponse(
-      String eppn, boolean hasConnected, UUID userId, UUID profilePictureId) {}
+      String eppn,
+      boolean hasConnected,
+      UUID userId,
+      UUID profilePictureId,
+      List<EUniverse> universes) {}
 }

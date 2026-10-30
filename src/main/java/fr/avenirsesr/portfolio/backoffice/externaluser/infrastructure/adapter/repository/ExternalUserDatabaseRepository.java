@@ -28,6 +28,9 @@ public class ExternalUserDatabaseRepository
     extends GenericJpaRepositoryAdapter<ExternalUser, ExternalUserEntity>
     implements ExternalUserRepository {
 
+  private static final Sort AFFILIATED_SORT =
+      Sort.by(Sort.Order.asc("lastName").ignoreCase(), Sort.Order.asc("firstName").ignoreCase());
+
   private final ExternalUserJpaRepository jpaRepository;
 
   public ExternalUserDatabaseRepository(ExternalUserJpaRepository jpaRepository) {
@@ -73,19 +76,36 @@ public class ExternalUserDatabaseRepository
       List<UUID> institutionIds,
       List<UUID> groupIds,
       PageCriteria pageCriteria) {
-    Specification<ExternalUserEntity> specification =
-        Specification.where(ExternalUserSpecification.withNameOrEmailContaining(keyword))
-            .and(
-                ExternalUserSpecification.affiliatedMatching(
-                    categories, institutionIds, withSubGroups(groupIds)));
     PageRequest pageRequest =
-        PageRequest.of(
-            pageCriteria.page(),
-            pageCriteria.pageSize(),
-            Sort.by(
-                Sort.Order.asc("lastName").ignoreCase(), Sort.Order.asc("firstName").ignoreCase()));
+        PageRequest.of(pageCriteria.page(), pageCriteria.pageSize(), AFFILIATED_SORT);
 
-    return findAll(specification, pageRequest);
+    return findAll(
+        affiliatedSpecification(keyword, categories, institutionIds, groupIds), pageRequest);
+  }
+
+  @Override
+  public List<ExternalUser> findAllAffiliated(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds) {
+    return jpaRepository
+        .findAll(
+            affiliatedSpecification(keyword, categories, institutionIds, groupIds), AFFILIATED_SORT)
+        .stream()
+        .map(ExternalUserMapper.INSTANCE::toDomain)
+        .toList();
+  }
+
+  private Specification<ExternalUserEntity> affiliatedSpecification(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds) {
+    return Specification.where(ExternalUserSpecification.withNameOrEmailContaining(keyword))
+        .and(
+            ExternalUserSpecification.affiliatedMatching(
+                categories, institutionIds, withSubGroups(groupIds)));
   }
 
   private List<UUID> withSubGroups(List<UUID> groupIds) {

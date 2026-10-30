@@ -13,6 +13,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -63,8 +64,10 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
       List<EUserCategory> categories,
       List<UUID> institutionIds,
       List<UUID> groupIds,
+      List<EUniverse> cofolioUniverses,
       PageCriteria pageCriteria) {
-    return delegate.findAll(keyword, categories, institutionIds, groupIds, pageCriteria);
+    return delegate.findAll(
+        keyword, categories, institutionIds, groupIds, cofolioUniverses, pageCriteria);
   }
 
   @Override

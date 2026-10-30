@@ -14,6 +14,7 @@ import fr.avenirsesr.portfolio.backoffice.group.application.adapter.mapper.Group
 import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.mapper.InstitutionApplicationMapper;
 import fr.avenirsesr.portfolio.common.group.application.adapter.dto.GroupReferenceDTO;
 import fr.avenirsesr.portfolio.common.institution.application.adapter.dto.InstitutionReferenceDTO;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -41,6 +42,7 @@ public class ExternalUserAffiliationApplicationMapper {
         externalUser.getFirstName(),
         externalUser.getLastName(),
         externalUser.getEmail(),
+        cofolioProfile == null ? null : cofolioProfile.userId(),
         cofolioProfile == null ? null : cofolioProfile.profilePictureId(),
         new InstitutionReferenceDTO(detail.institution().getId(), detail.institution().getName()),
         detail.groups().stream()
@@ -70,6 +72,8 @@ public class ExternalUserAffiliationApplicationMapper {
         externalUser.getLastName(),
         externalUser.getEmail(),
         cofolioProfile != null && cofolioProfile.hasConnected(),
+        cofolioProfile == null ? null : cofolioProfile.userId(),
+        cofolioProfile == null ? List.of() : cofolioProfile.universes().stream().sorted().toList(),
         cofolioProfile == null ? null : cofolioProfile.profilePictureId(),
         affiliatedExternalUser.categories(),
         affiliatedExternalUser.institutions().stream()
