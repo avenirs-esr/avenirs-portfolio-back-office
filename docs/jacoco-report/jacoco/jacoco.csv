@@ -107,7 +107,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.af
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.client,ApiSecurityClient,51,10,4,0,19,4,4,2,2,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.client,ApiSecurityClient.UserRolesResponse,6,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.client,ApiCofolioProfileClient.UserProfileResponse,15,0,0,0,1,0,1,0,1,0
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.client,ApiCofolioProfileClient,79,17,6,0,22,6,5,2,2,2
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.client,ApiCofolioProfileClient,81,17,6,0,25,6,5,2,2,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.client,ApiCofolioProfileClient.UserProfileLookupBody,6,0,0,0,1,0,1,0,1,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.infrastructure.adapter.client,ApiCofolioProfileClient.new ParameterizedTypeReference() {...},0,3,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.trace.application.controller,TraceConfigurationController,31,4,0,0,9,1,2,1,2,1
