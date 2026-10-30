@@ -70,14 +70,21 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
 <span class="nc" id="L70">                    response.eppn(),</span>
 <span class="nc" id="L71">                    response.hasConnected(),</span>
 <span class="nc" id="L72">                    response.userId(),</span>
-<span class="nc" id="L73">                    response.profilePictureId())));</span>
+<span class="nc" id="L73">                    response.profilePictureId(),</span>
+<span class="nc" id="L74">                    response.staff(),</span>
+<span class="nc" id="L75">                    response.student())));</span>
 
-<span class="nc" id="L75">    return profilesByEppn;</span>
+<span class="nc" id="L77">    return profilesByEppn;</span>
   }
 
-<span class="nc" id="L78">  private record UserProfileLookupBody(List&lt;String&gt; eppns) {}</span>
+<span class="nc" id="L80">  private record UserProfileLookupBody(List&lt;String&gt; eppns) {}</span>
 
-<span class="nc" id="L80">  private record UserProfileResponse(</span>
-      String eppn, boolean hasConnected, UUID userId, UUID profilePictureId) {}
+<span class="nc" id="L82">  private record UserProfileResponse(</span>
+      String eppn,
+      boolean hasConnected,
+      UUID userId,
+      UUID profilePictureId,
+      boolean staff,
+      boolean student) {}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
