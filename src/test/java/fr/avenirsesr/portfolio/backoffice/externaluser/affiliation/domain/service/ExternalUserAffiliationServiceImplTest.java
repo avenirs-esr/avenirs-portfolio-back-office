@@ -559,9 +559,9 @@ class ExternalUserAffiliationServiceImplTest {
     Group groupA = group(UUID.randomUUID(), "Groupe A", EGroupType.STUDENT_GROUP, option);
     PageCriteria pageCriteria = new PageCriteria(0, 8);
     UUID staffInstitutionId = UUID.randomUUID();
-    loggedInStaffAffiliatedTo(List.of(staffInstitutionId), List.of());
+    loggedInStaffAffiliatedToInstitutions(List.of(staffInstitutionId));
     when(externalUserRepository.findAllAffiliated(
-            null, null, List.of(staffInstitutionId), List.of(), pageCriteria))
+            null, null, List.of(staffInstitutionId), null, pageCriteria))
         .thenReturn(new PagedResult<>(List.of(user), new PageInfo(0, 8, 1)));
     when(externalUserAffiliationRepository.findAllByExternalUserIds(List.of(user.getId())))
         .thenReturn(
@@ -608,23 +608,18 @@ class ExternalUserAffiliationServiceImplTest {
   void shouldDefaultToTheStaffScope_whenNoInstitutionNorGroupIsFiltered() {
     BddLogger.given("a search narrowed by a keyword and a category only");
     UUID institutionId = UUID.randomUUID();
-    UUID groupId = UUID.randomUUID();
     PageCriteria pageCriteria = new PageCriteria(0, 8);
     PageInfo expectedPageInfo = new PageInfo(0, 8, 0);
-    loggedInStaffAffiliatedTo(List.of(institutionId), List.of(groupId));
+    loggedInStaffAffiliatedToInstitutions(List.of(institutionId));
     when(externalUserRepository.findAllAffiliated(
-            "tessier",
-            List.of(EUserCategory.STAFF),
-            List.of(institutionId),
-            List.of(groupId),
-            pageCriteria))
+            "tessier", List.of(EUserCategory.STAFF), List.of(institutionId), null, pageCriteria))
         .thenReturn(new PagedResult<>(List.of(), expectedPageInfo));
 
     BddLogger.when("finding all the affiliated users");
     PagedResult<AffiliatedExternalUser> result =
         service.findAll("tessier", List.of(EUserCategory.STAFF), null, null, pageCriteria);
 
-    BddLogger.then("it should query the repository with the institutions and groups of the staff");
+    BddLogger.then("it should query the repository with the institutions of the staff only");
     assertEquals(List.of(), result.content());
     assertEquals(expectedPageInfo, result.pageInfo());
     verifyNoInteractions(institutionService, groupService);
@@ -635,7 +630,7 @@ class ExternalUserAffiliationServiceImplTest {
     BddLogger.given("a search with empty institution and group filters");
     UUID institutionId = UUID.randomUUID();
     PageCriteria pageCriteria = new PageCriteria(0, 8);
-    loggedInStaffAffiliatedTo(List.of(institutionId), List.of());
+    loggedInStaffAffiliatedToInstitutions(List.of(institutionId));
     when(externalUserRepository.findAllAffiliated(
             null, null, List.of(institutionId), List.of(), pageCriteria))
         .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
@@ -653,8 +648,8 @@ class ExternalUserAffiliationServiceImplTest {
     BddLogger.given("a logged-in staff without any staff affiliation");
     PageCriteria pageCriteria = new PageCriteria(2, 10);
     PageInfo expectedPageInfo = new PageInfo(2, 10, 0);
-    loggedInStaffAffiliatedTo(List.of(), List.of());
-    when(externalUserRepository.findAllAffiliated(null, null, List.of(), List.of(), pageCriteria))
+    loggedInStaffAffiliatedToInstitutions(List.of());
+    when(externalUserRepository.findAllAffiliated(null, null, List.of(), null, pageCriteria))
         .thenReturn(new PagedResult<>(List.of(), expectedPageInfo));
 
     BddLogger.when("finding all the affiliated users without filters");
@@ -667,61 +662,16 @@ class ExternalUserAffiliationServiceImplTest {
   }
 
   @Test
-  void shouldDefaultTheGroupsToTheStaffOnes_whenOnlyInstitutionsAreFiltered() {
+  void shouldNotDefaultTheGroups_whenOnlyInstitutionsAreFiltered() {
     BddLogger.given("a staff filtering on an institution it is affiliated to, without any group");
     UUID institutionId = UUID.randomUUID();
-    UUID staffGroupId = UUID.randomUUID();
     PageCriteria pageCriteria = new PageCriteria(0, 8);
-    ExternalUser staff = loggedInStaffAffiliatedTo(List.of(institutionId), List.of(staffGroupId));
+    ExternalUser staff = loggedInStaffAffiliatedToInstitutions(List.of(institutionId));
     when(externalUserRepository.findByEppn(staff.getEppn())).thenReturn(Optional.of(staff));
     when(institutionService.staffHasAccess(List.of(institutionId), List.of(institutionId)))
         .thenReturn(true);
     when(externalUserRepository.findAllAffiliated(
-            null, null, List.of(institutionId), List.of(staffGroupId), pageCriteria))
-        .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
-
-    BddLogger.when("finding all the affiliated users");
-    service.findAll(null, null, List.of(institutionId), null, pageCriteria);
-
-    BddLogger.then(
-        "it should keep the given institutions and default the groups to the staff ones");
-    verify(externalUserRepository)
-        .findAllAffiliated(null, null, List.of(institutionId), List.of(staffGroupId), pageCriteria);
-  }
-
-  @Test
-  void shouldDefaultTheInstitutionsToTheStaffOnes_whenOnlyGroupsAreFiltered() {
-    BddLogger.given("a staff filtering on a group it is affiliated to, without any institution");
-    UUID staffInstitutionId = UUID.randomUUID();
-    UUID groupId = UUID.randomUUID();
-    PageCriteria pageCriteria = new PageCriteria(0, 8);
-    ExternalUser staff = loggedInStaffAffiliatedTo(List.of(staffInstitutionId), List.of(groupId));
-    when(externalUserRepository.findByEppn(staff.getEppn())).thenReturn(Optional.of(staff));
-    when(groupService.staffHasAccess(List.of(groupId), List.of(groupId))).thenReturn(true);
-    when(externalUserRepository.findAllAffiliated(
-            null, null, List.of(staffInstitutionId), List.of(groupId), pageCriteria))
-        .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
-
-    BddLogger.when("finding all the affiliated users");
-    service.findAll(null, null, null, List.of(groupId), pageCriteria);
-
-    BddLogger.then(
-        "it should keep the given groups and default the institutions to the staff ones");
-    verify(externalUserRepository)
-        .findAllAffiliated(null, null, List.of(staffInstitutionId), List.of(groupId), pageCriteria);
-  }
-
-  @Test
-  void shouldLeaveTheGroupsEmpty_whenOnlyInstitutionsAreFilteredAndTheStaffHasNoGroup() {
-    BddLogger.given("a staff affiliated to an institution only, filtering on that institution");
-    UUID institutionId = UUID.randomUUID();
-    PageCriteria pageCriteria = new PageCriteria(0, 8);
-    ExternalUser staff = loggedInStaffAffiliatedTo(List.of(institutionId), List.of());
-    when(externalUserRepository.findByEppn(staff.getEppn())).thenReturn(Optional.of(staff));
-    when(institutionService.staffHasAccess(List.of(institutionId), List.of(institutionId)))
-        .thenReturn(true);
-    when(externalUserRepository.findAllAffiliated(
-            null, null, List.of(institutionId), List.of(), pageCriteria))
+            null, null, List.of(institutionId), null, pageCriteria))
         .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
 
     BddLogger.when("finding all the affiliated users");
@@ -729,7 +679,27 @@ class ExternalUserAffiliationServiceImplTest {
 
     BddLogger.then("it should not narrow the search on any group");
     verify(externalUserRepository)
-        .findAllAffiliated(null, null, List.of(institutionId), List.of(), pageCriteria);
+        .findAllAffiliated(null, null, List.of(institutionId), null, pageCriteria);
+  }
+
+  @Test
+  void shouldNotDefaultTheInstitutions_whenOnlyGroupsAreFiltered() {
+    BddLogger.given("a staff filtering on a group it is affiliated to, without any institution");
+    UUID groupId = UUID.randomUUID();
+    PageCriteria pageCriteria = new PageCriteria(0, 8);
+    ExternalUser staff = loggedInStaffAffiliatedToGroups(List.of(groupId));
+    when(externalUserRepository.findByEppn(staff.getEppn())).thenReturn(Optional.of(staff));
+    when(groupService.staffHasAccess(List.of(groupId), List.of(groupId))).thenReturn(true);
+    when(externalUserRepository.findAllAffiliated(
+            null, null, List.of(), List.of(groupId), pageCriteria))
+        .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
+
+    BddLogger.when("finding all the affiliated users");
+    service.findAll(null, null, null, List.of(groupId), pageCriteria);
+
+    BddLogger.then("it should not narrow the search on any institution");
+    verify(externalUserRepository)
+        .findAllAffiliated(null, null, List.of(), List.of(groupId), pageCriteria);
   }
 
   @Test
@@ -866,6 +836,23 @@ class ExternalUserAffiliationServiceImplTest {
     when(externalUserAffiliationRepository.findDistinctInstitutionIds(
             staff.getId(), EUserCategory.STAFF))
         .thenReturn(institutionIds);
+    when(externalUserAffiliationRepository.findDistinctGroupIds(staff.getId(), EUserCategory.STAFF))
+        .thenReturn(groupIds);
+    return staff;
+  }
+
+  private ExternalUser loggedInStaffAffiliatedToInstitutions(List<UUID> institutionIds) {
+    ExternalUser staff = externalUser(EUserCategory.STAFF);
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff);
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            staff.getId(), EUserCategory.STAFF))
+        .thenReturn(institutionIds);
+    return staff;
+  }
+
+  private ExternalUser loggedInStaffAffiliatedToGroups(List<UUID> groupIds) {
+    ExternalUser staff = externalUser(EUserCategory.STAFF);
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff);
     when(externalUserAffiliationRepository.findDistinctGroupIds(staff.getId(), EUserCategory.STAFF))
         .thenReturn(groupIds);
     return staff;
