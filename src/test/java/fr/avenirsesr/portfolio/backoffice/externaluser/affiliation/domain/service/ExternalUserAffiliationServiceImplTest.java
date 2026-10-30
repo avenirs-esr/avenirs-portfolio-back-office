@@ -15,8 +15,10 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserGlobalAuthorization;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.model.Group;
@@ -41,6 +43,7 @@ import fr.avenirsesr.portfolio.common.user.domain.model.enums.EUserStatus;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -61,12 +64,17 @@ class ExternalUserAffiliationServiceImplTest {
   @Mock private GroupService groupService;
   @Mock private LoggedInExternalUserService loggedInExternalUserService;
   @Mock private SecurityClient securityClient;
+  @Mock private CofolioProfileClient cofolioProfileClient;
 
   @InjectMocks private ExternalUserAffiliationServiceImpl service;
 
   private static ExternalUser externalUser(EUserCategory... categories) {
+    return externalUser("lucas.tessier@university.com", categories);
+  }
+
+  private static ExternalUser externalUser(String eppn, EUserCategory... categories) {
     return ExternalUser.create(
-        "lucas.tessier@university.com",
+        eppn,
         "PEG-0001",
         EExternalSource.BACK_OFFICE,
         "0350001A",
@@ -539,11 +547,61 @@ class ExternalUserAffiliationServiceImplTest {
             List.of(EUserCategory.STAFF),
             List.of(institutionId),
             List.of(groupId),
+            false,
+            false,
             pageCriteria);
 
     BddLogger.then("it should forward every filter to the repository, without narrowing them");
     assertEquals(List.of(), result.content());
     assertEquals(expectedPageInfo, result.pageInfo());
+  }
+
+  @Test
+  void shouldKeepOnlyTheUsersWithACofolioProfile_whenFilteringOnCofolioStaffOrStudent() {
+    BddLogger.given("a staff, a student and a never connected user among the affiliated users");
+    ExternalUser staffUser = externalUser(EUserCategory.STAFF);
+    ExternalUser studentUser = externalUser("student@university.com", EUserCategory.STUDENT);
+    ExternalUser neverConnectedUser = externalUser("new@university.com", EUserCategory.STAFF);
+    UUID staffInstitutionId = UUID.randomUUID();
+    loggedInStaffAffiliatedToInstitutions(List.of(staffInstitutionId));
+    when(externalUserRepository.findAllAffiliated(
+            null, null, List.of(staffInstitutionId), null, new PageCriteria(0, 100)))
+        .thenReturn(
+            new PagedResult<>(
+                List.of(staffUser, studentUser, neverConnectedUser), new PageInfo(0, 100, 3)));
+    when(externalUserAffiliationRepository.findAllByExternalUserIds(anyList()))
+        .thenReturn(List.of());
+    when(cofolioProfileClient.findByEppns(anyList()))
+        .thenReturn(
+            Map.of(
+                staffUser.getEppn(),
+                new CofolioProfile(staffUser.getEppn(), true, UUID.randomUUID(), null, true, false),
+                studentUser.getEppn(),
+                new CofolioProfile(
+                    studentUser.getEppn(), true, UUID.randomUUID(), null, false, true),
+                neverConnectedUser.getEppn(),
+                new CofolioProfile(neverConnectedUser.getEppn(), false, null, null, false, false)));
+
+    BddLogger.when("finding the affiliated users with a Cofolio staff profile");
+    PagedResult<AffiliatedExternalUser> staffOnly =
+        service.findAll(null, null, null, null, true, false, new PageCriteria(0, 8));
+    BddLogger.when("finding them with a Cofolio staff or student profile");
+    PagedResult<AffiliatedExternalUser> staffOrStudent =
+        service.findAll(null, null, null, null, true, true, new PageCriteria(0, 8));
+
+    BddLogger.when("asking for pages of one user among the staff or student ones");
+    PagedResult<AffiliatedExternalUser> secondPage =
+        service.findAll(null, null, null, null, true, true, new PageCriteria(1, 1));
+
+    BddLogger.then("only the matching users should be returned, with the filtered total");
+    assertEquals(1, secondPage.content().size());
+    assertEquals(new PageInfo(1, 1, 2), secondPage.pageInfo());
+    assertEquals(
+        List.of(staffUser),
+        staffOnly.content().stream().map(AffiliatedExternalUser::externalUser).toList());
+    assertEquals(1, staffOnly.pageInfo().totalElements());
+    assertEquals(2, staffOrStudent.content().size());
+    assertEquals(2, staffOrStudent.pageInfo().totalElements());
   }
 
   @Test
@@ -572,7 +630,7 @@ class ExternalUserAffiliationServiceImplTest {
 
     BddLogger.when("finding all the affiliated users");
     List<AffiliatedExternalUser> content =
-        service.findAll(null, null, null, null, pageCriteria).content();
+        service.findAll(null, null, null, null, false, false, pageCriteria).content();
 
     BddLogger.then(
         "it should report the user once, with the ancestors of its groups and no duplicate");
@@ -599,7 +657,9 @@ class ExternalUserAffiliationServiceImplTest {
     BddLogger.then("it should reject the search without querying the affiliated users");
     assertThrows(
         UserNotAuthorizedException.class,
-        () -> service.findAll(null, null, null, List.of(groupId), new PageCriteria(0, 8)));
+        () ->
+            service.findAll(
+                null, null, null, List.of(groupId), false, false, new PageCriteria(0, 8)));
     verify(externalUserRepository, never())
         .findAllAffiliated(any(), any(), any(), any(), any(PageCriteria.class));
   }
@@ -617,7 +677,8 @@ class ExternalUserAffiliationServiceImplTest {
 
     BddLogger.when("finding all the affiliated users");
     PagedResult<AffiliatedExternalUser> result =
-        service.findAll("tessier", List.of(EUserCategory.STAFF), null, null, pageCriteria);
+        service.findAll(
+            "tessier", List.of(EUserCategory.STAFF), null, null, false, false, pageCriteria);
 
     BddLogger.then("it should query the repository with the institutions of the staff only");
     assertEquals(List.of(), result.content());
@@ -636,7 +697,7 @@ class ExternalUserAffiliationServiceImplTest {
         .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
 
     BddLogger.when("finding all the affiliated users");
-    service.findAll(null, null, List.of(), List.of(), pageCriteria);
+    service.findAll(null, null, List.of(), List.of(), false, false, pageCriteria);
 
     BddLogger.then("it should be scoped like a search without filters");
     verify(externalUserRepository)
@@ -654,7 +715,7 @@ class ExternalUserAffiliationServiceImplTest {
 
     BddLogger.when("finding all the affiliated users without filters");
     PagedResult<AffiliatedExternalUser> result =
-        service.findAll(null, null, null, null, pageCriteria);
+        service.findAll(null, null, null, null, false, false, pageCriteria);
 
     BddLogger.then("it should query the repository with the empty staff scope, as is");
     assertEquals(List.of(), result.content());
@@ -675,7 +736,7 @@ class ExternalUserAffiliationServiceImplTest {
         .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
 
     BddLogger.when("finding all the affiliated users");
-    service.findAll(null, null, List.of(institutionId), null, pageCriteria);
+    service.findAll(null, null, List.of(institutionId), null, false, false, pageCriteria);
 
     BddLogger.then("it should not narrow the search on any group");
     verify(externalUserRepository)
@@ -695,7 +756,7 @@ class ExternalUserAffiliationServiceImplTest {
         .thenReturn(new PagedResult<>(List.of(), new PageInfo(0, 8, 0)));
 
     BddLogger.when("finding all the affiliated users");
-    service.findAll(null, null, null, List.of(groupId), pageCriteria);
+    service.findAll(null, null, null, List.of(groupId), false, false, pageCriteria);
 
     BddLogger.then("it should not narrow the search on any institution");
     verify(externalUserRepository)

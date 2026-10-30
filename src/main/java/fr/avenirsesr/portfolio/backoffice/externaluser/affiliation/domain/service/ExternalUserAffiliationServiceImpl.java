@@ -15,7 +15,9 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.StaffAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.output.repository.ExternalUserAffiliationRepository;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.group.domain.exception.GroupNotFoundException;
@@ -28,6 +30,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.Institut
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageInfo;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
@@ -63,6 +66,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   private final GroupService groupService;
   private final LoggedInExternalUserService loggedInExternalUserService;
   private final SecurityClient securityClient;
+  private final CofolioProfileClient cofolioProfileClient;
 
   @Override
   public ExternalUserAffiliation addAffiliation(
@@ -166,6 +170,8 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
       List<EUserCategory> categories,
       List<UUID> institutionIds,
       List<UUID> groupIds,
+      boolean cofolioStaff,
+      boolean cofolioStudent,
       PageCriteria pageCriteria) {
     requireStaffAccessToFilters(institutionIds, groupIds);
 
@@ -175,25 +181,84 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             ? institutionIdsOf(staff.getId(), EUserCategory.STAFF)
             : institutionIds;
 
+    if (!cofolioStaff && !cofolioStudent) {
+      return findPage(keyword, categories, scopedInstitutionIds, groupIds, pageCriteria);
+    }
+
+    return findWithCofolioProfile(
+        keyword,
+        categories,
+        scopedInstitutionIds,
+        groupIds,
+        cofolioStaff,
+        cofolioStudent,
+        pageCriteria);
+  }
+
+  private PagedResult<AffiliatedExternalUser> findPage(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds,
+      PageCriteria pageCriteria) {
     PagedResult<ExternalUser> externalUsers =
         externalUserRepository.findAllAffiliated(
-            keyword, categories, scopedInstitutionIds, groupIds, pageCriteria);
+            keyword, categories, institutionIds, groupIds, pageCriteria);
+
+    return new PagedResult<>(withAffiliations(externalUsers.content()), externalUsers.pageInfo());
+  }
+
+  private List<AffiliatedExternalUser> withAffiliations(List<ExternalUser> externalUsers) {
     Map<UUID, List<ExternalUserAffiliation>> affiliationsByExternalUserId =
         externalUserAffiliationRepository
-            .findAllByExternalUserIds(
-                externalUsers.content().stream().map(ExternalUser::getId).toList())
+            .findAllByExternalUserIds(externalUsers.stream().map(ExternalUser::getId).toList())
             .stream()
             .collect(Collectors.groupingBy(affiliation -> affiliation.getExternalUser().getId()));
 
+    return externalUsers.stream()
+        .map(
+            externalUser ->
+                toAffiliatedExternalUser(
+                    externalUser,
+                    affiliationsByExternalUserId.getOrDefault(externalUser.getId(), List.of())))
+        .toList();
+  }
+
+  private PagedResult<AffiliatedExternalUser> findWithCofolioProfile(
+      String keyword,
+      List<EUserCategory> categories,
+      List<UUID> institutionIds,
+      List<UUID> groupIds,
+      boolean cofolioStaff,
+      boolean cofolioStudent,
+      PageCriteria pageCriteria) {
+    int batchSize = new PageCriteria(0, Integer.MAX_VALUE).pageSize();
+    List<ExternalUser> matching = new ArrayList<>();
+    PagedResult<ExternalUser> current;
+    int page = 0;
+    do {
+      current =
+          externalUserRepository.findAllAffiliated(
+              keyword, categories, institutionIds, groupIds, new PageCriteria(page++, batchSize));
+      Map<String, CofolioProfile> profiles =
+          cofolioProfileClient.findByEppns(
+              current.content().stream().map(ExternalUser::getEppn).distinct().toList());
+      current.content().stream()
+          .filter(user -> matches(profiles.get(user.getEppn()), cofolioStaff, cofolioStudent))
+          .forEach(matching::add);
+    } while ((long) page * batchSize < current.pageInfo().totalElements());
+
+    int from = Math.min(pageCriteria.page() * pageCriteria.pageSize(), matching.size());
+    int to = Math.min(from + pageCriteria.pageSize(), matching.size());
     return new PagedResult<>(
-        externalUsers.content().stream()
-            .map(
-                externalUser ->
-                    toAffiliatedExternalUser(
-                        externalUser,
-                        affiliationsByExternalUserId.getOrDefault(externalUser.getId(), List.of())))
-            .toList(),
-        externalUsers.pageInfo());
+        withAffiliations(matching.subList(from, to)),
+        new PageInfo(pageCriteria.page(), pageCriteria.pageSize(), matching.size()));
+  }
+
+  private static boolean matches(CofolioProfile profile, boolean staff, boolean student) {
+    return profile != null
+        && profile.userId() != null
+        && ((staff && profile.staff()) || (student && profile.student()));
   }
 
   private static AffiliatedExternalUser toAffiliatedExternalUser(

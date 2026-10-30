@@ -63,8 +63,11 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
       List<EUserCategory> categories,
       List<UUID> institutionIds,
       List<UUID> groupIds,
+      boolean cofolioStaff,
+      boolean cofolioStudent,
       PageCriteria pageCriteria) {
-    return delegate.findAll(keyword, categories, institutionIds, groupIds, pageCriteria);
+    return delegate.findAll(
+        keyword, categories, institutionIds, groupIds, cofolioStaff, cofolioStudent, pageCriteria);
   }
 
   @Override

@@ -41,6 +41,7 @@ public class ExternalUserAffiliationApplicationMapper {
         externalUser.getFirstName(),
         externalUser.getLastName(),
         externalUser.getEmail(),
+        cofolioProfile == null ? null : cofolioProfile.userId(),
         cofolioProfile == null ? null : cofolioProfile.profilePictureId(),
         new InstitutionReferenceDTO(detail.institution().getId(), detail.institution().getName()),
         detail.groups().stream()
@@ -70,6 +71,9 @@ public class ExternalUserAffiliationApplicationMapper {
         externalUser.getLastName(),
         externalUser.getEmail(),
         cofolioProfile != null && cofolioProfile.hasConnected(),
+        cofolioProfile == null ? null : cofolioProfile.userId(),
+        cofolioProfile != null && cofolioProfile.staff(),
+        cofolioProfile != null && cofolioProfile.student(),
         cofolioProfile == null ? null : cofolioProfile.profilePictureId(),
         affiliatedExternalUser.categories(),
         affiliatedExternalUser.institutions().stream()

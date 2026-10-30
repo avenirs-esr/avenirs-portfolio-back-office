@@ -628,7 +628,13 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .thenReturn(
               Map.of(
                   SEEDED_STUDENT_EPPN,
-                  new CofolioProfile(SEEDED_STUDENT_EPPN, true, profilePictureId)));
+                  new CofolioProfile(
+                      SEEDED_STUDENT_EPPN,
+                      true,
+                      UUID.randomUUID(),
+                      profilePictureId,
+                      false,
+                      true)));
 
       BddLogger.when("calling GET /back-office/external-users/affiliations");
       mockMvc
@@ -646,12 +652,42 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
     }
 
     @Test
+    void thenItShouldOnlyReturnTheStudentsOfCofolio_whenFilteringOnCofolioStudent()
+        throws Exception {
+      BddLogger.given("a Tessier student who logged in to Cofolio, the others never did");
+      affiliateStaffToSeededProgram();
+      when(cofolioProfileClient.findByEppns(any()))
+          .thenReturn(
+              Map.of(
+                  SEEDED_STUDENT_EPPN,
+                  new CofolioProfile(
+                      SEEDED_STUDENT_EPPN, true, UUID.randomUUID(), null, false, true)));
+
+      BddLogger.when("calling GET /back-office/external-users/affiliations?cofolioStudent=true");
+      mockMvc
+          .perform(
+              asStaffUser(get(BASE_PATH), STAFF_EPPN)
+                  .param("keyword", "tessier")
+                  .param("cofolioStudent", "true")
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data", hasSize(1)))
+          .andExpect(jsonPath("$.data[0].student", is(true)))
+          .andExpect(jsonPath("$.page.totalElements", is(1)));
+
+      BddLogger.then("it should only return the user owning a student profile");
+    }
+
+    @Test
     void thenItShouldReportNoPicture_whenTheUserConnectedWithoutUploadingOne() throws Exception {
       BddLogger.given("a Tessier user who logged in to Cofolio without uploading a picture");
       affiliateStaffToSeededProgram();
       when(cofolioProfileClient.findByEppns(any()))
           .thenReturn(
-              Map.of(SEEDED_STUDENT_EPPN, new CofolioProfile(SEEDED_STUDENT_EPPN, true, null)));
+              Map.of(
+                  SEEDED_STUDENT_EPPN,
+                  new CofolioProfile(
+                      SEEDED_STUDENT_EPPN, true, UUID.randomUUID(), null, false, true)));
 
       BddLogger.when("calling GET /back-office/external-users/affiliations");
       mockMvc
@@ -765,7 +801,13 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .thenReturn(
               Map.of(
                   SEEDED_STUDENT_EPPN,
-                  new CofolioProfile(SEEDED_STUDENT_EPPN, true, profilePictureId)));
+                  new CofolioProfile(
+                      SEEDED_STUDENT_EPPN,
+                      true,
+                      UUID.randomUUID(),
+                      profilePictureId,
+                      false,
+                      true)));
 
       BddLogger.when("calling GET /back-office/external-users/{externalUserId}/detail");
       mockMvc
