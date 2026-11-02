@@ -1,9 +1,17 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.exception.ExternalUserAffiliationCategoryNotAllowedException;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
@@ -640,6 +648,10 @@ class ExternalUserAffiliationServiceImplTest {
                 ExternalUserAffiliation.create(user, rennes, groupA, EUserCategory.STUDENT),
                 ExternalUserAffiliation.create(user, rennes, null, EUserCategory.STUDENT),
                 ExternalUserAffiliation.create(user, bordeaux, program, EUserCategory.STUDENT)));
+    when(institutionService.staffHasAccess(List.of(staffInstitutionId), List.of(rennes.getId())))
+        .thenReturn(true);
+    when(institutionService.staffHasAccess(List.of(staffInstitutionId), List.of(bordeaux.getId())))
+        .thenReturn(true);
 
     BddLogger.when("finding all the affiliated users");
     List<AffiliatedExternalUser> content =
@@ -657,6 +669,43 @@ class ExternalUserAffiliationServiceImplTest {
     assertEquals(
         List.of("Groupe A", "Licence Informatique", "Parcours IA"),
         affiliatedUser.groups().stream().map(Group::getName).toList());
+  }
+
+  @Test
+  void shouldOnlyReportTheRattachementsOfTheStaffScope_whenFindingAllAffiliatedUsers() {
+    BddLogger.given("a user affiliated to an institution of the staff scope and to another one");
+    ExternalUser user = externalUser(EUserCategory.STUDENT);
+    Institution rennes =
+        institution(UUID.randomUUID(), "Université de Rennes", EInstitutionType.PRIMARY, null);
+    Institution bordeaux =
+        institution(UUID.randomUUID(), "Université de Bordeaux", EInstitutionType.PRIMARY, null);
+    Group computerScience = group(UUID.randomUUID(), "Licence Informatique", null);
+    Group mathematics = group(UUID.randomUUID(), "Licence Mathematiques", null);
+    PageCriteria pageCriteria = new PageCriteria(0, 8);
+    UUID staffInstitutionId = UUID.randomUUID();
+    loggedInStaffAffiliatedToInstitutions(List.of(staffInstitutionId));
+    when(externalUserRepository.findAllAffiliated(
+            null, null, List.of(staffInstitutionId), null, pageCriteria))
+        .thenReturn(new PagedResult<>(List.of(user), new PageInfo(0, 8, 1)));
+    when(externalUserAffiliationRepository.findAllByExternalUserIds(List.of(user.getId())))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(
+                    user, rennes, computerScience, EUserCategory.STUDENT),
+                ExternalUserAffiliation.create(
+                    user, bordeaux, mathematics, EUserCategory.STUDENT)));
+    when(institutionService.staffHasAccess(List.of(staffInstitutionId), List.of(rennes.getId())))
+        .thenReturn(true);
+    when(institutionService.staffHasAccess(List.of(staffInstitutionId), List.of(bordeaux.getId())))
+        .thenReturn(false);
+
+    BddLogger.when("finding all the affiliated users");
+    AffiliatedExternalUser affiliatedUser =
+        service.findAll(null, null, null, null, null, pageCriteria).content().get(0);
+
+    BddLogger.then("it should only report the institution and the groups of the staff scope");
+    assertEquals(List.of(rennes), affiliatedUser.institutions());
+    assertEquals(List.of(computerScience), affiliatedUser.groups());
   }
 
   @Test
@@ -787,7 +836,7 @@ class ExternalUserAffiliationServiceImplTest {
     when(externalUserAffiliationRepository.findDistinctInstitutionIds(
             staff.getId(), EUserCategory.STAFF))
         .thenReturn(List.of(institution.getId()));
-    when(externalUserAffiliationRepository.findAllByExternalUserId(student.getId()))
+    when(externalUserAffiliationRepository.findAllByExternalUserIds(List.of(student.getId())))
         .thenReturn(
             List.of(
                 ExternalUserAffiliation.create(student, institution, option, EUserCategory.STUDENT),
@@ -798,13 +847,95 @@ class ExternalUserAffiliationServiceImplTest {
         .thenReturn(true);
 
     BddLogger.when("getting the external user detail");
-    ExternalUserDetail detail = service.getExternalUserDetail(student.getId());
+    ExternalUserDetail detail = service.getExternalUserDetail(student.getId(), null);
 
     BddLogger.then("it should list each group and the shared program once");
-    assertSame(institution, detail.institution());
+    assertEquals(List.of(institution), detail.institutions());
     assertEquals(
-        List.of(option.getId(), program.getId(), studentGroup.getId()),
+        List.of(program.getId(), option.getId(), studentGroup.getId()),
         detail.groups().stream().map(Group::getId).toList());
+  }
+
+  @Test
+  void shouldReturnEveryInstitutionOfTheStaffScope_whenGettingExternalUserDetail() {
+    BddLogger.given("a student enrolled in two institutions of the staff scope");
+    ExternalUser student = externalUser(EUserCategory.STUDENT);
+    UUID staffInstitutionId = UUID.randomUUID();
+    Institution rennes =
+        institution(UUID.randomUUID(), "Université de Rennes", EInstitutionType.PRIMARY, null);
+    Institution bordeaux =
+        institution(UUID.randomUUID(), "Université de Bordeaux", EInstitutionType.PRIMARY, null);
+    Group computerScience = group(UUID.randomUUID(), "Licence Informatique", null);
+    Group mathematics = group(UUID.randomUUID(), "Licence Mathematiques", null);
+    when(externalUserRepository.findById(student.getId())).thenReturn(Optional.of(student));
+    loggedInStaffAffiliatedToInstitutions(List.of(staffInstitutionId));
+    when(externalUserAffiliationRepository.findAllByExternalUserIds(List.of(student.getId())))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(
+                    student, rennes, computerScience, EUserCategory.STUDENT),
+                ExternalUserAffiliation.create(
+                    student, bordeaux, mathematics, EUserCategory.STUDENT)));
+    when(institutionService.staffHasAccess(List.of(staffInstitutionId), List.of(rennes.getId())))
+        .thenReturn(true);
+    when(institutionService.staffHasAccess(List.of(staffInstitutionId), List.of(bordeaux.getId())))
+        .thenReturn(true);
+
+    BddLogger.when("getting the external user detail without any filter");
+    ExternalUserDetail detail = service.getExternalUserDetail(student.getId(), null);
+
+    BddLogger.then("it should list both institutions and both programs, not only the first ones");
+    assertEquals(List.of(bordeaux, rennes), detail.institutions());
+    assertEquals(List.of(computerScience, mathematics), detail.groups());
+  }
+
+  @Test
+  void shouldOnlyReturnTheFilteredInstitutions_whenGettingExternalUserDetailWithAFilter() {
+    BddLogger.given("a student enrolled in two institutions, and a staff filtering on one of them");
+    ExternalUser student = externalUser(EUserCategory.STUDENT);
+    Institution rennes =
+        institution(UUID.randomUUID(), "Université de Rennes", EInstitutionType.PRIMARY, null);
+    Institution bordeaux =
+        institution(UUID.randomUUID(), "Université de Bordeaux", EInstitutionType.PRIMARY, null);
+    Group computerScience = group(UUID.randomUUID(), "Licence Informatique", null);
+    Group mathematics = group(UUID.randomUUID(), "Licence Mathematiques", null);
+    when(externalUserRepository.findById(student.getId())).thenReturn(Optional.of(student));
+    grantLoggedInStaffAccessTo(List.of(rennes.getId()), null, true);
+    when(externalUserAffiliationRepository.findAllByExternalUserIds(List.of(student.getId())))
+        .thenReturn(
+            List.of(
+                ExternalUserAffiliation.create(
+                    student, rennes, computerScience, EUserCategory.STUDENT),
+                ExternalUserAffiliation.create(
+                    student, bordeaux, mathematics, EUserCategory.STUDENT)));
+    when(institutionService.staffHasAccess(List.of(rennes.getId()), List.of(rennes.getId())))
+        .thenReturn(true);
+    when(institutionService.staffHasAccess(List.of(rennes.getId()), List.of(bordeaux.getId())))
+        .thenReturn(false);
+
+    BddLogger.when("getting the external user detail filtered on that institution");
+    ExternalUserDetail detail =
+        service.getExternalUserDetail(student.getId(), List.of(rennes.getId()));
+
+    BddLogger.then("it should only list the filtered institution and its groups");
+    assertEquals(List.of(rennes), detail.institutions());
+    assertEquals(List.of(computerScience), detail.groups());
+  }
+
+  @Test
+  void shouldRejectExternalUserDetail_whenFilteringOnAnInstitutionOutsideTheStaffScope() {
+    BddLogger.given("a staff filtering on an institution it is not affiliated to");
+    ExternalUser student = externalUser(EUserCategory.STUDENT);
+    UUID institutionId = UUID.randomUUID();
+    when(externalUserRepository.findById(student.getId())).thenReturn(Optional.of(student));
+    grantLoggedInStaffAccessTo(List.of(institutionId), null, false);
+
+    BddLogger.when("getting the external user detail filtered on that institution");
+    BddLogger.then("it should be refused without looking up the affiliations of the user");
+    assertThrows(
+        UserNotAuthorizedException.class,
+        () -> service.getExternalUserDetail(student.getId(), List.of(institutionId)));
+    verify(externalUserAffiliationRepository, never()).findAllByExternalUserIds(any());
   }
 
   @Test
@@ -818,7 +949,7 @@ class ExternalUserAffiliationServiceImplTest {
     when(externalUserAffiliationRepository.findDistinctInstitutionIds(
             staff.getId(), EUserCategory.STAFF))
         .thenReturn(List.of());
-    when(externalUserAffiliationRepository.findAllByExternalUserId(student.getId()))
+    when(externalUserAffiliationRepository.findAllByExternalUserIds(List.of(student.getId())))
         .thenReturn(
             List.of(
                 ExternalUserAffiliation.create(student, institution, null, EUserCategory.STUDENT)));
@@ -829,7 +960,8 @@ class ExternalUserAffiliationServiceImplTest {
 
     BddLogger.then("it should be refused");
     assertThrows(
-        UserNotAuthorizedException.class, () -> service.getExternalUserDetail(student.getId()));
+        UserNotAuthorizedException.class,
+        () -> service.getExternalUserDetail(student.getId(), null));
   }
 
   @Test
@@ -841,7 +973,8 @@ class ExternalUserAffiliationServiceImplTest {
     BddLogger.when("getting the external user detail");
 
     BddLogger.then("it should be refused");
-    assertThrows(ExternalUserNotFoundException.class, () -> service.getExternalUserDetail(id));
+    assertThrows(
+        ExternalUserNotFoundException.class, () -> service.getExternalUserDetail(id, null));
   }
 
   @Test
@@ -855,7 +988,7 @@ class ExternalUserAffiliationServiceImplTest {
     when(externalUserAffiliationRepository.findDistinctInstitutionIds(
             staff.getId(), EUserCategory.STAFF))
         .thenReturn(List.of());
-    when(externalUserAffiliationRepository.findAllByExternalUserId(student.getId()))
+    when(externalUserAffiliationRepository.findAllByExternalUserIds(List.of(student.getId())))
         .thenReturn(
             List.of(
                 ExternalUserAffiliation.create(student, institution, null, EUserCategory.STUDENT)));
@@ -884,7 +1017,7 @@ class ExternalUserAffiliationServiceImplTest {
     when(externalUserAffiliationRepository.findDistinctInstitutionIds(
             staff.getId(), EUserCategory.STAFF))
         .thenReturn(List.of());
-    when(externalUserAffiliationRepository.findAllByExternalUserId(student.getId()))
+    when(externalUserAffiliationRepository.findAllByExternalUserIds(List.of(student.getId())))
         .thenReturn(
             List.of(
                 ExternalUserAffiliation.create(student, institution, null, EUserCategory.STUDENT)));

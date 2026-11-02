@@ -48,8 +48,8 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   }
 
   @Override
-  public ExternalUserDetail getExternalUserDetail(UUID externalUserId) {
-    return delegate.getExternalUserDetail(externalUserId);
+  public ExternalUserDetail getExternalUserDetail(UUID externalUserId, List<UUID> institutionIds) {
+    return delegate.getExternalUserDetail(externalUserId, institutionIds);
   }
 
   @Override

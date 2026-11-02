@@ -72,7 +72,7 @@ class ExternalUserContextualAuthorizationServiceImplTest {
   }
 
   private void givenUserSeenByAnAdministrator(AffiliationScopeNode... institutionRoots) {
-    when(externalUserAffiliationService.getExternalUserDetail(externalUser.getId()))
+    when(externalUserAffiliationService.getExternalUserDetail(externalUser.getId(), null))
         .thenReturn(new ExternalUserDetail(externalUser, null, List.of()));
     when(externalUserAffiliationService.staffScope())
         .thenReturn(new StaffAffiliationScope(List.of(institutionRoots), List.of()));
@@ -134,7 +134,7 @@ class ExternalUserContextualAuthorizationServiceImplTest {
   @Test
   void shouldRejectAUserOutsideTheScopeOfTheAdministratorWithoutReachingTheProviders() {
     BddLogger.given("a user the administrator may not see");
-    when(externalUserAffiliationService.getExternalUserDetail(externalUser.getId()))
+    when(externalUserAffiliationService.getExternalUserDetail(externalUser.getId(), null))
         .thenThrow(new UserNotAuthorizedException("outside of the scope"));
 
     BddLogger.then("both operations should be refused, and no provider queried");

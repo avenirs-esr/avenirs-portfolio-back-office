@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.UUID;
 
-@Schema(requiredProperties = {"id", "firstName", "lastName", "email", "institution", "groups"})
+@Schema(requiredProperties = {"id", "firstName", "lastName", "email", "institutions", "groups"})
 public record ExternalUserDetailDTO(
     UUID id,
     String firstName,
@@ -14,5 +14,5 @@ public record ExternalUserDetailDTO(
     String email,
     UUID userId,
     UUID profilePictureId,
-    InstitutionReferenceDTO institution,
+    List<InstitutionReferenceDTO> institutions,
     List<GroupReferenceDTO> groups) {}
