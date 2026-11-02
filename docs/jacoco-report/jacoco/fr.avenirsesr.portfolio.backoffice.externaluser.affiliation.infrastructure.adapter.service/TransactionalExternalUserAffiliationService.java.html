@@ -13,6 +13,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,28 +33,28 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Transactional
   public ExternalUserAffiliation addAffiliation(
       UUID externalUserId, UUID institutionId, UUID groupId, EUserCategory category) {
-<span class="fc" id="L35">    return delegate.addAffiliation(externalUserId, institutionId, groupId, category);</span>
+<span class="fc" id="L36">    return delegate.addAffiliation(externalUserId, institutionId, groupId, category);</span>
   }
 
   @Override
   @Transactional
   public void removeAffiliation(UUID externalUserId, UUID affiliationId) {
-<span class="fc" id="L41">    delegate.removeAffiliation(externalUserId, affiliationId);</span>
-<span class="fc" id="L42">  }</span>
+<span class="fc" id="L42">    delegate.removeAffiliation(externalUserId, affiliationId);</span>
+<span class="fc" id="L43">  }</span>
 
   @Override
   public List&lt;ExternalUserAffiliation&gt; getAffiliations(UUID externalUserId) {
-<span class="fc" id="L46">    return delegate.getAffiliations(externalUserId);</span>
+<span class="fc" id="L47">    return delegate.getAffiliations(externalUserId);</span>
   }
 
   @Override
   public ExternalUserDetail getExternalUserDetail(UUID externalUserId) {
-<span class="fc" id="L51">    return delegate.getExternalUserDetail(externalUserId);</span>
+<span class="fc" id="L52">    return delegate.getExternalUserDetail(externalUserId);</span>
   }
 
   @Override
   public ExternalUserGlobalAuthorization getExternalUserGlobalAuthorization(UUID externalUserId) {
-<span class="fc" id="L56">    return delegate.getExternalUserGlobalAuthorization(externalUserId);</span>
+<span class="fc" id="L57">    return delegate.getExternalUserGlobalAuthorization(externalUserId);</span>
   }
 
   @Override
@@ -63,11 +64,10 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
       List&lt;EUserCategory&gt; categories,
       List&lt;UUID&gt; institutionIds,
       List&lt;UUID&gt; groupIds,
-      boolean cofolioStaff,
-      boolean cofolioStudent,
+      List&lt;EUniverse&gt; cofolioUniverses,
       PageCriteria pageCriteria) {
 <span class="fc" id="L69">    return delegate.findAll(</span>
-        keyword, categories, institutionIds, groupIds, cofolioStaff, cofolioStudent, pageCriteria);
+        keyword, categories, institutionIds, groupIds, cofolioUniverses, pageCriteria);
   }
 
   @Override

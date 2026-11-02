@@ -3,11 +3,13 @@
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.CofolioProfile;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.CofolioProfileClient;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.client.LoggedInUserHeadersForwarder;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EUniverse;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,12 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-<span class="fc" id="L19">@Slf4j</span>
+<span class="fc" id="L21">@Slf4j</span>
 @Component
 public class ApiCofolioProfileClient implements CofolioProfileClient {
 
-<span class="fc" id="L23">  private static final ParameterizedTypeReference&lt;List&lt;UserProfileResponse&gt;&gt; PROFILE_LIST =</span>
-<span class="fc" id="L24">      new ParameterizedTypeReference&lt;&gt;() {};</span>
+<span class="fc" id="L25">  private static final ParameterizedTypeReference&lt;List&lt;UserProfileResponse&gt;&gt; PROFILE_LIST =</span>
+<span class="fc" id="L26">      new ParameterizedTypeReference&lt;&gt;() {};</span>
 
   private final WebClient webClient;
   private final LoggedInUserHeadersForwarder headersForwarder;
@@ -30,61 +32,59 @@ public class ApiCofolioProfileClient implements CofolioProfileClient {
   private String userProfilesEndpoint;
 
   public ApiCofolioProfileClient(
-<span class="fc" id="L33">      WebClient webClient, LoggedInUserHeadersForwarder headersForwarder) {</span>
-<span class="fc" id="L34">    this.webClient = webClient;</span>
-<span class="fc" id="L35">    this.headersForwarder = headersForwarder;</span>
-<span class="fc" id="L36">  }</span>
+<span class="fc" id="L35">      WebClient webClient, LoggedInUserHeadersForwarder headersForwarder) {</span>
+<span class="fc" id="L36">    this.webClient = webClient;</span>
+<span class="fc" id="L37">    this.headersForwarder = headersForwarder;</span>
+<span class="fc" id="L38">  }</span>
 
   @Override
   public Map&lt;String, CofolioProfile&gt; findByEppns(Collection&lt;String&gt; eppns) {
-<span class="nc bnc" id="L40" title="All 4 branches missed.">    if (eppns == null || eppns.isEmpty()) {</span>
-<span class="nc" id="L41">      return Map.of();</span>
+<span class="nc bnc" id="L42" title="All 4 branches missed.">    if (eppns == null || eppns.isEmpty()) {</span>
+<span class="nc" id="L43">      return Map.of();</span>
     }
 
-<span class="nc" id="L44">    List&lt;String&gt; requestedEppns = eppns.stream().filter(Objects::nonNull).distinct().toList();</span>
-<span class="nc" id="L45">    log.debug(</span>
+<span class="nc" id="L46">    List&lt;String&gt; requestedEppns = eppns.stream().filter(Objects::nonNull).distinct().toList();</span>
+<span class="nc" id="L47">    log.debug(</span>
         &quot;Fetching the cofolio profiles of {} eppn(s) from the portfolio api&quot;,
-<span class="nc" id="L47">        requestedEppns.size());</span>
+<span class="nc" id="L49">        requestedEppns.size());</span>
 
-<span class="nc" id="L49">    List&lt;UserProfileResponse&gt; responses =</span>
+<span class="nc" id="L51">    List&lt;UserProfileResponse&gt; responses =</span>
         webClient
-<span class="nc" id="L51">            .post()</span>
-<span class="nc" id="L52">            .uri(userProfilesEndpoint)</span>
-<span class="nc" id="L53">            .headers(headersForwarder::forward)</span>
-<span class="nc" id="L54">            .contentType(MediaType.APPLICATION_JSON)</span>
-<span class="nc" id="L55">            .bodyValue(new UserProfileLookupBody(requestedEppns))</span>
-<span class="nc" id="L56">            .retrieve()</span>
-<span class="nc" id="L57">            .bodyToMono(PROFILE_LIST)</span>
-<span class="nc" id="L58">            .block();</span>
+<span class="nc" id="L53">            .post()</span>
+<span class="nc" id="L54">            .uri(userProfilesEndpoint)</span>
+<span class="nc" id="L55">            .headers(headersForwarder::forward)</span>
+<span class="nc" id="L56">            .contentType(MediaType.APPLICATION_JSON)</span>
+<span class="nc" id="L57">            .bodyValue(new UserProfileLookupBody(requestedEppns))</span>
+<span class="nc" id="L58">            .retrieve()</span>
+<span class="nc" id="L59">            .bodyToMono(PROFILE_LIST)</span>
+<span class="nc" id="L60">            .block();</span>
 
-<span class="nc bnc" id="L60" title="All 2 branches missed.">    if (responses == null) {</span>
-<span class="nc" id="L61">      return Map.of();</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">    if (responses == null) {</span>
+<span class="nc" id="L63">      return Map.of();</span>
     }
 
-<span class="nc" id="L64">    Map&lt;String, CofolioProfile&gt; profilesByEppn = new LinkedHashMap&lt;&gt;();</span>
-<span class="nc" id="L65">    responses.forEach(</span>
+<span class="nc" id="L66">    Map&lt;String, CofolioProfile&gt; profilesByEppn = new LinkedHashMap&lt;&gt;();</span>
+<span class="nc" id="L67">    responses.forEach(</span>
         response -&gt;
-<span class="nc" id="L67">            profilesByEppn.put(</span>
-<span class="nc" id="L68">                response.eppn(),</span>
+<span class="nc" id="L69">            profilesByEppn.put(</span>
+<span class="nc" id="L70">                response.eppn(),</span>
                 new CofolioProfile(
-<span class="nc" id="L70">                    response.eppn(),</span>
-<span class="nc" id="L71">                    response.hasConnected(),</span>
-<span class="nc" id="L72">                    response.userId(),</span>
-<span class="nc" id="L73">                    response.profilePictureId(),</span>
-<span class="nc" id="L74">                    response.staff(),</span>
-<span class="nc" id="L75">                    response.student())));</span>
+<span class="nc" id="L72">                    response.eppn(),</span>
+<span class="nc" id="L73">                    response.hasConnected(),</span>
+<span class="nc" id="L74">                    response.userId(),</span>
+<span class="nc" id="L75">                    response.profilePictureId(),</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                    response.universes() == null ? Set.of() : Set.copyOf(response.universes()))));</span>
 
-<span class="nc" id="L77">    return profilesByEppn;</span>
+<span class="nc" id="L78">    return profilesByEppn;</span>
   }
 
-<span class="nc" id="L80">  private record UserProfileLookupBody(List&lt;String&gt; eppns) {}</span>
+<span class="nc" id="L81">  private record UserProfileLookupBody(List&lt;String&gt; eppns) {}</span>
 
-<span class="nc" id="L82">  private record UserProfileResponse(</span>
+<span class="nc" id="L83">  private record UserProfileResponse(</span>
       String eppn,
       boolean hasConnected,
       UUID userId,
       UUID profilePictureId,
-      boolean staff,
-      boolean student) {}
+      List&lt;EUniverse&gt; universes) {}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
