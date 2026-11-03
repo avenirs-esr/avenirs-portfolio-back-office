@@ -26,7 +26,7 @@ public interface ExternalUserAffiliationService {
 
   List<ExternalUserAffiliation> getAffiliations(UUID externalUserId);
 
-  ExternalUserDetail getExternalUserDetail(UUID externalUserId);
+  ExternalUserDetail getExternalUserDetail(UUID externalUserId, List<UUID> institutionIds);
 
   ExternalUserGlobalAuthorization getExternalUserGlobalAuthorization(UUID externalUserId);
 

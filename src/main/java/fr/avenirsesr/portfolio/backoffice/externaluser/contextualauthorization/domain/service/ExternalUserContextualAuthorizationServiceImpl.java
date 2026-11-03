@@ -62,7 +62,7 @@ public class ExternalUserContextualAuthorizationServiceImpl
   private Scope resolveScope(UUID externalUserId) {
     String eppn =
         externalUserAffiliationService
-            .getExternalUserDetail(externalUserId)
+            .getExternalUserDetail(externalUserId, null)
             .externalUser()
             .getEppn();
     Set<UUID> institutionIds = new LinkedHashSet<>();

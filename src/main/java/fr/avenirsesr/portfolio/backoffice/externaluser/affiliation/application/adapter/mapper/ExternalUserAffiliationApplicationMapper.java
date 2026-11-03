@@ -44,7 +44,11 @@ public class ExternalUserAffiliationApplicationMapper {
         externalUser.getEmail(),
         cofolioProfile == null ? null : cofolioProfile.userId(),
         cofolioProfile == null ? null : cofolioProfile.profilePictureId(),
-        new InstitutionReferenceDTO(detail.institution().getId(), detail.institution().getName()),
+        detail.institutions().stream()
+            .map(
+                institution ->
+                    new InstitutionReferenceDTO(institution.getId(), institution.getName()))
+            .toList(),
         detail.groups().stream()
             .map(group -> new GroupReferenceDTO(group.getId(), group.getName(), group.getType()))
             .toList());

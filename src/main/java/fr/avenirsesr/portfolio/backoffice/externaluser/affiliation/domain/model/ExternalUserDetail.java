@@ -6,4 +6,4 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import java.util.List;
 
 public record ExternalUserDetail(
-    ExternalUser externalUser, Institution institution, List<Group> groups) {}
+    ExternalUser externalUser, List<Institution> institutions, List<Group> groups) {}

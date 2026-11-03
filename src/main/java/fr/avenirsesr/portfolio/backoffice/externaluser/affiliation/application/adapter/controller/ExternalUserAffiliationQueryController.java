@@ -103,11 +103,16 @@ public class ExternalUserAffiliationQueryController {
 
   @PreAuthorize("hasAuthority('external-user:read')")
   @GetMapping("/{externalUserId}/detail")
-  public ResponseEntity<ExternalUserDetailDTO> getExternalUser(@PathVariable UUID externalUserId) {
-    log.debug("Getting the detail of external user: {}", externalUserId);
+  public ResponseEntity<ExternalUserDetailDTO> getExternalUser(
+      @PathVariable UUID externalUserId,
+      @RequestParam(required = false) List<UUID> institutionIds) {
+    log.debug(
+        "Getting the detail of external user: {} (institutions: {})",
+        externalUserId,
+        institutionIds);
 
     ExternalUserDetail detail =
-        externalUserAffiliationService.getExternalUserDetail(externalUserId);
+        externalUserAffiliationService.getExternalUserDetail(externalUserId, institutionIds);
     CofolioProfile cofolioProfile =
         cofolioProfileClient
             .findByEppns(List.of(detail.externalUser().getEppn()))

@@ -127,6 +127,14 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
         EUserCategory.STUDENT);
   }
 
+  private void affiliateStaffToSeededBordeaux() {
+    externalUserAffiliationService.addAffiliation(
+        externalUserIdOf(STAFF_EPPN),
+        institutionIdOf(SEEDED_BORDEAUX_UAI),
+        null,
+        EUserCategory.STAFF);
+  }
+
   private static int totalElementsOf(MvcResult result) throws Exception {
     return JsonPath.read(result.getResponse().getContentAsString(), "$.page.totalElements");
   }
@@ -336,27 +344,20 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .andExpect(jsonPath("$.data[0].firstName", is("Lucas")))
           .andExpect(jsonPath("$.data[0].lastName", is("Tessier")))
           .andExpect(jsonPath("$.data[0].categories", contains("STUDENT")))
-          .andExpect(
-              jsonPath(
-                  "$.data[0].institutions[*].name",
-                  contains("Université de Bordeaux", "Université de Rennes")))
+          .andExpect(jsonPath("$.data[0].institutions[*].name", contains("Université de Rennes")))
           .andExpect(
               jsonPath(
                   "$.data[0].groups[*].name",
                   contains(
-                      "Groupe A",
-                      "Groupe B",
-                      "Licence Informatique",
-                      "Licence Informatique - Parcours IA",
-                      "Licence Mathematiques")))
+                      "Groupe A", "Licence Informatique", "Licence Informatique - Parcours IA")))
           .andExpect(jsonPath("$.data[0].groups[0].type", is("STUDENT_GROUP")))
           .andExpect(
               jsonPath("$.data[0].groups[0].parent.name", is("Licence Informatique - Parcours IA")))
           .andExpect(jsonPath("$.data[0].groups[0].usersCount", is(SEEDED_GROUPE_A_USERS_COUNT)));
 
       BddLogger.then(
-          "it should return the user identity once, with every institution it is affiliated to and"
-              + " every group it belongs to, the ancestors of the hierarchy included");
+          "it should return the user identity once, with the institutions and groups of the staff"
+              + " scope only, the ancestors of the hierarchy included");
     }
 
     @Test
@@ -828,7 +829,8 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .andExpect(jsonPath("$.lastName", is("Tessier")))
           .andExpect(jsonPath("$.profilePictureId", is(profilePictureId.toString())))
           .andExpect(
-              jsonPath("$.institution.id", is(institutionIdOf(SEEDED_RENNES_UAI).toString())))
+              jsonPath(
+                  "$.institutions[*].id", contains(institutionIdOf(SEEDED_RENNES_UAI).toString())))
           .andExpect(
               jsonPath(
                   "$.groups[*].id",
@@ -838,6 +840,60 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
                       groupIdOf(SEEDED_PROGRAM_ID_SI_SCO).toString())));
 
       BddLogger.then("it should hide the Bordeaux group and list the Rennes ones with parents");
+    }
+
+    @Test
+    void thenItShouldReturnEveryInstitutionOfTheStaffScopeWithItsGroups() throws Exception {
+      BddLogger.given("a student of Rennes and Bordeaux, seen by a staff of both");
+      affiliateStaffToSeededBordeaux();
+      UUID externalUserId = externalUserIdOf(SEEDED_STUDENT_EPPN);
+
+      BddLogger.when("calling GET /back-office/external-users/{externalUserId}/detail");
+      mockMvc
+          .perform(
+              asStaffUser(get(EXTERNAL_USERS_PATH + externalUserId + "/detail"), STAFF_EPPN)
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(
+              jsonPath(
+                  "$.institutions[*].name",
+                  contains("Université de Bordeaux", "Université de Rennes")))
+          .andExpect(
+              jsonPath(
+                  "$.groups[*].name",
+                  contains(
+                      "Groupe A",
+                      "Groupe B",
+                      "Licence Informatique",
+                      "Licence Informatique - Parcours IA",
+                      "Licence Mathematiques")));
+
+      BddLogger.then("it should list both institutions with their groups, not only the first one");
+    }
+
+    @Test
+    void thenItShouldOnlyReturnTheFilteredInstitution_whenFilteringByInstitution()
+        throws Exception {
+      BddLogger.given("a student of Rennes and Bordeaux, seen by a staff of both");
+      affiliateStaffToSeededBordeaux();
+      UUID externalUserId = externalUserIdOf(SEEDED_STUDENT_EPPN);
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/{externalUserId}/detail filtered by Rennes");
+      mockMvc
+          .perform(
+              asStaffUser(get(EXTERNAL_USERS_PATH + externalUserId + "/detail"), STAFF_EPPN)
+                  .param("institutionIds", institutionIdOf(SEEDED_RENNES_UAI).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.institutions[*].name", contains("Université de Rennes")))
+          .andExpect(
+              jsonPath(
+                  "$.groups[*].name",
+                  contains(
+                      "Groupe A", "Licence Informatique", "Licence Informatique - Parcours IA")));
+
+      BddLogger.then("it should only list Rennes and its groups");
     }
 
     @Test
@@ -853,6 +909,24 @@ class ExternalUserAffiliationQueryControllerIT extends ContainerConfigurationTes
           .andExpect(status().isForbidden());
 
       BddLogger.then("it should return 403");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenFilteringOnAnInstitutionOutsideTheStaffScope()
+        throws Exception {
+      BddLogger.given("a student of Rennes and Bordeaux, seen by a staff of Rennes");
+      UUID externalUserId = externalUserIdOf(SEEDED_STUDENT_EPPN);
+
+      BddLogger.when(
+          "calling GET /back-office/external-users/{externalUserId}/detail filtered by Bordeaux");
+      mockMvc
+          .perform(
+              asStaffUser(get(EXTERNAL_USERS_PATH + externalUserId + "/detail"), STAFF_EPPN)
+                  .param("institutionIds", institutionIdOf(SEEDED_BORDEAUX_UAI).toString())
+                  .accept(MediaType.APPLICATION_JSON))
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, the staff not being affiliated to Bordeaux");
     }
 
     @Test

@@ -106,58 +106,34 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   }
 
   @Override
-  public ExternalUserDetail getExternalUserDetail(UUID externalUserId) {
+  public ExternalUserDetail getExternalUserDetail(UUID externalUserId, List<UUID> institutionIds) {
     ExternalUser externalUser =
         externalUserRepository
             .findById(externalUserId)
             .orElseThrow(ExternalUserNotFoundException::new);
-    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();
-    List<UUID> staffInstitutionIds = institutionIdsOf(staff.getId(), EUserCategory.STAFF);
+    requireStaffAccess(institutionIds, null);
 
-    List<ExternalUserAffiliation> affiliations =
-        externalUserAffiliationRepository.findAllByExternalUserId(externalUserId);
-    Set<UUID> accessibleInstitutionIds = new HashSet<>();
-    affiliations.stream()
-        .map(affiliation -> affiliation.getInstitution().getId())
-        .distinct()
-        .filter(id -> institutionService.staffHasAccess(staffInstitutionIds, List.of(id)))
-        .forEach(accessibleInstitutionIds::add);
+    List<UUID> scopedInstitutionIds = scopedInstitutionIds(institutionIds);
+    AffiliatedExternalUser affiliatedExternalUser =
+        toAffiliatedExternalUsers(List.of(externalUser), scopedInstitutionIds).get(0);
 
-    Institution institution =
-        affiliations.stream()
-            .map(ExternalUserAffiliation::getInstitution)
-            .filter(i -> accessibleInstitutionIds.contains(i.getId()))
-            .findFirst()
-            .orElseThrow(
-                () -> {
-                  log.warn(
-                      "Staff {} has no access to any institution of external user {}",
-                      staff.getId(),
-                      externalUserId);
-                  return new UserNotAuthorizedException(
-                      "The external user does not belong to an institution the user is affiliated"
-                          + " to");
-                });
+    if (affiliatedExternalUser.institutions().isEmpty()) {
+      log.warn(
+          "Staff {} has no access to any institution of external user {} within {}",
+          loggedInExternalUserService.getLoggedInExternalUser().getId(),
+          externalUserId,
+          scopedInstitutionIds);
+      throw new UserNotAuthorizedException(
+          "The external user does not belong to an institution the user is affiliated to");
+    }
 
-    Map<UUID, Group> groupsById = new LinkedHashMap<>();
-    affiliations.stream()
-        .filter(affiliation -> affiliation.getGroup() != null)
-        .filter(affiliation -> institution.getId().equals(affiliation.getInstitution().getId()))
-        .forEach(
-            affiliation -> {
-              Optional<Group> current = Optional.of(affiliation.getGroup());
-              while (current.isPresent() && !groupsById.containsKey(current.get().getId())) {
-                groupsById.put(current.get().getId(), current.get());
-                current = current.get().getParent();
-              }
-            });
-
-    return new ExternalUserDetail(externalUser, institution, List.copyOf(groupsById.values()));
+    return new ExternalUserDetail(
+        externalUser, affiliatedExternalUser.institutions(), affiliatedExternalUser.groups());
   }
 
   @Override
   public ExternalUserGlobalAuthorization getExternalUserGlobalAuthorization(UUID externalUserId) {
-    ExternalUser externalUser = getExternalUserDetail(externalUserId).externalUser();
+    ExternalUser externalUser = getExternalUserDetail(externalUserId, List.of()).externalUser();
 
     Set<ERole> roles = securityClient.findRolesByLogin(externalUser.getEppn());
 
@@ -172,13 +148,9 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
       List<UUID> groupIds,
       List<EUniverse> cofolioUniverses,
       PageCriteria pageCriteria) {
-    requireStaffAccessToFilters(institutionIds, groupIds);
+    requireStaffAccess(institutionIds, groupIds);
 
-    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();
-    List<UUID> scopedInstitutionIds =
-        isEmpty(institutionIds)
-            ? institutionIdsOf(staff.getId(), EUserCategory.STAFF)
-            : institutionIds;
+    List<UUID> scopedInstitutionIds = scopedInstitutionIds(institutionIds);
 
     if (isEmpty(cofolioUniverses)) {
       return findPage(keyword, categories, scopedInstitutionIds, groupIds, pageCriteria);
@@ -198,23 +170,9 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
         externalUserRepository.findAllAffiliated(
             keyword, categories, institutionIds, groupIds, pageCriteria);
 
-    return new PagedResult<>(withAffiliations(externalUsers.content()), externalUsers.pageInfo());
-  }
-
-  private List<AffiliatedExternalUser> withAffiliations(List<ExternalUser> externalUsers) {
-    Map<UUID, List<ExternalUserAffiliation>> affiliationsByExternalUserId =
-        externalUserAffiliationRepository
-            .findAllByExternalUserIds(externalUsers.stream().map(ExternalUser::getId).toList())
-            .stream()
-            .collect(Collectors.groupingBy(affiliation -> affiliation.getExternalUser().getId()));
-
-    return externalUsers.stream()
-        .map(
-            externalUser ->
-                toAffiliatedExternalUser(
-                    externalUser,
-                    affiliationsByExternalUserId.getOrDefault(externalUser.getId(), List.of())))
-        .toList();
+    return new PagedResult<>(
+        toAffiliatedExternalUsers(externalUsers.content(), institutionIds),
+        externalUsers.pageInfo());
   }
 
   private PagedResult<AffiliatedExternalUser> findWithCofolioProfile(
@@ -237,7 +195,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
     int from = Math.min(pageCriteria.page() * pageCriteria.pageSize(), matching.size());
     int to = Math.min(from + pageCriteria.pageSize(), matching.size());
     return new PagedResult<>(
-        withAffiliations(matching.subList(from, to)),
+        toAffiliatedExternalUsers(matching.subList(from, to), institutionIds),
         new PageInfo(pageCriteria.page(), pageCriteria.pageSize(), matching.size()));
   }
 
@@ -245,6 +203,33 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
     return profile != null
         && profile.userId() != null
         && universes.stream().anyMatch(profile.universes()::contains);
+  }
+
+  private List<AffiliatedExternalUser> toAffiliatedExternalUsers(
+      List<ExternalUser> externalUsers, List<UUID> scopedInstitutionIds) {
+    List<ExternalUserAffiliation> affiliations =
+        externalUserAffiliationRepository.findAllByExternalUserIds(
+            externalUsers.stream().map(ExternalUser::getId).toList());
+    Set<UUID> accessibleInstitutionIds =
+        affiliations.stream()
+            .map(affiliation -> affiliation.getInstitution().getId())
+            .distinct()
+            .filter(id -> institutionService.staffHasAccess(scopedInstitutionIds, List.of(id)))
+            .collect(Collectors.toSet());
+    Map<UUID, List<ExternalUserAffiliation>> affiliationsByExternalUserId =
+        affiliations.stream()
+            .filter(
+                affiliation ->
+                    accessibleInstitutionIds.contains(affiliation.getInstitution().getId()))
+            .collect(Collectors.groupingBy(affiliation -> affiliation.getExternalUser().getId()));
+
+    return externalUsers.stream()
+        .map(
+            externalUser ->
+                toAffiliatedExternalUser(
+                    externalUser,
+                    affiliationsByExternalUserId.getOrDefault(externalUser.getId(), List.of())))
+        .toList();
   }
 
   private static AffiliatedExternalUser toAffiliatedExternalUser(
@@ -284,7 +269,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
         .toList();
   }
 
-  private void requireStaffAccessToFilters(List<UUID> institutionIds, List<UUID> groupIds) {
+  private void requireStaffAccess(List<UUID> institutionIds, List<UUID> groupIds) {
     if (isEmpty(institutionIds) && isEmpty(groupIds)) {
       return;
     }
@@ -299,6 +284,13 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
       throw new UserNotAuthorizedException(
           "The filtered institutions and groups must be ones the user is affiliated to");
     }
+  }
+
+  private List<UUID> scopedInstitutionIds(List<UUID> institutionIds) {
+    return isEmpty(institutionIds)
+        ? institutionIdsOf(
+            loggedInExternalUserService.getLoggedInExternalUser().getId(), EUserCategory.STAFF)
+        : institutionIds;
   }
 
   @Override
