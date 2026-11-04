@@ -1480,6 +1480,16 @@
     "status": "INACTIVE"
   },
   {
+    "eppn": "IA.USMB",
+    "firstName": "IA",
+    "lastName": "USMB",
+    "email": "ia.usmb@university.com",
+    "categories": ["STUDENT", "STAFF"],
+    "externalId": "USMB-IA-001",
+    "institutionUAI": "0350002B",
+    "status": "INACTIVE"
+  },
+  {
     "eppn": "Etu1L1.ULILLE",
     "firstName": "Etu1",
     "lastName": "L1",
