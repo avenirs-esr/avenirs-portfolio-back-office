@@ -8,23 +8,35 @@ import static org.mockito.Mockito.*;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.ConfigurationTranslationService;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.serializer.ConfigurationValueSerializer;
+import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.serializer.JacksonConfigurationValueSerializer;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.AlertConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.BuildLifeProjectConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteContentConfiguration;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class WebsiteContentConfigurationServiceImplTest {
 
   @Mock private ConfigurationTranslationService configurationTranslationService;
+  @Mock private ConfigurationRepository configurationRepository;
+
+  @Spy
+  private ConfigurationValueSerializer configurationValueSerializer =
+      new JacksonConfigurationValueSerializer();
 
   @InjectMocks private WebsiteContentConfigurationServiceImpl service;
 
@@ -106,5 +118,63 @@ class WebsiteContentConfigurationServiceImplTest {
     verify(configurationTranslationService)
         .buildAndSaveTranslatedEntities(anyMap(), eq(EConfigurationScope.WEBSITE_CONTENT));
     assertEquals("<p>Contenu mis à jour</p>", existing.getValue());
+  }
+
+  private static Configuration alertConfiguration(String json) {
+    return Configuration.create(
+        UUID.randomUUID(),
+        EConfigurationScope.WEBSITE_CONTENT,
+        EWebsiteContentConfiguration.ALERT,
+        json);
+  }
+
+  @Test
+  void shouldCreateAlertWhenNoneIsConfigured() {
+    BddLogger.given("no alert configured yet");
+    when(configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT))
+        .thenReturn(List.of());
+    when(configurationRepository.save(any(Configuration.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+    var alert =
+        new AlertConfiguration(
+            "Maintenance",
+            null,
+            Instant.parse("2026-11-10T08:00:00Z"),
+            Instant.parse("2026-11-10T12:00:00Z"));
+
+    BddLogger.when("putting an alert");
+    AlertConfiguration result = service.putAlertConfiguration(alert);
+
+    BddLogger.then("a new ALERT configuration holding the alert as JSON is saved and returned");
+    var captor = ArgumentCaptor.forClass(Configuration.class);
+    verify(configurationRepository).save(captor.capture());
+    Configuration saved = captor.getValue();
+    assertEquals(EConfigurationScope.WEBSITE_CONTENT, saved.getScope());
+    assertEquals(EWebsiteContentConfiguration.ALERT, saved.getKey());
+    assertEquals(
+        "{\"message\":\"Maintenance\",\"active\":null,"
+            + "\"startDate\":\"2026-11-10T08:00:00Z\",\"endDate\":\"2026-11-10T12:00:00Z\"}",
+        saved.getValue());
+    assertEquals(alert, result);
+  }
+
+  @Test
+  void shouldReplaceExistingAlert() {
+    BddLogger.given("an alert already configured");
+    Configuration existing = alertConfiguration("{\"message\":\"Old\",\"active\":false}");
+    when(configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT))
+        .thenReturn(List.of(existing));
+    when(configurationRepository.save(existing)).thenReturn(existing);
+    var alert = new AlertConfiguration("New", true, null, null);
+
+    BddLogger.when("putting a new alert");
+    AlertConfiguration result = service.putAlertConfiguration(alert);
+
+    BddLogger.then("the existing configuration is updated and the new alert returned");
+    verify(configurationRepository).save(existing);
+    assertEquals(
+        alert,
+        configurationValueSerializer.deserialize(existing.getValue(), AlertConfiguration.class));
+    assertEquals(alert, result);
   }
 }
