@@ -16,4 +16,6 @@ public interface WebsiteContentConfigurationService {
   Optional<AlertConfiguration> getAlertConfiguration();
 
   AlertConfiguration putAlertConfiguration(AlertConfiguration alertConfiguration);
+
+  Optional<String> getDisplayedAlertMessage();
 }

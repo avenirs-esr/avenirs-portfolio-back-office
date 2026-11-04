@@ -26,4 +26,11 @@ public record AlertConfiguration(
       }
     }
   }
+
+  public boolean isDisplayedAt(Instant instant) {
+    if (startDate == null) {
+      return Boolean.TRUE.equals(active);
+    }
+    return !instant.isBefore(startDate) && instant.isBefore(endDate);
+  }
 }

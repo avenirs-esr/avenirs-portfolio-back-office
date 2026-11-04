@@ -13,10 +13,14 @@ import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.AlertConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteContentConfiguration;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import java.time.Instant;
 import java.util.List;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +30,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 class WebsiteContentControllerIT extends ContainerConfigurationTest {
   private static final String ALERT_SETUP_PATH = "/back-office/config/website-content/setup/alert";
+  private static final String ALERT_MESSAGE_PATH =
+      "/back-office/config/website-content/alert/message";
   private static final String SCHEDULED_ALERT =
       """
       {"message":"Maintenance",\
@@ -34,6 +40,7 @@ class WebsiteContentControllerIT extends ContainerConfigurationTest {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ConfigurationRepository configurationRepository;
+  @Autowired private WebsiteContentConfigurationService websiteContentConfigurationService;
   @Autowired private ObjectMapper objectMapper;
 
   @Value("${security.authentication.api-key}")
@@ -238,5 +245,68 @@ class WebsiteContentControllerIT extends ContainerConfigurationTest {
     mockMvc
         .perform(get(ALERT_SETUP_PATH).principal(uuidPrincipal()))
         .andExpect(status().isUnauthorized());
+  }
+
+  private void expectPublicAlertMessage(Matcher<? super String> message) throws Exception {
+    mockMvc
+        .perform(get(ALERT_MESSAGE_PATH))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message", message));
+  }
+
+  @Test
+  void shouldReturnNoMessageWithoutAuthenticationWhenNoAlertIsConfigured() throws Exception {
+    BddLogger.given("no alert configured");
+
+    BddLogger.when("reading " + ALERT_MESSAGE_PATH + " without any credentials");
+    BddLogger.then("200 OK is returned without message");
+    expectPublicAlertMessage(nullValue());
+  }
+
+  @Test
+  void shouldReturnTheMessageOfAnActiveAlertWithoutPeriod() throws Exception {
+    BddLogger.given("an active alert without period");
+    websiteContentConfigurationService.putAlertConfiguration(
+        new AlertConfiguration("Maintenance", true, null, null));
+
+    BddLogger.when("reading " + ALERT_MESSAGE_PATH + " without any credentials");
+    BddLogger.then("its message is returned");
+    expectPublicAlertMessage(is("Maintenance"));
+  }
+
+  @Test
+  void shouldReturnNoMessageForAnInactiveAlertWithoutPeriod() throws Exception {
+    BddLogger.given("an inactive alert without period");
+    websiteContentConfigurationService.putAlertConfiguration(
+        new AlertConfiguration("Maintenance", false, null, null));
+
+    BddLogger.when("reading " + ALERT_MESSAGE_PATH + " without any credentials");
+    BddLogger.then("no message is returned");
+    expectPublicAlertMessage(nullValue());
+  }
+
+  @Test
+  void shouldReturnTheMessageOfAnAlertScheduledAroundNow() throws Exception {
+    BddLogger.given("an alert scheduled around now");
+    var now = Instant.now();
+    websiteContentConfigurationService.putAlertConfiguration(
+        new AlertConfiguration("Maintenance", null, now.minusSeconds(3600), now.plusSeconds(3600)));
+
+    BddLogger.when("reading " + ALERT_MESSAGE_PATH + " without any credentials");
+    BddLogger.then("its message is returned");
+    expectPublicAlertMessage(is("Maintenance"));
+  }
+
+  @Test
+  void shouldReturnNoMessageForAnAlertWhosePeriodIsOver() throws Exception {
+    BddLogger.given("an alert whose scheduled period is over");
+    var now = Instant.now();
+    websiteContentConfigurationService.putAlertConfiguration(
+        new AlertConfiguration(
+            "Maintenance", null, now.minusSeconds(7200), now.minusSeconds(3600)));
+
+    BddLogger.when("reading " + ALERT_MESSAGE_PATH + " without any credentials");
+    BddLogger.then("no message is returned");
+    expectPublicAlertMessage(nullValue());
   }
 }
