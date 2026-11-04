@@ -95,6 +95,27 @@ class ConfigurationMapperTest {
   }
 
   @Test
+  void shouldMapAlertAsJsonConfiguration() {
+    BddLogger.given("an alert configuration");
+    var json = "{\"message\":\"Maintenance\",\"active\":true}";
+    var configuration =
+        Configuration.create(
+            UUID.randomUUID(),
+            EConfigurationScope.WEBSITE_CONTENT,
+            EWebsiteContentConfiguration.ALERT,
+            json);
+
+    BddLogger.when("mapping it to an entity and back");
+    var entity = mapper.fromDomain(configuration);
+    var mappedBack = mapper.toDomain(entity);
+
+    BddLogger.then("its JSON document is kept as is");
+    assertEquals(json, entity.getValue().orElseThrow());
+    assertEquals(json, mappedBack.getValue());
+    assertEquals(EWebsiteContentConfiguration.ALERT, mappedBack.getKey());
+  }
+
+  @Test
   void shouldKeepMissingValueEmpty() {
     BddLogger.given("a configuration without value");
     var configuration =

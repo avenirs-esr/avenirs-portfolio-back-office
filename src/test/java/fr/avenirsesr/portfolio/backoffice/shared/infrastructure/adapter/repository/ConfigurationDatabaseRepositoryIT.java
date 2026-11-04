@@ -2,16 +2,21 @@ package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.reposit
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.model.ConfigurationEntity;
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
 import fr.avenirsesr.portfolio.backoffice.trace.domain.port.input.TraceConfigurationService;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteContentConfiguration;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
 import fr.avenirsesr.portfolio.common.configuration.domain.model.EConfiguration;
 import fr.avenirsesr.portfolio.common.configuration.domain.model.ETraceConfiguration;
 import fr.avenirsesr.portfolio.common.configuration.domain.model.TraceConfiguration;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import jakarta.persistence.EntityManager;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ConfigurationDatabaseRepositoryIT extends ContainerConfigurationTest {
   @Autowired private ConfigurationDatabaseRepository configurationDatabaseRepository;
   @Autowired private TraceConfigurationService traceConfigurationService;
+  @Autowired private WebsiteContentConfigurationService websiteContentConfigurationService;
   @Autowired private EntityManager entityManager;
 
   @BeforeAll
@@ -54,5 +60,36 @@ class ConfigurationDatabaseRepositoryIT extends ContainerConfigurationTest {
             .getValue()
             .orElseThrow());
     assertEquals(traceConfiguration, traceConfigurationService.getTraceConfiguration());
+  }
+
+  @Test
+  void shouldStoreAlertAsJsonObjectNextToBuildLifeProjectContent() throws Exception {
+    BddLogger.given("an alert saved next to the seeded build life project content");
+    var json =
+        "{\"message\":\"Maintenance\",\"active\":null,"
+            + "\"startDate\":\"2026-11-10T08:00:00Z\",\"endDate\":\"2026-11-10T12:00:00Z\"}";
+    var contentBefore = websiteContentConfigurationService.getLifeProjectConfiguration();
+
+    BddLogger.when("saving it and reading the configurations back from the database");
+    configurationDatabaseRepository.save(
+        Configuration.create(
+            UUID.randomUUID(),
+            EConfigurationScope.WEBSITE_CONTENT,
+            EWebsiteContentConfiguration.ALERT,
+            json));
+    flushAndClear();
+
+    BddLogger.then("the alert is a JSON object and the build life project content is unchanged");
+    var storedAlert =
+        storedEntity(EConfigurationScope.WEBSITE_CONTENT, EWebsiteContentConfiguration.ALERT)
+            .getValue()
+            .orElseThrow();
+    var objectMapper = new ObjectMapper();
+    assertTrue(objectMapper.readTree(storedAlert).isObject());
+    assertEquals(objectMapper.readTree(json), objectMapper.readTree(storedAlert));
+    assertEquals(contentBefore, websiteContentConfigurationService.getLifeProjectConfiguration());
+    assertEquals(
+        2,
+        websiteContentConfigurationService.getLifeProjectConfigurationWithAllTranslations().size());
   }
 }
