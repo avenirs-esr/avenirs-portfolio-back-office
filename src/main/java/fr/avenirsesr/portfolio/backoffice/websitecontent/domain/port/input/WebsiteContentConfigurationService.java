@@ -4,6 +4,7 @@ import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.AlertConfi
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.BuildLifeProjectConfiguration;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
 import java.util.Map;
+import java.util.Optional;
 
 public interface WebsiteContentConfigurationService {
   BuildLifeProjectConfiguration getLifeProjectConfiguration();
@@ -11,6 +12,8 @@ public interface WebsiteContentConfigurationService {
   Map<ELanguage, BuildLifeProjectConfiguration> getLifeProjectConfigurationWithAllTranslations();
 
   void postLifeProjectConfiguration(Map<ELanguage, BuildLifeProjectConfiguration> configuration);
+
+  Optional<AlertConfiguration> getAlertConfiguration();
 
   AlertConfiguration putAlertConfiguration(AlertConfiguration alertConfiguration);
 }

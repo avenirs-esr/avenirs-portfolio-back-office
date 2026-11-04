@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -189,5 +190,53 @@ class WebsiteContentControllerIT extends ContainerConfigurationTest {
                 .content(SCHEDULED_ALERT))
         .andExpect(status().isUnauthorized());
     assertTrue(storedAlerts().isEmpty());
+  }
+
+  @Test
+  void shouldReturnAnInactiveAlertWhenNoneIsConfigured() throws Exception {
+    BddLogger.given("no alert configured");
+
+    BddLogger.when("getting it with the website-content-config:read authority");
+    BddLogger.then("200 OK is returned with an inactive alert");
+    mockMvc
+        .perform(
+            get(ALERT_SETUP_PATH)
+                .principal(uuidPrincipal())
+                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message", nullValue()))
+        .andExpect(jsonPath("$.active", is(false)))
+        .andExpect(jsonPath("$.startDate", nullValue()))
+        .andExpect(jsonPath("$.endDate", nullValue()));
+  }
+
+  @Test
+  void shouldReturnTheSavedAlert() throws Exception {
+    BddLogger.given("a scheduled alert saved");
+    mockMvc.perform(putAlert(SCHEDULED_ALERT)).andExpect(status().isOk());
+
+    BddLogger.when("getting it with the website-content-config:read authority");
+    BddLogger.then("200 OK is returned with the saved alert");
+    mockMvc
+        .perform(
+            get(ALERT_SETUP_PATH)
+                .principal(uuidPrincipal())
+                .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message", is("Maintenance")))
+        .andExpect(jsonPath("$.active", nullValue()))
+        .andExpect(jsonPath("$.startDate", is("2026-11-10T08:00:00Z")))
+        .andExpect(jsonPath("$.endDate", is("2026-11-10T12:00:00Z")));
+  }
+
+  @Test
+  void shouldRejectAReadWithoutTheApiKey() throws Exception {
+    BddLogger.given("the " + ALERT_SETUP_PATH + " endpoint");
+
+    BddLogger.when("getting the alert without the api key");
+    BddLogger.then("401 UNAUTHORIZED is returned");
+    mockMvc
+        .perform(get(ALERT_SETUP_PATH).principal(uuidPrincipal()))
+        .andExpect(status().isUnauthorized());
   }
 }

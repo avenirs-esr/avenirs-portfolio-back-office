@@ -83,6 +83,18 @@ public class WebsiteContentController {
     return ResponseEntity.ok(toAlertConfigurationDTO(saved));
   }
 
+  @PreAuthorize("hasAuthority('website-content-config:read')")
+  @GetMapping(path = "/setup/alert")
+  public ResponseEntity<AlertConfigurationDTO> getAlertConfig() {
+    log.debug("Received request to get alert config");
+
+    return ResponseEntity.ok(
+        websiteContentConfigurationService
+            .getAlertConfiguration()
+            .map(WebsiteContentController::toAlertConfigurationDTO)
+            .orElseGet(() -> new AlertConfigurationDTO(null, false, null, null)));
+  }
+
   private static AlertConfigurationDTO toAlertConfigurationDTO(AlertConfiguration configuration) {
     return new AlertConfigurationDTO(
         configuration.message(),
