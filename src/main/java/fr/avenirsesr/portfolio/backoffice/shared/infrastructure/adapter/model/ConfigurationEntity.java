@@ -12,6 +12,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(
@@ -29,6 +31,7 @@ public class ConfigurationEntity extends AvenirsBaseEntity {
   private String key;
 
   @Getter(AccessLevel.NONE)
+  @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "\"value\"")
   private String value;
 
