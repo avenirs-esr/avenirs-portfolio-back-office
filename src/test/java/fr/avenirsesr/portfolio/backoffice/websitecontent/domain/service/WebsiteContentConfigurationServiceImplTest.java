@@ -19,6 +19,7 @@ import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -176,5 +177,49 @@ class WebsiteContentConfigurationServiceImplTest {
         alert,
         configurationValueSerializer.deserialize(existing.getValue(), AlertConfiguration.class));
     assertEquals(alert, result);
+  }
+
+  @Test
+  void shouldReturnNoAlertWhenNoneIsConfigured() {
+    BddLogger.given("website content configurations without alert");
+    when(configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT))
+        .thenReturn(
+            List.of(
+                Configuration.create(
+                    UUID.randomUUID(),
+                    EConfigurationScope.WEBSITE_CONTENT,
+                    EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT,
+                    "<p>Projet de vie</p>")));
+
+    BddLogger.when("getting the alert configuration");
+    var result = service.getAlertConfiguration();
+
+    BddLogger.then("no alert is returned");
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldReturnStoredAlert() {
+    BddLogger.given("an alert stored as JSON");
+    when(configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT))
+        .thenReturn(
+            List.of(
+                alertConfiguration(
+                    "{\"message\":\"Maintenance\",\"active\":null,"
+                        + "\"startDate\":\"2026-11-10T08:00:00Z\","
+                        + "\"endDate\":\"2026-11-10T12:00:00Z\"}")));
+
+    BddLogger.when("getting the alert configuration");
+    var result = service.getAlertConfiguration();
+
+    BddLogger.then("the stored alert is returned");
+    assertEquals(
+        Optional.of(
+            new AlertConfiguration(
+                "Maintenance",
+                null,
+                Instant.parse("2026-11-10T08:00:00Z"),
+                Instant.parse("2026-11-10T12:00:00Z"))),
+        result);
   }
 }

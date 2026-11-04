@@ -125,6 +125,12 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
   }
 
   @Override
+  public Optional<AlertConfiguration> getAlertConfiguration() {
+    return findAlertConfiguration()
+        .map(c -> configurationValueSerializer.deserialize(c.getValue(), AlertConfiguration.class));
+  }
+
+  @Override
   public AlertConfiguration putAlertConfiguration(AlertConfiguration alertConfiguration) {
     var value = configurationValueSerializer.serialize(alertConfiguration);
     var configuration =
