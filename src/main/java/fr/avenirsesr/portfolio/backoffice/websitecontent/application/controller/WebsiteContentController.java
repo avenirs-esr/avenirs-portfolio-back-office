@@ -1,6 +1,7 @@
 package fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller;
 
 import fr.avenirsesr.portfolio.backoffice.websitecontent.application.dto.AlertConfigurationDTO;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.application.dto.AlertMessageDTO;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.application.dto.BuildLifeProjectConfigDTO;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.AlertConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.BuildLifeProjectConfiguration;
@@ -93,6 +94,15 @@ public class WebsiteContentController {
             .getAlertConfiguration()
             .map(WebsiteContentController::toAlertConfigurationDTO)
             .orElseGet(() -> new AlertConfigurationDTO(null, false, null, null)));
+  }
+
+  @GetMapping(path = "/alert/message")
+  public ResponseEntity<AlertMessageDTO> getAlertMessage() {
+    log.debug("Received request to get alert message");
+
+    return ResponseEntity.ok(
+        new AlertMessageDTO(
+            websiteContentConfigurationService.getDisplayedAlertMessage().orElse(null)));
   }
 
   private static AlertConfigurationDTO toAlertConfigurationDTO(AlertConfiguration configuration) {

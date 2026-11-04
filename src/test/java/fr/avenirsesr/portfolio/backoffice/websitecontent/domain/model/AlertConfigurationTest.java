@@ -111,4 +111,30 @@ class AlertConfigurationTest {
         () -> new AlertConfiguration("Maintenance", null, START, START));
     assertEquals(EErrorCode.END_DATE_BEFORE_START_DATE, exception.getErrorCode());
   }
+
+  @Test
+  void shouldFollowActiveFlagWhenActivatedManually() {
+    BddLogger.given("alerts activated and deactivated manually");
+    var active = new AlertConfiguration("Maintenance", true, null, null);
+    var inactive = new AlertConfiguration("Maintenance", false, null, null);
+
+    BddLogger.when("checking whether they are displayed");
+    BddLogger.then("only the active one is");
+    assertTrue(active.isDisplayedAt(START));
+    assertFalse(inactive.isDisplayedAt(START));
+  }
+
+  @Test
+  void shouldFollowPeriodWhenScheduled() {
+    BddLogger.given("an alert scheduled over a period");
+    var alert = new AlertConfiguration("Maintenance", null, START, END);
+
+    BddLogger.when("checking whether it is displayed around its period");
+    BddLogger.then("it is displayed from the start, included, to the end, excluded");
+    assertFalse(alert.isDisplayedAt(START.minusSeconds(1)));
+    assertTrue(alert.isDisplayedAt(START));
+    assertTrue(alert.isDisplayedAt(END.minusSeconds(1)));
+    assertFalse(alert.isDisplayedAt(END));
+    assertFalse(alert.isDisplayedAt(END.plusSeconds(1)));
+  }
 }

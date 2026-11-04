@@ -222,4 +222,53 @@ class WebsiteContentConfigurationServiceImplTest {
                 Instant.parse("2026-11-10T12:00:00Z"))),
         result);
   }
+
+  @Test
+  void shouldReturnMessageOfDisplayedAlert() {
+    BddLogger.given("an alert scheduled around now");
+    var now = Instant.now();
+    var json =
+        configurationValueSerializer.serialize(
+            new AlertConfiguration(
+                "Maintenance", null, now.minusSeconds(3600), now.plusSeconds(3600)));
+    when(configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT))
+        .thenReturn(List.of(alertConfiguration(json)));
+
+    BddLogger.when("getting the displayed alert message");
+    var result = service.getDisplayedAlertMessage();
+
+    BddLogger.then("its message is returned");
+    assertEquals(Optional.of("Maintenance"), result);
+  }
+
+  @Test
+  void shouldReturnNoMessageWhenAlertIsOver() {
+    BddLogger.given("an alert whose scheduled period is over");
+    var now = Instant.now();
+    var json =
+        configurationValueSerializer.serialize(
+            new AlertConfiguration(
+                "Maintenance", null, now.minusSeconds(7200), now.minusSeconds(3600)));
+    when(configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT))
+        .thenReturn(List.of(alertConfiguration(json)));
+
+    BddLogger.when("getting the displayed alert message");
+    var result = service.getDisplayedAlertMessage();
+
+    BddLogger.then("no message is returned");
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldReturnNoMessageWhenNoAlertIsConfigured() {
+    BddLogger.given("no alert configured");
+    when(configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT))
+        .thenReturn(List.of());
+
+    BddLogger.when("getting the displayed alert message");
+    var result = service.getDisplayedAlertMessage();
+
+    BddLogger.then("no message is returned");
+    assertTrue(result.isEmpty());
+  }
 }

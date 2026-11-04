@@ -11,6 +11,7 @@ import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteCo
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
 import fr.avenirsesr.portfolio.common.configuration.domain.exception.ConfigurationException;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -148,5 +149,13 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
 
     log.info("Alert configuration saved : {}", alertConfiguration);
     return configurationValueSerializer.deserialize(saved.getValue(), AlertConfiguration.class);
+  }
+
+  @Override
+  public Optional<String> getDisplayedAlertMessage() {
+    var now = Instant.now();
+    return getAlertConfiguration()
+        .filter(alert -> alert.isDisplayedAt(now))
+        .map(AlertConfiguration::message);
   }
 }
