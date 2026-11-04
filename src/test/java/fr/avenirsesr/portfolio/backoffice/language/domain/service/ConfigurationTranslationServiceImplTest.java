@@ -36,7 +36,7 @@ class ConfigurationTranslationServiceImplTest {
     entityFr.setId(UUID.randomUUID());
     entityFr.setScope(EConfigurationScope.ADDITIONAL_SKILL);
     entityFr.setKey("LEVEL_BEGINNER_LABEL");
-    entityFr.setValue("Débutant");
+    entityFr.setValue("\"Débutant\"");
 
     var translations = new HashSet<ConfigurationTranslationEntity>();
     translations.add(
