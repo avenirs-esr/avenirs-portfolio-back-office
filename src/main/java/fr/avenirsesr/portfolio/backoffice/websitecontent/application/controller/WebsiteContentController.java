@@ -1,6 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller;
 
+import fr.avenirsesr.portfolio.backoffice.websitecontent.application.dto.AlertConfigurationDTO;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.application.dto.BuildLifeProjectConfigDTO;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.AlertConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.BuildLifeProjectConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
@@ -62,5 +64,30 @@ public class WebsiteContentController {
         websiteContentConfigurationService.getLifeProjectConfiguration();
 
     return ResponseEntity.ok(new BuildLifeProjectConfigDTO(config.html()));
+  }
+
+  @PreAuthorize("hasAuthority('website-content-config:update')")
+  @PutMapping(path = "/setup/alert")
+  public ResponseEntity<AlertConfigurationDTO> putAlertConfig(
+      @RequestBody AlertConfigurationDTO configuration) {
+    log.debug("Received request to put alert config : {}", configuration);
+
+    AlertConfiguration saved =
+        websiteContentConfigurationService.putAlertConfiguration(
+            new AlertConfiguration(
+                configuration.message(),
+                configuration.active(),
+                configuration.startDate(),
+                configuration.endDate()));
+
+    return ResponseEntity.ok(toAlertConfigurationDTO(saved));
+  }
+
+  private static AlertConfigurationDTO toAlertConfigurationDTO(AlertConfiguration configuration) {
+    return new AlertConfigurationDTO(
+        configuration.message(),
+        configuration.active(),
+        configuration.startDate(),
+        configuration.endDate());
   }
 }

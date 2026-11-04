@@ -4,6 +4,8 @@ import fr.avenirsesr.portfolio.backoffice.shared.domain.model.Configuration;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.model.EConfigurationScope;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.ConfigurationTranslationService;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.serializer.ConfigurationValueSerializer;
+import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.AlertConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.BuildLifeProjectConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteContentConfiguration;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
@@ -11,6 +13,7 @@ import fr.avenirsesr.portfolio.common.configuration.domain.exception.Configurati
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -21,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebsiteContentConfigurationServiceImpl implements WebsiteContentConfigurationService {
   private final ConfigurationRepository configurationRepository;
   private final ConfigurationTranslationService configurationTranslationService;
+  private final ConfigurationValueSerializer configurationValueSerializer;
 
   private BuildLifeProjectConfiguration mapConfigToBuildLifeProjectConfig(
       List<Configuration> configurations) {
@@ -112,5 +116,31 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
         newTranslatedConfigurations, EConfigurationScope.WEBSITE_CONTENT);
 
     log.info("Added website content configurations : {}", newTranslatedConfigurations);
+  }
+
+  private Optional<Configuration> findAlertConfiguration() {
+    return configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT).stream()
+        .filter(c -> c.getKey() == EWebsiteContentConfiguration.ALERT)
+        .findAny();
+  }
+
+  @Override
+  public AlertConfiguration putAlertConfiguration(AlertConfiguration alertConfiguration) {
+    var value = configurationValueSerializer.serialize(alertConfiguration);
+    var configuration =
+        findAlertConfiguration()
+            .orElseGet(
+                () ->
+                    Configuration.create(
+                        UUID.randomUUID(),
+                        EConfigurationScope.WEBSITE_CONTENT,
+                        EWebsiteContentConfiguration.ALERT,
+                        value));
+    configuration.setValue(value);
+
+    var saved = configurationRepository.save(configuration);
+
+    log.info("Alert configuration saved : {}", alertConfiguration);
+    return configurationValueSerializer.deserialize(saved.getValue(), AlertConfiguration.class);
   }
 }
