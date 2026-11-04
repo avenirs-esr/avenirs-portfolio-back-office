@@ -894,6 +894,18 @@
     "groupIdSIScos": []
   },
   {
+    "eppn": "IA.USMB",
+    "category": "STUDENT",
+    "institutionUAIs": ["0330001C", "0350001A"],
+    "groupIdSIScos": ["10000003", "10000005"]
+  },
+  {
+    "eppn": "IA.USMB",
+    "category": "STAFF",
+    "institutionUAIs": ["0330001C", "0350001A"],
+    "groupIdSIScos": []
+  },
+  {
     "eppn": "Etu1L1.ULILLE",
     "category": "STUDENT",
     "institutionUAIs": ["0330001C"],
