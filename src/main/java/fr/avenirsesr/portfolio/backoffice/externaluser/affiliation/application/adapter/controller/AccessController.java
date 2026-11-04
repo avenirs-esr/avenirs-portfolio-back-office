@@ -3,9 +3,16 @@ package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ScopeNodeResponse;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.StaffAccessCheckRequest;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.StaffScopeResponse;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.StaffSearchItemResponse;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.StudentScopeResponse;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.mapper.ExternalUserAffiliationApplicationMapper;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliationScopeNode;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.common.data.application.adapter.dto.PageInfoDTO;
+import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -57,6 +65,27 @@ public class AccessController {
 
     return ResponseEntity.ok(
         new StaffScopeResponse(toResponse(scope.institutions()), toResponse(scope.groups())));
+  }
+
+  @GetMapping("/staff/search")
+  public ResponseEntity<PagedResponse<StaffSearchItemResponse>> searchStaff(
+      @RequestParam String eppn,
+      @RequestParam(required = false) String keyword,
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer pageSize) {
+    PageCriteria pageCriteria = new PageCriteria(page, pageSize);
+    log.debug(
+        "Searching the staff reachable by eppn {} (keyword: {}) {}", eppn, keyword, pageCriteria);
+
+    PagedResult<ExternalUser> staff =
+        externalUserAffiliationService.searchStaff(eppn, keyword, pageCriteria);
+
+    return ResponseEntity.ok(
+        new PagedResponse<>(
+            staff.content().stream()
+                .map(ExternalUserAffiliationApplicationMapper::toStaffSearchItemResponse)
+                .toList(),
+            PageInfoDTO.fromDomain(staff.pageInfo())));
   }
 
   private static List<ScopeNodeResponse> toResponse(List<AffiliationScopeNode> nodes) {

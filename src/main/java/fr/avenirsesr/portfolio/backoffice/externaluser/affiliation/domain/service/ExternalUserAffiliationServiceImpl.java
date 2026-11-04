@@ -349,8 +349,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
   @Override
   public boolean staffHasAccess(
       String eppn, List<UUID> targetInstitutionIds, List<UUID> targetGroupIds) {
-    ExternalUser externalUser =
-        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);
+    ExternalUser externalUser = findExternalUserByEppn(eppn);
 
     boolean institutionsOk =
         isEmpty(targetInstitutionIds)
@@ -366,8 +365,7 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
 
   @Override
   public ExternalUserAffiliationScope studentScope(String eppn) {
-    ExternalUser externalUser =
-        externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);
+    ExternalUser externalUser = findExternalUserByEppn(eppn);
 
     List<UUID> affiliatedInstitutionIds =
         institutionIdsOf(externalUser.getId(), EUserCategory.STUDENT);
@@ -395,6 +393,23 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
             .map(this::toGroupItem)
             .map(root -> toScopeTree(root, this::findGroupChildren))
             .toList());
+  }
+
+  @Override
+  public PagedResult<ExternalUser> searchStaff(
+      String eppn, String keyword, PageCriteria pageCriteria) {
+    List<UUID> institutionIds =
+        institutionIdsOf(findExternalUserByEppn(eppn).getId(), EUserCategory.STAFF);
+    if (institutionIds.isEmpty()) {
+      return new PagedResult<>(
+          List.of(), new PageInfo(pageCriteria.page(), pageCriteria.pageSize(), 0));
+    }
+    return externalUserRepository.findAllAffiliated(
+        keyword, List.of(EUserCategory.STAFF), institutionIds, null, pageCriteria);
+  }
+
+  private ExternalUser findExternalUserByEppn(String eppn) {
+    return externalUserRepository.findByEppn(eppn).orElseThrow(ExternalUserNotFoundException::new);
   }
 
   private ScopeItem toInstitutionItem(Institution institution) {

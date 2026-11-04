@@ -55,4 +55,6 @@ public interface ExternalUserAffiliationService {
   ExternalUserAffiliationScope studentScope(String eppn);
 
   StaffAffiliationScope staffScope();
+
+  PagedResult<ExternalUser> searchStaff(String eppn, String keyword, PageCriteria pageCriteria);
 }

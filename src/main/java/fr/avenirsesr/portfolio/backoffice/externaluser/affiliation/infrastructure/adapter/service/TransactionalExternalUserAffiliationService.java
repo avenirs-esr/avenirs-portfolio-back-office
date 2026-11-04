@@ -102,4 +102,11 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   public StaffAffiliationScope staffScope() {
     return delegate.staffScope();
   }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<ExternalUser> searchStaff(
+      String eppn, String keyword, PageCriteria pageCriteria) {
+    return delegate.searchStaff(eppn, keyword, pageCriteria);
+  }
 }

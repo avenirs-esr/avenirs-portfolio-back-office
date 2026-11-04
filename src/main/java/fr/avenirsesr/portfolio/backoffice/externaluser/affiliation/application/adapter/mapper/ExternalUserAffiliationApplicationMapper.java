@@ -4,6 +4,7 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.a
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserAffiliationOverviewDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserDetailDTO;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.ExternalUserGlobalAuthorizationDTO;
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.dto.StaffSearchItemResponse;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.AffiliatedExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliation;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserDetail;
@@ -57,6 +58,11 @@ public class ExternalUserAffiliationApplicationMapper {
   public static ExternalUserGlobalAuthorizationDTO toExternalUserGlobalAuthorizationDTO(
       ExternalUserGlobalAuthorization authorization) {
     return new ExternalUserGlobalAuthorizationDTO(authorization.roles(), authorization.universes());
+  }
+
+  public static StaffSearchItemResponse toStaffSearchItemResponse(ExternalUser externalUser) {
+    return new StaffSearchItemResponse(
+        externalUser.getEppn(), externalUser.getFirstName(), externalUser.getLastName());
   }
 
   /**

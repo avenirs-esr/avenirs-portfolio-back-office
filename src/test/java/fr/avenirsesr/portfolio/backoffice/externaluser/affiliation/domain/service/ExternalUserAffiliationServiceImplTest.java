@@ -320,6 +320,50 @@ class ExternalUserAffiliationServiceImplTest {
     verifyNoInteractions(institutionService, groupService);
   }
 
+  @Test
+  void shouldSearchStaffInTheStaffInstitutionsOfTheRequester_whenSearchingStaff() {
+    BddLogger.given("a multi-profile external user with different STUDENT and STAFF institutions");
+    ExternalUser requester = externalUser(EUserCategory.STUDENT, EUserCategory.STAFF);
+    UUID staffInstitutionId = UUID.randomUUID();
+    PageCriteria pageCriteria = new PageCriteria(0, 20);
+    PagedResult<ExternalUser> expected = new PagedResult<>(List.of(), new PageInfo(0, 20, 0));
+    when(externalUserRepository.findByEppn(requester.getEppn())).thenReturn(Optional.of(requester));
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            requester.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of(staffInstitutionId));
+    when(externalUserRepository.findAllAffiliated(
+            "tessier",
+            List.of(EUserCategory.STAFF),
+            List.of(staffInstitutionId),
+            null,
+            pageCriteria))
+        .thenReturn(expected);
+
+    BddLogger.when("searching the staff");
+    PagedResult<ExternalUser> result =
+        service.searchStaff(requester.getEppn(), "tessier", pageCriteria);
+
+    BddLogger.then(
+        "it should only look for STAFF users in the STAFF institutions of the requester");
+    assertEquals(expected, result);
+  }
+
+  @Test
+  void shouldReturnAnEmptyPage_whenSearchingStaffWithoutStaffAffiliation() {
+    BddLogger.given("an external user with no STAFF affiliation");
+    ExternalUser requester = externalUser(EUserCategory.STUDENT);
+    PageCriteria pageCriteria = new PageCriteria(0, 20);
+    when(externalUserRepository.findByEppn(requester.getEppn())).thenReturn(Optional.of(requester));
+
+    BddLogger.when("searching the staff");
+    PagedResult<ExternalUser> result = service.searchStaff(requester.getEppn(), null, pageCriteria);
+
+    BddLogger.then("it should return an empty page without querying the users");
+    assertTrue(result.content().isEmpty());
+    assertEquals(new PageInfo(0, 20, 0), result.pageInfo());
+    verify(externalUserRepository, never()).findAllAffiliated(any(), any(), any(), any(), any());
+  }
+
   private static Group group(UUID id, String name, Group parent) {
     return group(id, name, EGroupType.PROGRAM, parent);
   }
