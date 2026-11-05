@@ -61,19 +61,19 @@ public interface TranslationUtil {
 
   static &lt;T extends TranslationEntity&gt; T getTranslation(Set&lt;T&gt; translations) {
     var preferredLanguage =
-<span class="fc" id="L64">        Optional.ofNullable(RequestContext.get())</span>
-<span class="fc" id="L65">            .map(RequestData::preferredLanguage)</span>
-<span class="fc" id="L66">            .orElse(ELanguage.FALLBACK);</span>
+<span class="nc" id="L64">        Optional.ofNullable(RequestContext.get())</span>
+<span class="nc" id="L65">            .map(RequestData::preferredLanguage)</span>
+<span class="nc" id="L66">            .orElse(ELanguage.FALLBACK);</span>
 
-<span class="fc" id="L68">    return getTranslation(translations, preferredLanguage);</span>
+<span class="nc" id="L68">    return getTranslation(translations, preferredLanguage);</span>
   }
 
   static &lt;T extends TranslationEntity&gt; T getTranslation(
       Set&lt;T&gt; translations, ELanguage selectedLanguage) {
-<span class="fc" id="L73">    return translations.stream()</span>
-<span class="fc" id="L74">        .filter(t -&gt; t.getLanguage().equals(selectedLanguage))</span>
-<span class="fc" id="L75">        .findFirst()</span>
-<span class="fc" id="L76">        .orElseGet(</span>
+<span class="nc" id="L73">    return translations.stream()</span>
+<span class="nc" id="L74">        .filter(t -&gt; t.getLanguage().equals(selectedLanguage))</span>
+<span class="nc" id="L75">        .findFirst()</span>
+<span class="nc" id="L76">        .orElseGet(</span>
             () -&gt;
 <span class="nc" id="L78">                translations.stream()</span>
 <span class="nc" id="L79">                    .filter(t -&gt; t.getLanguage().equals(ELanguage.FALLBACK))</span>

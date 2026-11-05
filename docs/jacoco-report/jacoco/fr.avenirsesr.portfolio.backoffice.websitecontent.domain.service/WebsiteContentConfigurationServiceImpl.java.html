@@ -37,18 +37,18 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
 
   @Override
   public BuildLifeProjectConfiguration getLifeProjectConfiguration() {
-<span class="fc" id="L40">    List&lt;Configuration&gt; configurations =</span>
-<span class="fc" id="L41">        configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT);</span>
+<span class="nc" id="L40">    List&lt;Configuration&gt; configurations =</span>
+<span class="nc" id="L41">        configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT);</span>
 
-<span class="fc" id="L43">    return new BuildLifeProjectConfiguration(</span>
-<span class="fc" id="L44">        configurations.stream()</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">            .filter(c -&gt; c.getKey() == EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT)</span>
-<span class="fc" id="L46">            .findAny()</span>
-<span class="fc" id="L47">            .orElseThrow(</span>
+<span class="nc" id="L43">    return new BuildLifeProjectConfiguration(</span>
+<span class="nc" id="L44">        configurations.stream()</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">            .filter(c -&gt; c.getKey() == EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT)</span>
+<span class="nc" id="L46">            .findAny()</span>
+<span class="nc" id="L47">            .orElseThrow(</span>
                 () -&gt;
 <span class="nc" id="L49">                    new ConfigurationException(</span>
                         &quot;Missing website content configuration: BUILD_LIFE_PROJECT_CONTENT&quot;))
-<span class="fc" id="L51">            .getValue());</span>
+<span class="nc" id="L51">            .getValue());</span>
   }
 
   @Override
