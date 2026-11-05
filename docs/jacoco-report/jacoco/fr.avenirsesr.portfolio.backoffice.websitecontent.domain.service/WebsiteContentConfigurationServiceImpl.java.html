@@ -125,23 +125,29 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
   }
 
   @Override
+  public Optional&lt;AlertConfiguration&gt; getAlertConfiguration() {
+<span class="fc" id="L129">    return findAlertConfiguration()</span>
+<span class="fc" id="L130">        .map(c -&gt; configurationValueSerializer.deserialize(c.getValue(), AlertConfiguration.class));</span>
+  }
+
+  @Override
   public AlertConfiguration putAlertConfiguration(AlertConfiguration alertConfiguration) {
-<span class="fc" id="L129">    var value = configurationValueSerializer.serialize(alertConfiguration);</span>
-<span class="fc" id="L130">    var configuration =</span>
-<span class="fc" id="L131">        findAlertConfiguration()</span>
-<span class="fc" id="L132">            .orElseGet(</span>
+<span class="fc" id="L135">    var value = configurationValueSerializer.serialize(alertConfiguration);</span>
+<span class="fc" id="L136">    var configuration =</span>
+<span class="fc" id="L137">        findAlertConfiguration()</span>
+<span class="fc" id="L138">            .orElseGet(</span>
                 () -&gt;
-<span class="fc" id="L134">                    Configuration.create(</span>
-<span class="fc" id="L135">                        UUID.randomUUID(),</span>
+<span class="fc" id="L140">                    Configuration.create(</span>
+<span class="fc" id="L141">                        UUID.randomUUID(),</span>
                         EConfigurationScope.WEBSITE_CONTENT,
                         EWebsiteContentConfiguration.ALERT,
                         value));
-<span class="fc" id="L139">    configuration.setValue(value);</span>
+<span class="fc" id="L145">    configuration.setValue(value);</span>
 
-<span class="fc" id="L141">    var saved = configurationRepository.save(configuration);</span>
+<span class="fc" id="L147">    var saved = configurationRepository.save(configuration);</span>
 
-<span class="fc" id="L143">    log.info(&quot;Alert configuration saved : {}&quot;, alertConfiguration);</span>
-<span class="fc" id="L144">    return configurationValueSerializer.deserialize(saved.getValue(), AlertConfiguration.class);</span>
+<span class="fc" id="L149">    log.info(&quot;Alert configuration saved : {}&quot;, alertConfiguration);</span>
+<span class="fc" id="L150">    return configurationValueSerializer.deserialize(saved.getValue(), AlertConfiguration.class);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

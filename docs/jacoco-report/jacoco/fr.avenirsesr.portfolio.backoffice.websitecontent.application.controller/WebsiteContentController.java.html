@@ -83,12 +83,24 @@ public class WebsiteContentController {
 <span class="fc" id="L83">    return ResponseEntity.ok(toAlertConfigurationDTO(saved));</span>
   }
 
+  @PreAuthorize(&quot;hasAuthority('website-content-config:read')&quot;)
+  @GetMapping(path = &quot;/setup/alert&quot;)
+  public ResponseEntity&lt;AlertConfigurationDTO&gt; getAlertConfig() {
+<span class="fc" id="L89">    log.debug(&quot;Received request to get alert config&quot;);</span>
+
+<span class="fc" id="L91">    return ResponseEntity.ok(</span>
+        websiteContentConfigurationService
+<span class="fc" id="L93">            .getAlertConfiguration()</span>
+<span class="fc" id="L94">            .map(WebsiteContentController::toAlertConfigurationDTO)</span>
+<span class="fc" id="L95">            .orElseGet(() -&gt; new AlertConfigurationDTO(null, false, null, null)));</span>
+  }
+
   private static AlertConfigurationDTO toAlertConfigurationDTO(AlertConfiguration configuration) {
-<span class="fc" id="L87">    return new AlertConfigurationDTO(</span>
-<span class="fc" id="L88">        configuration.message(),</span>
-<span class="fc" id="L89">        configuration.active(),</span>
-<span class="fc" id="L90">        configuration.startDate(),</span>
-<span class="fc" id="L91">        configuration.endDate());</span>
+<span class="fc" id="L99">    return new AlertConfigurationDTO(</span>
+<span class="fc" id="L100">        configuration.message(),</span>
+<span class="fc" id="L101">        configuration.active(),</span>
+<span class="fc" id="L102">        configuration.startDate(),</span>
+<span class="fc" id="L103">        configuration.endDate());</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
