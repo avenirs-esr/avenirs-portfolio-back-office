@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JacksonConfigurationValueSerializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.serializer</a> &gt; <span class="el_source">JacksonConfigurationValueSerializer.java</span></div><h1>JacksonConfigurationValueSerializer.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.serializer;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.serializer.ConfigurationValueSerializer;
+import fr.avenirsesr.portfolio.common.configuration.domain.exception.ConfigurationException;
+import org.springframework.stereotype.Component;
+
+@Component
+<span class="fc" id="L14">public class JacksonConfigurationValueSerializer implements ConfigurationValueSerializer {</span>
+<span class="fc" id="L15">  private final ObjectMapper objectMapper =</span>
+<span class="fc" id="L16">      JsonMapper.builder()</span>
+<span class="fc" id="L17">          .addModule(new JavaTimeModule())</span>
+<span class="fc" id="L18">          .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)</span>
+<span class="fc" id="L19">          .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)</span>
+<span class="fc" id="L20">          .build();</span>
+
+  @Override
+  public String serialize(Object value) {
+    try {
+<span class="fc" id="L25">      return objectMapper.writeValueAsString(value);</span>
+<span class="nc" id="L26">    } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L27">      throw new ConfigurationException(</span>
+<span class="nc" id="L28">          &quot;Unable to serialize configuration value: &quot; + e.getOriginalMessage());</span>
+    }
+  }
+
+  @Override
+  public &lt;T&gt; T deserialize(String json, Class&lt;T&gt; type) {
+    try {
+<span class="fc" id="L35">      return objectMapper.readValue(json, type);</span>
+<span class="fc" id="L36">    } catch (JsonProcessingException e) {</span>
+<span class="fc" id="L37">      throw new ConfigurationException(</span>
+          &quot;Unable to read configuration value as &quot;
+<span class="fc" id="L39">              + type.getSimpleName()</span>
+              + &quot;: &quot;
+<span class="fc" id="L41">              + e.getOriginalMessage());</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -2,6 +2,7 @@
 
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.ConfigurationTranslationService;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.repository.ConfigurationRepository;
+import fr.avenirsesr.portfolio.backoffice.shared.domain.port.output.serializer.ConfigurationValueSerializer;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.service.WebsiteContentConfigurationServiceImpl;
 import org.springframework.context.annotation.Bean;
@@ -11,18 +12,21 @@ import org.springframework.context.annotation.Configuration;
 public class WebsiteContentConfigurationServiceConfig {
   private final ConfigurationRepository configurationRepository;
   private final ConfigurationTranslationService configurationTranslationService;
+  private final ConfigurationValueSerializer configurationValueSerializer;
 
   public WebsiteContentConfigurationServiceConfig(
       ConfigurationRepository configurationRepository,
-<span class="fc" id="L17">      ConfigurationTranslationService configurationTranslationService) {</span>
-<span class="fc" id="L18">    this.configurationRepository = configurationRepository;</span>
-<span class="fc" id="L19">    this.configurationTranslationService = configurationTranslationService;</span>
-<span class="fc" id="L20">  }</span>
+      ConfigurationTranslationService configurationTranslationService,
+<span class="fc" id="L20">      ConfigurationValueSerializer configurationValueSerializer) {</span>
+<span class="fc" id="L21">    this.configurationRepository = configurationRepository;</span>
+<span class="fc" id="L22">    this.configurationTranslationService = configurationTranslationService;</span>
+<span class="fc" id="L23">    this.configurationValueSerializer = configurationValueSerializer;</span>
+<span class="fc" id="L24">  }</span>
 
   @Bean
   public WebsiteContentConfigurationService websiteContentConfigurationService() {
-<span class="fc" id="L24">    return new WebsiteContentConfigurationServiceImpl(</span>
-        configurationRepository, configurationTranslationService);
+<span class="fc" id="L28">    return new WebsiteContentConfigurationServiceImpl(</span>
+        configurationRepository, configurationTranslationService, configurationValueSerializer);
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
