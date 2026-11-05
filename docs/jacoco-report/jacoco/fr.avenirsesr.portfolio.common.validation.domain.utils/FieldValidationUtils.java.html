@@ -70,10 +70,10 @@ public final class FieldValidationUtils {
 <span class="nc" id="L70">  }</span>
 
   public static &lt;T&gt; void requireNotNull(String fieldName, T value) {
-<span class="nc bnc" id="L73" title="All 2 branches missed.">    if (value == null) {</span>
-<span class="nc" id="L74">      throw new FieldValidationException(EErrorCode.NOT_NULL, fieldName);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">    if (value == null) {</span>
+<span class="fc" id="L74">      throw new FieldValidationException(EErrorCode.NOT_NULL, fieldName);</span>
     }
-<span class="nc" id="L76">  }</span>
+<span class="fc" id="L76">  }</span>
 
   public static void validateDateOrder(LocalDate startDate, LocalDate endDate) {
 

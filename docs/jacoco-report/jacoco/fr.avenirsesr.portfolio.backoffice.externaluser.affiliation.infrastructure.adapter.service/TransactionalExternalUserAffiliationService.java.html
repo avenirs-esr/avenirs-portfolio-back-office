@@ -102,12 +102,5 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   public StaffAffiliationScope staffScope() {
 <span class="fc" id="L103">    return delegate.staffScope();</span>
   }
-
-  @Override
-  @Transactional(readOnly = true)
-  public PagedResult&lt;ExternalUser&gt; searchStaff(
-      String eppn, String keyword, PageCriteria pageCriteria) {
-<span class="fc" id="L110">    return delegate.searchStaff(eppn, keyword, pageCriteria);</span>
-  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
