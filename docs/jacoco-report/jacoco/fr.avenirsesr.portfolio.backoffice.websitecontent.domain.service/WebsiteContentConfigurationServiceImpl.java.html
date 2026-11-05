@@ -11,6 +11,7 @@ import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.model.EWebsiteCo
 import fr.avenirsesr.portfolio.backoffice.websitecontent.domain.port.input.WebsiteContentConfigurationService;
 import fr.avenirsesr.portfolio.common.configuration.domain.exception.ConfigurationException;
 import fr.avenirsesr.portfolio.common.language.domain.model.enums.ELanguage;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-<span class="fc" id="L22">@Slf4j</span>
+<span class="fc" id="L23">@Slf4j</span>
 @AllArgsConstructor
 public class WebsiteContentConfigurationServiceImpl implements WebsiteContentConfigurationService {
   private final ConfigurationRepository configurationRepository;
@@ -28,126 +29,134 @@ public class WebsiteContentConfigurationServiceImpl implements WebsiteContentCon
 
   private BuildLifeProjectConfiguration mapConfigToBuildLifeProjectConfig(
       List&lt;Configuration&gt; configurations) {
-<span class="fc" id="L31">    return new BuildLifeProjectConfiguration(</span>
-<span class="fc" id="L32">        configurations.stream()</span>
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">            .filter(c -&gt; c.getKey() == EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT)</span>
-<span class="fc" id="L34">            .findAny()</span>
-<span class="fc" id="L35">            .orElseThrow(</span>
+<span class="fc" id="L32">    return new BuildLifeProjectConfiguration(</span>
+<span class="fc" id="L33">        configurations.stream()</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">            .filter(c -&gt; c.getKey() == EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT)</span>
+<span class="fc" id="L35">            .findAny()</span>
+<span class="fc" id="L36">            .orElseThrow(</span>
                 () -&gt;
-<span class="nc" id="L37">                    new ConfigurationException(</span>
+<span class="nc" id="L38">                    new ConfigurationException(</span>
                         &quot;Missing website content configuration: BUILD_LIFE_PROJECT_CONTENT&quot;))
-<span class="fc" id="L39">            .getValue());</span>
+<span class="fc" id="L40">            .getValue());</span>
   }
 
   @Override
   public BuildLifeProjectConfiguration getLifeProjectConfiguration() {
-<span class="fc" id="L44">    List&lt;Configuration&gt; configurations =</span>
-<span class="fc" id="L45">        configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT);</span>
+<span class="fc" id="L45">    List&lt;Configuration&gt; configurations =</span>
+<span class="fc" id="L46">        configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT);</span>
 
-<span class="fc" id="L47">    return new BuildLifeProjectConfiguration(</span>
-<span class="fc" id="L48">        configurations.stream()</span>
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">            .filter(c -&gt; c.getKey() == EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT)</span>
-<span class="fc" id="L50">            .findAny()</span>
-<span class="fc" id="L51">            .orElseThrow(</span>
+<span class="fc" id="L48">    return new BuildLifeProjectConfiguration(</span>
+<span class="fc" id="L49">        configurations.stream()</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">            .filter(c -&gt; c.getKey() == EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT)</span>
+<span class="fc" id="L51">            .findAny()</span>
+<span class="fc" id="L52">            .orElseThrow(</span>
                 () -&gt;
-<span class="nc" id="L53">                    new ConfigurationException(</span>
+<span class="nc" id="L54">                    new ConfigurationException(</span>
                         &quot;Missing website content configuration: BUILD_LIFE_PROJECT_CONTENT&quot;))
-<span class="fc" id="L55">            .getValue());</span>
+<span class="fc" id="L56">            .getValue());</span>
   }
 
   @Override
   public Map&lt;ELanguage, BuildLifeProjectConfiguration&gt;
       getLifeProjectConfigurationWithAllTranslations() {
-<span class="fc" id="L61">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; configurationsByLanguage =</span>
-<span class="fc" id="L62">        configurationTranslationService.findInScopeWithAllTranslations(</span>
+<span class="fc" id="L62">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; configurationsByLanguage =</span>
+<span class="fc" id="L63">        configurationTranslationService.findInScopeWithAllTranslations(</span>
             EConfigurationScope.WEBSITE_CONTENT);
 
-<span class="fc" id="L65">    return configurationsByLanguage.entrySet().stream()</span>
-<span class="fc" id="L66">        .collect(</span>
-<span class="fc" id="L67">            Collectors.toMap(</span>
-<span class="fc" id="L68">                Map.Entry::getKey, entry -&gt; mapConfigToBuildLifeProjectConfig(entry.getValue())));</span>
+<span class="fc" id="L66">    return configurationsByLanguage.entrySet().stream()</span>
+<span class="fc" id="L67">        .collect(</span>
+<span class="fc" id="L68">            Collectors.toMap(</span>
+<span class="fc" id="L69">                Map.Entry::getKey, entry -&gt; mapConfigToBuildLifeProjectConfig(entry.getValue())));</span>
   }
 
   @Override
   public void postLifeProjectConfiguration(
       Map&lt;ELanguage, BuildLifeProjectConfiguration&gt; configurations) {
-<span class="fc" id="L74">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; savedConfigurations =</span>
-<span class="fc" id="L75">        configurationTranslationService.findInScopeWithAllTranslations(</span>
+<span class="fc" id="L75">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; savedConfigurations =</span>
+<span class="fc" id="L76">        configurationTranslationService.findInScopeWithAllTranslations(</span>
             EConfigurationScope.WEBSITE_CONTENT);
 
-<span class="fc" id="L78">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; newTranslatedConfigurations =</span>
-<span class="fc" id="L79">        configurations.entrySet().stream()</span>
-<span class="fc" id="L80">            .collect(</span>
-<span class="fc" id="L81">                Collectors.toMap(</span>
+<span class="fc" id="L79">    Map&lt;ELanguage, List&lt;Configuration&gt;&gt; newTranslatedConfigurations =</span>
+<span class="fc" id="L80">        configurations.entrySet().stream()</span>
+<span class="fc" id="L81">            .collect(</span>
+<span class="fc" id="L82">                Collectors.toMap(</span>
                     Map.Entry::getKey,
                     entry -&gt; {
-<span class="fc" id="L84">                      var language = entry.getKey();</span>
-<span class="fc" id="L85">                      var value = entry.getValue().html();</span>
+<span class="fc" id="L85">                      var language = entry.getKey();</span>
+<span class="fc" id="L86">                      var value = entry.getValue().html();</span>
                       var newConfiguration =
-<span class="fc bfc" id="L87" title="All 2 branches covered.">                          savedConfigurations.get(language) != null</span>
-<span class="fc" id="L88">                                  &amp;&amp; savedConfigurations.get(language).stream()</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">                                      .anyMatch(</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">                          savedConfigurations.get(language) != null</span>
+<span class="fc" id="L89">                                  &amp;&amp; savedConfigurations.get(language).stream()</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                                      .anyMatch(</span>
                                           c -&gt;
-<span class="pc bpc" id="L91" title="1 of 2 branches missed.">                                              c.getKey()</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">                                              c.getKey()</span>
                                                   == EWebsiteContentConfiguration
                                                       .BUILD_LIFE_PROJECT_CONTENT)
-<span class="fc" id="L94">                              ? savedConfigurations.get(language).stream()</span>
-<span class="fc" id="L95">                                  .filter(</span>
+<span class="fc" id="L95">                              ? savedConfigurations.get(language).stream()</span>
+<span class="fc" id="L96">                                  .filter(</span>
                                       c -&gt;
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                                          c.getKey()</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">                                          c.getKey()</span>
                                               == EWebsiteContentConfiguration
                                                   .BUILD_LIFE_PROJECT_CONTENT)
-<span class="fc" id="L100">                                  .findAny()</span>
-<span class="fc" id="L101">                                  .orElseThrow(</span>
+<span class="fc" id="L101">                                  .findAny()</span>
+<span class="fc" id="L102">                                  .orElseThrow(</span>
                                       () -&gt;
-<span class="nc" id="L103">                                          new ConfigurationException(</span>
+<span class="nc" id="L104">                                          new ConfigurationException(</span>
                                               &quot;Missing website content configuration while&quot;
                                                   + &quot; updating: BUILD_LIFE_PROJECT_CONTENT&quot;))
-<span class="fc" id="L106">                              : Configuration.create(</span>
-<span class="fc" id="L107">                                  UUID.randomUUID(),</span>
+<span class="fc" id="L107">                              : Configuration.create(</span>
+<span class="fc" id="L108">                                  UUID.randomUUID(),</span>
                                   EConfigurationScope.WEBSITE_CONTENT,
                                   EWebsiteContentConfiguration.BUILD_LIFE_PROJECT_CONTENT,
                                   value);
-<span class="fc" id="L111">                      newConfiguration.setValue(value);</span>
-<span class="fc" id="L112">                      return List.of(newConfiguration);</span>
+<span class="fc" id="L112">                      newConfiguration.setValue(value);</span>
+<span class="fc" id="L113">                      return List.of(newConfiguration);</span>
                     }));
 
-<span class="fc" id="L115">    configurationTranslationService.buildAndSaveTranslatedEntities(</span>
+<span class="fc" id="L116">    configurationTranslationService.buildAndSaveTranslatedEntities(</span>
         newTranslatedConfigurations, EConfigurationScope.WEBSITE_CONTENT);
 
-<span class="fc" id="L118">    log.info(&quot;Added website content configurations : {}&quot;, newTranslatedConfigurations);</span>
-<span class="fc" id="L119">  }</span>
+<span class="fc" id="L119">    log.info(&quot;Added website content configurations : {}&quot;, newTranslatedConfigurations);</span>
+<span class="fc" id="L120">  }</span>
 
   private Optional&lt;Configuration&gt; findAlertConfiguration() {
-<span class="fc" id="L122">    return configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT).stream()</span>
-<span class="fc bfc" id="L123" title="All 2 branches covered.">        .filter(c -&gt; c.getKey() == EWebsiteContentConfiguration.ALERT)</span>
-<span class="fc" id="L124">        .findAny();</span>
+<span class="fc" id="L123">    return configurationRepository.inScope(EConfigurationScope.WEBSITE_CONTENT).stream()</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        .filter(c -&gt; c.getKey() == EWebsiteContentConfiguration.ALERT)</span>
+<span class="fc" id="L125">        .findAny();</span>
   }
 
   @Override
   public Optional&lt;AlertConfiguration&gt; getAlertConfiguration() {
-<span class="fc" id="L129">    return findAlertConfiguration()</span>
-<span class="fc" id="L130">        .map(c -&gt; configurationValueSerializer.deserialize(c.getValue(), AlertConfiguration.class));</span>
+<span class="fc" id="L130">    return findAlertConfiguration()</span>
+<span class="fc" id="L131">        .map(c -&gt; configurationValueSerializer.deserialize(c.getValue(), AlertConfiguration.class));</span>
   }
 
   @Override
   public AlertConfiguration putAlertConfiguration(AlertConfiguration alertConfiguration) {
-<span class="fc" id="L135">    var value = configurationValueSerializer.serialize(alertConfiguration);</span>
-<span class="fc" id="L136">    var configuration =</span>
-<span class="fc" id="L137">        findAlertConfiguration()</span>
-<span class="fc" id="L138">            .orElseGet(</span>
+<span class="fc" id="L136">    var value = configurationValueSerializer.serialize(alertConfiguration);</span>
+<span class="fc" id="L137">    var configuration =</span>
+<span class="fc" id="L138">        findAlertConfiguration()</span>
+<span class="fc" id="L139">            .orElseGet(</span>
                 () -&gt;
-<span class="fc" id="L140">                    Configuration.create(</span>
-<span class="fc" id="L141">                        UUID.randomUUID(),</span>
+<span class="fc" id="L141">                    Configuration.create(</span>
+<span class="fc" id="L142">                        UUID.randomUUID(),</span>
                         EConfigurationScope.WEBSITE_CONTENT,
                         EWebsiteContentConfiguration.ALERT,
                         value));
-<span class="fc" id="L145">    configuration.setValue(value);</span>
+<span class="fc" id="L146">    configuration.setValue(value);</span>
 
-<span class="fc" id="L147">    var saved = configurationRepository.save(configuration);</span>
+<span class="fc" id="L148">    var saved = configurationRepository.save(configuration);</span>
 
-<span class="fc" id="L149">    log.info(&quot;Alert configuration saved : {}&quot;, alertConfiguration);</span>
-<span class="fc" id="L150">    return configurationValueSerializer.deserialize(saved.getValue(), AlertConfiguration.class);</span>
+<span class="fc" id="L150">    log.info(&quot;Alert configuration saved : {}&quot;, alertConfiguration);</span>
+<span class="fc" id="L151">    return configurationValueSerializer.deserialize(saved.getValue(), AlertConfiguration.class);</span>
+  }
+
+  @Override
+  public Optional&lt;String&gt; getDisplayedAlertMessage() {
+<span class="fc" id="L156">    var now = Instant.now();</span>
+<span class="fc" id="L157">    return getAlertConfiguration()</span>
+<span class="fc" id="L158">        .filter(alert -&gt; alert.isDisplayedAt(now))</span>
+<span class="fc" id="L159">        .map(AlertConfiguration::message);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -75,12 +75,12 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.file.application.ad
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.testutils,BddLogger,0,22,0,0,0,10,0,5,0,5
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller,GroupQueryController,0,212,0,2,0,51,0,9,0,8
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.group.application.adapter.controller,GroupProvisioningController,10,108,4,8,3,24,4,7,0,5
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller,WebsiteContentController,66,61,0,0,19,19,5,5,5,5
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.application.controller,WebsiteContentController,66,75,0,0,19,22,5,6,5,6
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.domain.service,ExternalUserServiceImpl,83,196,5,9,25,57,6,15,2,12
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.domain.service,ExternalUserServiceImpl.UpsertResult,0,9,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.service,ConfigurationTranslationServiceImpl,1,142,1,1,0,44,1,12,0,12
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.service,LoggedInExternalUserServiceImpl,4,14,1,1,1,5,1,1,0,1
-avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.domain.service,WebsiteContentConfigurationServiceImpl,19,224,4,10,3,60,7,20,3,17
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.websitecontent.domain.service,WebsiteContentConfigurationServiceImpl,19,238,4,10,3,64,7,22,3,19
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.validation.infrastructure.adapter.utils,ValidationUtils,14,0,4,0,4,0,4,0,2,0
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.contextualauthorization.application.adapter.controller,ExternalUserContextualAuthorizationQueryController,0,66,0,0,0,16,0,3,0,3
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.openapi,SwaggerSchema,15,0,0,0,4,0,1,0,1,0
