@@ -12,6 +12,18 @@
     "groupIdSIScos": ["10000004", "10000005"]
   },
   {
+    "eppn": "47b4f54d-0d11-4b9f-8041-c0a249fbcbc6@recia.fr",
+    "category": "STUDENT",
+    "institutionUAIs": ["0330001C", "0350001A"],
+    "groupIdSIScos": ["10000003"]
+  },
+  {
+    "eppn": "47b4f54d-0d11-4b9f-8041-c0a249fbcbc6@recia.fr",
+    "category": "STAFF",
+    "institutionUAIs": ["0330001C"],
+    "groupIdSIScos": ["10000004", "10000005"]
+  },
+  {
     "eppn": "arthur.lambert@university.com",
     "category": "STUDENT",
     "institutionUAIs": ["0350001A"],
