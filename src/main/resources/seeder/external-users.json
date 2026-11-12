@@ -2338,5 +2338,15 @@
     "externalId": "ADMIN-0002",
     "institutionUAI": "0350002B",
     "status": "ACTIVE"
+  },
+  {
+    "eppn": "47b4f54d-0d11-4b9f-8041-c0a249fbcbc6@recia.fr",
+    "firstName": "Julien",
+    "lastName": "Gribonvald",
+    "email": "julien.gribonvald@university.com",
+    "categories": ["STUDENT", "STAFF"],
+    "externalId": "JGRI-2026-004",
+    "institutionUAI": "0330001C",
+    "status": "ACTIVE"
   }
 ]
