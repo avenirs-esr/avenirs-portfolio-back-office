@@ -8,6 +8,12 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.dto.ExternalUserImportSummaryResponse;
+import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.dto.ProvisionExternalUserRequest;
+import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.dto.ProvisionExternalUserResponse;
+import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.mapper.ExternalUserApplicationMapper;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportSummary;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.input.ExternalUserService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExternalUserAffiliationProvisioningController {
 
   private final ExternalUserAffiliationService externalUserAffiliationService;
+  private final ExternalUserService externalUserService;
 
   @Value("${admin.token:}")
   private String adminToken;
@@ -64,6 +71,34 @@ public class ExternalUserAffiliationProvisioningController {
         summary.failed().size());
 
     return ResponseEntity.ok(ExternalUserAffiliationImportSummaryResponse.from(summary));
+  }
+
+  @PreAuthorize("hasAuthority('external-user:import')")
+  @PostMapping("/provision")
+  public ResponseEntity<ProvisionExternalUserResponse> provision(
+      @RequestBody ProvisionExternalUserRequest request,
+      @RequestHeader(name = "X-ADMIN-TOKEN") String token) {
+    HttpStatus rejection = checkAdminToken(token);
+    if (rejection != null) {
+      return ResponseEntity.status(rejection).build();
+    }
+
+    log.info("Provisioning external user {} via admin endpoint", request.eppn());
+    ExternalUserImportSummary userSummary =
+        externalUserService.createAll(
+            List.of(ExternalUserApplicationMapper.toExternalUserData(request)));
+    ExternalUserAffiliationImportSummary affiliationSummary =
+        externalUserAffiliationService.createAll(
+            ExternalUserApplicationMapper.toExternalUserAffiliationData(request));
+
+    ProvisionExternalUserResponse response =
+        new ProvisionExternalUserResponse(
+            ExternalUserImportSummaryResponse.from(userSummary, externalUserAffiliationService),
+            ExternalUserAffiliationImportSummaryResponse.from(affiliationSummary));
+
+    return userSummary.failed().isEmpty() && affiliationSummary.failed().isEmpty()
+        ? ResponseEntity.ok(response)
+        : ResponseEntity.unprocessableEntity().body(response);
   }
 
   @PreAuthorize("hasAuthority('external-user:update')")
