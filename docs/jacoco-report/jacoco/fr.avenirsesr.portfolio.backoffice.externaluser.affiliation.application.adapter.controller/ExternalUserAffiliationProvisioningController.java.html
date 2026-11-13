@@ -8,6 +8,12 @@ import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationData;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationImportSummary;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
+import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.dto.ExternalUserImportSummaryResponse;
+import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.dto.ProvisionExternalUserRequest;
+import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.dto.ProvisionExternalUserResponse;
+import fr.avenirsesr.portfolio.backoffice.externaluser.application.adapter.mapper.ExternalUserApplicationMapper;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUserImportSummary;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.input.ExternalUserService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +39,14 @@ import org.springframework.web.bind.annotation.RestController;
  * idSISco), for institutions importing their affiliations in batch (e.g. from a CSV export) without
  * knowing the internal identifiers upfront.
  */
-<span class="fc" id="L36">@Slf4j</span>
+<span class="fc" id="L42">@Slf4j</span>
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/admin/external-users&quot;)
 public class ExternalUserAffiliationProvisioningController {
 
   private final ExternalUserAffiliationService externalUserAffiliationService;
+  private final ExternalUserService externalUserService;
 
   @Value(&quot;${admin.token:}&quot;)
   private String adminToken;
@@ -49,21 +56,49 @@ public class ExternalUserAffiliationProvisioningController {
   public ResponseEntity&lt;ExternalUserAffiliationImportSummaryResponse&gt; createAll(
       @RequestBody List&lt;ExternalUserAffiliationData&gt; affiliations,
       @RequestHeader(name = &quot;X-ADMIN-TOKEN&quot;) String token) {
-<span class="fc" id="L52">    HttpStatus rejection = checkAdminToken(token);</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">    if (rejection != null) {</span>
-<span class="fc" id="L54">      return ResponseEntity.status(rejection).build();</span>
+<span class="fc" id="L59">    HttpStatus rejection = checkAdminToken(token);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">    if (rejection != null) {</span>
+<span class="fc" id="L61">      return ResponseEntity.status(rejection).build();</span>
     }
 
-<span class="fc" id="L57">    log.info(&quot;Importing {} external user affiliation(s) via admin endpoint&quot;, affiliations.size());</span>
-<span class="fc" id="L58">    ExternalUserAffiliationImportSummary summary =</span>
-<span class="fc" id="L59">        externalUserAffiliationService.createAll(affiliations);</span>
-<span class="fc" id="L60">    log.info(</span>
+<span class="fc" id="L64">    log.info(&quot;Importing {} external user affiliation(s) via admin endpoint&quot;, affiliations.size());</span>
+<span class="fc" id="L65">    ExternalUserAffiliationImportSummary summary =</span>
+<span class="fc" id="L66">        externalUserAffiliationService.createAll(affiliations);</span>
+<span class="fc" id="L67">    log.info(</span>
         &quot;External user affiliation import summary: {} created, {} existing, {} failed&quot;,
-<span class="fc" id="L62">        summary.created().size(),</span>
-<span class="fc" id="L63">        summary.existing().size(),</span>
-<span class="fc" id="L64">        summary.failed().size());</span>
+<span class="fc" id="L69">        summary.created().size(),</span>
+<span class="fc" id="L70">        summary.existing().size(),</span>
+<span class="fc" id="L71">        summary.failed().size());</span>
 
-<span class="fc" id="L66">    return ResponseEntity.ok(ExternalUserAffiliationImportSummaryResponse.from(summary));</span>
+<span class="fc" id="L73">    return ResponseEntity.ok(ExternalUserAffiliationImportSummaryResponse.from(summary));</span>
+  }
+
+  @PreAuthorize(&quot;hasAuthority('external-user:import')&quot;)
+  @PostMapping(&quot;/provision&quot;)
+  public ResponseEntity&lt;ProvisionExternalUserResponse&gt; provision(
+      @RequestBody ProvisionExternalUserRequest request,
+      @RequestHeader(name = &quot;X-ADMIN-TOKEN&quot;) String token) {
+<span class="fc" id="L81">    HttpStatus rejection = checkAdminToken(token);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">    if (rejection != null) {</span>
+<span class="fc" id="L83">      return ResponseEntity.status(rejection).build();</span>
+    }
+
+<span class="fc" id="L86">    log.info(&quot;Provisioning external user {} via admin endpoint&quot;, request.eppn());</span>
+<span class="fc" id="L87">    ExternalUserImportSummary userSummary =</span>
+<span class="fc" id="L88">        externalUserService.createAll(</span>
+<span class="fc" id="L89">            List.of(ExternalUserApplicationMapper.toExternalUserData(request)));</span>
+<span class="fc" id="L90">    ExternalUserAffiliationImportSummary affiliationSummary =</span>
+<span class="fc" id="L91">        externalUserAffiliationService.createAll(</span>
+<span class="fc" id="L92">            ExternalUserApplicationMapper.toExternalUserAffiliationData(request));</span>
+
+<span class="fc" id="L94">    ProvisionExternalUserResponse response =</span>
+        new ProvisionExternalUserResponse(
+<span class="fc" id="L96">            ExternalUserImportSummaryResponse.from(userSummary, externalUserAffiliationService),</span>
+<span class="fc" id="L97">            ExternalUserAffiliationImportSummaryResponse.from(affiliationSummary));</span>
+
+<span class="pc bpc" id="L99" title="1 of 4 branches missed.">    return userSummary.failed().isEmpty() &amp;&amp; affiliationSummary.failed().isEmpty()</span>
+<span class="fc" id="L100">        ? ResponseEntity.ok(response)</span>
+<span class="fc" id="L101">        : ResponseEntity.unprocessableEntity().body(response);</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('external-user:update')&quot;)
@@ -72,23 +107,23 @@ public class ExternalUserAffiliationProvisioningController {
       @PathVariable UUID externalUserId,
       @RequestBody AddExternalUserAffiliationRequest request,
       @RequestHeader(name = &quot;X-ADMIN-TOKEN&quot;) String token) {
-<span class="fc" id="L75">    HttpStatus rejection = checkAdminToken(token);</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">    if (rejection != null) {</span>
-<span class="fc" id="L77">      return ResponseEntity.status(rejection).build();</span>
+<span class="fc" id="L110">    HttpStatus rejection = checkAdminToken(token);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">    if (rejection != null) {</span>
+<span class="fc" id="L112">      return ResponseEntity.status(rejection).build();</span>
     }
 
-<span class="fc" id="L80">    log.debug(</span>
+<span class="fc" id="L115">    log.debug(</span>
         &quot;Adding affiliation for external user: {} to institution: {}, group: {}&quot;,
         externalUserId,
-<span class="fc" id="L83">        request.institutionId(),</span>
-<span class="fc" id="L84">        request.groupId());</span>
+<span class="fc" id="L118">        request.institutionId(),</span>
+<span class="fc" id="L119">        request.groupId());</span>
 
-<span class="fc" id="L86">    ExternalUserAffiliation affiliation =</span>
-<span class="fc" id="L87">        externalUserAffiliationService.addAffiliation(</span>
-<span class="fc" id="L88">            externalUserId, request.institutionId(), request.groupId(), request.category());</span>
+<span class="fc" id="L121">    ExternalUserAffiliation affiliation =</span>
+<span class="fc" id="L122">        externalUserAffiliationService.addAffiliation(</span>
+<span class="fc" id="L123">            externalUserId, request.institutionId(), request.groupId(), request.category());</span>
 
-<span class="fc" id="L90">    return ResponseEntity.status(HttpStatus.CREATED)</span>
-<span class="fc" id="L91">        .body(ExternalUserAffiliationApplicationMapper.toExternalUserAffiliationDTO(affiliation));</span>
+<span class="fc" id="L125">    return ResponseEntity.status(HttpStatus.CREATED)</span>
+<span class="fc" id="L126">        .body(ExternalUserAffiliationApplicationMapper.toExternalUserAffiliationDTO(affiliation));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('external-user:update')&quot;)
@@ -97,26 +132,26 @@ public class ExternalUserAffiliationProvisioningController {
       @PathVariable UUID externalUserId,
       @PathVariable UUID affiliationId,
       @RequestHeader(name = &quot;X-ADMIN-TOKEN&quot;) String token) {
-<span class="fc" id="L100">    HttpStatus rejection = checkAdminToken(token);</span>
-<span class="pc bpc" id="L101" title="1 of 2 branches missed.">    if (rejection != null) {</span>
-<span class="nc" id="L102">      return ResponseEntity.status(rejection).build();</span>
+<span class="fc" id="L135">    HttpStatus rejection = checkAdminToken(token);</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">    if (rejection != null) {</span>
+<span class="nc" id="L137">      return ResponseEntity.status(rejection).build();</span>
     }
 
-<span class="fc" id="L105">    log.debug(&quot;Removing affiliation: {} for external user: {}&quot;, affiliationId, externalUserId);</span>
+<span class="fc" id="L140">    log.debug(&quot;Removing affiliation: {} for external user: {}&quot;, affiliationId, externalUserId);</span>
 
-<span class="fc" id="L107">    externalUserAffiliationService.removeAffiliation(externalUserId, affiliationId);</span>
+<span class="fc" id="L142">    externalUserAffiliationService.removeAffiliation(externalUserId, affiliationId);</span>
 
-<span class="fc" id="L109">    return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L144">    return ResponseEntity.noContent().build();</span>
   }
 
   private HttpStatus checkAdminToken(String token) {
-<span class="pc bpc" id="L113" title="2 of 4 branches missed.">    if (adminToken == null || adminToken.isBlank()) {</span>
-<span class="nc" id="L114">      return HttpStatus.SERVICE_UNAVAILABLE;</span>
+<span class="pc bpc" id="L148" title="2 of 4 branches missed.">    if (adminToken == null || adminToken.isBlank()) {</span>
+<span class="nc" id="L149">      return HttpStatus.SERVICE_UNAVAILABLE;</span>
     }
-<span class="fc bfc" id="L116" title="All 2 branches covered.">    if (!adminToken.equals(token)) {</span>
-<span class="fc" id="L117">      return HttpStatus.FORBIDDEN;</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">    if (!adminToken.equals(token)) {</span>
+<span class="fc" id="L152">      return HttpStatus.FORBIDDEN;</span>
     }
-<span class="fc" id="L119">    return null;</span>
+<span class="fc" id="L154">    return null;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
