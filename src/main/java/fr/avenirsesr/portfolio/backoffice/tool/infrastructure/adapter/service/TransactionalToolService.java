@@ -2,6 +2,8 @@ package fr.avenirsesr.portfolio.backoffice.tool.infrastructure.adapter.service;
 
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
+import fr.avenirsesr.portfolio.common.file.domain.model.File;
+import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,5 +34,31 @@ public class TransactionalToolService implements ToolService {
   @Transactional
   public Tool updateLocalTool(UUID toolId, String name, String description, String url) {
     return delegate.updateLocalTool(toolId, name, description, url);
+  }
+
+  @Override
+  @Transactional
+  public File uploadNationalToolBanner(
+      UUID toolId, String fileName, String mimeType, long size, FileContent content) {
+    return delegate.uploadNationalToolBanner(toolId, fileName, mimeType, size, content);
+  }
+
+  @Override
+  @Transactional
+  public File uploadLocalToolBanner(
+      UUID toolId, String fileName, String mimeType, long size, FileContent content) {
+    return delegate.uploadLocalToolBanner(toolId, fileName, mimeType, size, content);
+  }
+
+  @Override
+  @Transactional
+  public void deleteNationalToolBanner(UUID toolId) {
+    delegate.deleteNationalToolBanner(toolId);
+  }
+
+  @Override
+  @Transactional
+  public void deleteLocalToolBanner(UUID toolId) {
+    delegate.deleteLocalToolBanner(toolId);
   }
 }

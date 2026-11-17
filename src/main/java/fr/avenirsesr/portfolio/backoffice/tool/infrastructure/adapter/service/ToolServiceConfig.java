@@ -6,6 +6,7 @@ import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.Logge
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.service.ToolServiceImpl;
+import fr.avenirsesr.portfolio.common.file.domain.port.input.FileResourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ public class ToolServiceConfig {
   private final InstitutionRepository institutionRepository;
   private final ExternalUserAffiliationService externalUserAffiliationService;
   private final LoggedInExternalUserService loggedInExternalUserService;
+  private final FileResourceService fileResourceService;
 
   @Bean
   public ToolService toolService() {
@@ -25,6 +27,7 @@ public class ToolServiceConfig {
             toolRepository,
             institutionRepository,
             externalUserAffiliationService,
-            loggedInExternalUserService));
+            loggedInExternalUserService,
+            fileResourceService));
   }
 }

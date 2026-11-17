@@ -3,6 +3,8 @@ package fr.avenirsesr.portfolio.backoffice.tool.domain.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -22,8 +24,11 @@ import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.Too
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.FieldValidationException;
 import fr.avenirsesr.portfolio.common.error.domain.model.enums.EErrorCode;
+import fr.avenirsesr.portfolio.common.file.domain.exception.FileTypeNotSupportedException;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
+import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
 import fr.avenirsesr.portfolio.common.file.domain.model.enums.EFileType;
+import fr.avenirsesr.portfolio.common.file.domain.port.input.FileResourceService;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
@@ -35,6 +40,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,11 +51,16 @@ class ToolServiceImplTest {
   private static final String NAME = "Moodle";
   private static final String DESCRIPTION = "Plateforme de cours en ligne";
   private static final String URL = "https://moodle.example.fr";
+  private static final String BANNER_NAME = "banner.png";
+  private static final String PNG = "image/png";
+  private static final long BANNER_SIZE = 1024L;
+  private static final FileContent BANNER_CONTENT = FileContent.ofBytes(new byte[] {1, 2, 3});
 
   @Mock private ToolRepository toolRepository;
   @Mock private InstitutionRepository institutionRepository;
   @Mock private ExternalUserAffiliationService externalUserAffiliationService;
   @Mock private LoggedInExternalUserService loggedInExternalUserService;
+  @Mock private FileResourceService fileResourceService;
 
   @InjectMocks private ToolServiceImpl service;
 
@@ -103,6 +114,12 @@ class ToolServiceImplTest {
     Tool tool = Tool.create(NAME, DESCRIPTION, URL, banner, institution);
     when(toolRepository.findById(tool.getId())).thenReturn(Optional.of(tool));
     return tool;
+  }
+
+  private void uploadingReturns(File uploaded) {
+    when(fileResourceService.upload(
+            eq(BANNER_NAME), eq(PNG), eq(BANNER_SIZE), any(FileContent.class), eq(false)))
+        .thenReturn(uploaded);
   }
 
   private void savingReturnsTheTool() {
@@ -464,6 +481,201 @@ class ToolServiceImplTest {
 
       BddLogger.then("it should report the tool as not found, without checking the staff scope");
       verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+    }
+  }
+
+  @Nested
+  class WhenManagingTheBannerOfANationalTool {
+
+    @Test
+    void thenItShouldUploadAnImageAsAPublicFileAndAttachIt() {
+      BddLogger.given("an existing national tool without banner");
+      Tool existing = existingTool(null, null);
+      File uploaded = banner();
+      uploadingReturns(uploaded);
+
+      BddLogger.when("uploading a png banner");
+      File result =
+          service.uploadNationalToolBanner(
+              existing.getId(), BANNER_NAME, PNG, BANNER_SIZE, BANNER_CONTENT);
+
+      BddLogger.then("it should store it unrestricted and attach it to the tool");
+      assertThat(result).isEqualTo(uploaded);
+      assertThat(existing.getBanner()).contains(uploaded);
+      verify(toolRepository).save(existing);
+      verify(fileResourceService, never()).delete(any());
+    }
+
+    @Test
+    void thenItShouldDeleteThePreviousBannerOnceTheToolPointsToTheNewOne() {
+      BddLogger.given("an existing national tool with a banner");
+      File previous = banner();
+      Tool existing = existingTool(previous, null);
+      File uploaded = banner();
+      uploadingReturns(uploaded);
+
+      BddLogger.when("uploading another banner");
+      service.uploadNationalToolBanner(
+          existing.getId(), BANNER_NAME, PNG, BANNER_SIZE, BANNER_CONTENT);
+
+      BddLogger.then("it should save the tool with the new banner, then delete the previous one");
+      InOrder order = inOrder(fileResourceService, toolRepository);
+      order
+          .verify(fileResourceService)
+          .upload(eq(BANNER_NAME), eq(PNG), eq(BANNER_SIZE), any(FileContent.class), eq(false));
+      order.verify(toolRepository).save(existing);
+      order.verify(fileResourceService).delete(previous.getId());
+      assertThat(existing.getBanner()).contains(uploaded);
+    }
+
+    @Test
+    void thenItShouldRejectAFileThatIsNotAnImage() {
+      BddLogger.when("uploading a pdf as the banner of a tool");
+      assertThrows(
+          FileTypeNotSupportedException.class,
+          () ->
+              service.uploadNationalToolBanner(
+                  UUID.randomUUID(), "banner.pdf", "application/pdf", BANNER_SIZE, BANNER_CONTENT));
+
+      BddLogger.then("it should be rejected before any lookup nor upload");
+      verifyNoInteractions(toolRepository, fileResourceService);
+    }
+
+    @Test
+    void thenItShouldRefuseTheBannerOfAToolAttachedToAnInstitution() {
+      BddLogger.given("an existing regional tool");
+      Tool existing = existingTool(null, primaryInstitution());
+
+      BddLogger.when("uploading its banner as a national tool");
+      assertThrows(
+          UserNotAuthorizedException.class,
+          () ->
+              service.uploadNationalToolBanner(
+                  existing.getId(), BANNER_NAME, PNG, BANNER_SIZE, BANNER_CONTENT));
+
+      BddLogger.then("it should be refused, without uploading anything");
+      verifyNoInteractions(fileResourceService);
+    }
+
+    @Test
+    void thenItShouldDetachTheBannerBeforeDeletingIt() {
+      BddLogger.given("an existing national tool with a banner");
+      File banner = banner();
+      Tool existing = existingTool(banner, null);
+
+      BddLogger.when("deleting its banner");
+      service.deleteNationalToolBanner(existing.getId());
+
+      BddLogger.then("it should save the tool without banner, then delete the file");
+      assertThat(existing.getBanner()).isEmpty();
+      InOrder order = inOrder(toolRepository, fileResourceService);
+      order.verify(toolRepository).save(existing);
+      order.verify(fileResourceService).delete(banner.getId());
+    }
+
+    @Test
+    void thenItShouldDoNothing_whenTheToolHasNoBanner() {
+      BddLogger.given("an existing national tool without banner");
+      Tool existing = existingTool(null, null);
+
+      BddLogger.when("deleting its banner");
+      service.deleteNationalToolBanner(existing.getId());
+
+      BddLogger.then("it should neither save the tool nor delete any file");
+      verify(toolRepository, never()).save(any());
+      verifyNoInteractions(fileResourceService);
+    }
+  }
+
+  @Nested
+  class WhenManagingTheBannerOfALocalTool {
+
+    @Test
+    void thenItShouldUploadTheBannerOfAToolWithinTheStaffScope() {
+      BddLogger.given("an existing local tool of an institution accessible to the staff");
+      Institution institution = secondaryInstitution(primaryInstitution());
+      Tool existing = existingTool(null, institution);
+      staffHasAccessTo(institution, true);
+      File uploaded = banner();
+      uploadingReturns(uploaded);
+
+      BddLogger.when("uploading its banner");
+      File result =
+          service.uploadLocalToolBanner(
+              existing.getId(), BANNER_NAME, PNG, BANNER_SIZE, BANNER_CONTENT);
+
+      BddLogger.then("it should attach the uploaded banner to the tool");
+      assertThat(result).isEqualTo(uploaded);
+      assertThat(existing.getBanner()).contains(uploaded);
+      verify(toolRepository).save(existing);
+    }
+
+    @Test
+    void thenItShouldRefuseToUploadTheBannerOfAToolOutsideTheStaffScope() {
+      BddLogger.given("an existing tool of an institution the staff has no access to");
+      Institution institution = primaryInstitution();
+      Tool existing = existingTool(null, institution);
+      staffHasAccessTo(institution, false);
+
+      BddLogger.when("uploading its banner");
+      assertThrows(
+          UserNotAuthorizedException.class,
+          () ->
+              service.uploadLocalToolBanner(
+                  existing.getId(), BANNER_NAME, PNG, BANNER_SIZE, BANNER_CONTENT));
+
+      BddLogger.then("it should be refused, without uploading anything");
+      verifyNoInteractions(fileResourceService);
+    }
+
+    @Test
+    void thenItShouldRefuseToUploadTheBannerOfANationalTool() {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null, null);
+
+      BddLogger.when("uploading its banner as a local tool");
+      assertThrows(
+          UserNotAuthorizedException.class,
+          () ->
+              service.uploadLocalToolBanner(
+                  existing.getId(), BANNER_NAME, PNG, BANNER_SIZE, BANNER_CONTENT));
+
+      BddLogger.then("it should be refused, without uploading anything");
+      verifyNoInteractions(fileResourceService);
+    }
+
+    @Test
+    void thenItShouldDeleteTheBannerOfAToolWithinTheStaffScope() {
+      BddLogger.given("an existing regional tool with a banner, accessible to the staff");
+      Institution institution = primaryInstitution();
+      File banner = banner();
+      Tool existing = existingTool(banner, institution);
+      staffHasAccessTo(institution, true);
+
+      BddLogger.when("deleting its banner");
+      service.deleteLocalToolBanner(existing.getId());
+
+      BddLogger.then("it should detach the banner and delete the file");
+      assertThat(existing.getBanner()).isEmpty();
+      verify(toolRepository).save(existing);
+      verify(fileResourceService).delete(banner.getId());
+    }
+
+    @Test
+    void thenItShouldRefuseToDeleteTheBannerOfAToolOutsideTheStaffScope() {
+      BddLogger.given("an existing tool with a banner, of an institution out of the staff scope");
+      Institution institution = primaryInstitution();
+      Tool existing = existingTool(banner(), institution);
+      staffHasAccessTo(institution, false);
+
+      BddLogger.when("deleting its banner");
+      assertThrows(
+          UserNotAuthorizedException.class, () -> service.deleteLocalToolBanner(existing.getId()));
+
+      BddLogger.then("it should be refused, keeping the banner");
+      assertThat(existing.getBanner()).isPresent();
+      verifyNoInteractions(fileResourceService);
+      verify(toolRepository, never()).save(any());
     }
   }
 }
