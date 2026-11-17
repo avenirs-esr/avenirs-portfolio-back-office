@@ -15,12 +15,15 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.Instituti
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
+import fr.avenirsesr.portfolio.backoffice.tool.domain.exception.ToolNotFoundException;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.FieldValidationException;
 import fr.avenirsesr.portfolio.common.error.domain.model.enums.EErrorCode;
+import fr.avenirsesr.portfolio.common.file.domain.model.File;
+import fr.avenirsesr.portfolio.common.file.domain.model.enums.EFileType;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
@@ -83,6 +86,23 @@ class ToolServiceImplTest {
         "Ethan",
         "Perrin",
         EUserStatus.ACTIVE);
+  }
+
+  private static File banner() {
+    return File.create(
+        UUID.randomUUID(),
+        EFileType.PNG,
+        "banner.png",
+        1024,
+        "banner.png",
+        UUID.randomUUID(),
+        false);
+  }
+
+  private Tool existingTool(File banner, Institution institution) {
+    Tool tool = Tool.create(NAME, DESCRIPTION, URL, banner, institution);
+    when(toolRepository.findById(tool.getId())).thenReturn(Optional.of(tool));
+    return tool;
   }
 
   private void savingReturnsTheTool() {
@@ -302,6 +322,148 @@ class ToolServiceImplTest {
 
       BddLogger.then("it should be rejected before any lookup");
       verifyNoInteractions(toolRepository, institutionRepository, loggedInExternalUserService);
+    }
+  }
+
+  @Nested
+  class WhenUpdatingANationalTool {
+
+    @Test
+    void thenItShouldReplaceTheInformationWithTheTrimmedOnes() {
+      BddLogger.given("an existing national tool with a banner");
+      File banner = banner();
+      Tool existing = existingTool(banner, null);
+      savingReturnsTheTool();
+
+      BddLogger.when("updating it with new information surrounded by blanks");
+      Tool tool =
+          service.updateNationalTool(
+              existing.getId(), " Moodle 2 ", "Nouvelle description ", " https://new.example.fr");
+
+      BddLogger.then("it should save the same tool holding the trimmed information");
+      assertThat(tool.getId()).isEqualTo(existing.getId());
+      assertThat(tool.getName()).isEqualTo("Moodle 2");
+      assertThat(tool.getDescription()).isEqualTo("Nouvelle description");
+      assertThat(tool.getUrl()).isEqualTo("https://new.example.fr");
+      assertThat(tool.getType()).isEqualTo(EToolType.NATIONAL);
+      assertThat(tool.getBanner()).contains(banner);
+      verify(toolRepository).save(existing);
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+    }
+
+    @Test
+    void thenItShouldRefuseAToolAttachedToAnInstitution() {
+      BddLogger.given("an existing regional tool");
+      Tool existing = existingTool(null, primaryInstitution());
+
+      BddLogger.when("updating it as a national tool");
+      assertThrows(
+          UserNotAuthorizedException.class,
+          () -> service.updateNationalTool(existing.getId(), NAME, DESCRIPTION, URL));
+
+      BddLogger.then("it should be refused, without saving anything");
+      verify(toolRepository, never()).save(any());
+    }
+
+    @Test
+    void thenItShouldRejectAnUnknownTool() {
+      BddLogger.given("a tool id matching no tool");
+      UUID toolId = UUID.randomUUID();
+      when(toolRepository.findById(toolId)).thenReturn(Optional.empty());
+
+      BddLogger.when("updating it as a national tool");
+      assertThrows(
+          ToolNotFoundException.class,
+          () -> service.updateNationalTool(toolId, NAME, DESCRIPTION, URL));
+
+      BddLogger.then("it should report the tool as not found, without saving anything");
+      verify(toolRepository, never()).save(any());
+    }
+
+    @Test
+    void thenItShouldValidateTheFieldsBeforeResolvingTheTool() {
+      BddLogger.when("updating a tool with a too long description");
+      FieldValidationException exception =
+          assertThrows(
+              FieldValidationException.class,
+              () -> service.updateNationalTool(UUID.randomUUID(), NAME, "a".repeat(201), URL));
+
+      BddLogger.then("it should be rejected as too long, before any lookup");
+      assertThat(exception.getErrorCode()).isEqualTo(EErrorCode.TOO_LONG);
+      verifyNoInteractions(toolRepository);
+    }
+  }
+
+  @Nested
+  class WhenUpdatingALocalTool {
+
+    @Test
+    void thenItShouldReplaceTheInformationAndKeepTheInstitution() {
+      BddLogger.given("an existing local tool of an institution accessible to the staff");
+      Institution institution = secondaryInstitution(primaryInstitution());
+      Tool existing = existingTool(null, institution);
+      staffHasAccessTo(institution, true);
+      savingReturnsTheTool();
+
+      BddLogger.when("updating it");
+      Tool tool =
+          service.updateLocalTool(
+              existing.getId(), "Moodle 2", "Nouvelle description", "https://new.example.fr");
+
+      BddLogger.then("it should save the new information and keep its institution and type");
+      assertThat(tool.getName()).isEqualTo("Moodle 2");
+      assertThat(tool.getDescription()).isEqualTo("Nouvelle description");
+      assertThat(tool.getUrl()).isEqualTo("https://new.example.fr");
+      assertThat(tool.getInstitution()).contains(institution);
+      assertThat(tool.getType()).isEqualTo(EToolType.LOCAL);
+      verify(toolRepository).save(existing);
+      verifyNoInteractions(institutionRepository);
+    }
+
+    @Test
+    void thenItShouldRefuseANationalTool() {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null, null);
+
+      BddLogger.when("updating it as a local tool");
+      assertThrows(
+          UserNotAuthorizedException.class,
+          () -> service.updateLocalTool(existing.getId(), NAME, DESCRIPTION, URL));
+
+      BddLogger.then("it should be refused, without checking the staff scope nor saving");
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+      verify(toolRepository, never()).save(any());
+    }
+
+    @Test
+    void thenItShouldRefuseAToolOutsideTheStaffScope() {
+      BddLogger.given("an existing tool of an institution the staff has no access to");
+      Institution institution = primaryInstitution();
+      Tool existing = existingTool(null, institution);
+      staffHasAccessTo(institution, false);
+
+      BddLogger.when("updating it");
+      assertThrows(
+          UserNotAuthorizedException.class,
+          () -> service.updateLocalTool(existing.getId(), NAME, DESCRIPTION, URL));
+
+      BddLogger.then("it should be refused, without saving anything");
+      verify(toolRepository, never()).save(any());
+    }
+
+    @Test
+    void thenItShouldRejectAnUnknownTool() {
+      BddLogger.given("a tool id matching no tool");
+      UUID toolId = UUID.randomUUID();
+      when(toolRepository.findById(toolId)).thenReturn(Optional.empty());
+
+      BddLogger.when("updating it as a local tool");
+      assertThrows(
+          ToolNotFoundException.class,
+          () -> service.updateLocalTool(toolId, NAME, DESCRIPTION, URL));
+
+      BddLogger.then("it should report the tool as not found, without checking the staff scope");
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
     }
   }
 }

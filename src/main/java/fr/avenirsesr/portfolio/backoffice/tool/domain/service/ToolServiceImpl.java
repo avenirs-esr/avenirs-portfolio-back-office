@@ -6,6 +6,8 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.Instituti
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
+import fr.avenirsesr.portfolio.backoffice.tool.domain.exception.ToolNotFoundException;
+import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
@@ -58,6 +60,54 @@ public class ToolServiceImpl implements ToolService {
     return tool;
   }
 
+  @Override
+  public Tool updateNationalTool(UUID toolId, String name, String description, String url) {
+    validateFields(name, description, url);
+
+    Tool tool = findTool(toolId);
+    if (tool.getType() != EToolType.NATIONAL) {
+      log.warn("Tool {} is {} and cannot be updated as a national tool", toolId, tool.getType());
+      throw new UserNotAuthorizedException("Only a national tool can be updated as such");
+    }
+
+    Tool updated = toolRepository.save(applyFields(tool, name, description, url));
+    log.info("National tool {} updated", toolId);
+
+    return updated;
+  }
+
+  @Override
+  public Tool updateLocalTool(UUID toolId, String name, String description, String url) {
+    validateFields(name, description, url);
+
+    Tool tool = findTool(toolId);
+    Institution institution =
+        tool.getInstitution()
+            .orElseThrow(
+                () -> {
+                  log.warn("Tool {} is national and cannot be updated as a local tool", toolId);
+                  return new UserNotAuthorizedException(
+                      "A national tool cannot be updated as a local tool");
+                });
+    requireStaffAccess(institution);
+
+    Tool updated = toolRepository.save(applyFields(tool, name, description, url));
+    log.info("{} tool {} updated", updated.getType(), toolId);
+
+    return updated;
+  }
+
+  private Tool findTool(UUID toolId) {
+    return toolRepository.findById(toolId).orElseThrow(ToolNotFoundException::new);
+  }
+
+  private static Tool applyFields(Tool tool, String name, String description, String url) {
+    tool.setName(name.trim());
+    tool.setDescription(description.trim());
+    tool.setUrl(url.trim());
+    return tool;
+  }
+
   private static void validateFields(String name, String description, String url) {
     FieldValidationUtils.requireNotBlankAndMaxLength("name", name, NAME_MAX_LENGTH);
     FieldValidationUtils.requireNotBlankAndMaxLength(
@@ -71,7 +121,7 @@ public class ToolServiceImpl implements ToolService {
     if (!externalUserAffiliationService.staffHasAccess(
         staff.getEppn(), List.of(institution.getId()), List.of())) {
       log.warn(
-          "Staff {} is not allowed to create a tool for institution {}",
+          "Staff {} is not allowed to manage the tools of institution {}",
           staff.getId(),
           institution.getId());
       throw new UserNotAuthorizedException(
