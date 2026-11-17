@@ -1,9 +1,5 @@
 package fr.avenirsesr.portfolio.backoffice.tool.domain.service;
 
-import static fr.avenirsesr.portfolio.common.validation.domain.utils.FieldValidationUtils.requireNotBlankAndMaxLength;
-import static fr.avenirsesr.portfolio.common.validation.domain.utils.FieldValidationUtils.requireNotNull;
-import static fr.avenirsesr.portfolio.common.validation.domain.utils.FieldValidationUtils.validateUrl;
-
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotFoundException;
@@ -14,6 +10,7 @@ import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
 import fr.avenirsesr.portfolio.common.security.domain.exception.UserNotAuthorizedException;
+import fr.avenirsesr.portfolio.common.validation.domain.utils.FieldValidationUtils;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -45,7 +42,7 @@ public class ToolServiceImpl implements ToolService {
   @Override
   public Tool createLocalTool(String name, String description, String url, UUID institutionId) {
     validateFields(name, description, url);
-    requireNotNull("institutionId", institutionId);
+    FieldValidationUtils.requireNotNull("institutionId", institutionId);
 
     Institution institution =
         institutionRepository
@@ -62,10 +59,11 @@ public class ToolServiceImpl implements ToolService {
   }
 
   private static void validateFields(String name, String description, String url) {
-    requireNotBlankAndMaxLength("name", name, NAME_MAX_LENGTH);
-    requireNotBlankAndMaxLength("description", description, DESCRIPTION_MAX_LENGTH);
-    requireNotBlankAndMaxLength("url", url, URL_MAX_LENGTH);
-    validateUrl(url.trim());
+    FieldValidationUtils.requireNotBlankAndMaxLength("name", name, NAME_MAX_LENGTH);
+    FieldValidationUtils.requireNotBlankAndMaxLength(
+        "description", description, DESCRIPTION_MAX_LENGTH);
+    FieldValidationUtils.requireNotBlankAndMaxLength("url", url, URL_MAX_LENGTH);
+    FieldValidationUtils.validateUrl(url.trim());
   }
 
   private void requireStaffAccess(Institution institution) {
