@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 public final class FieldValidationUtils {
 
   public static void requireNotBlankAndMaxLength(String fieldName, String value, int maxLength) {
-<span class="nc bnc" id="L14" title="All 4 branches missed.">    if (value == null || value.trim().isEmpty()) {</span>
-<span class="nc" id="L15">      throw new FieldValidationException(EErrorCode.NOT_BLANK, fieldName);</span>
+<span class="fc bfc" id="L14" title="All 4 branches covered.">    if (value == null || value.trim().isEmpty()) {</span>
+<span class="fc" id="L15">      throw new FieldValidationException(EErrorCode.NOT_BLANK, fieldName);</span>
     }
 
-<span class="nc" id="L18">    String trimmed = value.trim();</span>
-<span class="nc bnc" id="L19" title="All 2 branches missed.">    if (trimmed.length() &gt; maxLength) {</span>
-<span class="nc" id="L20">      throw new FieldValidationException(EErrorCode.TOO_LONG, fieldName);</span>
+<span class="fc" id="L18">    String trimmed = value.trim();</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">    if (trimmed.length() &gt; maxLength) {</span>
+<span class="fc" id="L20">      throw new FieldValidationException(EErrorCode.TOO_LONG, fieldName);</span>
     }
-<span class="nc" id="L22">  }</span>
+<span class="fc" id="L22">  }</span>
 
   public static void requireNotBlankAndEnrichedMaxLength(
       String fieldName, String value, int maxLength) {
@@ -57,17 +57,17 @@ public final class FieldValidationUtils {
 <span class="nc" id="L57">  }</span>
 
   public static void validateUrl(String url) {
-<span class="nc bnc" id="L60" title="All 4 branches missed.">    if (url == null || url.trim().isEmpty()) {</span>
+<span class="pc bpc" id="L60" title="2 of 4 branches missed.">    if (url == null || url.trim().isEmpty()) {</span>
 <span class="nc" id="L61">      return;</span>
     }
     try {
-<span class="nc" id="L64">      URI uri = new java.net.URI(url);</span>
-<span class="nc bnc" id="L65" title="All 2 branches missed.">      if (uri.getScheme() == null) throw new FieldValidationException(EErrorCode.NOT_URL, url);</span>
-<span class="nc" id="L66">      uri.toURL();</span>
-<span class="nc" id="L67">    } catch (Exception e) {</span>
-<span class="nc" id="L68">      throw new FieldValidationException(EErrorCode.NOT_URL, url);</span>
-<span class="nc" id="L69">    }</span>
-<span class="nc" id="L70">  }</span>
+<span class="fc" id="L64">      URI uri = new java.net.URI(url);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">      if (uri.getScheme() == null) throw new FieldValidationException(EErrorCode.NOT_URL, url);</span>
+<span class="fc" id="L66">      uri.toURL();</span>
+<span class="fc" id="L67">    } catch (Exception e) {</span>
+<span class="fc" id="L68">      throw new FieldValidationException(EErrorCode.NOT_URL, url);</span>
+<span class="fc" id="L69">    }</span>
+<span class="fc" id="L70">  }</span>
 
   public static &lt;T&gt; void requireNotNull(String fieldName, T value) {
 <span class="fc bfc" id="L73" title="All 2 branches covered.">    if (value == null) {</span>
