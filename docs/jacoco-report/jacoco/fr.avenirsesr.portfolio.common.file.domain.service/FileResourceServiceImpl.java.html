@@ -25,25 +25,25 @@ public class FileResourceServiceImpl implements FileResourceService {
   @Override
   public File upload(
       String fileName, String mimeType, long size, FileContent content, boolean isRestricted) {
-<span class="fc" id="L28">    var uploadedById = fileUploaderProvider.currentUploaderId();</span>
-<span class="fc" id="L29">    var fileType = EFileType.fromMimeType(mimeType);</span>
+<span class="nc" id="L28">    var uploadedById = fileUploaderProvider.currentUploaderId();</span>
+<span class="nc" id="L29">    var fileType = EFileType.fromMimeType(mimeType);</span>
 
-<span class="pc bpc" id="L31" title="1 of 2 branches missed.">    if (fileType.getSizeLimit().isLessThan(size)) {</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">    if (fileType.getSizeLimit().isLessThan(size)) {</span>
 <span class="nc" id="L32">      throw new FileSizeTooBigException();</span>
     }
 
-<span class="fc" id="L35">    var fileResource = new FileResource(UUID.randomUUID(), fileName, fileType, size, content);</span>
-<span class="fc" id="L36">    var uri = fileStorageService.upload(fileResource);</span>
-<span class="fc" id="L37">    var file =</span>
-<span class="fc" id="L38">        File.create(</span>
-<span class="fc" id="L39">            fileResource.id(),</span>
-<span class="fc" id="L40">            fileResource.fileType(),</span>
-<span class="fc" id="L41">            fileResource.fileName(),</span>
-<span class="fc" id="L42">            fileResource.size(),</span>
+<span class="nc" id="L35">    var fileResource = new FileResource(UUID.randomUUID(), fileName, fileType, size, content);</span>
+<span class="nc" id="L36">    var uri = fileStorageService.upload(fileResource);</span>
+<span class="nc" id="L37">    var file =</span>
+<span class="nc" id="L38">        File.create(</span>
+<span class="nc" id="L39">            fileResource.id(),</span>
+<span class="nc" id="L40">            fileResource.fileType(),</span>
+<span class="nc" id="L41">            fileResource.fileName(),</span>
+<span class="nc" id="L42">            fileResource.size(),</span>
             uri,
             uploadedById,
             isRestricted);
-<span class="fc" id="L46">    return fileRepository.save(file);</span>
+<span class="nc" id="L46">    return fileRepository.save(file);</span>
   }
 
   @Override
@@ -87,11 +87,11 @@ public class FileResourceServiceImpl implements FileResourceService {
 
   @Override
   public void delete(UUID fileId) {
-<span class="fc" id="L90">    var file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
+<span class="nc" id="L90">    var file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);</span>
 
-<span class="fc" id="L92">    fileRepository.removeFromDatabase(file);</span>
-<span class="fc" id="L93">    fileStorageService.delete(file.getUri());</span>
-<span class="fc" id="L94">    log.info(&quot;File deleted: {}&quot;, file);</span>
-<span class="fc" id="L95">  }</span>
+<span class="nc" id="L92">    fileRepository.removeFromDatabase(file);</span>
+<span class="nc" id="L93">    fileStorageService.delete(file.getUri());</span>
+<span class="nc" id="L94">    log.info(&quot;File deleted: {}&quot;, file);</span>
+<span class="nc" id="L95">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
