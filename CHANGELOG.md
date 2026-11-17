@@ -7,6 +7,29 @@ and [Conventional Commits](https://www.conventionalcommits.org/) standard.
 ---
 
 
+## [v1.0.9] - 2026-11-17
+
+- **Files owned by the back office**
+    - The terms of use are registered and stored by this service, through the file registry of
+      `avenirs-portfolio-common`, instead of being relayed to the portfolio api over HTTP.
+      `ApiFileClient` is gone.
+    - New endpoints `POST back-office/files` and `GET back-office/storage/{fileId}`, both behind
+      authentication. The `url` of the `FileDTO` returned by a terms of use upload now points at
+      `back-office/storage`.
+    - The uploader of a file is the external user matching the authenticated principal or, when
+      there is none (for instance with `security.authentication.filter=disabled`), an identifier
+      derived from the principal name.
+- **Update process**
+    - New table `file`, and new foreign key `fk_cgu_file` from `cgu.file_id`, created `NOT VALID`:
+      the terms of use published before this version point at a file of the api that was not
+      copied over. Publish them again, then run `ALTER TABLE cgu VALIDATE CONSTRAINT fk_cgu_file;`.
+    - New properties `file.registry.enabled` (`true`), `file.storage.type` (`local` by default,
+      `s3` for an object storage), `file.storage.local-path` and `file.storage.endpoint-prefix`.
+      With `s3`, the `file.storage.s3.*` properties of the portfolio api apply here as well.
+    - Properties `avenirs.api.file.endpoint` and `avenirs.api.storage.endpoint` removed.
+    - With the `local` backend, the files land in `/workspace/app/target/storage`: mount a volume
+      there, or they are lost when the container is recreated.
+
 ## [v1.0.8] - 2026-09-25
 
 - **Terms of use consultation**
