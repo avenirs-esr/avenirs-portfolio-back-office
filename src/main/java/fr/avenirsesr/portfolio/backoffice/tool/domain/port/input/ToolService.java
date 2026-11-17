@@ -23,4 +23,8 @@ public interface ToolService {
   void deleteNationalToolBanner(UUID toolId);
 
   void deleteLocalToolBanner(UUID toolId);
+
+  void deleteNationalTool(UUID toolId);
+
+  void deleteLocalTool(UUID toolId);
 }

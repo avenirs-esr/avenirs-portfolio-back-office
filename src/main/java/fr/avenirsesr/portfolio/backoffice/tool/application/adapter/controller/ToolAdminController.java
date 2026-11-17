@@ -87,6 +87,26 @@ public class ToolAdminController {
   }
 
   @PreAuthorize("hasAuthority('tool:national:management')")
+  @DeleteMapping("/national/{toolId}")
+  public ResponseEntity<Void> deleteNationalTool(@PathVariable UUID toolId) {
+    log.debug("Received request to delete the national tool {}", toolId);
+
+    toolService.deleteNationalTool(toolId);
+
+    return ResponseEntity.noContent().build();
+  }
+
+  @PreAuthorize("hasAuthority('tool:local:management')")
+  @DeleteMapping("/local/{toolId}")
+  public ResponseEntity<Void> deleteLocalTool(@PathVariable UUID toolId) {
+    log.debug("Received request to delete the tool {}", toolId);
+
+    toolService.deleteLocalTool(toolId);
+
+    return ResponseEntity.noContent().build();
+  }
+
+  @PreAuthorize("hasAuthority('tool:national:management')")
   @PostMapping(value = "/national/{toolId}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<FileDTO> uploadNationalToolBanner(
       @PathVariable UUID toolId, @RequestParam("file") MultipartFile file) {

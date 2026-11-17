@@ -678,4 +678,115 @@ class ToolServiceImplTest {
       verify(toolRepository, never()).save(any());
     }
   }
+
+  @Nested
+  class WhenDeletingANationalTool {
+
+    @Test
+    void thenItShouldRemoveTheToolThenItsBanner() {
+      BddLogger.given("an existing national tool with a banner");
+      File banner = banner();
+      Tool existing = existingTool(banner, null);
+
+      BddLogger.when("deleting it");
+      service.deleteNationalTool(existing.getId());
+
+      BddLogger.then("it should remove the tool, then delete the file of its banner");
+      InOrder order = inOrder(toolRepository, fileResourceService);
+      order.verify(toolRepository).removeFromDatabase(existing);
+      order.verify(fileResourceService).delete(banner.getId());
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+    }
+
+    @Test
+    void thenItShouldOnlyRemoveTheTool_whenItHasNoBanner() {
+      BddLogger.given("an existing national tool without banner");
+      Tool existing = existingTool(null, null);
+
+      BddLogger.when("deleting it");
+      service.deleteNationalTool(existing.getId());
+
+      BddLogger.then("it should remove the tool without deleting any file");
+      verify(toolRepository).removeFromDatabase(existing);
+      verifyNoInteractions(fileResourceService);
+    }
+
+    @Test
+    void thenItShouldRefuseAToolAttachedToAnInstitution() {
+      BddLogger.given("an existing regional tool");
+      Tool existing = existingTool(banner(), primaryInstitution());
+
+      BddLogger.when("deleting it as a national tool");
+      assertThrows(
+          UserNotAuthorizedException.class, () -> service.deleteNationalTool(existing.getId()));
+
+      BddLogger.then("it should be refused, removing nothing");
+      verify(toolRepository, never()).removeFromDatabase(any());
+      verifyNoInteractions(fileResourceService);
+    }
+
+    @Test
+    void thenItShouldRejectAnUnknownTool() {
+      BddLogger.given("a tool id matching no tool");
+      UUID toolId = UUID.randomUUID();
+      when(toolRepository.findById(toolId)).thenReturn(Optional.empty());
+
+      BddLogger.when("deleting it as a national tool");
+      assertThrows(ToolNotFoundException.class, () -> service.deleteNationalTool(toolId));
+
+      BddLogger.then("it should report the tool as not found, removing nothing");
+      verify(toolRepository, never()).removeFromDatabase(any());
+    }
+  }
+
+  @Nested
+  class WhenDeletingALocalTool {
+
+    @Test
+    void thenItShouldRemoveAToolWithinTheStaffScopeAndItsBanner() {
+      BddLogger.given("an existing local tool with a banner, of an institution of the staff scope");
+      Institution institution = secondaryInstitution(primaryInstitution());
+      File banner = banner();
+      Tool existing = existingTool(banner, institution);
+      staffHasAccessTo(institution, true);
+
+      BddLogger.when("deleting it");
+      service.deleteLocalTool(existing.getId());
+
+      BddLogger.then("it should remove the tool, then delete the file of its banner");
+      InOrder order = inOrder(toolRepository, fileResourceService);
+      order.verify(toolRepository).removeFromDatabase(existing);
+      order.verify(fileResourceService).delete(banner.getId());
+    }
+
+    @Test
+    void thenItShouldRefuseAToolOutsideTheStaffScope() {
+      BddLogger.given("an existing tool of an institution the staff has no access to");
+      Institution institution = primaryInstitution();
+      Tool existing = existingTool(banner(), institution);
+      staffHasAccessTo(institution, false);
+
+      BddLogger.when("deleting it");
+      assertThrows(
+          UserNotAuthorizedException.class, () -> service.deleteLocalTool(existing.getId()));
+
+      BddLogger.then("it should be refused, removing nothing");
+      verify(toolRepository, never()).removeFromDatabase(any());
+      verifyNoInteractions(fileResourceService);
+    }
+
+    @Test
+    void thenItShouldRefuseANationalTool() {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null, null);
+
+      BddLogger.when("deleting it as a local tool");
+      assertThrows(
+          UserNotAuthorizedException.class, () -> service.deleteLocalTool(existing.getId()));
+
+      BddLogger.then("it should be refused, without checking the staff scope nor removing");
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+      verify(toolRepository, never()).removeFromDatabase(any());
+    }
+  }
 }

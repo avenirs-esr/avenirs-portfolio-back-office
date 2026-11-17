@@ -114,6 +114,22 @@ public class ToolServiceImpl implements ToolService {
     removeBanner(findLocalTool(toolId));
   }
 
+  @Override
+  public void deleteNationalTool(UUID toolId) {
+    removeTool(findNationalTool(toolId));
+  }
+
+  @Override
+  public void deleteLocalTool(UUID toolId) {
+    removeTool(findLocalTool(toolId));
+  }
+
+  private void removeTool(Tool tool) {
+    toolRepository.removeFromDatabase(tool);
+    tool.getBanner().ifPresent(banner -> fileResourceService.delete(banner.getId()));
+    log.info("{} tool {} deleted", tool.getType(), tool.getId());
+  }
+
   private Tool findNationalTool(UUID toolId) {
     Tool tool = findTool(toolId);
     if (tool.getType() != EToolType.NATIONAL) {
