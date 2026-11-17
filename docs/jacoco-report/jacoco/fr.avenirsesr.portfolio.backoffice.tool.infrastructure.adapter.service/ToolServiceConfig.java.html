@@ -6,7 +6,6 @@ import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.Logge
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.service.ToolServiceImpl;
-import fr.avenirsesr.portfolio.common.file.domain.port.input.FileResourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,17 +17,15 @@ public class ToolServiceConfig {
   private final InstitutionRepository institutionRepository;
   private final ExternalUserAffiliationService externalUserAffiliationService;
   private final LoggedInExternalUserService loggedInExternalUserService;
-  private final FileResourceService fileResourceService;
 
   @Bean
   public ToolService toolService() {
-<span class="fc" id="L25">    return new TransactionalToolService(</span>
+<span class="fc" id="L23">    return new TransactionalToolService(</span>
         new ToolServiceImpl(
             toolRepository,
             institutionRepository,
             externalUserAffiliationService,
-            loggedInExternalUserService,
-            fileResourceService));
+            loggedInExternalUserService));
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

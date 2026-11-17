@@ -2,8 +2,6 @@
 
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
-import fr.avenirsesr.portfolio.common.file.domain.model.File;
-import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,51 +13,13 @@ public class TransactionalToolService implements ToolService {
   @Override
   @Transactional
   public Tool createNationalTool(String name, String description, String url) {
-<span class="fc" id="L18">    return delegate.createNationalTool(name, description, url);</span>
+<span class="fc" id="L16">    return delegate.createNationalTool(name, description, url);</span>
   }
 
   @Override
   @Transactional
   public Tool createLocalTool(String name, String description, String url, UUID institutionId) {
-<span class="fc" id="L24">    return delegate.createLocalTool(name, description, url, institutionId);</span>
+<span class="fc" id="L22">    return delegate.createLocalTool(name, description, url, institutionId);</span>
   }
-
-  @Override
-  @Transactional
-  public Tool updateNationalTool(UUID toolId, String name, String description, String url) {
-<span class="fc" id="L30">    return delegate.updateNationalTool(toolId, name, description, url);</span>
-  }
-
-  @Override
-  @Transactional
-  public Tool updateLocalTool(UUID toolId, String name, String description, String url) {
-<span class="fc" id="L36">    return delegate.updateLocalTool(toolId, name, description, url);</span>
-  }
-
-  @Override
-  @Transactional
-  public File uploadNationalToolBanner(
-      UUID toolId, String fileName, String mimeType, long size, FileContent content) {
-<span class="fc" id="L43">    return delegate.uploadNationalToolBanner(toolId, fileName, mimeType, size, content);</span>
-  }
-
-  @Override
-  @Transactional
-  public File uploadLocalToolBanner(
-      UUID toolId, String fileName, String mimeType, long size, FileContent content) {
-<span class="fc" id="L50">    return delegate.uploadLocalToolBanner(toolId, fileName, mimeType, size, content);</span>
-  }
-
-  @Override
-  @Transactional
-  public void deleteNationalToolBanner(UUID toolId) {
-<span class="fc" id="L56">    delegate.deleteNationalToolBanner(toolId);</span>
-<span class="fc" id="L57">  }</span>
-
-  @Override
-  @Transactional
-  public void deleteLocalToolBanner(UUID toolId) {
-<span class="fc" id="L62">    delegate.deleteLocalToolBanner(toolId);</span>
-<span class="fc" id="L63">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
