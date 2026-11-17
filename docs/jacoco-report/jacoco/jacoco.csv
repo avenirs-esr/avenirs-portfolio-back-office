@@ -20,6 +20,7 @@ avenirs-portfolio-back-office,fr.avenirsesr.portfolio.common.data.infrastructure
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionConfigController,0,16,0,0,0,4,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionController,0,15,0,0,0,4,0,2,0,2
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller,InstitutionAdminController,46,114,8,8,11,26,8,7,1,6
+avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.tool.infrastructure.adapter.repository,ToolDatabaseRepository,0,7,0,0,0,2,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.service,ExternalUserAffiliationServiceConfig,0,25,0,0,0,1,0,1,0,1
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.infrastructure.adapter.service,TransactionalExternalUserAffiliationService,12,67,0,0,2,12,2,11,2,11
 avenirs-portfolio-back-office,fr.avenirsesr.portfolio.backoffice.externaluser.contextualauthorization.domain.service,ExternalUserContextualAuthorizationServiceImpl,0,134,0,4,0,32,0,12,0,10
