@@ -61,4 +61,16 @@ public class TransactionalToolService implements ToolService {
   public void deleteLocalToolBanner(UUID toolId) {
     delegate.deleteLocalToolBanner(toolId);
   }
+
+  @Override
+  @Transactional
+  public void deleteNationalTool(UUID toolId) {
+    delegate.deleteNationalTool(toolId);
+  }
+
+  @Override
+  @Transactional
+  public void deleteLocalTool(UUID toolId) {
+    delegate.deleteLocalTool(toolId);
+  }
 }
