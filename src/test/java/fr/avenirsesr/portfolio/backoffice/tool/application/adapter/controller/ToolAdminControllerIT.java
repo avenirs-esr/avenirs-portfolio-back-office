@@ -3,7 +3,13 @@ package fr.avenirsesr.portfolio.backoffice.tool.application.adapter.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,6 +26,10 @@ import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.UpdateToo
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
+import fr.avenirsesr.portfolio.common.file.domain.model.File;
+import fr.avenirsesr.portfolio.common.file.domain.model.enums.EFileType;
+import fr.avenirsesr.portfolio.common.file.domain.port.output.repository.FileRepository;
+import fr.avenirsesr.portfolio.common.file.domain.port.output.service.FileStorageService;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
@@ -31,9 +41,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.AbstractMockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 class ToolAdminControllerIT extends ContainerConfigurationTest {
@@ -54,6 +67,9 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
   @Autowired private ToolRepository toolRepository;
   @Autowired private InstitutionRepository institutionRepository;
   @Autowired private EntityManager entityManager;
+  @Autowired private FileRepository fileRepository;
+
+  @MockitoBean private FileStorageService fileStorageService;
 
   @BeforeAll
   void setup(@Autowired SeederRunner seederRunner) {
@@ -65,11 +81,31 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
   }
 
   private Tool existingTool(String institutionUai) {
+    return existingTool(institutionUai, null);
+  }
+
+  private Tool existingTool(String institutionUai, File banner) {
     Institution institution =
         institutionUai == null
             ? null
             : institutionRepository.findByUai(institutionUai).orElseThrow();
-    return toolRepository.save(Tool.create(NAME, DESCRIPTION, URL, null, institution));
+    return toolRepository.save(Tool.create(NAME, DESCRIPTION, URL, banner, institution));
+  }
+
+  private File storedBanner() {
+    return fileRepository.save(
+        File.create(
+            UUID.randomUUID(),
+            EFileType.PNG,
+            "previous.png",
+            1024,
+            "previous-locator",
+            UUID.randomUUID(),
+            false));
+  }
+
+  private static MockMultipartFile pngBanner() {
+    return new MockMultipartFile("file", "banner.png", "image/png", new byte[] {1, 2, 3});
   }
 
   private Tool reloaded(UUID toolId) {
@@ -80,29 +116,41 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
 
   private ResultActions postAsStaff(String path, Object payload, EPermission... permissions)
       throws Exception {
-    return asStaff(post(path), payload, permissions);
+    return mockMvc.perform(withJson(asStaff(post(path), permissions), payload));
   }
 
   private ResultActions putAsStaff(String path, Object payload, EPermission... permissions)
       throws Exception {
-    return asStaff(put(path), payload, permissions);
+    return mockMvc.perform(withJson(asStaff(put(path), permissions), payload));
   }
 
-  private ResultActions asStaff(
-      MockHttpServletRequestBuilder request, Object payload, EPermission... permissions)
-      throws Exception {
-    return mockMvc.perform(
-        request
-            .header("X-Forwarded-For", "203.0.113.10")
-            .with(
-                authentication(
-                    new HmacAuthenticationToken(
-                        STAFF_EPPN,
-                        Arrays.stream(permissions)
-                            .map(permission -> new SimpleGrantedAuthority(permission.authority()))
-                            .toList())))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(payload)));
+  private ResultActions uploadAsStaff(
+      String path, MockMultipartFile file, EPermission... permissions) throws Exception {
+    return mockMvc.perform(asStaff(multipart(path).file(file), permissions));
+  }
+
+  private ResultActions deleteAsStaff(String path, EPermission... permissions) throws Exception {
+    return mockMvc.perform(asStaff(delete(path), permissions));
+  }
+
+  private MockHttpServletRequestBuilder withJson(
+      MockHttpServletRequestBuilder request, Object payload) throws Exception {
+    return request
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(payload));
+  }
+
+  private static <B extends AbstractMockHttpServletRequestBuilder<B>> B asStaff(
+      B request, EPermission... permissions) {
+    return request
+        .header("X-Forwarded-For", "203.0.113.10")
+        .with(
+            authentication(
+                new HmacAuthenticationToken(
+                    STAFF_EPPN,
+                    Arrays.stream(permissions)
+                        .map(permission -> new SimpleGrantedAuthority(permission.authority()))
+                        .toList())));
   }
 
   private Tool storedToolOf(ResultActions result) throws Exception {
@@ -482,6 +530,199 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
 
       BddLogger.then("it should return 400, leaving the tool untouched");
       assertThat(reloaded(existing.getId()).getName()).isEqualTo(NAME);
+    }
+  }
+
+  @Nested
+  class WhenManagingTheBannerOfANationalTool {
+
+    @Test
+    void thenItShouldUploadTheBannerAndAttachItToTheTool() throws Exception {
+      BddLogger.given("an existing national tool without banner");
+      Tool existing = existingTool(null);
+      when(fileStorageService.upload(any())).thenReturn("new-locator");
+
+      BddLogger.when("calling POST " + NATIONAL_PATH + "/{toolId}/banner with a png");
+      String body =
+          uploadAsStaff(
+                  NATIONAL_PATH + "/" + existing.getId() + "/banner",
+                  pngBanner(),
+                  EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+              .andExpect(status().isCreated())
+              .andExpect(jsonPath("$.fileName", is("banner.png")))
+              .andExpect(jsonPath("$.fileType", is(EFileType.PNG.name())))
+              .andReturn()
+              .getResponse()
+              .getContentAsString();
+
+      BddLogger.then("it should attach the stored file to the tool");
+      UUID bannerId = UUID.fromString(objectMapper.readTree(body).get("id").asText());
+      assertThat(reloaded(existing.getId()).getBanner())
+          .get()
+          .extracting(File::getId)
+          .isEqualTo(bannerId);
+    }
+
+    @Test
+    void thenItShouldReplaceAndDeleteThePreviousBanner() throws Exception {
+      BddLogger.given("an existing national tool with a banner");
+      File previous = storedBanner();
+      Tool existing = existingTool(null, previous);
+      when(fileStorageService.upload(any())).thenReturn("new-locator");
+
+      BddLogger.when("calling POST " + NATIONAL_PATH + "/{toolId}/banner with another png");
+      uploadAsStaff(
+              NATIONAL_PATH + "/" + existing.getId() + "/banner",
+              pngBanner(),
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isCreated());
+
+      BddLogger.then("it should attach the new banner and delete the previous file");
+      assertThat(reloaded(existing.getId()).getBanner())
+          .get()
+          .extracting(File::getUri)
+          .isEqualTo("new-locator");
+      assertThat(fileRepository.findById(previous.getId())).isEmpty();
+      verify(fileStorageService).delete("previous-locator");
+    }
+
+    @Test
+    void thenItShouldReturnBadRequest_whenTheFileIsNotAnImage() throws Exception {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling POST " + NATIONAL_PATH + "/{toolId}/banner with a pdf");
+      uploadAsStaff(
+              NATIONAL_PATH + "/" + existing.getId() + "/banner",
+              new MockMultipartFile("file", "banner.pdf", "application/pdf", new byte[] {1}),
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isBadRequest());
+
+      BddLogger.then("it should return 400, without storing anything");
+      verify(fileStorageService, never()).upload(any());
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheStaffOnlyManagesLocalTools() throws Exception {
+      BddLogger.given("an existing national tool and a staff managing local tools only");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling POST " + NATIONAL_PATH + "/{toolId}/banner");
+      uploadAsStaff(
+              NATIONAL_PATH + "/" + existing.getId() + "/banner",
+              pngBanner(),
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, without storing anything");
+      verify(fileStorageService, never()).upload(any());
+    }
+
+    @Test
+    void thenItShouldDeleteTheBanner() throws Exception {
+      BddLogger.given("an existing national tool with a banner");
+      File banner = storedBanner();
+      Tool existing = existingTool(null, banner);
+
+      BddLogger.when("calling DELETE " + NATIONAL_PATH + "/{toolId}/banner");
+      deleteAsStaff(
+              NATIONAL_PATH + "/" + existing.getId() + "/banner",
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isNoContent());
+
+      BddLogger.then("it should detach the banner and delete its file");
+      assertThat(reloaded(existing.getId()).getBanner()).isEmpty();
+      assertThat(fileRepository.findById(banner.getId())).isEmpty();
+      verify(fileStorageService).delete("previous-locator");
+    }
+
+    @Test
+    void thenItShouldReturnNotFound_whenTheToolDoesNotExist() throws Exception {
+      BddLogger.when("calling DELETE " + NATIONAL_PATH + "/{toolId}/banner for an unknown tool");
+      deleteAsStaff(
+              NATIONAL_PATH + "/" + UUID.randomUUID() + "/banner",
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isNotFound());
+
+      BddLogger.then("it should return 404");
+    }
+  }
+
+  @Nested
+  class WhenManagingTheBannerOfALocalTool {
+
+    @Test
+    void thenItShouldUploadTheBannerOfAToolOfTheStaffScope() throws Exception {
+      BddLogger.given("an existing regional tool of Rennes and a staff of Rennes");
+      Tool existing = existingTool(RENNES_UAI);
+      when(fileStorageService.upload(any())).thenReturn("new-locator");
+
+      BddLogger.when("calling POST " + LOCAL_PATH + "/{toolId}/banner with a png");
+      uploadAsStaff(
+              LOCAL_PATH + "/" + existing.getId() + "/banner",
+              pngBanner(),
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isCreated());
+
+      BddLogger.then("it should attach the stored file to the tool");
+      assertThat(reloaded(existing.getId()).getBanner())
+          .get()
+          .extracting(File::getUri)
+          .isEqualTo("new-locator");
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheToolIsOutsideTheStaffScope() throws Exception {
+      BddLogger.given("an existing tool of Bordeaux and a staff of Rennes");
+      Tool existing = existingTool(BORDEAUX_UAI);
+
+      BddLogger.when("calling POST " + LOCAL_PATH + "/{toolId}/banner");
+      uploadAsStaff(
+              LOCAL_PATH + "/" + existing.getId() + "/banner",
+              pngBanner(),
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, without storing anything");
+      verify(fileStorageService, never()).upload(any());
+      assertThat(reloaded(existing.getId()).getBanner()).isEmpty();
+    }
+
+    @Test
+    void thenItShouldDeleteTheBannerOfAToolOfTheStaffScope() throws Exception {
+      BddLogger.given("an existing local tool of the IUT of Rennes with a banner");
+      File banner = storedBanner();
+      Tool existing = existingTool(RENNES_IUT_UAI, banner);
+
+      BddLogger.when("calling DELETE " + LOCAL_PATH + "/{toolId}/banner");
+      deleteAsStaff(
+              LOCAL_PATH + "/" + existing.getId() + "/banner",
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isNoContent());
+
+      BddLogger.then("it should detach the banner and delete its file");
+      assertThat(reloaded(existing.getId()).getBanner()).isEmpty();
+      assertThat(fileRepository.findById(banner.getId())).isEmpty();
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenDeletingTheBannerOfANationalTool() throws Exception {
+      BddLogger.given("an existing national tool with a banner");
+      File banner = storedBanner();
+      Tool existing = existingTool(null, banner);
+
+      BddLogger.when("calling DELETE " + LOCAL_PATH + "/{toolId}/banner");
+      deleteAsStaff(
+              LOCAL_PATH + "/" + existing.getId() + "/banner",
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, keeping the banner");
+      assertThat(reloaded(existing.getId()).getBanner())
+          .get()
+          .extracting(File::getId)
+          .isEqualTo(banner.getId());
+      verify(fileStorageService, never()).delete(any());
     }
   }
 }

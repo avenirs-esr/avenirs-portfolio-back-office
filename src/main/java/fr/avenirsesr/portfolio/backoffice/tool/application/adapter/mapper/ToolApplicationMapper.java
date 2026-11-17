@@ -3,6 +3,7 @@ package fr.avenirsesr.portfolio.backoffice.tool.application.adapter.mapper;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.ToolDTO;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
+import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 
 public class ToolApplicationMapper {
 
@@ -15,6 +16,7 @@ public class ToolApplicationMapper {
         tool.getDescription(),
         tool.getUrl(),
         tool.getType(),
-        tool.getInstitution().map(Institution::getId).orElse(null));
+        tool.getInstitution().map(Institution::getId).orElse(null),
+        FileDTO.fromDomain(tool.getBanner()));
   }
 }
