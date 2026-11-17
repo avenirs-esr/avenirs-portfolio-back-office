@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,12 +16,14 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.reposit
 import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.SeederRunner;
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.CreateLocalToolRequest;
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.CreateNationalToolRequest;
+import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.UpdateToolRequest;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import jakarta.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,6 +34,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 class ToolAdminControllerIT extends ContainerConfigurationTest {
 
@@ -49,6 +53,7 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
   @Autowired private ObjectMapper objectMapper;
   @Autowired private ToolRepository toolRepository;
   @Autowired private InstitutionRepository institutionRepository;
+  @Autowired private EntityManager entityManager;
 
   @BeforeAll
   void setup(@Autowired SeederRunner seederRunner) {
@@ -59,10 +64,35 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
     return institutionRepository.findByUai(uai).map(Institution::getId).orElseThrow();
   }
 
+  private Tool existingTool(String institutionUai) {
+    Institution institution =
+        institutionUai == null
+            ? null
+            : institutionRepository.findByUai(institutionUai).orElseThrow();
+    return toolRepository.save(Tool.create(NAME, DESCRIPTION, URL, null, institution));
+  }
+
+  private Tool reloaded(UUID toolId) {
+    entityManager.flush();
+    entityManager.clear();
+    return toolRepository.findById(toolId).orElseThrow();
+  }
+
   private ResultActions postAsStaff(String path, Object payload, EPermission... permissions)
       throws Exception {
+    return asStaff(post(path), payload, permissions);
+  }
+
+  private ResultActions putAsStaff(String path, Object payload, EPermission... permissions)
+      throws Exception {
+    return asStaff(put(path), payload, permissions);
+  }
+
+  private ResultActions asStaff(
+      MockHttpServletRequestBuilder request, Object payload, EPermission... permissions)
+      throws Exception {
     return mockMvc.perform(
-        post(path)
+        request
             .header("X-Forwarded-For", "203.0.113.10")
             .with(
                 authentication(
@@ -244,6 +274,214 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
           .andExpect(status().isBadRequest());
 
       BddLogger.then("it should return 400");
+    }
+  }
+
+  @Nested
+  class WhenUpdatingANationalTool {
+
+    private static final UpdateToolRequest UPDATE =
+        new UpdateToolRequest("Moodle 2", "Nouvelle description", "https://new.example.fr");
+
+    @Test
+    void thenItShouldUpdateTheNationalTool() throws Exception {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling PUT " + NATIONAL_PATH + "/{toolId}");
+      putAsStaff(
+              NATIONAL_PATH + "/" + existing.getId(),
+              UPDATE,
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.id", is(existing.getId().toString())))
+          .andExpect(jsonPath("$.name", is(UPDATE.name())))
+          .andExpect(jsonPath("$.description", is(UPDATE.description())))
+          .andExpect(jsonPath("$.url", is(UPDATE.url())))
+          .andExpect(jsonPath("$.type", is(EToolType.NATIONAL.name())))
+          .andExpect(jsonPath("$.institutionId", nullValue()));
+
+      BddLogger.then("it should store the new information");
+      Tool stored = reloaded(existing.getId());
+      assertThat(stored.getName()).isEqualTo(UPDATE.name());
+      assertThat(stored.getDescription()).isEqualTo(UPDATE.description());
+      assertThat(stored.getUrl()).isEqualTo(UPDATE.url());
+      assertThat(stored.getInstitution()).isEmpty();
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheToolIsAttachedToAnInstitution() throws Exception {
+      BddLogger.given("an existing regional tool of Rennes");
+      Tool existing = existingTool(RENNES_UAI);
+
+      BddLogger.when("calling PUT " + NATIONAL_PATH + "/{toolId}");
+      putAsStaff(
+              NATIONAL_PATH + "/" + existing.getId(),
+              UPDATE,
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, leaving the tool untouched");
+      assertThat(reloaded(existing.getId()).getName()).isEqualTo(NAME);
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheStaffOnlyManagesLocalTools() throws Exception {
+      BddLogger.given("an existing national tool and a staff managing local tools only");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling PUT " + NATIONAL_PATH + "/{toolId}");
+      putAsStaff(
+              NATIONAL_PATH + "/" + existing.getId(),
+              UPDATE,
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, leaving the tool untouched");
+      assertThat(reloaded(existing.getId()).getName()).isEqualTo(NAME);
+    }
+
+    @Test
+    void thenItShouldReturnNotFound_whenTheToolDoesNotExist() throws Exception {
+      BddLogger.when("calling PUT " + NATIONAL_PATH + "/{toolId} for an unknown tool");
+      putAsStaff(
+              NATIONAL_PATH + "/" + UUID.randomUUID(),
+              UPDATE,
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isNotFound());
+
+      BddLogger.then("it should return 404");
+    }
+
+    @Test
+    void thenItShouldReturnBadRequest_whenTheUrlIsInvalid() throws Exception {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling PUT " + NATIONAL_PATH + "/{toolId} with an url lacking its scheme");
+      putAsStaff(
+              NATIONAL_PATH + "/" + existing.getId(),
+              new UpdateToolRequest(NAME, DESCRIPTION, "moodle.example.fr"),
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isBadRequest());
+
+      BddLogger.then("it should return 400, leaving the tool untouched");
+      assertThat(reloaded(existing.getId()).getUrl()).isEqualTo(URL);
+    }
+  }
+
+  @Nested
+  class WhenUpdatingALocalTool {
+
+    private static final UpdateToolRequest UPDATE =
+        new UpdateToolRequest("Moodle 2", "Nouvelle description", "https://new.example.fr");
+
+    @Test
+    void thenItShouldUpdateARegionalTool_ofTheStaffPrimaryInstitution() throws Exception {
+      BddLogger.given("an existing regional tool of Rennes and a staff of Rennes");
+      Tool existing = existingTool(RENNES_UAI);
+      UUID rennesId = institutionIdOf(RENNES_UAI);
+
+      BddLogger.when("calling PUT " + LOCAL_PATH + "/{toolId}");
+      putAsStaff(
+              LOCAL_PATH + "/" + existing.getId(), UPDATE, EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.name", is(UPDATE.name())))
+          .andExpect(jsonPath("$.type", is(EToolType.REGIONAL.name())))
+          .andExpect(jsonPath("$.institutionId", is(rennesId.toString())));
+
+      BddLogger.then("it should store the new information and keep the tool attached to Rennes");
+      Tool stored = reloaded(existing.getId());
+      assertThat(stored.getName()).isEqualTo(UPDATE.name());
+      assertThat(stored.getDescription()).isEqualTo(UPDATE.description());
+      assertThat(stored.getUrl()).isEqualTo(UPDATE.url());
+      assertThat(stored.getInstitution()).get().extracting(Institution::getId).isEqualTo(rennesId);
+    }
+
+    @Test
+    void thenItShouldUpdateALocalTool_ofASecondaryInstitutionOfTheStaffScope() throws Exception {
+      BddLogger.given("an existing local tool of the IUT of Rennes and a staff of Rennes");
+      Tool existing = existingTool(RENNES_IUT_UAI);
+
+      BddLogger.when("calling PUT " + LOCAL_PATH + "/{toolId}");
+      putAsStaff(
+              LOCAL_PATH + "/" + existing.getId(), UPDATE, EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.type", is(EToolType.LOCAL.name())))
+          .andExpect(jsonPath("$.institutionId", is(institutionIdOf(RENNES_IUT_UAI).toString())));
+
+      BddLogger.then("it should store the new information");
+      assertThat(reloaded(existing.getId()).getName()).isEqualTo(UPDATE.name());
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheToolIsOutsideTheStaffScope() throws Exception {
+      BddLogger.given("an existing tool of Bordeaux and a staff of Rennes");
+      Tool existing = existingTool(BORDEAUX_UAI);
+
+      BddLogger.when("calling PUT " + LOCAL_PATH + "/{toolId}");
+      putAsStaff(
+              LOCAL_PATH + "/" + existing.getId(), UPDATE, EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, leaving the tool untouched");
+      assertThat(reloaded(existing.getId()).getName()).isEqualTo(NAME);
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheToolIsNational() throws Exception {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling PUT " + LOCAL_PATH + "/{toolId}");
+      putAsStaff(
+              LOCAL_PATH + "/" + existing.getId(), UPDATE, EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, leaving the tool untouched");
+      assertThat(reloaded(existing.getId()).getName()).isEqualTo(NAME);
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheStaffOnlyManagesNationalTools() throws Exception {
+      BddLogger.given("an existing regional tool of Rennes and a staff managing national tools");
+      Tool existing = existingTool(RENNES_UAI);
+
+      BddLogger.when("calling PUT " + LOCAL_PATH + "/{toolId}");
+      putAsStaff(
+              LOCAL_PATH + "/" + existing.getId(),
+              UPDATE,
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+
+      BddLogger.then("it should return 403, leaving the tool untouched");
+      assertThat(reloaded(existing.getId()).getName()).isEqualTo(NAME);
+    }
+
+    @Test
+    void thenItShouldReturnNotFound_whenTheToolDoesNotExist() throws Exception {
+      BddLogger.when("calling PUT " + LOCAL_PATH + "/{toolId} for an unknown tool");
+      putAsStaff(
+              LOCAL_PATH + "/" + UUID.randomUUID(), UPDATE, EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isNotFound());
+
+      BddLogger.then("it should return 404");
+    }
+
+    @Test
+    void thenItShouldReturnBadRequest_whenTheNameIsBlank() throws Exception {
+      BddLogger.given("an existing regional tool of Rennes");
+      Tool existing = existingTool(RENNES_UAI);
+
+      BddLogger.when("calling PUT " + LOCAL_PATH + "/{toolId} with a blank name");
+      putAsStaff(
+              LOCAL_PATH + "/" + existing.getId(),
+              new UpdateToolRequest(" ", DESCRIPTION, URL),
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isBadRequest());
+
+      BddLogger.then("it should return 400, leaving the tool untouched");
+      assertThat(reloaded(existing.getId()).getName()).isEqualTo(NAME);
     }
   }
 }

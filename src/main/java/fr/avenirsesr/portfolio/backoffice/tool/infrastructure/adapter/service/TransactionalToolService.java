@@ -21,4 +21,16 @@ public class TransactionalToolService implements ToolService {
   public Tool createLocalTool(String name, String description, String url, UUID institutionId) {
     return delegate.createLocalTool(name, description, url, institutionId);
   }
+
+  @Override
+  @Transactional
+  public Tool updateNationalTool(UUID toolId, String name, String description, String url) {
+    return delegate.updateNationalTool(toolId, name, description, url);
+  }
+
+  @Override
+  @Transactional
+  public Tool updateLocalTool(UUID toolId, String name, String description, String url) {
+    return delegate.updateLocalTool(toolId, name, description, url);
+  }
 }
