@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -26,17 +25,17 @@ import org.springframework.web.context.request.async.WebAsyncUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component(&quot;userRequestContextFilter&quot;)
-<span class="fc" id="L29">@Slf4j</span>
+<span class="fc" id="L28">@Slf4j</span>
 public class RequestContextFilter extends OncePerRequestFilter {
-<span class="fc" id="L31">  private static final String INTERCEPTOR_KEY = RequestContextFilter.class.getName();</span>
+<span class="fc" id="L30">  private static final String INTERCEPTOR_KEY = RequestContextFilter.class.getName();</span>
 
   private final BaseUserService userService;
   private final ObjectMapper objectMapper;
 
-<span class="fc" id="L36">  public RequestContextFilter(BaseUserService userService, ObjectMapper objectMapper) {</span>
-<span class="fc" id="L37">    this.userService = userService;</span>
-<span class="fc" id="L38">    this.objectMapper = objectMapper;</span>
-<span class="fc" id="L39">  }</span>
+<span class="fc" id="L35">  public RequestContextFilter(BaseUserService userService, ObjectMapper objectMapper) {</span>
+<span class="fc" id="L36">    this.userService = userService;</span>
+<span class="fc" id="L37">    this.objectMapper = objectMapper;</span>
+<span class="fc" id="L38">  }</span>
 
   @Override
   public void doFilterInternal(
@@ -45,50 +44,49 @@ public class RequestContextFilter extends OncePerRequestFilter {
     // This filter's own try/finally only covers the synchronous path. For requests handled
     // asynchronously (e.g. StreamingResponseBody), filterChain.doFilter() returns before the real
     // work runs, so RequestContext must be re-armed on the worker thread.
-<span class="fc" id="L48">    WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);</span>
-<span class="fc" id="L49">    CallableProcessingInterceptor interceptor = new RequestContextInterceptor();</span>
-<span class="fc" id="L50">    asyncManager.registerCallableInterceptor(INTERCEPTOR_KEY, interceptor);</span>
+<span class="fc" id="L47">    WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);</span>
+<span class="fc" id="L48">    CallableProcessingInterceptor interceptor = new RequestContextInterceptor();</span>
+<span class="fc" id="L49">    asyncManager.registerCallableInterceptor(INTERCEPTOR_KEY, interceptor);</span>
 
     try {
       try {
-<span class="fc" id="L54">        Principal principal = request.getUserPrincipal();</span>
+<span class="fc" id="L53">        Principal principal = request.getUserPrincipal();</span>
 
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (principal != null) {</span>
-<span class="fc" id="L57">          String name = principal.getName();</span>
-<span class="fc" id="L58">          User user = userService.getUserByEppn(name);</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (principal != null) {</span>
+<span class="fc" id="L56">          String name = principal.getName();</span>
+<span class="fc" id="L57">          User user = userService.getUserByEppn(name);</span>
 
-<span class="fc" id="L60">          String languageCode = request.getHeader(&quot;Accept-Language&quot;);</span>
+<span class="fc" id="L59">          String languageCode = request.getHeader(&quot;Accept-Language&quot;);</span>
           ELanguage preferredLanguage =
-<span class="pc bpc" id="L62" title="3 of 4 branches missed.">              languageCode == null || languageCode.isEmpty()</span>
-<span class="fc" id="L63">                  ? ELanguage.FALLBACK</span>
-<span class="pc" id="L64">                  : ELanguage.fromCode(languageCode);</span>
+<span class="pc bpc" id="L61" title="3 of 4 branches missed.">              languageCode == null || languageCode.isEmpty()</span>
+<span class="fc" id="L62">                  ? ELanguage.FALLBACK</span>
+<span class="pc" id="L63">                  : ELanguage.fromCode(languageCode);</span>
 
-<span class="fc" id="L66">          RequestData data = new RequestData(Optional.ofNullable(user), preferredLanguage);</span>
-<span class="fc" id="L67">          RequestContext.set(data);</span>
+<span class="fc" id="L65">          RequestData data = new RequestData(Optional.ofNullable(user), preferredLanguage);</span>
+<span class="fc" id="L66">          RequestContext.set(data);</span>
         }
-<span class="nc" id="L69">      } catch (BusinessException ex) {</span>
-<span class="nc" id="L70">        log.warn(&quot;Rejected request while building request context: {}&quot;, ex.getErrorCode());</span>
-<span class="nc" id="L71">        writeErrorResponse(response, ex.getErrorCode(), ex.getDetails());</span>
-<span class="nc" id="L72">        return;</span>
-<span class="nc" id="L73">      } catch (Exception ex) {</span>
-<span class="nc" id="L74">        log.error(&quot;Unexpected error while building request context&quot;, ex);</span>
-<span class="nc" id="L75">        writeErrorResponse(response, EErrorCode.UNEXPECTED_ERROR, null);</span>
-<span class="nc" id="L76">        return;</span>
-<span class="fc" id="L77">      }</span>
+<span class="nc" id="L68">      } catch (BusinessException ex) {</span>
+<span class="nc" id="L69">        log.warn(&quot;Rejected request while building request context: {}&quot;, ex.getErrorCode());</span>
+<span class="nc" id="L70">        writeErrorResponse(response, ex.getErrorCode());</span>
+<span class="nc" id="L71">        return;</span>
+<span class="nc" id="L72">      } catch (Exception ex) {</span>
+<span class="nc" id="L73">        log.error(&quot;Unexpected error while building request context&quot;, ex);</span>
+<span class="nc" id="L74">        writeErrorResponse(response, EErrorCode.UNEXPECTED_ERROR);</span>
+<span class="nc" id="L75">        return;</span>
+<span class="fc" id="L76">      }</span>
 
-<span class="fc" id="L79">      filterChain.doFilter(request, response);</span>
+<span class="fc" id="L78">      filterChain.doFilter(request, response);</span>
     } finally {
-<span class="fc" id="L81">      RequestContext.clear();</span>
+<span class="fc" id="L80">      RequestContext.clear();</span>
     }
-<span class="fc" id="L83">  }</span>
+<span class="fc" id="L82">  }</span>
 
-  private void writeErrorResponse(
-      HttpServletResponse response, EErrorCode errorCode, Map&lt;String, Object&gt; details)
+  private void writeErrorResponse(HttpServletResponse response, EErrorCode errorCode)
       throws IOException, StreamWriteException, DatabindException {
-<span class="nc" id="L88">    response.setStatus(errorCode.getHttpStatus().value());</span>
-<span class="nc" id="L89">    response.setContentType(MediaType.APPLICATION_JSON_VALUE);</span>
-<span class="nc" id="L90">    objectMapper.writeValue(</span>
-<span class="nc" id="L91">        response.getWriter(), new ErrorResponse(errorCode.name(), errorCode.getMessage(), details));</span>
-<span class="nc" id="L92">  }</span>
+<span class="nc" id="L86">    response.setStatus(errorCode.getHttpStatus().value());</span>
+<span class="nc" id="L87">    response.setContentType(MediaType.APPLICATION_JSON_VALUE);</span>
+<span class="nc" id="L88">    objectMapper.writeValue(</span>
+<span class="nc" id="L89">        response.getWriter(), new ErrorResponse(errorCode.name(), errorCode.getMessage()));</span>
+<span class="nc" id="L90">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
