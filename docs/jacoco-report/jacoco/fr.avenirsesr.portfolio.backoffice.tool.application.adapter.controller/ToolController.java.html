@@ -10,13 +10,14 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-<span class="fc" id="L19">@Slf4j</span>
+<span class="fc" id="L20">@Slf4j</span>
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/tools/available&quot;)
@@ -24,24 +25,26 @@ public class ToolController {
 
   private final ToolService toolService;
 
+  @PreAuthorize(&quot;hasAuthority('tool:read')&quot;)
   @GetMapping
   public ResponseEntity&lt;PagedResponse&lt;ToolDTO&gt;&gt; getAvailableTools(
       @RequestParam(required = false) EToolType type,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
-<span class="fc" id="L32">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
-<span class="fc" id="L33">    log.debug(</span>
+<span class="fc" id="L34">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
+<span class="fc" id="L35">    log.debug(</span>
         &quot;Received request to get the {} tools available to the learner {}&quot;, type, pageCriteria);
 
-<span class="fc" id="L36">    return ResponseEntity.ok(</span>
-<span class="fc" id="L37">        ToolApplicationMapper.toPagedResponse(toolService.findAvailableTools(type, pageCriteria)));</span>
+<span class="fc" id="L38">    return ResponseEntity.ok(</span>
+<span class="fc" id="L39">        ToolApplicationMapper.toPagedResponse(toolService.findAvailableTools(type, pageCriteria)));</span>
   }
 
+  @PreAuthorize(&quot;hasAuthority('tool:read')&quot;)
   @GetMapping(&quot;/{toolId}&quot;)
   public ResponseEntity&lt;ToolDTO&gt; getAvailableTool(@PathVariable UUID toolId) {
-<span class="fc" id="L42">    log.debug(&quot;Received request to get the tool {} available to the learner&quot;, toolId);</span>
+<span class="fc" id="L45">    log.debug(&quot;Received request to get the tool {} available to the learner&quot;, toolId);</span>
 
-<span class="fc" id="L44">    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(toolService.getAvailableTool(toolId)));</span>
+<span class="fc" id="L47">    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(toolService.getAvailableTool(toolId)));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
