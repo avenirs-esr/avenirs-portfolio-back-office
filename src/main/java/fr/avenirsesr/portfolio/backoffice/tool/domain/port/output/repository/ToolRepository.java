@@ -13,4 +13,7 @@ public interface ToolRepository extends GenericRepositoryPort<Tool> {
 
   PagedResult<Tool> findAllOfInstitutions(
       Collection<UUID> institutionIds, EToolType type, PageCriteria pageCriteria);
+
+  PagedResult<Tool> findAllNationalOrOfInstitutions(
+      Collection<UUID> institutionIds, EToolType type, PageCriteria pageCriteria);
 }

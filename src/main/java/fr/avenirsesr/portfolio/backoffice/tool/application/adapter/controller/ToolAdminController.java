@@ -8,10 +8,8 @@ import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.mapper.ToolAp
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
-import fr.avenirsesr.portfolio.common.data.application.adapter.dto.PageInfoDTO;
 import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
-import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import java.util.UUID;
@@ -48,7 +46,8 @@ public class ToolAdminController {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
     log.debug("Received request to get the national tools {}", pageCriteria);
 
-    return ResponseEntity.ok(toPagedResponse(toolService.findNationalTools(pageCriteria)));
+    return ResponseEntity.ok(
+        ToolApplicationMapper.toPagedResponse(toolService.findNationalTools(pageCriteria)));
   }
 
   @PreAuthorize("hasAuthority('tool:local:management')")
@@ -60,7 +59,8 @@ public class ToolAdminController {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
     log.debug("Received request to get the {} tools of the staff scope {}", type, pageCriteria);
 
-    return ResponseEntity.ok(toPagedResponse(toolService.findLocalTools(type, pageCriteria)));
+    return ResponseEntity.ok(
+        ToolApplicationMapper.toPagedResponse(toolService.findLocalTools(type, pageCriteria)));
   }
 
   @PreAuthorize("hasAuthority('tool:national:management')")
@@ -203,11 +203,5 @@ public class ToolAdminController {
     toolService.deleteLocalToolBanner(toolId);
 
     return ResponseEntity.noContent().build();
-  }
-
-  private static PagedResponse<ToolDTO> toPagedResponse(PagedResult<Tool> tools) {
-    return new PagedResponse<>(
-        tools.content().stream().map(ToolApplicationMapper::toToolDTO).toList(),
-        PageInfoDTO.fromDomain(tools.pageInfo()));
   }
 }

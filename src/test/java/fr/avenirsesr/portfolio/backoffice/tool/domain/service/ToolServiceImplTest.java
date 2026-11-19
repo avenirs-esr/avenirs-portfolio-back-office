@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.model.ExternalUserAffiliationScope;
 import fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.domain.port.input.ExternalUserAffiliationService;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.enums.EExternalSource;
@@ -51,6 +52,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ToolServiceImplTest {
   private static final String STAFF_EPPN = "ethan.perrin@university.com";
+  private static final String LEARNER_EPPN = "arthur.lambert@university.com";
   private static final String NAME = "Moodle";
   private static final String DESCRIPTION = "Plateforme de cours en ligne";
   private static final String URL = "https://moodle.example.fr";
@@ -100,6 +102,25 @@ class ToolServiceImplTest {
         "Ethan",
         "Perrin",
         EUserStatus.ACTIVE);
+  }
+
+  private static ExternalUser learner() {
+    return ExternalUser.create(
+        LEARNER_EPPN,
+        "STUDENT-0001",
+        EExternalSource.BACK_OFFICE,
+        "0350002B",
+        Set.of(EUserCategory.STUDENT),
+        LEARNER_EPPN,
+        "Arthur",
+        "Lambert",
+        EUserStatus.ACTIVE);
+  }
+
+  private void learnerScopeIs(List<UUID> institutionIds) {
+    when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(learner());
+    when(externalUserAffiliationService.studentScope(LEARNER_EPPN))
+        .thenReturn(new ExternalUserAffiliationScope(institutionIds, List.of()));
   }
 
   private static File banner() {
@@ -940,6 +961,109 @@ class ToolServiceImplTest {
 
       BddLogger.then("it should be refused, without checking the staff scope");
       verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+    }
+  }
+
+  @Nested
+  class WhenListingTheAvailableTools {
+
+    @Test
+    void thenItShouldReturnTheNationalToolsAndThoseOfTheLearnerInstitutions() {
+      BddLogger.given("a learner of a secondary institution, whose scope includes its primary one");
+      Institution primary = primaryInstitution();
+      Institution secondary = secondaryInstitution(primary);
+      List<UUID> scope = List.of(secondary.getId(), primary.getId());
+      learnerScopeIs(scope);
+      PageCriteria pageCriteria = new PageCriteria(0, 8);
+      PagedResult<Tool> page =
+          new PagedResult<>(
+              List.of(
+                  Tool.create(NAME, DESCRIPTION, URL, null, null),
+                  Tool.create(NAME, DESCRIPTION, URL, null, secondary)),
+              new PageInfo(0, 8, 2));
+      when(toolRepository.findAllNationalOrOfInstitutions(scope, null, pageCriteria))
+          .thenReturn(page);
+
+      BddLogger.when("listing the tools available to that learner");
+      PagedResult<Tool> result = service.findAvailableTools(null, pageCriteria);
+
+      BddLogger.then(
+          "it should return the national tools and those of the institutions of the learner");
+      assertThat(result).isSameAs(page);
+    }
+
+    @Test
+    void thenItShouldFilterOnTheRequestedType() {
+      BddLogger.given("a learner of a primary institution");
+      List<UUID> scope = List.of(primaryInstitution().getId());
+      learnerScopeIs(scope);
+      PageCriteria pageCriteria = new PageCriteria(2, 4);
+      PagedResult<Tool> page = new PagedResult<>(List.of(), new PageInfo(2, 4, 0));
+      when(toolRepository.findAllNationalOrOfInstitutions(scope, EToolType.REGIONAL, pageCriteria))
+          .thenReturn(page);
+
+      BddLogger.when("listing the regional tools available to that learner");
+      PagedResult<Tool> result = service.findAvailableTools(EToolType.REGIONAL, pageCriteria);
+
+      BddLogger.then("it should only query the tools of the requested type");
+      assertThat(result).isSameAs(page);
+    }
+  }
+
+  @Nested
+  class WhenGettingAnAvailableTool {
+
+    @Test
+    void thenItShouldReturnANationalTool_withoutResolvingTheLearnerScope() {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(banner(), null);
+
+      BddLogger.when("getting it as a learner");
+      Tool result = service.getAvailableTool(existing.getId());
+
+      BddLogger.then("it should return it, every learner having access to the national tools");
+      assertThat(result).isSameAs(existing);
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+    }
+
+    @Test
+    void thenItShouldReturnAToolOfAnInstitutionOfTheLearner() {
+      BddLogger.given("an existing regional tool of the primary institution of the learner");
+      Institution primary = primaryInstitution();
+      Institution secondary = secondaryInstitution(primary);
+      Tool existing = existingTool(null, primary);
+      learnerScopeIs(List.of(secondary.getId(), primary.getId()));
+
+      BddLogger.when("getting it as that learner");
+      Tool result = service.getAvailableTool(existing.getId());
+
+      BddLogger.then("it should return it");
+      assertThat(result).isSameAs(existing);
+    }
+
+    @Test
+    void thenItShouldRefuseAToolOfAnotherInstitution() {
+      BddLogger.given("an existing local tool of an institution the learner does not belong to");
+      Tool existing = existingTool(null, secondaryInstitution(primaryInstitution()));
+      learnerScopeIs(List.of(UUID.randomUUID()));
+
+      BddLogger.when("getting it as that learner");
+
+      BddLogger.then("it should be refused");
+      assertThrows(
+          UserNotAuthorizedException.class, () -> service.getAvailableTool(existing.getId()));
+    }
+
+    @Test
+    void thenItShouldRejectAnUnknownTool() {
+      BddLogger.given("a tool id matching no tool");
+      UUID toolId = UUID.randomUUID();
+      when(toolRepository.findById(toolId)).thenReturn(Optional.empty());
+
+      BddLogger.when("getting it as a learner");
+
+      BddLogger.then("it should report the tool as not found");
+      assertThrows(ToolNotFoundException.class, () -> service.getAvailableTool(toolId));
     }
   }
 }
