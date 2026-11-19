@@ -71,35 +71,30 @@ public class AccessController {
   public ResponseEntity&lt;PagedResponse&lt;StaffSearchItemResponse&gt;&gt; searchStaff(
       @RequestParam String eppn,
       @RequestParam(required = false) String keyword,
-      @RequestParam(required = false, defaultValue = &quot;false&quot;) boolean national,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
-<span class="fc" id="L77">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
-<span class="fc" id="L78">    log.debug(</span>
-        &quot;Searching the staff reachable by eppn {} (keyword: {},national: {}) {}&quot;,
-        eppn,
-        keyword,
-<span class="fc" id="L82">        national,</span>
-        pageCriteria);
+<span class="fc" id="L76">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
+<span class="fc" id="L77">    log.debug(</span>
+        &quot;Searching the staff reachable by eppn {} (keyword: {}) {}&quot;, eppn, keyword, pageCriteria);
 
-<span class="fc" id="L85">    PagedResult&lt;ExternalUser&gt; staff =</span>
-<span class="fc" id="L86">        externalUserAffiliationService.searchStaff(eppn, keyword, national, pageCriteria);</span>
+<span class="fc" id="L80">    PagedResult&lt;ExternalUser&gt; staff =</span>
+<span class="fc" id="L81">        externalUserAffiliationService.searchStaff(eppn, keyword, pageCriteria);</span>
 
-<span class="fc" id="L88">    return ResponseEntity.ok(</span>
+<span class="fc" id="L83">    return ResponseEntity.ok(</span>
         new PagedResponse&lt;&gt;(
-<span class="fc" id="L90">            staff.content().stream()</span>
-<span class="fc" id="L91">                .map(ExternalUserAffiliationApplicationMapper::toStaffSearchItemResponse)</span>
-<span class="fc" id="L92">                .toList(),</span>
-<span class="fc" id="L93">            PageInfoDTO.fromDomain(staff.pageInfo())));</span>
+<span class="fc" id="L85">            staff.content().stream()</span>
+<span class="fc" id="L86">                .map(ExternalUserAffiliationApplicationMapper::toStaffSearchItemResponse)</span>
+<span class="fc" id="L87">                .toList(),</span>
+<span class="fc" id="L88">            PageInfoDTO.fromDomain(staff.pageInfo())));</span>
   }
 
   private static List&lt;ScopeNodeResponse&gt; toResponse(List&lt;AffiliationScopeNode&gt; nodes) {
-<span class="fc" id="L97">    return nodes.stream()</span>
-<span class="fc" id="L98">        .map(</span>
+<span class="fc" id="L92">    return nodes.stream()</span>
+<span class="fc" id="L93">        .map(</span>
             node -&gt;
-<span class="fc" id="L100">                new ScopeNodeResponse(</span>
-<span class="fc" id="L101">                    node.id(), node.title(), node.type(), toResponse(node.children())))</span>
-<span class="fc" id="L102">        .toList();</span>
+<span class="fc" id="L95">                new ScopeNodeResponse(</span>
+<span class="fc" id="L96">                    node.id(), node.title(), node.type(), toResponse(node.children())))</span>
+<span class="fc" id="L97">        .toList();</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

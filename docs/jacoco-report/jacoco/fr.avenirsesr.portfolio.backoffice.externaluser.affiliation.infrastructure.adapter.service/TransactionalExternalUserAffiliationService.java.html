@@ -90,7 +90,7 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Override
   public boolean staffHasAccess(
       String eppn, List&lt;UUID&gt; targetInstitutionIds, List&lt;UUID&gt; targetGroupIds) {
-<span class="nc" id="L93">    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);</span>
+<span class="fc" id="L93">    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);</span>
   }
 
   @Override
@@ -106,8 +106,8 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Override
   @Transactional(readOnly = true)
   public PagedResult&lt;ExternalUser&gt; searchStaff(
-      String eppn, String keyword, boolean national, PageCriteria pageCriteria) {
-<span class="fc" id="L110">    return delegate.searchStaff(eppn, keyword, national, pageCriteria);</span>
+      String eppn, String keyword, PageCriteria pageCriteria) {
+<span class="fc" id="L110">    return delegate.searchStaff(eppn, keyword, pageCriteria);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
