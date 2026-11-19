@@ -114,91 +114,107 @@ public class ToolServiceImpl implements ToolService {
 <span class="fc" id="L114">    removeBanner(findLocalTool(toolId));</span>
 <span class="fc" id="L115">  }</span>
 
+  @Override
+  public void deleteNationalTool(UUID toolId) {
+<span class="fc" id="L119">    removeTool(findNationalTool(toolId));</span>
+<span class="fc" id="L120">  }</span>
+
+  @Override
+  public void deleteLocalTool(UUID toolId) {
+<span class="fc" id="L124">    removeTool(findLocalTool(toolId));</span>
+<span class="fc" id="L125">  }</span>
+
+  private void removeTool(Tool tool) {
+<span class="fc" id="L128">    toolRepository.removeFromDatabase(tool);</span>
+<span class="fc" id="L129">    tool.getBanner().ifPresent(banner -&gt; fileResourceService.delete(banner.getId()));</span>
+<span class="fc" id="L130">    log.info(&quot;{} tool {} deleted&quot;, tool.getType(), tool.getId());</span>
+<span class="fc" id="L131">  }</span>
+
   private Tool findNationalTool(UUID toolId) {
-<span class="fc" id="L118">    Tool tool = findTool(toolId);</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">    if (tool.getType() != EToolType.NATIONAL) {</span>
-<span class="fc" id="L120">      log.warn(&quot;Tool {} is {} and cannot be managed as a national tool&quot;, toolId, tool.getType());</span>
-<span class="fc" id="L121">      throw new UserNotAuthorizedException(&quot;Only a national tool can be managed as such&quot;);</span>
+<span class="fc" id="L134">    Tool tool = findTool(toolId);</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">    if (tool.getType() != EToolType.NATIONAL) {</span>
+<span class="fc" id="L136">      log.warn(&quot;Tool {} is {} and cannot be managed as a national tool&quot;, toolId, tool.getType());</span>
+<span class="fc" id="L137">      throw new UserNotAuthorizedException(&quot;Only a national tool can be managed as such&quot;);</span>
     }
 
-<span class="fc" id="L124">    return tool;</span>
+<span class="fc" id="L140">    return tool;</span>
   }
 
   private Tool findLocalTool(UUID toolId) {
-<span class="fc" id="L128">    Tool tool = findTool(toolId);</span>
-<span class="fc" id="L129">    Institution institution =</span>
-<span class="fc" id="L130">        tool.getInstitution()</span>
-<span class="fc" id="L131">            .orElseThrow(</span>
+<span class="fc" id="L144">    Tool tool = findTool(toolId);</span>
+<span class="fc" id="L145">    Institution institution =</span>
+<span class="fc" id="L146">        tool.getInstitution()</span>
+<span class="fc" id="L147">            .orElseThrow(</span>
                 () -&gt; {
-<span class="fc" id="L133">                  log.warn(&quot;Tool {} is national and cannot be managed as a local tool&quot;, toolId);</span>
-<span class="fc" id="L134">                  return new UserNotAuthorizedException(</span>
+<span class="fc" id="L149">                  log.warn(&quot;Tool {} is national and cannot be managed as a local tool&quot;, toolId);</span>
+<span class="fc" id="L150">                  return new UserNotAuthorizedException(</span>
                       &quot;A national tool cannot be managed as a local tool&quot;);
                 });
-<span class="fc" id="L137">    requireStaffAccess(institution);</span>
+<span class="fc" id="L153">    requireStaffAccess(institution);</span>
 
-<span class="fc" id="L139">    return tool;</span>
+<span class="fc" id="L155">    return tool;</span>
   }
 
   private Tool findTool(UUID toolId) {
-<span class="fc" id="L143">    return toolRepository.findById(toolId).orElseThrow(ToolNotFoundException::new);</span>
+<span class="fc" id="L159">    return toolRepository.findById(toolId).orElseThrow(ToolNotFoundException::new);</span>
   }
 
   private File replaceBanner(
       Tool tool, String fileName, String mimeType, long size, FileContent content) {
-<span class="fc" id="L148">    Optional&lt;File&gt; previous = tool.getBanner();</span>
-<span class="fc" id="L149">    File banner = fileResourceService.upload(fileName, mimeType, size, content, false);</span>
+<span class="fc" id="L164">    Optional&lt;File&gt; previous = tool.getBanner();</span>
+<span class="fc" id="L165">    File banner = fileResourceService.upload(fileName, mimeType, size, content, false);</span>
 
-<span class="fc" id="L151">    tool.setBanner(banner);</span>
-<span class="fc" id="L152">    toolRepository.save(tool);</span>
-<span class="fc" id="L153">    previous.ifPresent(file -&gt; fileResourceService.delete(file.getId()));</span>
-<span class="fc" id="L154">    log.info(&quot;Banner {} set on tool {}&quot;, banner.getId(), tool.getId());</span>
+<span class="fc" id="L167">    tool.setBanner(banner);</span>
+<span class="fc" id="L168">    toolRepository.save(tool);</span>
+<span class="fc" id="L169">    previous.ifPresent(file -&gt; fileResourceService.delete(file.getId()));</span>
+<span class="fc" id="L170">    log.info(&quot;Banner {} set on tool {}&quot;, banner.getId(), tool.getId());</span>
 
-<span class="fc" id="L156">    return banner;</span>
+<span class="fc" id="L172">    return banner;</span>
   }
 
   private void removeBanner(Tool tool) {
-<span class="fc" id="L160">    tool.getBanner()</span>
-<span class="fc" id="L161">        .ifPresent(</span>
+<span class="fc" id="L176">    tool.getBanner()</span>
+<span class="fc" id="L177">        .ifPresent(</span>
             banner -&gt; {
-<span class="fc" id="L163">              tool.setBanner(null);</span>
-<span class="fc" id="L164">              toolRepository.save(tool);</span>
-<span class="fc" id="L165">              fileResourceService.delete(banner.getId());</span>
-<span class="fc" id="L166">              log.info(&quot;Banner {} removed from tool {}&quot;, banner.getId(), tool.getId());</span>
-<span class="fc" id="L167">            });</span>
-<span class="fc" id="L168">  }</span>
+<span class="fc" id="L179">              tool.setBanner(null);</span>
+<span class="fc" id="L180">              toolRepository.save(tool);</span>
+<span class="fc" id="L181">              fileResourceService.delete(banner.getId());</span>
+<span class="fc" id="L182">              log.info(&quot;Banner {} removed from tool {}&quot;, banner.getId(), tool.getId());</span>
+<span class="fc" id="L183">            });</span>
+<span class="fc" id="L184">  }</span>
 
   private static Tool applyFields(Tool tool, String name, String description, String url) {
-<span class="fc" id="L171">    tool.setName(name.trim());</span>
-<span class="fc" id="L172">    tool.setDescription(description.trim());</span>
-<span class="fc" id="L173">    tool.setUrl(url.trim());</span>
-<span class="fc" id="L174">    return tool;</span>
+<span class="fc" id="L187">    tool.setName(name.trim());</span>
+<span class="fc" id="L188">    tool.setDescription(description.trim());</span>
+<span class="fc" id="L189">    tool.setUrl(url.trim());</span>
+<span class="fc" id="L190">    return tool;</span>
   }
 
   private static void requireImage(String mimeType) {
-<span class="fc bfc" id="L178" title="All 2 branches covered.">    if (!EFileType.fromMimeType(mimeType).isImage()) {</span>
-<span class="fc" id="L179">      throw new FileTypeNotSupportedException(&quot;The banner of a tool must be an image&quot;);</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">    if (!EFileType.fromMimeType(mimeType).isImage()) {</span>
+<span class="fc" id="L195">      throw new FileTypeNotSupportedException(&quot;The banner of a tool must be an image&quot;);</span>
     }
-<span class="fc" id="L181">  }</span>
+<span class="fc" id="L197">  }</span>
 
   private static void validateFields(String name, String description, String url) {
-<span class="fc" id="L184">    FieldValidationUtils.requireNotBlankAndMaxLength(&quot;name&quot;, name, NAME_MAX_LENGTH);</span>
-<span class="fc" id="L185">    FieldValidationUtils.requireNotBlankAndMaxLength(</span>
+<span class="fc" id="L200">    FieldValidationUtils.requireNotBlankAndMaxLength(&quot;name&quot;, name, NAME_MAX_LENGTH);</span>
+<span class="fc" id="L201">    FieldValidationUtils.requireNotBlankAndMaxLength(</span>
         &quot;description&quot;, description, DESCRIPTION_MAX_LENGTH);
-<span class="fc" id="L187">    FieldValidationUtils.requireNotBlankAndMaxLength(&quot;url&quot;, url, URL_MAX_LENGTH);</span>
-<span class="fc" id="L188">    FieldValidationUtils.validateUrl(url.trim());</span>
-<span class="fc" id="L189">  }</span>
+<span class="fc" id="L203">    FieldValidationUtils.requireNotBlankAndMaxLength(&quot;url&quot;, url, URL_MAX_LENGTH);</span>
+<span class="fc" id="L204">    FieldValidationUtils.validateUrl(url.trim());</span>
+<span class="fc" id="L205">  }</span>
 
   private void requireStaffAccess(Institution institution) {
-<span class="fc" id="L192">    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">    if (!externalUserAffiliationService.staffHasAccess(</span>
-<span class="fc" id="L194">        staff.getEppn(), List.of(institution.getId()), List.of())) {</span>
-<span class="fc" id="L195">      log.warn(</span>
+<span class="fc" id="L208">    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">    if (!externalUserAffiliationService.staffHasAccess(</span>
+<span class="fc" id="L210">        staff.getEppn(), List.of(institution.getId()), List.of())) {</span>
+<span class="fc" id="L211">      log.warn(</span>
           &quot;Staff {} is not allowed to manage the tools of institution {}&quot;,
-<span class="fc" id="L197">          staff.getId(),</span>
-<span class="fc" id="L198">          institution.getId());</span>
-<span class="fc" id="L199">      throw new UserNotAuthorizedException(</span>
+<span class="fc" id="L213">          staff.getId(),</span>
+<span class="fc" id="L214">          institution.getId());</span>
+<span class="fc" id="L215">      throw new UserNotAuthorizedException(</span>
           &quot;The institution of the tool must be one the user is affiliated to&quot;);
     }
-<span class="fc" id="L202">  }</span>
+<span class="fc" id="L218">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
