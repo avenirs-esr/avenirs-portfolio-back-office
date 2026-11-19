@@ -11,6 +11,8 @@ import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.domain.exception.FileTypeNotSupportedException;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
@@ -122,6 +124,30 @@ public class ToolServiceImpl implements ToolService {
   @Override
   public void deleteLocalTool(UUID toolId) {
     removeTool(findLocalTool(toolId));
+  }
+
+  @Override
+  public PagedResult<Tool> findNationalTools(PageCriteria pageCriteria) {
+    return toolRepository.findAllNational(pageCriteria);
+  }
+
+  @Override
+  public PagedResult<Tool> findLocalTools(EToolType type, PageCriteria pageCriteria) {
+    ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();
+    List<UUID> institutionIds =
+        externalUserAffiliationService.staffAccessibleInstitutionIds(staff.getEppn());
+
+    return toolRepository.findAllOfInstitutions(institutionIds, type, pageCriteria);
+  }
+
+  @Override
+  public Tool getNationalTool(UUID toolId) {
+    return findNationalTool(toolId);
+  }
+
+  @Override
+  public Tool getLocalTool(UUID toolId) {
+    return findLocalTool(toolId);
   }
 
   private void removeTool(Tool tool) {

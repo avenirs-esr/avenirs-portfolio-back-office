@@ -44,6 +44,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -361,6 +362,24 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
                 groupIdsOf(externalUser.getId(), EUserCategory.STAFF), targetGroupIds);
 
     return institutionsOk && groupsOk;
+  }
+
+  @Override
+  public List<UUID> staffAccessibleInstitutionIds(String eppn) {
+    ExternalUser externalUser = findExternalUserByEppn(eppn);
+
+    Set<UUID> accessibleIds =
+        new LinkedHashSet<>(institutionIdsOf(externalUser.getId(), EUserCategory.STAFF));
+    List<UUID> currentLevelIds = List.copyOf(accessibleIds);
+    while (!currentLevelIds.isEmpty()) {
+      currentLevelIds =
+          institutionRepository.findAllByParentIds(currentLevelIds).stream()
+              .map(Institution::getId)
+              .filter(accessibleIds::add)
+              .toList();
+    }
+
+    return List.copyOf(accessibleIds);
   }
 
   @Override

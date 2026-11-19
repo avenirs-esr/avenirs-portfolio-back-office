@@ -256,6 +256,51 @@ class ExternalUserAffiliationServiceImplTest {
   }
 
   @Test
+  void shouldIncludeTheDescendants_whenResolvingTheInstitutionsAccessibleToAStaff() {
+    BddLogger.given(
+        "a STAFF external user affiliated to a primary institution having a secondary one");
+    ExternalUser user = externalUser(EUserCategory.STUDENT, EUserCategory.STAFF);
+    UUID primaryId = UUID.randomUUID();
+    UUID secondaryId = UUID.randomUUID();
+    Institution primary = institution(primaryId);
+    Institution secondary =
+        institution(secondaryId, "Université de Rennes - IUT", EInstitutionType.SECONDARY, primary);
+    when(externalUserRepository.findByEppn(user.getEppn())).thenReturn(Optional.of(user));
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            user.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of(primaryId));
+    when(institutionRepository.findAllByParentIds(List.of(primaryId)))
+        .thenReturn(List.of(secondary));
+    when(institutionRepository.findAllByParentIds(List.of(secondaryId))).thenReturn(List.of());
+
+    BddLogger.when("resolving the institutions accessible to that staff");
+    List<UUID> accessibleIds = service.staffAccessibleInstitutionIds(user.getEppn());
+
+    BddLogger.then(
+        "it should return the institution of the STAFF affiliation and its descendants only");
+    assertEquals(List.of(primaryId, secondaryId), accessibleIds);
+    verify(externalUserAffiliationRepository, never())
+        .findDistinctInstitutionIds(user.getId(), EUserCategory.STUDENT);
+  }
+
+  @Test
+  void shouldReturnNoInstitution_whenTheStaffIsAffiliatedToNoInstitution() {
+    BddLogger.given("a STAFF external user affiliated to no institution");
+    ExternalUser user = externalUser(EUserCategory.STAFF);
+    when(externalUserRepository.findByEppn(user.getEppn())).thenReturn(Optional.of(user));
+    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
+            user.getId(), EUserCategory.STAFF))
+        .thenReturn(List.of());
+
+    BddLogger.when("resolving the institutions accessible to that staff");
+    List<UUID> accessibleIds = service.staffAccessibleInstitutionIds(user.getEppn());
+
+    BddLogger.then("it should return no institution, without looking for any descendant");
+    assertTrue(accessibleIds.isEmpty());
+    verify(institutionRepository, never()).findAllByParentIds(anyCollection());
+  }
+
+  @Test
   void shouldBuildAccessTree_whenResolvingStaffScope() {
     BddLogger.given(
         "a STAFF external user affiliated to an institution and a program, both having children");

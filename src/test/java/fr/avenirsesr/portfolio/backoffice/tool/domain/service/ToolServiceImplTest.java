@@ -21,6 +21,9 @@ import fr.avenirsesr.portfolio.backoffice.tool.domain.exception.ToolNotFoundExce
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.output.repository.ToolRepository;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageInfo;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.data.domain.model.enums.EUserCategory;
 import fr.avenirsesr.portfolio.common.error.domain.exception.FieldValidationException;
 import fr.avenirsesr.portfolio.common.error.domain.model.enums.EErrorCode;
@@ -787,6 +790,156 @@ class ToolServiceImplTest {
       BddLogger.then("it should be refused, without checking the staff scope nor removing");
       verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
       verify(toolRepository, never()).removeFromDatabase(any());
+    }
+  }
+
+  @Nested
+  class WhenListingTheNationalTools {
+
+    @Test
+    void thenItShouldReturnThePageOfNationalTools() {
+      BddLogger.given("a page of national tools");
+      PageCriteria pageCriteria = new PageCriteria(0, 8);
+      PagedResult<Tool> page =
+          new PagedResult<>(
+              List.of(Tool.create(NAME, DESCRIPTION, URL, null, null)), new PageInfo(0, 8, 1));
+      when(toolRepository.findAllNational(pageCriteria)).thenReturn(page);
+
+      BddLogger.when("listing the national tools");
+      PagedResult<Tool> result = service.findNationalTools(pageCriteria);
+
+      BddLogger.then("it should return that page, without resolving any staff scope");
+      assertThat(result).isSameAs(page);
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+    }
+  }
+
+  @Nested
+  class WhenListingTheLocalTools {
+
+    @Test
+    void thenItShouldReturnTheToolsOfTheInstitutionsOfTheStaffScope() {
+      BddLogger.given("a staff whose scope covers a primary institution and its secondary one");
+      Institution primary = primaryInstitution();
+      Institution secondary = secondaryInstitution(primary);
+      List<UUID> scope = List.of(primary.getId(), secondary.getId());
+      PageCriteria pageCriteria = new PageCriteria(1, 5);
+      PagedResult<Tool> page =
+          new PagedResult<>(
+              List.of(Tool.create(NAME, DESCRIPTION, URL, null, secondary)), new PageInfo(1, 5, 6));
+      when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff());
+      when(externalUserAffiliationService.staffAccessibleInstitutionIds(STAFF_EPPN))
+          .thenReturn(scope);
+      when(toolRepository.findAllOfInstitutions(scope, EToolType.LOCAL, pageCriteria))
+          .thenReturn(page);
+
+      BddLogger.when("listing the local tools");
+      PagedResult<Tool> result = service.findLocalTools(EToolType.LOCAL, pageCriteria);
+
+      BddLogger.then("it should return the page of tools of the institutions of the staff scope");
+      assertThat(result).isSameAs(page);
+    }
+
+    @Test
+    void thenItShouldNotFilterOnTheType_whenNoneIsGiven() {
+      BddLogger.given("a staff whose scope covers one institution");
+      List<UUID> scope = List.of(primaryInstitution().getId());
+      PageCriteria pageCriteria = new PageCriteria(0, 8);
+      PagedResult<Tool> page = new PagedResult<>(List.of(), new PageInfo(0, 8, 0));
+      when(loggedInExternalUserService.getLoggedInExternalUser()).thenReturn(staff());
+      when(externalUserAffiliationService.staffAccessibleInstitutionIds(STAFF_EPPN))
+          .thenReturn(scope);
+      when(toolRepository.findAllOfInstitutions(scope, null, pageCriteria)).thenReturn(page);
+
+      BddLogger.when("listing the local tools without type");
+      PagedResult<Tool> result = service.findLocalTools(null, pageCriteria);
+
+      BddLogger.then("it should query the tools of the staff scope whatever their type");
+      assertThat(result).isSameAs(page);
+    }
+  }
+
+  @Nested
+  class WhenGettingANationalTool {
+
+    @Test
+    void thenItShouldReturnTheNationalTool() {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(banner(), null);
+
+      BddLogger.when("getting it");
+      Tool result = service.getNationalTool(existing.getId());
+
+      BddLogger.then("it should return it, without resolving any staff scope");
+      assertThat(result).isSameAs(existing);
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
+    }
+
+    @Test
+    void thenItShouldRefuseAToolAttachedToAnInstitution() {
+      BddLogger.given("an existing regional tool");
+      Tool existing = existingTool(null, primaryInstitution());
+
+      BddLogger.when("getting it as a national tool");
+
+      BddLogger.then("it should be refused");
+      assertThrows(
+          UserNotAuthorizedException.class, () -> service.getNationalTool(existing.getId()));
+    }
+
+    @Test
+    void thenItShouldRejectAnUnknownTool() {
+      BddLogger.given("a tool id matching no tool");
+      UUID toolId = UUID.randomUUID();
+      when(toolRepository.findById(toolId)).thenReturn(Optional.empty());
+
+      BddLogger.when("getting it as a national tool");
+
+      BddLogger.then("it should report the tool as not found");
+      assertThrows(ToolNotFoundException.class, () -> service.getNationalTool(toolId));
+    }
+  }
+
+  @Nested
+  class WhenGettingALocalTool {
+
+    @Test
+    void thenItShouldReturnAToolWithinTheStaffScope() {
+      BddLogger.given("an existing local tool of an institution of the staff scope");
+      Institution institution = secondaryInstitution(primaryInstitution());
+      Tool existing = existingTool(null, institution);
+      staffHasAccessTo(institution, true);
+
+      BddLogger.when("getting it");
+      Tool result = service.getLocalTool(existing.getId());
+
+      BddLogger.then("it should return it");
+      assertThat(result).isSameAs(existing);
+    }
+
+    @Test
+    void thenItShouldRefuseAToolOutsideTheStaffScope() {
+      BddLogger.given("an existing tool of an institution the staff has no access to");
+      Institution institution = primaryInstitution();
+      Tool existing = existingTool(null, institution);
+      staffHasAccessTo(institution, false);
+
+      BddLogger.when("getting it");
+
+      BddLogger.then("it should be refused");
+      assertThrows(UserNotAuthorizedException.class, () -> service.getLocalTool(existing.getId()));
+    }
+
+    @Test
+    void thenItShouldRefuseANationalTool() {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null, null);
+
+      BddLogger.when("getting it as a local tool");
+      assertThrows(UserNotAuthorizedException.class, () -> service.getLocalTool(existing.getId()));
+
+      BddLogger.then("it should be refused, without checking the staff scope");
+      verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
     }
   }
 }
