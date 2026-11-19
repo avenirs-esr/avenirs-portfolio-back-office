@@ -100,5 +100,17 @@ public class TransactionalToolService implements ToolService {
   public Tool getLocalTool(UUID toolId) {
 <span class="fc" id="L101">    return delegate.getLocalTool(toolId);</span>
   }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult&lt;Tool&gt; findAvailableTools(EToolType type, PageCriteria pageCriteria) {
+<span class="fc" id="L107">    return delegate.findAvailableTools(type, pageCriteria);</span>
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Tool getAvailableTool(UUID toolId) {
+<span class="fc" id="L113">    return delegate.getAvailableTool(toolId);</span>
+  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

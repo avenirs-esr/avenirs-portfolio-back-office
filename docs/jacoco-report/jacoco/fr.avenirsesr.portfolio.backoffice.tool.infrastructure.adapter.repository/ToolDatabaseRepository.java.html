@@ -36,11 +36,21 @@ public class ToolDatabaseRepository extends GenericJpaRepositoryAdapter&lt;Tool,
 <span class="fc" id="L36">        sortedByName(pageCriteria));</span>
   }
 
+  @Override
+  public PagedResult&lt;Tool&gt; findAllNationalOrOfInstitutions(
+      Collection&lt;UUID&gt; institutionIds, EToolType type, PageCriteria pageCriteria) {
+<span class="fc" id="L42">    return findAll(</span>
+<span class="fc" id="L43">        ToolSpecification.isNational()</span>
+<span class="fc" id="L44">            .or(ToolSpecification.withInstitutionIds(institutionIds))</span>
+<span class="fc" id="L45">            .and(ToolSpecification.withType(type)),</span>
+<span class="fc" id="L46">        sortedByName(pageCriteria));</span>
+  }
+
   private static PageRequest sortedByName(PageCriteria pageCriteria) {
-<span class="fc" id="L40">    return PageRequest.of(</span>
-<span class="fc" id="L41">        pageCriteria.page(),</span>
-<span class="fc" id="L42">        pageCriteria.pageSize(),</span>
-<span class="fc" id="L43">        Sort.by(Sort.Order.asc(&quot;name&quot;).ignoreCase(), Sort.Order.asc(&quot;id&quot;)));</span>
+<span class="fc" id="L50">    return PageRequest.of(</span>
+<span class="fc" id="L51">        pageCriteria.page(),</span>
+<span class="fc" id="L52">        pageCriteria.pageSize(),</span>
+<span class="fc" id="L53">        Sort.by(Sort.Order.asc(&quot;name&quot;).ignoreCase(), Sort.Order.asc(&quot;id&quot;)));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
