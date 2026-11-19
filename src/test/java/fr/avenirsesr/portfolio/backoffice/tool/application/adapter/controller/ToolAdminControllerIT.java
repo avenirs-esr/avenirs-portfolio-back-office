@@ -1,6 +1,8 @@
 package fr.avenirsesr.portfolio.backoffice.tool.application.adapter.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -134,6 +137,18 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
     return mockMvc.perform(asStaff(multipart(path).file(file), permissions));
   }
 
+  private ResultActions getAsStaff(String path, EPermission... permissions) throws Exception {
+    return mockMvc.perform(asStaff(get(path), permissions));
+  }
+
+  private Tool savedTool(String name, String institutionUai) {
+    Institution institution =
+        institutionUai == null
+            ? null
+            : institutionRepository.findByUai(institutionUai).orElseThrow();
+    return toolRepository.save(Tool.create(name, DESCRIPTION, URL, null, institution));
+  }
+
   private ResultActions deleteAsStaff(String path, EPermission... permissions) throws Exception {
     return mockMvc.perform(asStaff(delete(path), permissions));
   }
@@ -165,6 +180,247 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
   }
 
   @Nested
+  class WhenListingTheNationalTools {
+
+    @Test
+    void thenItShouldReturnThePageOfNationalTools_sortedByName() throws Exception {
+      BddLogger.given("three national tools, a regional one and a super admin");
+      Tool zotero = savedTool("Zotero", null);
+      Tool agenda = savedTool("Agenda", null);
+      savedTool("Moodle", null);
+      savedTool("ENT", RENNES_UAI);
+
+      BddLogger.when("calling GET " + NATIONAL_PATH + " for the first page of two tools");
+      getAsStaff(NATIONAL_PATH + "?page=0&pageSize=2", EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[*].name", contains("Agenda", "Moodle")))
+          .andExpect(jsonPath("$.data[0].id", is(agenda.getId().toString())))
+          .andExpect(jsonPath("$.data[0].description", is(DESCRIPTION)))
+          .andExpect(jsonPath("$.data[0].url", is(URL)))
+          .andExpect(jsonPath("$.data[0].type", is(EToolType.NATIONAL.name())))
+          .andExpect(jsonPath("$.data[0].institution", nullValue()))
+          .andExpect(jsonPath("$.page.page", is(0)))
+          .andExpect(jsonPath("$.page.pageSize", is(2)))
+          .andExpect(jsonPath("$.page.totalElements", is(3)))
+          .andExpect(jsonPath("$.page.totalPages", is(2)));
+
+      BddLogger.then("the next page should hold the last national tool");
+      getAsStaff(NATIONAL_PATH + "?page=1&pageSize=2", EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[*].id", contains(zotero.getId().toString())));
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheStaffOnlyManagesLocalTools() throws Exception {
+      BddLogger.given("a staff granted the local tool management permission only");
+
+      BddLogger.when("calling GET " + NATIONAL_PATH);
+
+      BddLogger.then("it should return 403");
+      getAsStaff(NATIONAL_PATH, EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+    }
+  }
+
+  @Nested
+  class WhenListingTheLocalTools {
+
+    @Test
+    void thenItShouldReturnTheToolsOfTheStaffScope_withTheirInstitution() throws Exception {
+      BddLogger.given(
+          "a staff of Rennes, tools of Rennes, of its IUT and of Bordeaux, and a national one");
+      savedTool("National", null);
+      savedTool("Bordeaux", BORDEAUX_UAI);
+      Tool regional = savedTool("Rennes", RENNES_UAI);
+      Tool local = savedTool("IUT", RENNES_IUT_UAI);
+
+      BddLogger.when("calling GET " + LOCAL_PATH + " without type");
+
+      BddLogger.then("it should return the regional and local tools of the staff scope only");
+      getAsStaff(LOCAL_PATH, EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(
+              jsonPath(
+                  "$.data[*].id", contains(local.getId().toString(), regional.getId().toString())))
+          .andExpect(jsonPath("$.data[0].type", is(EToolType.LOCAL.name())))
+          .andExpect(
+              jsonPath("$.data[0].institution.id", is(institutionIdOf(RENNES_IUT_UAI).toString())))
+          .andExpect(jsonPath("$.data[0].institution.name", is("Université de Rennes - IUT")))
+          .andExpect(jsonPath("$.data[1].type", is(EToolType.REGIONAL.name())))
+          .andExpect(jsonPath("$.data[1].institution.name", is("Université de Rennes")))
+          .andExpect(jsonPath("$.page.totalElements", is(2)));
+    }
+
+    @Test
+    void thenItShouldOnlyReturnTheToolsOfTheRequestedType() throws Exception {
+      BddLogger.given("a staff of Rennes, a regional and a local tool of its scope");
+      Tool regional = savedTool("Rennes", RENNES_UAI);
+      Tool local = savedTool("IUT", RENNES_IUT_UAI);
+
+      BddLogger.when("calling GET " + LOCAL_PATH + " for each type");
+
+      BddLogger.then("each type should only return its tools");
+      getAsStaff(LOCAL_PATH + "?type=REGIONAL", EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[*].id", contains(regional.getId().toString())));
+      getAsStaff(LOCAL_PATH + "?type=LOCAL", EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[*].id", contains(local.getId().toString())));
+    }
+
+    @Test
+    void thenItShouldReturnNoTool_whenTheNationalTypeIsRequested() throws Exception {
+      BddLogger.given("a staff of Rennes and a national tool");
+      savedTool("National", null);
+
+      BddLogger.when("calling GET " + LOCAL_PATH + "?type=NATIONAL");
+
+      BddLogger.then("it should return an empty page");
+      getAsStaff(LOCAL_PATH + "?type=NATIONAL", EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data", empty()))
+          .andExpect(jsonPath("$.page.totalElements", is(0)));
+    }
+
+    @Test
+    void thenItShouldReturnBadRequest_whenTheTypeIsUnknown() throws Exception {
+      BddLogger.given("a staff of Rennes");
+
+      BddLogger.when("calling GET " + LOCAL_PATH + "?type=UNKNOWN");
+
+      BddLogger.then("it should return 400");
+      getAsStaff(LOCAL_PATH + "?type=UNKNOWN", EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheStaffOnlyManagesNationalTools() throws Exception {
+      BddLogger.given("a staff granted the national tool management permission only");
+
+      BddLogger.when("calling GET " + LOCAL_PATH);
+
+      BddLogger.then("it should return 403");
+      getAsStaff(LOCAL_PATH, EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+    }
+  }
+
+  @Nested
+  class WhenGettingANationalTool {
+
+    @Test
+    void thenItShouldReturnTheNationalTool() throws Exception {
+      BddLogger.given("an existing national tool with a banner");
+      File banner = storedBanner();
+      Tool existing = existingTool(null, banner);
+
+      BddLogger.when("calling GET " + NATIONAL_PATH + "/{toolId}");
+
+      BddLogger.then("it should return the tool and its banner");
+      getAsStaff(NATIONAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.id", is(existing.getId().toString())))
+          .andExpect(jsonPath("$.name", is(NAME)))
+          .andExpect(jsonPath("$.description", is(DESCRIPTION)))
+          .andExpect(jsonPath("$.url", is(URL)))
+          .andExpect(jsonPath("$.type", is(EToolType.NATIONAL.name())))
+          .andExpect(jsonPath("$.institution", nullValue()))
+          .andExpect(jsonPath("$.banner.id", is(banner.getId().toString())));
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheToolIsAttachedToAnInstitution() throws Exception {
+      BddLogger.given("an existing regional tool");
+      Tool existing = existingTool(RENNES_UAI);
+
+      BddLogger.when("calling GET " + NATIONAL_PATH + "/{toolId}");
+
+      BddLogger.then("it should return 403");
+      getAsStaff(NATIONAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void thenItShouldReturnNotFound_whenTheToolDoesNotExist() throws Exception {
+      BddLogger.given("an unknown tool id");
+
+      BddLogger.when("calling GET " + NATIONAL_PATH + "/{toolId}");
+
+      BddLogger.then("it should return 404");
+      getAsStaff(NATIONAL_PATH + "/" + UUID.randomUUID(), EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+          .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheStaffOnlyManagesLocalTools() throws Exception {
+      BddLogger.given("an existing national tool and a staff managing local tools");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling GET " + NATIONAL_PATH + "/{toolId}");
+
+      BddLogger.then("it should return 403");
+      getAsStaff(NATIONAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+    }
+  }
+
+  @Nested
+  class WhenGettingALocalTool {
+
+    @Test
+    void thenItShouldReturnALocalToolOfTheStaffScope() throws Exception {
+      BddLogger.given("an existing tool of the IUT of Rennes and a staff of Rennes");
+      Tool existing = existingTool(RENNES_IUT_UAI);
+
+      BddLogger.when("calling GET " + LOCAL_PATH + "/{toolId}");
+
+      BddLogger.then("it should return the tool with its institution");
+      getAsStaff(LOCAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.id", is(existing.getId().toString())))
+          .andExpect(jsonPath("$.type", is(EToolType.LOCAL.name())))
+          .andExpect(jsonPath("$.institution.id", is(institutionIdOf(RENNES_IUT_UAI).toString())))
+          .andExpect(jsonPath("$.institution.name", is("Université de Rennes - IUT")))
+          .andExpect(jsonPath("$.banner", nullValue()));
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheToolIsOutsideTheStaffScope() throws Exception {
+      BddLogger.given("an existing tool of Bordeaux and a staff of Rennes");
+      Tool existing = existingTool(BORDEAUX_UAI);
+
+      BddLogger.when("calling GET " + LOCAL_PATH + "/{toolId}");
+
+      BddLogger.then("it should return 403");
+      getAsStaff(LOCAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void thenItShouldReturnForbidden_whenTheToolIsNational() throws Exception {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling GET " + LOCAL_PATH + "/{toolId}");
+
+      BddLogger.then("it should return 403");
+      getAsStaff(LOCAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void thenItShouldReturnNotFound_whenTheToolDoesNotExist() throws Exception {
+      BddLogger.given("an unknown tool id");
+
+      BddLogger.when("calling GET " + LOCAL_PATH + "/{toolId}");
+
+      BddLogger.then("it should return 404");
+      getAsStaff(LOCAL_PATH + "/" + UUID.randomUUID(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isNotFound());
+    }
+  }
+
+  @Nested
   class WhenCreatingANationalTool {
 
     @Test
@@ -183,7 +439,7 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
               .andExpect(jsonPath("$.description", is(DESCRIPTION)))
               .andExpect(jsonPath("$.url", is(URL)))
               .andExpect(jsonPath("$.type", is(EToolType.NATIONAL.name())))
-              .andExpect(jsonPath("$.institutionId", nullValue()));
+              .andExpect(jsonPath("$.institution", nullValue()));
 
       BddLogger.then("it should store a tool attached to no institution");
       Tool stored = storedToolOf(result);
@@ -240,7 +496,7 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
                   EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
               .andExpect(status().isCreated())
               .andExpect(jsonPath("$.type", is(EToolType.REGIONAL.name())))
-              .andExpect(jsonPath("$.institutionId", is(rennesId.toString())));
+              .andExpect(jsonPath("$.institution.id", is(rennesId.toString())));
 
       BddLogger.then("it should store a tool attached to Rennes");
       assertThat(storedToolOf(result).getInstitution())
@@ -264,7 +520,7 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
                   EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
               .andExpect(status().isCreated())
               .andExpect(jsonPath("$.type", is(EToolType.LOCAL.name())))
-              .andExpect(jsonPath("$.institutionId", is(rennesIutId.toString())));
+              .andExpect(jsonPath("$.institution.id", is(rennesIutId.toString())));
 
       BddLogger.then("it should store a tool attached to the IUT of Rennes");
       assertThat(storedToolOf(result).getInstitution())
@@ -352,7 +608,7 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
           .andExpect(jsonPath("$.description", is(UPDATE.description())))
           .andExpect(jsonPath("$.url", is(UPDATE.url())))
           .andExpect(jsonPath("$.type", is(EToolType.NATIONAL.name())))
-          .andExpect(jsonPath("$.institutionId", nullValue()));
+          .andExpect(jsonPath("$.institution", nullValue()));
 
       BddLogger.then("it should store the new information");
       Tool stored = reloaded(existing.getId());
@@ -441,7 +697,7 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.name", is(UPDATE.name())))
           .andExpect(jsonPath("$.type", is(EToolType.REGIONAL.name())))
-          .andExpect(jsonPath("$.institutionId", is(rennesId.toString())));
+          .andExpect(jsonPath("$.institution.id", is(rennesId.toString())));
 
       BddLogger.then("it should store the new information and keep the tool attached to Rennes");
       Tool stored = reloaded(existing.getId());
@@ -461,7 +717,7 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
               LOCAL_PATH + "/" + existing.getId(), UPDATE, EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.type", is(EToolType.LOCAL.name())))
-          .andExpect(jsonPath("$.institutionId", is(institutionIdOf(RENNES_IUT_UAI).toString())));
+          .andExpect(jsonPath("$.institution.id", is(institutionIdOf(RENNES_IUT_UAI).toString())));
 
       BddLogger.then("it should store the new information");
       assertThat(reloaded(existing.getId()).getName()).isEqualTo(UPDATE.name());

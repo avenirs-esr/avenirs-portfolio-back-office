@@ -1,6 +1,9 @@
 package fr.avenirsesr.portfolio.backoffice.tool.domain.port.input;
 
+import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
 import java.util.UUID;
@@ -27,4 +30,12 @@ public interface ToolService {
   void deleteNationalTool(UUID toolId);
 
   void deleteLocalTool(UUID toolId);
+
+  PagedResult<Tool> findNationalTools(PageCriteria pageCriteria);
+
+  PagedResult<Tool> findLocalTools(EToolType type, PageCriteria pageCriteria);
+
+  Tool getNationalTool(UUID toolId);
+
+  Tool getLocalTool(UUID toolId);
 }

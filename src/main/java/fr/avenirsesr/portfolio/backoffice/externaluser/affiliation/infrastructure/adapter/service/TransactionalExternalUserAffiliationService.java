@@ -94,6 +94,12 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public List<UUID> staffAccessibleInstitutionIds(String eppn) {
+    return delegate.staffAccessibleInstitutionIds(eppn);
+  }
+
+  @Override
   public ExternalUserAffiliationScope studentScope(String eppn) {
     return delegate.studentScope(eppn);
   }

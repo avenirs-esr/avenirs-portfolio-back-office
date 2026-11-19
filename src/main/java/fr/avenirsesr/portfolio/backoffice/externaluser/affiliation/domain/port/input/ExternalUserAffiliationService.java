@@ -52,6 +52,8 @@ public interface ExternalUserAffiliationService {
 
   boolean staffHasAccess(String eppn, List<UUID> targetInstitutionIds, List<UUID> targetGroupIds);
 
+  List<UUID> staffAccessibleInstitutionIds(String eppn);
+
   ExternalUserAffiliationScope studentScope(String eppn);
 
   StaffAffiliationScope staffScope();

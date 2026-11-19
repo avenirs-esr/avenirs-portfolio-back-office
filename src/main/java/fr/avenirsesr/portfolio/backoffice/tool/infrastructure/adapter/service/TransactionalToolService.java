@@ -1,7 +1,10 @@
 package fr.avenirsesr.portfolio.backoffice.tool.infrastructure.adapter.service;
 
+import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
 import java.util.UUID;
@@ -72,5 +75,29 @@ public class TransactionalToolService implements ToolService {
   @Transactional
   public void deleteLocalTool(UUID toolId) {
     delegate.deleteLocalTool(toolId);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Tool> findNationalTools(PageCriteria pageCriteria) {
+    return delegate.findNationalTools(pageCriteria);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Tool> findLocalTools(EToolType type, PageCriteria pageCriteria) {
+    return delegate.findLocalTools(type, pageCriteria);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Tool getNationalTool(UUID toolId) {
+    return delegate.getNationalTool(toolId);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Tool getLocalTool(UUID toolId) {
+    return delegate.getLocalTool(toolId);
   }
 }

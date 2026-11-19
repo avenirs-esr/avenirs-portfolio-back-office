@@ -5,8 +5,13 @@ import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.CreateNat
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.ToolDTO;
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.UpdateToolRequest;
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.mapper.ToolApplicationMapper;
+import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
+import fr.avenirsesr.portfolio.common.data.application.adapter.dto.PageInfoDTO;
+import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import java.util.UUID;
@@ -17,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,6 +39,45 @@ import org.springframework.web.multipart.MultipartFile;
 public class ToolAdminController {
 
   private final ToolService toolService;
+
+  @PreAuthorize("hasAuthority('tool:national:management')")
+  @GetMapping("/national")
+  public ResponseEntity<PagedResponse<ToolDTO>> getNationalTools(
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer pageSize) {
+    PageCriteria pageCriteria = new PageCriteria(page, pageSize);
+    log.debug("Received request to get the national tools {}", pageCriteria);
+
+    return ResponseEntity.ok(toPagedResponse(toolService.findNationalTools(pageCriteria)));
+  }
+
+  @PreAuthorize("hasAuthority('tool:local:management')")
+  @GetMapping("/local")
+  public ResponseEntity<PagedResponse<ToolDTO>> getLocalTools(
+      @RequestParam(required = false) EToolType type,
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer pageSize) {
+    PageCriteria pageCriteria = new PageCriteria(page, pageSize);
+    log.debug("Received request to get the {} tools of the staff scope {}", type, pageCriteria);
+
+    return ResponseEntity.ok(toPagedResponse(toolService.findLocalTools(type, pageCriteria)));
+  }
+
+  @PreAuthorize("hasAuthority('tool:national:management')")
+  @GetMapping("/national/{toolId}")
+  public ResponseEntity<ToolDTO> getNationalTool(@PathVariable UUID toolId) {
+    log.debug("Received request to get the national tool {}", toolId);
+
+    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(toolService.getNationalTool(toolId)));
+  }
+
+  @PreAuthorize("hasAuthority('tool:local:management')")
+  @GetMapping("/local/{toolId}")
+  public ResponseEntity<ToolDTO> getLocalTool(@PathVariable UUID toolId) {
+    log.debug("Received request to get the tool {}", toolId);
+
+    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(toolService.getLocalTool(toolId)));
+  }
 
   @PreAuthorize("hasAuthority('tool:national:management')")
   @PostMapping("/national")
@@ -158,5 +203,11 @@ public class ToolAdminController {
     toolService.deleteLocalToolBanner(toolId);
 
     return ResponseEntity.noContent().build();
+  }
+
+  private static PagedResponse<ToolDTO> toPagedResponse(PagedResult<Tool> tools) {
+    return new PagedResponse<>(
+        tools.content().stream().map(ToolApplicationMapper::toToolDTO).toList(),
+        PageInfoDTO.fromDomain(tools.pageInfo()));
   }
 }
