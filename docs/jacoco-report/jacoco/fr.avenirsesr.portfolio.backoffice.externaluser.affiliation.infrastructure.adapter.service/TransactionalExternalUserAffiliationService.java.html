@@ -90,30 +90,24 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Override
   public boolean staffHasAccess(
       String eppn, List&lt;UUID&gt; targetInstitutionIds, List&lt;UUID&gt; targetGroupIds) {
-<span class="fc" id="L93">    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);</span>
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List&lt;UUID&gt; staffAccessibleInstitutionIds(String eppn) {
-<span class="fc" id="L99">    return delegate.staffAccessibleInstitutionIds(eppn);</span>
+<span class="nc" id="L93">    return delegate.staffHasAccess(eppn, targetInstitutionIds, targetGroupIds);</span>
   }
 
   @Override
   public ExternalUserAffiliationScope studentScope(String eppn) {
-<span class="fc" id="L104">    return delegate.studentScope(eppn);</span>
+<span class="nc" id="L98">    return delegate.studentScope(eppn);</span>
   }
 
   @Override
   public StaffAffiliationScope staffScope() {
-<span class="fc" id="L109">    return delegate.staffScope();</span>
+<span class="fc" id="L103">    return delegate.staffScope();</span>
   }
 
   @Override
   @Transactional(readOnly = true)
   public PagedResult&lt;ExternalUser&gt; searchStaff(
-      String eppn, String keyword, PageCriteria pageCriteria) {
-<span class="fc" id="L116">    return delegate.searchStaff(eppn, keyword, pageCriteria);</span>
+      String keyword, List&lt;UUID&gt; institutionIds, List&lt;UUID&gt; groupIds, PageCriteria pageCriteria) {
+<span class="fc" id="L110">    return delegate.searchStaff(keyword, institutionIds, groupIds, pageCriteria);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

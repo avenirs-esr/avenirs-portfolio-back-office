@@ -2,26 +2,19 @@
 
 import fr.avenirsesr.portfolio.common.error.domain.exception.BusinessException;
 import fr.avenirsesr.portfolio.common.error.domain.model.enums.EErrorCode;
-import java.util.Map;
 
 public class ExternalUserNotFoundException extends BusinessException {
 
-  public static final String UNIQUE_SECURITY_NAME = &quot;uniqueSecurityName&quot;;
-
   public ExternalUserNotFoundException() {
-<span class="fc" id="L12">    super(EErrorCode.EXTERNAL_USER_NOT_FOUND);</span>
-<span class="fc" id="L13">  }</span>
+<span class="fc" id="L9">    super(EErrorCode.EXTERNAL_USER_NOT_FOUND);</span>
+<span class="fc" id="L10">  }</span>
 
   public ExternalUserNotFoundException(EErrorCode errorCode) {
-<span class="nc" id="L16">    super(errorCode);</span>
-<span class="nc" id="L17">  }</span>
+<span class="nc" id="L13">    super(errorCode);</span>
+<span class="nc" id="L14">  }</span>
 
   public ExternalUserNotFoundException(String customMessage) {
-<span class="nc" id="L20">    super(EErrorCode.EXTERNAL_USER_NOT_FOUND, customMessage);</span>
-<span class="nc" id="L21">  }</span>
-
-  public ExternalUserNotFoundException(String uniqueSecurityName, EErrorCode errorCode) {
-<span class="nc" id="L24">    super(errorCode, Map.of(UNIQUE_SECURITY_NAME, uniqueSecurityName));</span>
-<span class="nc" id="L25">  }</span>
+<span class="nc" id="L17">    super(EErrorCode.EXTERNAL_USER_NOT_FOUND, customMessage);</span>
+<span class="nc" id="L18">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
