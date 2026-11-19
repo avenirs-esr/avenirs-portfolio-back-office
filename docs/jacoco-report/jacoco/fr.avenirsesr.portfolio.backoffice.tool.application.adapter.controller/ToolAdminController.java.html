@@ -5,8 +5,13 @@ import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.CreateNat
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.ToolDTO;
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.dto.UpdateToolRequest;
 import fr.avenirsesr.portfolio.backoffice.tool.application.adapter.mapper.ToolApplicationMapper;
+import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.model.Tool;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
+import fr.avenirsesr.portfolio.common.data.application.adapter.dto.PageInfoDTO;
+import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
+import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import java.util.UUID;
@@ -17,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-<span class="fc" id="L29">@Slf4j</span>
+<span class="fc" id="L35">@Slf4j</span>
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(&quot;back-office/tools&quot;)
@@ -35,129 +41,174 @@ public class ToolAdminController {
   private final ToolService toolService;
 
   @PreAuthorize(&quot;hasAuthority('tool:national:management')&quot;)
+  @GetMapping(&quot;/national&quot;)
+  public ResponseEntity&lt;PagedResponse&lt;ToolDTO&gt;&gt; getNationalTools(
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer pageSize) {
+<span class="fc" id="L48">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
+<span class="fc" id="L49">    log.debug(&quot;Received request to get the national tools {}&quot;, pageCriteria);</span>
+
+<span class="fc" id="L51">    return ResponseEntity.ok(toPagedResponse(toolService.findNationalTools(pageCriteria)));</span>
+  }
+
+  @PreAuthorize(&quot;hasAuthority('tool:local:management')&quot;)
+  @GetMapping(&quot;/local&quot;)
+  public ResponseEntity&lt;PagedResponse&lt;ToolDTO&gt;&gt; getLocalTools(
+      @RequestParam(required = false) EToolType type,
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer pageSize) {
+<span class="fc" id="L60">    PageCriteria pageCriteria = new PageCriteria(page, pageSize);</span>
+<span class="fc" id="L61">    log.debug(&quot;Received request to get the {} tools of the staff scope {}&quot;, type, pageCriteria);</span>
+
+<span class="fc" id="L63">    return ResponseEntity.ok(toPagedResponse(toolService.findLocalTools(type, pageCriteria)));</span>
+  }
+
+  @PreAuthorize(&quot;hasAuthority('tool:national:management')&quot;)
+  @GetMapping(&quot;/national/{toolId}&quot;)
+  public ResponseEntity&lt;ToolDTO&gt; getNationalTool(@PathVariable UUID toolId) {
+<span class="fc" id="L69">    log.debug(&quot;Received request to get the national tool {}&quot;, toolId);</span>
+
+<span class="fc" id="L71">    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(toolService.getNationalTool(toolId)));</span>
+  }
+
+  @PreAuthorize(&quot;hasAuthority('tool:local:management')&quot;)
+  @GetMapping(&quot;/local/{toolId}&quot;)
+  public ResponseEntity&lt;ToolDTO&gt; getLocalTool(@PathVariable UUID toolId) {
+<span class="fc" id="L77">    log.debug(&quot;Received request to get the tool {}&quot;, toolId);</span>
+
+<span class="fc" id="L79">    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(toolService.getLocalTool(toolId)));</span>
+  }
+
+  @PreAuthorize(&quot;hasAuthority('tool:national:management')&quot;)
   @PostMapping(&quot;/national&quot;)
   public ResponseEntity&lt;ToolDTO&gt; createNationalTool(
       @RequestBody CreateNationalToolRequest request) {
-<span class="fc" id="L41">    log.debug(&quot;Received request to create the national tool {}&quot;, request.name());</span>
+<span class="fc" id="L86">    log.debug(&quot;Received request to create the national tool {}&quot;, request.name());</span>
 
-<span class="fc" id="L43">    Tool tool =</span>
-<span class="fc" id="L44">        toolService.createNationalTool(request.name(), request.description(), request.url());</span>
+<span class="fc" id="L88">    Tool tool =</span>
+<span class="fc" id="L89">        toolService.createNationalTool(request.name(), request.description(), request.url());</span>
 
-<span class="fc" id="L46">    return ResponseEntity.status(HttpStatus.CREATED).body(ToolApplicationMapper.toToolDTO(tool));</span>
+<span class="fc" id="L91">    return ResponseEntity.status(HttpStatus.CREATED).body(ToolApplicationMapper.toToolDTO(tool));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:local:management')&quot;)
   @PostMapping(&quot;/local&quot;)
   public ResponseEntity&lt;ToolDTO&gt; createLocalTool(@RequestBody CreateLocalToolRequest request) {
-<span class="fc" id="L52">    log.debug(</span>
+<span class="fc" id="L97">    log.debug(</span>
         &quot;Received request to create the tool {} for institution {}&quot;,
-<span class="fc" id="L54">        request.name(),</span>
-<span class="fc" id="L55">        request.institutionId());</span>
+<span class="fc" id="L99">        request.name(),</span>
+<span class="fc" id="L100">        request.institutionId());</span>
 
-<span class="fc" id="L57">    Tool tool =</span>
-<span class="fc" id="L58">        toolService.createLocalTool(</span>
-<span class="fc" id="L59">            request.name(), request.description(), request.url(), request.institutionId());</span>
+<span class="fc" id="L102">    Tool tool =</span>
+<span class="fc" id="L103">        toolService.createLocalTool(</span>
+<span class="fc" id="L104">            request.name(), request.description(), request.url(), request.institutionId());</span>
 
-<span class="fc" id="L61">    return ResponseEntity.status(HttpStatus.CREATED).body(ToolApplicationMapper.toToolDTO(tool));</span>
+<span class="fc" id="L106">    return ResponseEntity.status(HttpStatus.CREATED).body(ToolApplicationMapper.toToolDTO(tool));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:national:management')&quot;)
   @PutMapping(&quot;/national/{toolId}&quot;)
   public ResponseEntity&lt;ToolDTO&gt; updateNationalTool(
       @PathVariable UUID toolId, @RequestBody UpdateToolRequest request) {
-<span class="fc" id="L68">    log.debug(&quot;Received request to update the national tool {}&quot;, toolId);</span>
+<span class="fc" id="L113">    log.debug(&quot;Received request to update the national tool {}&quot;, toolId);</span>
 
-<span class="fc" id="L70">    Tool tool =</span>
-<span class="fc" id="L71">        toolService.updateNationalTool(</span>
-<span class="fc" id="L72">            toolId, request.name(), request.description(), request.url());</span>
+<span class="fc" id="L115">    Tool tool =</span>
+<span class="fc" id="L116">        toolService.updateNationalTool(</span>
+<span class="fc" id="L117">            toolId, request.name(), request.description(), request.url());</span>
 
-<span class="fc" id="L74">    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(tool));</span>
+<span class="fc" id="L119">    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(tool));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:local:management')&quot;)
   @PutMapping(&quot;/local/{toolId}&quot;)
   public ResponseEntity&lt;ToolDTO&gt; updateLocalTool(
       @PathVariable UUID toolId, @RequestBody UpdateToolRequest request) {
-<span class="fc" id="L81">    log.debug(&quot;Received request to update the tool {}&quot;, toolId);</span>
+<span class="fc" id="L126">    log.debug(&quot;Received request to update the tool {}&quot;, toolId);</span>
 
-<span class="fc" id="L83">    Tool tool =</span>
-<span class="fc" id="L84">        toolService.updateLocalTool(toolId, request.name(), request.description(), request.url());</span>
+<span class="fc" id="L128">    Tool tool =</span>
+<span class="fc" id="L129">        toolService.updateLocalTool(toolId, request.name(), request.description(), request.url());</span>
 
-<span class="fc" id="L86">    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(tool));</span>
+<span class="fc" id="L131">    return ResponseEntity.ok(ToolApplicationMapper.toToolDTO(tool));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:national:management')&quot;)
   @DeleteMapping(&quot;/national/{toolId}&quot;)
   public ResponseEntity&lt;Void&gt; deleteNationalTool(@PathVariable UUID toolId) {
-<span class="fc" id="L92">    log.debug(&quot;Received request to delete the national tool {}&quot;, toolId);</span>
+<span class="fc" id="L137">    log.debug(&quot;Received request to delete the national tool {}&quot;, toolId);</span>
 
-<span class="fc" id="L94">    toolService.deleteNationalTool(toolId);</span>
+<span class="fc" id="L139">    toolService.deleteNationalTool(toolId);</span>
 
-<span class="fc" id="L96">    return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L141">    return ResponseEntity.noContent().build();</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:local:management')&quot;)
   @DeleteMapping(&quot;/local/{toolId}&quot;)
   public ResponseEntity&lt;Void&gt; deleteLocalTool(@PathVariable UUID toolId) {
-<span class="fc" id="L102">    log.debug(&quot;Received request to delete the tool {}&quot;, toolId);</span>
+<span class="fc" id="L147">    log.debug(&quot;Received request to delete the tool {}&quot;, toolId);</span>
 
-<span class="fc" id="L104">    toolService.deleteLocalTool(toolId);</span>
+<span class="fc" id="L149">    toolService.deleteLocalTool(toolId);</span>
 
-<span class="fc" id="L106">    return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L151">    return ResponseEntity.noContent().build();</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:national:management')&quot;)
   @PostMapping(value = &quot;/national/{toolId}/banner&quot;, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity&lt;FileDTO&gt; uploadNationalToolBanner(
       @PathVariable UUID toolId, @RequestParam(&quot;file&quot;) MultipartFile file) {
-<span class="fc" id="L113">    log.debug(&quot;Received request to upload the banner of the national tool {}&quot;, toolId);</span>
+<span class="fc" id="L158">    log.debug(&quot;Received request to upload the banner of the national tool {}&quot;, toolId);</span>
 
-<span class="fc" id="L115">    File banner =</span>
-<span class="fc" id="L116">        toolService.uploadNationalToolBanner(</span>
+<span class="fc" id="L160">    File banner =</span>
+<span class="fc" id="L161">        toolService.uploadNationalToolBanner(</span>
             toolId,
-<span class="fc" id="L118">            file.getOriginalFilename(),</span>
-<span class="fc" id="L119">            file.getContentType(),</span>
-<span class="fc" id="L120">            file.getSize(),</span>
-<span class="fc" id="L121">            file::getInputStream);</span>
+<span class="fc" id="L163">            file.getOriginalFilename(),</span>
+<span class="fc" id="L164">            file.getContentType(),</span>
+<span class="fc" id="L165">            file.getSize(),</span>
+<span class="fc" id="L166">            file::getInputStream);</span>
 
-<span class="fc" id="L123">    return ResponseEntity.status(HttpStatus.CREATED).body(FileDTO.fromDomain(banner));</span>
+<span class="fc" id="L168">    return ResponseEntity.status(HttpStatus.CREATED).body(FileDTO.fromDomain(banner));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:national:management')&quot;)
   @DeleteMapping(&quot;/national/{toolId}/banner&quot;)
   public ResponseEntity&lt;Void&gt; deleteNationalToolBanner(@PathVariable UUID toolId) {
-<span class="fc" id="L129">    log.debug(&quot;Received request to delete the banner of the national tool {}&quot;, toolId);</span>
+<span class="fc" id="L174">    log.debug(&quot;Received request to delete the banner of the national tool {}&quot;, toolId);</span>
 
-<span class="fc" id="L131">    toolService.deleteNationalToolBanner(toolId);</span>
+<span class="fc" id="L176">    toolService.deleteNationalToolBanner(toolId);</span>
 
-<span class="fc" id="L133">    return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L178">    return ResponseEntity.noContent().build();</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:local:management')&quot;)
   @PostMapping(value = &quot;/local/{toolId}/banner&quot;, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity&lt;FileDTO&gt; uploadLocalToolBanner(
       @PathVariable UUID toolId, @RequestParam(&quot;file&quot;) MultipartFile file) {
-<span class="fc" id="L140">    log.debug(&quot;Received request to upload the banner of the tool {}&quot;, toolId);</span>
+<span class="fc" id="L185">    log.debug(&quot;Received request to upload the banner of the tool {}&quot;, toolId);</span>
 
-<span class="fc" id="L142">    File banner =</span>
-<span class="fc" id="L143">        toolService.uploadLocalToolBanner(</span>
+<span class="fc" id="L187">    File banner =</span>
+<span class="fc" id="L188">        toolService.uploadLocalToolBanner(</span>
             toolId,
-<span class="fc" id="L145">            file.getOriginalFilename(),</span>
-<span class="fc" id="L146">            file.getContentType(),</span>
-<span class="fc" id="L147">            file.getSize(),</span>
-<span class="fc" id="L148">            file::getInputStream);</span>
+<span class="fc" id="L190">            file.getOriginalFilename(),</span>
+<span class="fc" id="L191">            file.getContentType(),</span>
+<span class="fc" id="L192">            file.getSize(),</span>
+<span class="fc" id="L193">            file::getInputStream);</span>
 
-<span class="fc" id="L150">    return ResponseEntity.status(HttpStatus.CREATED).body(FileDTO.fromDomain(banner));</span>
+<span class="fc" id="L195">    return ResponseEntity.status(HttpStatus.CREATED).body(FileDTO.fromDomain(banner));</span>
   }
 
   @PreAuthorize(&quot;hasAuthority('tool:local:management')&quot;)
   @DeleteMapping(&quot;/local/{toolId}/banner&quot;)
   public ResponseEntity&lt;Void&gt; deleteLocalToolBanner(@PathVariable UUID toolId) {
-<span class="fc" id="L156">    log.debug(&quot;Received request to delete the banner of the tool {}&quot;, toolId);</span>
+<span class="fc" id="L201">    log.debug(&quot;Received request to delete the banner of the tool {}&quot;, toolId);</span>
 
-<span class="fc" id="L158">    toolService.deleteLocalToolBanner(toolId);</span>
+<span class="fc" id="L203">    toolService.deleteLocalToolBanner(toolId);</span>
 
-<span class="fc" id="L160">    return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L205">    return ResponseEntity.noContent().build();</span>
+  }
+
+  private static PagedResponse&lt;ToolDTO&gt; toPagedResponse(PagedResult&lt;Tool&gt; tools) {
+<span class="fc" id="L209">    return new PagedResponse&lt;&gt;(</span>
+<span class="fc" id="L210">        tools.content().stream().map(ToolApplicationMapper::toToolDTO).toList(),</span>
+<span class="fc" id="L211">        PageInfoDTO.fromDomain(tools.pageInfo()));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
