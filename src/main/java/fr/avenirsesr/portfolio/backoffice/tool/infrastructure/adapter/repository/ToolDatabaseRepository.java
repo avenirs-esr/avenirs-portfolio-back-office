@@ -36,6 +36,16 @@ public class ToolDatabaseRepository extends GenericJpaRepositoryAdapter<Tool, To
         sortedByName(pageCriteria));
   }
 
+  @Override
+  public PagedResult<Tool> findAllNationalOrOfInstitutions(
+      Collection<UUID> institutionIds, EToolType type, PageCriteria pageCriteria) {
+    return findAll(
+        ToolSpecification.isNational()
+            .or(ToolSpecification.withInstitutionIds(institutionIds))
+            .and(ToolSpecification.withType(type)),
+        sortedByName(pageCriteria));
+  }
+
   private static PageRequest sortedByName(PageCriteria pageCriteria) {
     return PageRequest.of(
         pageCriteria.page(),

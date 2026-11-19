@@ -38,4 +38,8 @@ public interface ToolService {
   Tool getNationalTool(UUID toolId);
 
   Tool getLocalTool(UUID toolId);
+
+  PagedResult<Tool> findAvailableTools(EToolType type, PageCriteria pageCriteria);
+
+  Tool getAvailableTool(UUID toolId);
 }

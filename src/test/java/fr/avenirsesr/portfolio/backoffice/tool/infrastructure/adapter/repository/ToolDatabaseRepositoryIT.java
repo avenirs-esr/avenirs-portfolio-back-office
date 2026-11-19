@@ -207,4 +207,73 @@ class ToolDatabaseRepositoryIT extends ContainerConfigurationTest {
     assertTrue(page.content().isEmpty());
     assertEquals(0, page.pageInfo().totalElements());
   }
+
+  @Test
+  void shouldReturnTheNationalToolsAndThoseOfTheGivenInstitutions() {
+    BddLogger.given("national, regional and local tools of several institutions");
+    var national = saved("National", null);
+    var regional = saved("Regional", institution(RENNES_UAI));
+    var local = saved("Local", institution(RENNES_IUT_UAI));
+    saved("Bordeaux", institution(BORDEAUX_UAI));
+    entityManager.flush();
+    entityManager.clear();
+
+    BddLogger.when("reading the national tools and those of Rennes and its IUT");
+    var page =
+        toolDatabaseRepository.findAllNationalOrOfInstitutions(
+            List.of(institution(RENNES_UAI).getId(), institution(RENNES_IUT_UAI).getId()),
+            null,
+            new PageCriteria(0, 10));
+
+    BddLogger.then("it returns the national tool and those of Rennes and its IUT, sorted by name");
+    assertEquals(List.of(local.getId(), national.getId(), regional.getId()), idsOf(page));
+    assertEquals(3, page.pageInfo().totalElements());
+  }
+
+  @Test
+  void shouldFilterTheNationalToolsAndThoseOfTheGivenInstitutionsOnTheirType() {
+    BddLogger.given("a national, a regional and a local tool");
+    var national = saved("National", null);
+    var regional = saved("Regional", institution(RENNES_UAI));
+    var local = saved("Local", institution(RENNES_IUT_UAI));
+    entityManager.flush();
+    entityManager.clear();
+    var rennesIds = List.of(institution(RENNES_UAI).getId(), institution(RENNES_IUT_UAI).getId());
+
+    BddLogger.when("reading them by type");
+
+    BddLogger.then("each type only returns the matching tools");
+    assertEquals(
+        List.of(national.getId()),
+        idsOf(
+            toolDatabaseRepository.findAllNationalOrOfInstitutions(
+                rennesIds, EToolType.NATIONAL, new PageCriteria(0, 10))));
+    assertEquals(
+        List.of(regional.getId()),
+        idsOf(
+            toolDatabaseRepository.findAllNationalOrOfInstitutions(
+                rennesIds, EToolType.REGIONAL, new PageCriteria(0, 10))));
+    assertEquals(
+        List.of(local.getId()),
+        idsOf(
+            toolDatabaseRepository.findAllNationalOrOfInstitutions(
+                rennesIds, EToolType.LOCAL, new PageCriteria(0, 10))));
+  }
+
+  @Test
+  void shouldOnlyReturnTheNationalTools_whenNoInstitutionIsGiven() {
+    BddLogger.given("a national and a regional tool");
+    var national = saved("National", null);
+    saved("Regional", institution(RENNES_UAI));
+    entityManager.flush();
+    entityManager.clear();
+
+    BddLogger.when("reading the national tools and those of no institution");
+    var page =
+        toolDatabaseRepository.findAllNationalOrOfInstitutions(
+            List.of(), null, new PageCriteria(0, 10));
+
+    BddLogger.then("it returns the national tool only");
+    assertEquals(List.of(national.getId()), idsOf(page));
+  }
 }

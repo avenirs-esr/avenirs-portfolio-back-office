@@ -100,4 +100,16 @@ public class TransactionalToolService implements ToolService {
   public Tool getLocalTool(UUID toolId) {
     return delegate.getLocalTool(toolId);
   }
+
+  @Override
+  @Transactional(readOnly = true)
+  public PagedResult<Tool> findAvailableTools(EToolType type, PageCriteria pageCriteria) {
+    return delegate.findAvailableTools(type, pageCriteria);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Tool getAvailableTool(UUID toolId) {
+    return delegate.getAvailableTool(toolId);
+  }
 }

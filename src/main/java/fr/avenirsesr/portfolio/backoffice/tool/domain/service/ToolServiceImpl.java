@@ -150,6 +150,35 @@ public class ToolServiceImpl implements ToolService {
     return findLocalTool(toolId);
   }
 
+  @Override
+  public PagedResult<Tool> findAvailableTools(EToolType type, PageCriteria pageCriteria) {
+    return toolRepository.findAllNationalOrOfInstitutions(
+        learnerInstitutionIds(), type, pageCriteria);
+  }
+
+  @Override
+  public Tool getAvailableTool(UUID toolId) {
+    Tool tool = findTool(toolId);
+    tool.getInstitution().ifPresent(this::requireLearnerAccess);
+
+    return tool;
+  }
+
+  private void requireLearnerAccess(Institution institution) {
+    if (!learnerInstitutionIds().contains(institution.getId())) {
+      log.warn(
+          "Tools of institution {} are not available to the logged-in learner",
+          institution.getId());
+      throw new UserNotAuthorizedException(
+          "The tool must be national or belong to an institution of the learner");
+    }
+  }
+
+  private List<UUID> learnerInstitutionIds() {
+    ExternalUser learner = loggedInExternalUserService.getLoggedInExternalUser();
+    return externalUserAffiliationService.studentScope(learner.getEppn()).institutionIds();
+  }
+
   private void removeTool(Tool tool) {
     toolRepository.removeFromDatabase(tool);
     tool.getBanner().ifPresent(banner -> fileResourceService.delete(banner.getId()));
