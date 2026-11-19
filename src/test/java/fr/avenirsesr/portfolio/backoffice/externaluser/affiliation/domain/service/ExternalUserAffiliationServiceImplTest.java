@@ -368,25 +368,21 @@ class ExternalUserAffiliationServiceImplTest {
   @Test
   void shouldSearchStaffInTheStaffInstitutionsOfTheRequester_whenSearchingStaff() {
     BddLogger.given("a multi-profile external user with different STUDENT and STAFF institutions");
-    ExternalUser requester = externalUser(EUserCategory.STUDENT, EUserCategory.STAFF);
     UUID staffInstitutionId = UUID.randomUUID();
     PageCriteria pageCriteria = new PageCriteria(0, 20);
     PagedResult<ExternalUser> expected = new PagedResult<>(List.of(), new PageInfo(0, 20, 0));
-    when(externalUserRepository.findByEppn(requester.getEppn())).thenReturn(Optional.of(requester));
-    when(externalUserAffiliationRepository.findDistinctInstitutionIds(
-            requester.getId(), EUserCategory.STAFF))
-        .thenReturn(List.of(staffInstitutionId));
+
     when(externalUserRepository.findAllAffiliated(
             "tessier",
             List.of(EUserCategory.STAFF),
             List.of(staffInstitutionId),
-            null,
+            List.of(),
             pageCriteria))
         .thenReturn(expected);
 
     BddLogger.when("searching the staff");
     PagedResult<ExternalUser> result =
-        service.searchStaff(requester.getEppn(), "tessier", pageCriteria);
+        service.searchStaff("tessier", List.of(staffInstitutionId), List.of(), pageCriteria);
 
     BddLogger.then(
         "it should only look for STAFF users in the STAFF institutions of the requester");
@@ -394,19 +390,55 @@ class ExternalUserAffiliationServiceImplTest {
   }
 
   @Test
-  void shouldReturnAnEmptyPage_whenSearchingStaffWithoutStaffAffiliation() {
-    BddLogger.given("an external user with no STAFF affiliation");
-    ExternalUser requester = externalUser(EUserCategory.STUDENT);
+  void shouldSearchStaffInAllInstitutions_whenNationalActivity() {
+    BddLogger.given("a national activity search: no perimeter filter at all");
     PageCriteria pageCriteria = new PageCriteria(0, 20);
-    when(externalUserRepository.findByEppn(requester.getEppn())).thenReturn(Optional.of(requester));
 
-    BddLogger.when("searching the staff");
-    PagedResult<ExternalUser> result = service.searchStaff(requester.getEppn(), null, pageCriteria);
+    ExternalUser otherInstitutionStaff =
+        externalUser("ethan.perrin@university.com", EUserCategory.STAFF);
 
-    BddLogger.then("it should return an empty page without querying the users");
-    assertTrue(result.content().isEmpty());
-    assertEquals(new PageInfo(0, 20, 0), result.pageInfo());
-    verify(externalUserRepository, never()).findAllAffiliated(any(), any(), any(), any(), any());
+    PagedResult<ExternalUser> expected =
+        new PagedResult<>(List.of(otherInstitutionStaff), new PageInfo(0, 20, 1));
+
+    when(externalUserRepository.findAllAffiliated(
+            "tessier", List.of(EUserCategory.STAFF), List.of(), List.of(), pageCriteria))
+        .thenReturn(expected);
+
+    BddLogger.when("searching the staff with national = true");
+
+    PagedResult<ExternalUser> result =
+        service.searchStaff("tessier", List.of(), List.of(), pageCriteria);
+
+    BddLogger.then("staff from other institutions are returned");
+    assertEquals(expected, result);
+  }
+
+  @Test
+  void shouldSearchStaffOnTheActivityPerimeter_whenTargeted() {
+    BddLogger.given("a targeted search: only the activity's institutions and groups");
+    PageCriteria pageCriteria = new PageCriteria(0, 20);
+    UUID institutionId = UUID.randomUUID();
+    UUID groupId = UUID.randomUUID();
+
+    ExternalUser sameInstitutionStaff =
+        externalUser("lucas.tessier@university.com", EUserCategory.STAFF);
+    PagedResult<ExternalUser> expected =
+        new PagedResult<>(List.of(sameInstitutionStaff), new PageInfo(0, 20, 1));
+
+    when(externalUserRepository.findAllAffiliated(
+            "tessier",
+            List.of(EUserCategory.STAFF),
+            List.of(institutionId),
+            List.of(groupId),
+            pageCriteria))
+        .thenReturn(expected);
+
+    BddLogger.when("searching with national = false and a perimeter");
+    PagedResult<ExternalUser> result =
+        service.searchStaff("tessier", List.of(institutionId), List.of(groupId), pageCriteria);
+
+    BddLogger.then("staff from the activity perimeter are returned");
+    assertEquals(expected, result);
   }
 
   private static Group group(UUID id, String name, Group parent) {

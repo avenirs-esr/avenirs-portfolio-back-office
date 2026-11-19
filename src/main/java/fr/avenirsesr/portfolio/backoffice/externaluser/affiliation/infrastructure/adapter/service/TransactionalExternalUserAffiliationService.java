@@ -112,7 +112,7 @@ public class TransactionalExternalUserAffiliationService implements ExternalUser
   @Override
   @Transactional(readOnly = true)
   public PagedResult<ExternalUser> searchStaff(
-      String eppn, String keyword, PageCriteria pageCriteria) {
-    return delegate.searchStaff(eppn, keyword, pageCriteria);
+      String keyword, List<UUID> institutionIds, List<UUID> groupIds, PageCriteria pageCriteria) {
+    return delegate.searchStaff(keyword, institutionIds, groupIds, pageCriteria);
   }
 }

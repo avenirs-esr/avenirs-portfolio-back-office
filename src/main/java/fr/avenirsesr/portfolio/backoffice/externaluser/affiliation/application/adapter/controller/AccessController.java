@@ -14,6 +14,7 @@ import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedRes
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -69,16 +70,25 @@ public class AccessController {
 
   @GetMapping("/staff/search")
   public ResponseEntity<PagedResponse<StaffSearchItemResponse>> searchStaff(
-      @RequestParam String eppn,
       @RequestParam(required = false) String keyword,
+      @RequestParam(required = false) List<UUID> institutionIds,
+      @RequestParam(required = false) List<UUID> groupIds,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
     log.debug(
-        "Searching the staff reachable by eppn {} (keyword: {}) {}", eppn, keyword, pageCriteria);
+        "Searching the staff reachable by institutionIds {} (keyword: {}, groupIds:" + " {}) {}",
+        institutionIds,
+        keyword,
+        groupIds,
+        pageCriteria);
+
+    List<UUID> institutionListIds = institutionIds == null ? List.of() : institutionIds;
+    List<UUID> groupListIds = groupIds == null ? List.of() : groupIds;
 
     PagedResult<ExternalUser> staff =
-        externalUserAffiliationService.searchStaff(eppn, keyword, pageCriteria);
+        externalUserAffiliationService.searchStaff(
+            keyword, institutionListIds, groupListIds, pageCriteria);
 
     return ResponseEntity.ok(
         new PagedResponse<>(

@@ -416,15 +416,10 @@ public class ExternalUserAffiliationServiceImpl implements ExternalUserAffiliati
 
   @Override
   public PagedResult<ExternalUser> searchStaff(
-      String eppn, String keyword, PageCriteria pageCriteria) {
-    List<UUID> institutionIds =
-        institutionIdsOf(findExternalUserByEppn(eppn).getId(), EUserCategory.STAFF);
-    if (institutionIds.isEmpty()) {
-      return new PagedResult<>(
-          List.of(), new PageInfo(pageCriteria.page(), pageCriteria.pageSize(), 0));
-    }
+      String keyword, List<UUID> institutionIds, List<UUID> groupIds, PageCriteria pageCriteria) {
+
     return externalUserRepository.findAllAffiliated(
-        keyword, List.of(EUserCategory.STAFF), institutionIds, null, pageCriteria);
+        keyword, List.of(EUserCategory.STAFF), institutionIds, groupIds, pageCriteria);
   }
 
   private ExternalUser findExternalUserByEppn(String eppn) {

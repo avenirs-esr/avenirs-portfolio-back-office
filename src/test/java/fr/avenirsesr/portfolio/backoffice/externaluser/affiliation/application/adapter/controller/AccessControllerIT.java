@@ -1,8 +1,6 @@
 package fr.avenirsesr.portfolio.backoffice.externaluser.affiliation.application.adapter.controller;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,6 +31,10 @@ class AccessControllerIT extends ContainerConfigurationTest {
   private static final String BASE_PATH = "/back-office/access";
   private static final String STAFF_EPPN = "ethan.perrin@university.com";
   private static final String STUDENT_ONLY_EPPN = "lucas.tessier@university.com";
+
+  private static final String LUCAS_EPPN = "lucas.tessier@university.com";
+
+  private static final String ETHAN_EPPN = "ethan.perrin@university.com";
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ExternalUserRepository externalUserRepository;
@@ -148,57 +150,6 @@ class AccessControllerIT extends ContainerConfigurationTest {
     }
 
     @Nested
-    class AndTheExternalUserHasNoStaffAffiliation {
-
-      private ResultActions response;
-
-      @BeforeEach
-      void setupWhen() throws Exception {
-        BddLogger.given("an external user affiliated only as a STUDENT");
-
-        BddLogger.when("calling GET /back-office/access/staff/scope as that user");
-        response =
-            mockMvc.perform(
-                asStaffUser(get(BASE_PATH + "/staff/scope"), STUDENT_ONLY_EPPN)
-                    .accept(MediaType.APPLICATION_JSON));
-      }
-
-      @Test
-      void thenItShouldReturnAnEmptyScope() throws Exception {
-        BddLogger.then("it should return an empty institution and group scope");
-
-        response
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.institutions", hasSize(0)))
-            .andExpect(jsonPath("$.groups", hasSize(0)));
-      }
-    }
-
-    @Nested
-    class AndExternalUserDoesNotExist {
-
-      private ResultActions response;
-
-      @BeforeEach
-      void setupWhen() throws Exception {
-        BddLogger.given("a principal eppn that does not match any external user");
-
-        BddLogger.when("calling GET /back-office/access/staff/scope as that user");
-        response =
-            mockMvc.perform(
-                asStaffUser(get(BASE_PATH + "/staff/scope"), "unknown.eppn@university.com")
-                    .accept(MediaType.APPLICATION_JSON));
-      }
-
-      @Test
-      void thenItShouldReturnNotFound() throws Exception {
-        BddLogger.then("it should return 404");
-
-        response.andExpect(status().isNotFound());
-      }
-    }
-
-    @Nested
     class AndNoAuthenticationIsProvided {
 
       private ResultActions response;
@@ -228,6 +179,7 @@ class AccessControllerIT extends ContainerConfigurationTest {
     class AndAKeywordMatchesAStaffAndAStudent {
 
       private ResultActions response;
+      private UUID institutionId;
 
       @BeforeEach
       void setupWhen() throws Exception {
@@ -236,12 +188,13 @@ class AccessControllerIT extends ContainerConfigurationTest {
                 + " institutions");
 
         BddLogger.when("calling GET /back-office/access/staff/search with that keyword");
+        institutionId = institutionRepository.findByUai("0350001A").orElseThrow().getId();
         response =
             mockMvc.perform(
                 asStaffUser(
                         get(BASE_PATH + "/staff/search")
-                            .param("eppn", STAFF_EPPN)
-                            .param("keyword", "tessier"),
+                            .param("keyword", "tessier")
+                            .param("institutionIds", String.valueOf(institutionId)),
                         STAFF_EPPN)
                     .accept(MediaType.APPLICATION_JSON));
       }
@@ -264,6 +217,7 @@ class AccessControllerIT extends ContainerConfigurationTest {
     class AndAKeywordMatchesAStaffOfAnotherInstitution {
 
       private ResultActions response;
+      private UUID institutionId;
 
       @BeforeEach
       void setupWhen() throws Exception {
@@ -272,12 +226,13 @@ class AccessControllerIT extends ContainerConfigurationTest {
                 + " only");
 
         BddLogger.when("calling GET /back-office/access/staff/search with that keyword");
+        institutionId = institutionRepository.findByUai("0350001A").orElseThrow().getId();
         response =
             mockMvc.perform(
                 asStaffUser(
                         get(BASE_PATH + "/staff/search")
-                            .param("eppn", STAFF_EPPN)
-                            .param("keyword", "fournier"),
+                            .param("keyword", "fournier")
+                            .param("institutionIds", String.valueOf(institutionId)),
                         STAFF_EPPN)
                     .accept(MediaType.APPLICATION_JSON));
       }
@@ -306,11 +261,7 @@ class AccessControllerIT extends ContainerConfigurationTest {
         BddLogger.when("calling GET /back-office/access/staff/search with a page size of 2");
         response =
             mockMvc.perform(
-                asStaffUser(
-                        get(BASE_PATH + "/staff/search")
-                            .param("eppn", STAFF_EPPN)
-                            .param("pageSize", "2"),
-                        STAFF_EPPN)
+                asStaffUser(get(BASE_PATH + "/staff/search").param("pageSize", "2"), STAFF_EPPN)
                     .accept(MediaType.APPLICATION_JSON));
       }
 
@@ -327,59 +278,50 @@ class AccessControllerIT extends ContainerConfigurationTest {
       }
     }
 
+    private ResultActions response;
+
     @Nested
-    class AndTheExternalUserHasNoStaffAffiliation {
-
-      private ResultActions response;
-
+    class AndExternalUserHasStaffAffiliation {
       @BeforeEach
       void setupWhen() throws Exception {
-        BddLogger.given("an external user affiliated only as a STUDENT");
+        BddLogger.given("an external user only as staff");
+        BddLogger.when("calling GET /back-office/access/staff/search ");
 
-        BddLogger.when("calling GET /back-office/access/staff/search as that user");
         response =
             mockMvc.perform(
                 asStaffUser(
-                        get(BASE_PATH + "/staff/search").param("eppn", STUDENT_ONLY_EPPN),
-                        STUDENT_ONLY_EPPN)
-                    .accept(MediaType.APPLICATION_JSON));
+                    get(BASE_PATH + "/staff/search")
+                        .param("keyword", "perrin")
+                        .param("page", "0")
+                        .param("pageSize", "20")
+                        .accept(MediaType.APPLICATION_JSON),
+                    LUCAS_EPPN));
       }
 
       @Test
-      void thenItShouldReturnAnEmptyPage() throws Exception {
-        BddLogger.then("it should return an empty page");
-
+      void thenItSHouldreturnStaffFromAllInstitutions() throws Exception {
+        BddLogger.then("the response is OK and staff from other institutions are returned");
         response
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data", hasSize(0)))
-            .andExpect(jsonPath("$.page.totalElements", is(0)));
+            .andExpect(jsonPath("$.data[*].eppn", hasItem(ETHAN_EPPN)));
       }
-    }
 
-    @Nested
-    class AndExternalUserDoesNotExist {
-
-      private ResultActions response;
-
-      @BeforeEach
-      void setupWhen() throws Exception {
-        BddLogger.given("an eppn that does not match any external user");
-
-        BddLogger.when("calling GET /back-office/access/staff/search with that eppn");
-        response =
-            mockMvc.perform(
-                asStaffUser(
-                        get(BASE_PATH + "/staff/search")
-                            .param("eppn", "unknown.eppn@university.com"),
-                        STAFF_EPPN)
-                    .accept(MediaType.APPLICATION_JSON));
-      }
+      UUID lucasInstitution = institutionRepository.findByUai("0330001C").orElseThrow().getId();
 
       @Test
-      void thenItShouldReturnNotFound() throws Exception {
-        BddLogger.then("it should return 404");
-
-        response.andExpect(status().isNotFound());
+      void shouldNotReturnStaffFromOtherInstitutionsWhenNotNational() throws Exception {
+        mockMvc
+            .perform(
+                asStaffUser(
+                    get(BASE_PATH + "/staff/search")
+                        .param("keyword", "perrin")
+                        .param("institutionIds", String.valueOf(lucasInstitution))
+                        .param("page", "0")
+                        .param("pageSize", "20")
+                        .accept(MediaType.APPLICATION_JSON),
+                    LUCAS_EPPN))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data[*].eppn", not(hasItem(ETHAN_EPPN))));
       }
     }
 
