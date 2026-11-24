@@ -12,6 +12,8 @@ import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedRes
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +55,9 @@ public class ToolAdminController {
   @PreAuthorize("hasAuthority('tool:local:management')")
   @GetMapping("/local")
   public ResponseEntity<PagedResponse<ToolDTO>> getLocalTools(
-      @RequestParam(required = false) EToolType type,
+      @Parameter(schema = @Schema(ref = "#/components/schemas/EToolType"))
+          @RequestParam(required = false)
+          EToolType type,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
