@@ -194,7 +194,7 @@ public abstract class GenericJpaRepositoryAdapter&lt;
 
   @Override
   public List&lt;D&gt; findAll() {
-<span class="nc" id="L197">    return jpaRepository.findAll().stream().map(mapper::toDomain).toList();</span>
+<span class="fc" id="L197">    return jpaRepository.findAll().stream().map(mapper::toDomain).toList();</span>
   }
 
   protected List&lt;D&gt; findAll(Specification&lt;E&gt; specification) {
