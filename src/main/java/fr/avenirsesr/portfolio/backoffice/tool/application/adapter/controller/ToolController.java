@@ -6,6 +6,8 @@ import fr.avenirsesr.portfolio.backoffice.tool.domain.model.EToolType;
 import fr.avenirsesr.portfolio.backoffice.tool.domain.port.input.ToolService;
 import fr.avenirsesr.portfolio.common.data.application.adapter.response.PagedResponse;
 import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +30,9 @@ public class ToolController {
   @PreAuthorize("hasAuthority('tool:read')")
   @GetMapping
   public ResponseEntity<PagedResponse<ToolDTO>> getAvailableTools(
-      @RequestParam(required = false) EToolType type,
+      @Parameter(schema = @Schema(ref = "#/components/schemas/EToolType"))
+          @RequestParam(required = false)
+          EToolType type,
       @RequestParam(required = false) Integer page,
       @RequestParam(required = false) Integer pageSize) {
     PageCriteria pageCriteria = new PageCriteria(page, pageSize);
