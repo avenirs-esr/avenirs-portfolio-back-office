@@ -6,6 +6,7 @@ import fr.avenirsesr.portfolio.common.institution.application.adapter.dto.Instit
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 
+@Schema(requiredProperties = {"id", "name", "description", "url", "type"})
 public record ToolDTO(
     UUID id,
     String name,
