@@ -38,6 +38,7 @@ import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.Hmac
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
 import jakarta.persistence.EntityManager;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeAll;
@@ -151,6 +152,11 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
 
   private ResultActions deleteAsStaff(String path, EPermission... permissions) throws Exception {
     return mockMvc.perform(asStaff(delete(path), permissions));
+  }
+
+  private ResultActions deleteAsStaff(String path, List<UUID> toolIds, EPermission... permissions)
+      throws Exception {
+    return mockMvc.perform(withJson(asStaff(delete(path), permissions), toolIds));
   }
 
   private MockHttpServletRequestBuilder withJson(
@@ -988,37 +994,45 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
   }
 
   @Nested
-  class WhenDeletingANationalTool {
+  class WhenDeletingNationalTools {
 
     @Test
-    void thenItShouldDeleteTheToolAndItsBanner() throws Exception {
-      BddLogger.given("an existing national tool with a banner");
+    void thenItShouldDeleteTheToolsAndTheirBanners() throws Exception {
+      BddLogger.given("two existing national tools, one of them with a banner");
       File banner = storedBanner();
-      Tool existing = existingTool(null, banner);
+      Tool withBanner = existingTool(null, banner);
+      Tool withoutBanner = existingTool(null);
 
-      BddLogger.when("calling DELETE " + NATIONAL_PATH + "/{toolId}");
+      BddLogger.when("calling DELETE " + NATIONAL_PATH + " with the ids of both tools");
       deleteAsStaff(
-              NATIONAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+              NATIONAL_PATH,
+              List.of(withBanner.getId(), withoutBanner.getId()),
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
           .andExpect(status().isNoContent());
 
-      BddLogger.then("it should delete the tool and the file of its banner");
-      assertThat(stored(existing.getId())).isEmpty();
+      BddLogger.then("it should delete the tools and the file of the banner");
+      assertThat(stored(withBanner.getId())).isEmpty();
+      assertThat(stored(withoutBanner.getId())).isEmpty();
       assertThat(fileRepository.findById(banner.getId())).isEmpty();
       verify(fileStorageService).delete("previous-locator");
     }
 
     @Test
-    void thenItShouldReturnForbidden_whenTheToolIsAttachedToAnInstitution() throws Exception {
-      BddLogger.given("an existing regional tool of Rennes");
-      Tool existing = existingTool(RENNES_UAI);
+    void thenItShouldReturnForbidden_whenOneOfTheToolsIsAttachedToAnInstitution() throws Exception {
+      BddLogger.given("an existing national tool and an existing regional tool of Rennes");
+      Tool national = existingTool(null);
+      Tool regional = existingTool(RENNES_UAI);
 
-      BddLogger.when("calling DELETE " + NATIONAL_PATH + "/{toolId}");
+      BddLogger.when("calling DELETE " + NATIONAL_PATH + " with the ids of both tools");
       deleteAsStaff(
-              NATIONAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+              NATIONAL_PATH,
+              List.of(national.getId(), regional.getId()),
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
           .andExpect(status().isForbidden());
 
-      BddLogger.then("it should return 403, keeping the tool");
-      assertThat(stored(existing.getId())).isPresent();
+      BddLogger.then("it should return 403, keeping both tools");
+      assertThat(stored(national.getId())).isPresent();
+      assertThat(stored(regional.getId())).isPresent();
     }
 
     @Test
@@ -1026,8 +1040,9 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
       BddLogger.given("an existing national tool and a staff managing local tools only");
       Tool existing = existingTool(null);
 
-      BddLogger.when("calling DELETE " + NATIONAL_PATH + "/{toolId}");
-      deleteAsStaff(NATIONAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+      BddLogger.when("calling DELETE " + NATIONAL_PATH);
+      deleteAsStaff(
+              NATIONAL_PATH, List.of(existing.getId()), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
           .andExpect(status().isForbidden());
 
       BddLogger.then("it should return 403, keeping the tool");
@@ -1035,72 +1050,81 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
     }
 
     @Test
-    void thenItShouldReturnNotFound_whenTheToolDoesNotExist() throws Exception {
-      BddLogger.when("calling DELETE " + NATIONAL_PATH + "/{toolId} for an unknown tool");
+    void thenItShouldReturnNotFound_whenOneOfTheToolsDoesNotExist() throws Exception {
+      BddLogger.given("an existing national tool");
+      Tool existing = existingTool(null);
+
+      BddLogger.when("calling DELETE " + NATIONAL_PATH + " with its id and an unknown one");
       deleteAsStaff(
-              NATIONAL_PATH + "/" + UUID.randomUUID(), EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+              NATIONAL_PATH,
+              List.of(existing.getId(), UUID.randomUUID()),
+              EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
           .andExpect(status().isNotFound());
 
-      BddLogger.then("it should return 404");
+      BddLogger.then("it should return 404, keeping the existing tool");
+      assertThat(stored(existing.getId())).isPresent();
     }
   }
 
   @Nested
-  class WhenDeletingALocalTool {
+  class WhenDeletingLocalTools {
 
     @Test
-    void thenItShouldDeleteALocalToolOfTheStaffScopeAndItsBanner() throws Exception {
-      BddLogger.given("an existing local tool of the IUT of Rennes with a banner");
+    void thenItShouldDeleteToolsOfTheStaffScopeAndTheirBanners() throws Exception {
+      BddLogger.given(
+          "an existing local tool of the IUT of Rennes with a banner and a regional one of Rennes");
       File banner = storedBanner();
-      Tool existing = existingTool(RENNES_IUT_UAI, banner);
+      Tool local = existingTool(RENNES_IUT_UAI, banner);
+      Tool regional = existingTool(RENNES_UAI);
 
-      BddLogger.when("calling DELETE " + LOCAL_PATH + "/{toolId}");
-      deleteAsStaff(LOCAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+      BddLogger.when("calling DELETE " + LOCAL_PATH + " with the ids of both tools");
+      deleteAsStaff(
+              LOCAL_PATH,
+              List.of(local.getId(), regional.getId()),
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
           .andExpect(status().isNoContent());
 
-      BddLogger.then("it should delete the tool and the file of its banner");
-      assertThat(stored(existing.getId())).isEmpty();
+      BddLogger.then("it should delete the tools and the file of the banner");
+      assertThat(stored(local.getId())).isEmpty();
+      assertThat(stored(regional.getId())).isEmpty();
       assertThat(fileRepository.findById(banner.getId())).isEmpty();
+      verify(fileStorageService).delete("previous-locator");
     }
 
     @Test
-    void thenItShouldDeleteARegionalToolOfTheStaffScope() throws Exception {
-      BddLogger.given("an existing regional tool of Rennes without banner");
-      Tool existing = existingTool(RENNES_UAI);
+    void thenItShouldReturnForbidden_whenOneOfTheToolsIsOutsideTheStaffScope() throws Exception {
+      BddLogger.given("an existing tool of Rennes, one of Bordeaux and a staff of Rennes");
+      Tool rennes = existingTool(RENNES_UAI);
+      Tool bordeaux = existingTool(BORDEAUX_UAI);
 
-      BddLogger.when("calling DELETE " + LOCAL_PATH + "/{toolId}");
-      deleteAsStaff(LOCAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
-          .andExpect(status().isNoContent());
-
-      BddLogger.then("it should delete the tool, without touching the storage");
-      assertThat(stored(existing.getId())).isEmpty();
-      verify(fileStorageService, never()).delete(any());
-    }
-
-    @Test
-    void thenItShouldReturnForbidden_whenTheToolIsOutsideTheStaffScope() throws Exception {
-      BddLogger.given("an existing tool of Bordeaux and a staff of Rennes");
-      Tool existing = existingTool(BORDEAUX_UAI);
-
-      BddLogger.when("calling DELETE " + LOCAL_PATH + "/{toolId}");
-      deleteAsStaff(LOCAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+      BddLogger.when("calling DELETE " + LOCAL_PATH + " with the ids of both tools");
+      deleteAsStaff(
+              LOCAL_PATH,
+              List.of(rennes.getId(), bordeaux.getId()),
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
           .andExpect(status().isForbidden());
 
-      BddLogger.then("it should return 403, keeping the tool");
-      assertThat(stored(existing.getId())).isPresent();
+      BddLogger.then("it should return 403, keeping both tools");
+      assertThat(stored(rennes.getId())).isPresent();
+      assertThat(stored(bordeaux.getId())).isPresent();
     }
 
     @Test
-    void thenItShouldReturnForbidden_whenTheToolIsNational() throws Exception {
-      BddLogger.given("an existing national tool");
-      Tool existing = existingTool(null);
+    void thenItShouldReturnForbidden_whenOneOfTheToolsIsNational() throws Exception {
+      BddLogger.given("an existing regional tool of Rennes and an existing national tool");
+      Tool regional = existingTool(RENNES_UAI);
+      Tool national = existingTool(null);
 
-      BddLogger.when("calling DELETE " + LOCAL_PATH + "/{toolId}");
-      deleteAsStaff(LOCAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+      BddLogger.when("calling DELETE " + LOCAL_PATH + " with the ids of both tools");
+      deleteAsStaff(
+              LOCAL_PATH,
+              List.of(regional.getId(), national.getId()),
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
           .andExpect(status().isForbidden());
 
-      BddLogger.then("it should return 403, keeping the tool");
-      assertThat(stored(existing.getId())).isPresent();
+      BddLogger.then("it should return 403, keeping both tools");
+      assertThat(stored(regional.getId())).isPresent();
+      assertThat(stored(national.getId())).isPresent();
     }
 
     @Test
@@ -1108,11 +1132,28 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
       BddLogger.given("an existing regional tool of Rennes and a staff managing national tools");
       Tool existing = existingTool(RENNES_UAI);
 
-      BddLogger.when("calling DELETE " + LOCAL_PATH + "/{toolId}");
-      deleteAsStaff(LOCAL_PATH + "/" + existing.getId(), EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
+      BddLogger.when("calling DELETE " + LOCAL_PATH);
+      deleteAsStaff(
+              LOCAL_PATH, List.of(existing.getId()), EPermission.PERM_TOOL_NATIONAL_MANAGEMENT)
           .andExpect(status().isForbidden());
 
       BddLogger.then("it should return 403, keeping the tool");
+      assertThat(stored(existing.getId())).isPresent();
+    }
+
+    @Test
+    void thenItShouldReturnNotFound_whenOneOfTheToolsDoesNotExist() throws Exception {
+      BddLogger.given("an existing regional tool of Rennes");
+      Tool existing = existingTool(RENNES_UAI);
+
+      BddLogger.when("calling DELETE " + LOCAL_PATH + " with its id and an unknown one");
+      deleteAsStaff(
+              LOCAL_PATH,
+              List.of(existing.getId(), UUID.randomUUID()),
+              EPermission.PERM_TOOL_LOCAL_MANAGEMENT)
+          .andExpect(status().isNotFound());
+
+      BddLogger.then("it should return 404, keeping the existing tool");
       assertThat(stored(existing.getId())).isPresent();
     }
   }

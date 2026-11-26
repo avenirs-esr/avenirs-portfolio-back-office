@@ -14,6 +14,7 @@ import fr.avenirsesr.portfolio.common.file.application.adapter.dto.FileDTO;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -136,21 +137,21 @@ public class ToolAdminController {
   }
 
   @PreAuthorize("hasAuthority('tool:national:management')")
-  @DeleteMapping("/national/{toolId}")
-  public ResponseEntity<Void> deleteNationalTool(@PathVariable UUID toolId) {
-    log.debug("Received request to delete the national tool {}", toolId);
+  @DeleteMapping("/national")
+  public ResponseEntity<Void> deleteNationalTools(@RequestBody List<UUID> toolIds) {
+    log.debug("Received request to delete the national tools {}", toolIds);
 
-    toolService.deleteNationalTool(toolId);
+    toolService.deleteNationalTools(toolIds);
 
     return ResponseEntity.noContent().build();
   }
 
   @PreAuthorize("hasAuthority('tool:local:management')")
-  @DeleteMapping("/local/{toolId}")
-  public ResponseEntity<Void> deleteLocalTool(@PathVariable UUID toolId) {
-    log.debug("Received request to delete the tool {}", toolId);
+  @DeleteMapping("/local")
+  public ResponseEntity<Void> deleteLocalTools(@RequestBody List<UUID> toolIds) {
+    log.debug("Received request to delete the tools {}", toolIds);
 
-    toolService.deleteLocalTool(toolId);
+    toolService.deleteLocalTools(toolIds);
 
     return ResponseEntity.noContent().build();
   }

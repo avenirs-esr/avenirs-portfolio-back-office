@@ -6,6 +6,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
+import java.util.List;
 import java.util.UUID;
 
 public interface ToolService {
@@ -27,9 +28,9 @@ public interface ToolService {
 
   void deleteLocalToolBanner(UUID toolId);
 
-  void deleteNationalTool(UUID toolId);
+  void deleteNationalTools(List<UUID> toolIds);
 
-  void deleteLocalTool(UUID toolId);
+  void deleteLocalTools(List<UUID> toolIds);
 
   PagedResult<Tool> findNationalTools(PageCriteria pageCriteria);
 
