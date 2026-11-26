@@ -117,16 +117,16 @@ public class ToolServiceImpl implements ToolService {
   }
 
   @Override
-  public void deleteNationalTools(List<UUID> toolIds) {
-    List<Tool> tools = findTools(toolIds);
+  public void deleteNationalTools(List<UUID> toolsIds) {
+    List<Tool> tools = findTools(toolsIds);
     tools.forEach(ToolServiceImpl::requireNational);
 
     removeTools(tools);
   }
 
   @Override
-  public void deleteLocalTools(List<UUID> toolIds) {
-    List<Tool> tools = findTools(toolIds);
+  public void deleteLocalTools(List<UUID> toolsIds) {
+    List<Tool> tools = findTools(toolsIds);
     requireStaffAccess(
         tools.stream()
             .map(ToolServiceImpl::requireInstitution)
@@ -217,9 +217,9 @@ public class ToolServiceImpl implements ToolService {
     return toolRepository.findById(toolId).orElseThrow(ToolNotFoundException::new);
   }
 
-  private List<Tool> findTools(List<UUID> toolIds) {
-    FieldValidationUtils.requireNotNull("toolIds", toolIds);
-    List<UUID> distinctIds = toolIds.stream().distinct().toList();
+  private List<Tool> findTools(List<UUID> toolsIds) {
+    FieldValidationUtils.requireNotNull("toolsIds", toolsIds);
+    List<UUID> distinctIds = toolsIds.stream().distinct().toList();
     List<Tool> tools = toolRepository.findAllById(distinctIds);
     if (tools.size() != distinctIds.size()) {
       log.warn("Some of the tools {} do not exist", distinctIds);

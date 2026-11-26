@@ -145,8 +145,8 @@ class ToolServiceImplTest {
     return Tool.create(NAME, DESCRIPTION, URL, banner, institution);
   }
 
-  private void findingToolsReturns(List<UUID> toolIds, Tool... tools) {
-    when(toolRepository.findAllById(toolIds)).thenReturn(List.of(tools));
+  private void findingToolsReturns(List<UUID> toolsIds, Tool... tools) {
+    when(toolRepository.findAllById(toolsIds)).thenReturn(List.of(tools));
   }
 
   private void uploadingReturns(File uploaded) {
@@ -724,11 +724,11 @@ class ToolServiceImplTest {
       File banner = banner();
       Tool withBanner = tool(banner, null);
       Tool withoutBanner = tool(null, null);
-      List<UUID> toolIds = List.of(withBanner.getId(), withoutBanner.getId());
-      findingToolsReturns(toolIds, withBanner, withoutBanner);
+      List<UUID> toolsIds = List.of(withBanner.getId(), withoutBanner.getId());
+      findingToolsReturns(toolsIds, withBanner, withoutBanner);
 
       BddLogger.when("deleting them");
-      service.deleteNationalTools(toolIds);
+      service.deleteNationalTools(toolsIds);
 
       BddLogger.then("it should remove the tools, then delete the file of the banner");
       InOrder order = inOrder(toolRepository, fileResourceService);
@@ -756,11 +756,11 @@ class ToolServiceImplTest {
       BddLogger.given("an existing national tool and an existing regional tool");
       Tool national = tool(banner(), null);
       Tool regional = tool(null, primaryInstitution());
-      List<UUID> toolIds = List.of(national.getId(), regional.getId());
-      findingToolsReturns(toolIds, national, regional);
+      List<UUID> toolsIds = List.of(national.getId(), regional.getId());
+      findingToolsReturns(toolsIds, national, regional);
 
       BddLogger.when("deleting them as national tools");
-      assertThrows(UserNotAuthorizedException.class, () -> service.deleteNationalTools(toolIds));
+      assertThrows(UserNotAuthorizedException.class, () -> service.deleteNationalTools(toolsIds));
 
       BddLogger.then("it should be refused, removing nothing");
       verify(toolRepository, never()).removeAllFromDatabase(any());
@@ -771,11 +771,11 @@ class ToolServiceImplTest {
     void thenItShouldRejectTheDeletion_whenOneToolDoesNotExist() {
       BddLogger.given("an existing national tool and a tool id matching no tool");
       Tool existing = tool(null, null);
-      List<UUID> toolIds = List.of(existing.getId(), UUID.randomUUID());
-      findingToolsReturns(toolIds, existing);
+      List<UUID> toolsIds = List.of(existing.getId(), UUID.randomUUID());
+      findingToolsReturns(toolsIds, existing);
 
       BddLogger.when("deleting them as national tools");
-      assertThrows(ToolNotFoundException.class, () -> service.deleteNationalTools(toolIds));
+      assertThrows(ToolNotFoundException.class, () -> service.deleteNationalTools(toolsIds));
 
       BddLogger.then("it should report a tool as not found, removing nothing");
       verify(toolRepository, never()).removeAllFromDatabase(any());
@@ -806,12 +806,12 @@ class ToolServiceImplTest {
       Tool local = tool(banner, secondary);
       Tool regional = tool(null, primary);
       Tool otherLocal = tool(null, secondary);
-      List<UUID> toolIds = List.of(local.getId(), regional.getId(), otherLocal.getId());
-      findingToolsReturns(toolIds, local, regional, otherLocal);
+      List<UUID> toolsIds = List.of(local.getId(), regional.getId(), otherLocal.getId());
+      findingToolsReturns(toolsIds, local, regional, otherLocal);
       staffHasAccessTo(List.of(secondary.getId(), primary.getId()), true);
 
       BddLogger.when("deleting them");
-      service.deleteLocalTools(toolIds);
+      service.deleteLocalTools(toolsIds);
 
       BddLogger.then("it should check the staff scope once, remove the tools, then the banner");
       InOrder order = inOrder(externalUserAffiliationService, toolRepository, fileResourceService);
@@ -830,12 +830,12 @@ class ToolServiceImplTest {
       Institution other = primaryInstitution();
       Tool withinScope = tool(banner(), primary);
       Tool outsideScope = tool(null, other);
-      List<UUID> toolIds = List.of(withinScope.getId(), outsideScope.getId());
-      findingToolsReturns(toolIds, withinScope, outsideScope);
+      List<UUID> toolsIds = List.of(withinScope.getId(), outsideScope.getId());
+      findingToolsReturns(toolsIds, withinScope, outsideScope);
       staffHasAccessTo(List.of(primary.getId(), other.getId()), false);
 
       BddLogger.when("deleting them");
-      assertThrows(UserNotAuthorizedException.class, () -> service.deleteLocalTools(toolIds));
+      assertThrows(UserNotAuthorizedException.class, () -> service.deleteLocalTools(toolsIds));
 
       BddLogger.then("it should be refused, removing nothing");
       verify(toolRepository, never()).removeAllFromDatabase(any());
@@ -847,11 +847,11 @@ class ToolServiceImplTest {
       BddLogger.given("an existing regional tool and an existing national tool");
       Tool regional = tool(null, primaryInstitution());
       Tool national = tool(null, null);
-      List<UUID> toolIds = List.of(regional.getId(), national.getId());
-      findingToolsReturns(toolIds, regional, national);
+      List<UUID> toolsIds = List.of(regional.getId(), national.getId());
+      findingToolsReturns(toolsIds, regional, national);
 
       BddLogger.when("deleting them as local tools");
-      assertThrows(UserNotAuthorizedException.class, () -> service.deleteLocalTools(toolIds));
+      assertThrows(UserNotAuthorizedException.class, () -> service.deleteLocalTools(toolsIds));
 
       BddLogger.then("it should be refused, without checking the staff scope nor removing");
       verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);
@@ -862,11 +862,11 @@ class ToolServiceImplTest {
     void thenItShouldRejectTheDeletion_whenOneToolDoesNotExist() {
       BddLogger.given("an existing regional tool and a tool id matching no tool");
       Tool existing = tool(null, primaryInstitution());
-      List<UUID> toolIds = List.of(existing.getId(), UUID.randomUUID());
-      findingToolsReturns(toolIds, existing);
+      List<UUID> toolsIds = List.of(existing.getId(), UUID.randomUUID());
+      findingToolsReturns(toolsIds, existing);
 
       BddLogger.when("deleting them as local tools");
-      assertThrows(ToolNotFoundException.class, () -> service.deleteLocalTools(toolIds));
+      assertThrows(ToolNotFoundException.class, () -> service.deleteLocalTools(toolsIds));
 
       BddLogger.then("it should report a tool as not found, without checking nor removing");
       verifyNoInteractions(loggedInExternalUserService, externalUserAffiliationService);

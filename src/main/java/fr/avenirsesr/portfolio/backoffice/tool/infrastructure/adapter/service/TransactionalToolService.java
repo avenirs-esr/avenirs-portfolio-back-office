@@ -68,14 +68,14 @@ public class TransactionalToolService implements ToolService {
 
   @Override
   @Transactional
-  public void deleteNationalTools(List<UUID> toolIds) {
-    delegate.deleteNationalTools(toolIds);
+  public void deleteNationalTools(List<UUID> toolsIds) {
+    delegate.deleteNationalTools(toolsIds);
   }
 
   @Override
   @Transactional
-  public void deleteLocalTools(List<UUID> toolIds) {
-    delegate.deleteLocalTools(toolIds);
+  public void deleteLocalTools(List<UUID> toolsIds) {
+    delegate.deleteLocalTools(toolsIds);
   }
 
   @Override

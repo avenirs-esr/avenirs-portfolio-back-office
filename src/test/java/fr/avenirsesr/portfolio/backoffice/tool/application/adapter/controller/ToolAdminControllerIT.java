@@ -154,9 +154,9 @@ class ToolAdminControllerIT extends ContainerConfigurationTest {
     return mockMvc.perform(asStaff(delete(path), permissions));
   }
 
-  private ResultActions deleteAsStaff(String path, List<UUID> toolIds, EPermission... permissions)
+  private ResultActions deleteAsStaff(String path, List<UUID> toolsIds, EPermission... permissions)
       throws Exception {
-    return mockMvc.perform(withJson(asStaff(delete(path), permissions), toolIds));
+    return mockMvc.perform(withJson(asStaff(delete(path), permissions), toolsIds));
   }
 
   private MockHttpServletRequestBuilder withJson(
