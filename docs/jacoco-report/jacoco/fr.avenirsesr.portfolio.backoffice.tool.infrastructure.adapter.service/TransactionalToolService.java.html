@@ -7,6 +7,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,99 +19,99 @@ public class TransactionalToolService implements ToolService {
   @Override
   @Transactional
   public Tool createNationalTool(String name, String description, String url) {
-<span class="fc" id="L21">    return delegate.createNationalTool(name, description, url);</span>
+<span class="fc" id="L22">    return delegate.createNationalTool(name, description, url);</span>
   }
 
   @Override
   @Transactional
   public Tool createLocalTool(String name, String description, String url, UUID institutionId) {
-<span class="fc" id="L27">    return delegate.createLocalTool(name, description, url, institutionId);</span>
+<span class="fc" id="L28">    return delegate.createLocalTool(name, description, url, institutionId);</span>
   }
 
   @Override
   @Transactional
   public Tool updateNationalTool(UUID toolId, String name, String description, String url) {
-<span class="fc" id="L33">    return delegate.updateNationalTool(toolId, name, description, url);</span>
+<span class="fc" id="L34">    return delegate.updateNationalTool(toolId, name, description, url);</span>
   }
 
   @Override
   @Transactional
   public Tool updateLocalTool(UUID toolId, String name, String description, String url) {
-<span class="fc" id="L39">    return delegate.updateLocalTool(toolId, name, description, url);</span>
+<span class="fc" id="L40">    return delegate.updateLocalTool(toolId, name, description, url);</span>
   }
 
   @Override
   @Transactional
   public File uploadNationalToolBanner(
       UUID toolId, String fileName, String mimeType, long size, FileContent content) {
-<span class="fc" id="L46">    return delegate.uploadNationalToolBanner(toolId, fileName, mimeType, size, content);</span>
+<span class="fc" id="L47">    return delegate.uploadNationalToolBanner(toolId, fileName, mimeType, size, content);</span>
   }
 
   @Override
   @Transactional
   public File uploadLocalToolBanner(
       UUID toolId, String fileName, String mimeType, long size, FileContent content) {
-<span class="fc" id="L53">    return delegate.uploadLocalToolBanner(toolId, fileName, mimeType, size, content);</span>
+<span class="fc" id="L54">    return delegate.uploadLocalToolBanner(toolId, fileName, mimeType, size, content);</span>
   }
 
   @Override
   @Transactional
   public void deleteNationalToolBanner(UUID toolId) {
-<span class="fc" id="L59">    delegate.deleteNationalToolBanner(toolId);</span>
-<span class="fc" id="L60">  }</span>
+<span class="fc" id="L60">    delegate.deleteNationalToolBanner(toolId);</span>
+<span class="fc" id="L61">  }</span>
 
   @Override
   @Transactional
   public void deleteLocalToolBanner(UUID toolId) {
-<span class="fc" id="L65">    delegate.deleteLocalToolBanner(toolId);</span>
-<span class="fc" id="L66">  }</span>
+<span class="fc" id="L66">    delegate.deleteLocalToolBanner(toolId);</span>
+<span class="fc" id="L67">  }</span>
 
   @Override
   @Transactional
-  public void deleteNationalTool(UUID toolId) {
-<span class="fc" id="L71">    delegate.deleteNationalTool(toolId);</span>
-<span class="fc" id="L72">  }</span>
+  public void deleteNationalTools(List&lt;UUID&gt; toolIds) {
+<span class="fc" id="L72">    delegate.deleteNationalTools(toolIds);</span>
+<span class="fc" id="L73">  }</span>
 
   @Override
   @Transactional
-  public void deleteLocalTool(UUID toolId) {
-<span class="fc" id="L77">    delegate.deleteLocalTool(toolId);</span>
-<span class="fc" id="L78">  }</span>
+  public void deleteLocalTools(List&lt;UUID&gt; toolIds) {
+<span class="fc" id="L78">    delegate.deleteLocalTools(toolIds);</span>
+<span class="fc" id="L79">  }</span>
 
   @Override
   @Transactional(readOnly = true)
   public PagedResult&lt;Tool&gt; findNationalTools(PageCriteria pageCriteria) {
-<span class="fc" id="L83">    return delegate.findNationalTools(pageCriteria);</span>
+<span class="fc" id="L84">    return delegate.findNationalTools(pageCriteria);</span>
   }
 
   @Override
   @Transactional(readOnly = true)
   public PagedResult&lt;Tool&gt; findLocalTools(EToolType type, PageCriteria pageCriteria) {
-<span class="fc" id="L89">    return delegate.findLocalTools(type, pageCriteria);</span>
+<span class="fc" id="L90">    return delegate.findLocalTools(type, pageCriteria);</span>
   }
 
   @Override
   @Transactional(readOnly = true)
   public Tool getNationalTool(UUID toolId) {
-<span class="fc" id="L95">    return delegate.getNationalTool(toolId);</span>
+<span class="fc" id="L96">    return delegate.getNationalTool(toolId);</span>
   }
 
   @Override
   @Transactional(readOnly = true)
   public Tool getLocalTool(UUID toolId) {
-<span class="fc" id="L101">    return delegate.getLocalTool(toolId);</span>
+<span class="fc" id="L102">    return delegate.getLocalTool(toolId);</span>
   }
 
   @Override
   @Transactional(readOnly = true)
   public PagedResult&lt;Tool&gt; findAvailableTools(EToolType type, PageCriteria pageCriteria) {
-<span class="fc" id="L107">    return delegate.findAvailableTools(type, pageCriteria);</span>
+<span class="fc" id="L108">    return delegate.findAvailableTools(type, pageCriteria);</span>
   }
 
   @Override
   @Transactional(readOnly = true)
   public Tool getAvailableTool(UUID toolId) {
-<span class="fc" id="L113">    return delegate.getAvailableTool(toolId);</span>
+<span class="fc" id="L114">    return delegate.getAvailableTool(toolId);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
