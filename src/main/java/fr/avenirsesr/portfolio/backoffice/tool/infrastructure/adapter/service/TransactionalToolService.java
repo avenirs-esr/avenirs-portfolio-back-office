@@ -7,6 +7,7 @@ import fr.avenirsesr.portfolio.common.data.domain.model.PageCriteria;
 import fr.avenirsesr.portfolio.common.data.domain.model.PagedResult;
 import fr.avenirsesr.portfolio.common.file.domain.model.File;
 import fr.avenirsesr.portfolio.common.file.domain.model.FileContent;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,14 +68,14 @@ public class TransactionalToolService implements ToolService {
 
   @Override
   @Transactional
-  public void deleteNationalTool(UUID toolId) {
-    delegate.deleteNationalTool(toolId);
+  public void deleteNationalTools(List<UUID> toolIds) {
+    delegate.deleteNationalTools(toolIds);
   }
 
   @Override
   @Transactional
-  public void deleteLocalTool(UUID toolId) {
-    delegate.deleteLocalTool(toolId);
+  public void deleteLocalTools(List<UUID> toolIds) {
+    delegate.deleteLocalTools(toolIds);
   }
 
   @Override

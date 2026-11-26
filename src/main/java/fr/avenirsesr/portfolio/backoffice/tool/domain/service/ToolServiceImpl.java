@@ -59,7 +59,7 @@ public class ToolServiceImpl implements ToolService {
         institutionRepository
             .findById(institutionId)
             .orElseThrow(InstitutionNotFoundException::new);
-    requireStaffAccess(institution);
+    requireStaffAccess(List.of(institutionId));
 
     Tool tool =
         toolRepository.save(
@@ -117,13 +117,24 @@ public class ToolServiceImpl implements ToolService {
   }
 
   @Override
-  public void deleteNationalTool(UUID toolId) {
-    removeTool(findNationalTool(toolId));
+  public void deleteNationalTools(List<UUID> toolIds) {
+    List<Tool> tools = findTools(toolIds);
+    tools.forEach(ToolServiceImpl::requireNational);
+
+    removeTools(tools);
   }
 
   @Override
-  public void deleteLocalTool(UUID toolId) {
-    removeTool(findLocalTool(toolId));
+  public void deleteLocalTools(List<UUID> toolIds) {
+    List<Tool> tools = findTools(toolIds);
+    requireStaffAccess(
+        tools.stream()
+            .map(ToolServiceImpl::requireInstitution)
+            .map(Institution::getId)
+            .distinct()
+            .toList());
+
+    removeTools(tools);
   }
 
   @Override
@@ -179,39 +190,61 @@ public class ToolServiceImpl implements ToolService {
     return externalUserAffiliationService.studentScope(learner.getEppn()).institutionIds();
   }
 
-  private void removeTool(Tool tool) {
-    toolRepository.removeFromDatabase(tool);
-    tool.getBanner().ifPresent(banner -> fileResourceService.delete(banner.getId()));
-    log.info("{} tool {} deleted", tool.getType(), tool.getId());
+  private void removeTools(List<Tool> tools) {
+    toolRepository.removeAllFromDatabase(tools);
+    tools.forEach(
+        tool -> {
+          tool.getBanner().ifPresent(banner -> fileResourceService.delete(banner.getId()));
+          log.info("{} tool {} deleted", tool.getType(), tool.getId());
+        });
   }
 
   private Tool findNationalTool(UUID toolId) {
     Tool tool = findTool(toolId);
-    if (tool.getType() != EToolType.NATIONAL) {
-      log.warn("Tool {} is {} and cannot be managed as a national tool", toolId, tool.getType());
-      throw new UserNotAuthorizedException("Only a national tool can be managed as such");
-    }
+    requireNational(tool);
 
     return tool;
   }
 
   private Tool findLocalTool(UUID toolId) {
     Tool tool = findTool(toolId);
-    Institution institution =
-        tool.getInstitution()
-            .orElseThrow(
-                () -> {
-                  log.warn("Tool {} is national and cannot be managed as a local tool", toolId);
-                  return new UserNotAuthorizedException(
-                      "A national tool cannot be managed as a local tool");
-                });
-    requireStaffAccess(institution);
+    requireStaffAccess(List.of(requireInstitution(tool).getId()));
 
     return tool;
   }
 
   private Tool findTool(UUID toolId) {
     return toolRepository.findById(toolId).orElseThrow(ToolNotFoundException::new);
+  }
+
+  private List<Tool> findTools(List<UUID> toolIds) {
+    FieldValidationUtils.requireNotNull("toolIds", toolIds);
+    List<UUID> distinctIds = toolIds.stream().distinct().toList();
+    List<Tool> tools = toolRepository.findAllById(distinctIds);
+    if (tools.size() != distinctIds.size()) {
+      log.warn("Some of the tools {} do not exist", distinctIds);
+      throw new ToolNotFoundException();
+    }
+
+    return tools;
+  }
+
+  private static void requireNational(Tool tool) {
+    if (tool.getType() != EToolType.NATIONAL) {
+      log.warn(
+          "Tool {} is {} and cannot be managed as a national tool", tool.getId(), tool.getType());
+      throw new UserNotAuthorizedException("Only a national tool can be managed as such");
+    }
+  }
+
+  private static Institution requireInstitution(Tool tool) {
+    return tool.getInstitution()
+        .orElseThrow(
+            () -> {
+              log.warn("Tool {} is national and cannot be managed as a local tool", tool.getId());
+              return new UserNotAuthorizedException(
+                  "A national tool cannot be managed as a local tool");
+            });
   }
 
   private File replaceBanner(
@@ -259,14 +292,14 @@ public class ToolServiceImpl implements ToolService {
     FieldValidationUtils.validateUrl(url.trim());
   }
 
-  private void requireStaffAccess(Institution institution) {
+  private void requireStaffAccess(List<UUID> institutionIds) {
     ExternalUser staff = loggedInExternalUserService.getLoggedInExternalUser();
     if (!externalUserAffiliationService.staffHasAccess(
-        staff.getEppn(), List.of(institution.getId()), List.of())) {
+        staff.getEppn(), institutionIds, List.of())) {
       log.warn(
-          "Staff {} is not allowed to manage the tools of institution {}",
+          "Staff {} is not allowed to manage the tools of institutions {}",
           staff.getId(),
-          institution.getId());
+          institutionIds);
       throw new UserNotAuthorizedException(
           "The institution of the tool must be one the user is affiliated to");
     }
