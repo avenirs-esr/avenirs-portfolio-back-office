@@ -138,20 +138,20 @@ public class ToolAdminController {
 
   @PreAuthorize("hasAuthority('tool:national:management')")
   @DeleteMapping("/national")
-  public ResponseEntity<Void> deleteNationalTools(@RequestBody List<UUID> toolIds) {
-    log.debug("Received request to delete the national tools {}", toolIds);
+  public ResponseEntity<Void> deleteNationalTools(@RequestBody List<UUID> toolsIds) {
+    log.debug("Received request to delete the national tools {}", toolsIds);
 
-    toolService.deleteNationalTools(toolIds);
+    toolService.deleteNationalTools(toolsIds);
 
     return ResponseEntity.noContent().build();
   }
 
   @PreAuthorize("hasAuthority('tool:local:management')")
   @DeleteMapping("/local")
-  public ResponseEntity<Void> deleteLocalTools(@RequestBody List<UUID> toolIds) {
-    log.debug("Received request to delete the tools {}", toolIds);
+  public ResponseEntity<Void> deleteLocalTools(@RequestBody List<UUID> toolsIds) {
+    log.debug("Received request to delete the tools {}", toolsIds);
 
-    toolService.deleteLocalTools(toolIds);
+    toolService.deleteLocalTools(toolsIds);
 
     return ResponseEntity.noContent().build();
   }

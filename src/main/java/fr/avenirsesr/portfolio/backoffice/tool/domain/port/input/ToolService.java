@@ -28,9 +28,9 @@ public interface ToolService {
 
   void deleteLocalToolBanner(UUID toolId);
 
-  void deleteNationalTools(List<UUID> toolIds);
+  void deleteNationalTools(List<UUID> toolsIds);
 
-  void deleteLocalTools(List<UUID> toolIds);
+  void deleteLocalTools(List<UUID> toolsIds);
 
   PagedResult<Tool> findNationalTools(PageCriteria pageCriteria);
 
