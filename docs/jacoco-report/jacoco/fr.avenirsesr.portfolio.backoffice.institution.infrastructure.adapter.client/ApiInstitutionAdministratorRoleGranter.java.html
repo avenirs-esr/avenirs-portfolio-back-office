@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiInstitutionAdministratorRoleGranter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.client</a> &gt; <span class="el_source">ApiInstitutionAdministratorRoleGranter.java</span></div><h1>ApiInstitutionAdministratorRoleGranter.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.client;
+
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionAdministratorRoleGrantException;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.client.InstitutionAdministratorRoleAssigner;
+import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.ERole;
+import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.AvenirsSecurityHeaders;
+import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+
+<span class="fc" id="L17">@Slf4j</span>
+@Component
+public class ApiInstitutionAdministratorRoleGranter
+    implements InstitutionAdministratorRoleAssigner {
+
+  private final WebClient webClient;
+  private final ExternalUserRepository externalUserRepository;
+  private final SecurityClient securityClient;
+
+  @Value(&quot;${avenirs.security.grant.endpoint}&quot;)
+  private String grantEndpoint;
+
+  @Value(&quot;${security.authentication.api-key}&quot;)
+  private String apiKeyValue;
+
+  public ApiInstitutionAdministratorRoleGranter(
+      WebClient webClient,
+      ExternalUserRepository externalUserRepository,
+<span class="fc" id="L35">      SecurityClient securityClient) {</span>
+<span class="fc" id="L36">    this.webClient = webClient;</span>
+<span class="fc" id="L37">    this.externalUserRepository = externalUserRepository;</span>
+<span class="fc" id="L38">    this.securityClient = securityClient;</span>
+<span class="fc" id="L39">  }</span>
+
+  @Override
+  public void grantAdminRole(UUID userId) {
+
+<span class="fc" id="L44">    String login =</span>
+        externalUserRepository
+<span class="fc" id="L46">            .findById(userId)</span>
+<span class="fc" id="L47">            .map(ExternalUser::getEppn)</span>
+<span class="fc" id="L48">            .orElseThrow(ExternalUserNotFoundException::new);</span>
+
+<span class="fc bfc" id="L50" title="All 2 branches covered.">    if (securityClient.findRolesByLogin(login).contains(ERole.ROLE_ADMIN)) {</span>
+<span class="fc" id="L51">      log.debug(&quot;User {} already has ROLE_ADMIN&quot;, login);</span>
+<span class="fc" id="L52">      return;</span>
+    }
+
+<span class="fc" id="L55">    AccessControlGrantResult result =</span>
+        webClient
+<span class="fc" id="L57">            .post()</span>
+<span class="fc" id="L58">            .uri(grantEndpoint)</span>
+<span class="fc" id="L59">            .header(AvenirsSecurityHeaders.API_KEY, apiKeyValue)</span>
+<span class="fc" id="L60">            .bodyValue(new AccessControlGrantRequest(login, ERole.ROLE_ADMIN.name()))</span>
+<span class="fc" id="L61">            .retrieve()</span>
+<span class="fc" id="L62">            .bodyToMono(AccessControlGrantResult.class)</span>
+<span class="fc" id="L63">            .block();</span>
+
+<span class="fc bfc" id="L65" title="All 4 branches covered.">    if (result == null || !result.granted()) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">      String error = result == null ? &quot;no response from security service&quot; : result.error();</span>
+<span class="fc" id="L67">      log.error(&quot;Security service refused to grant ROLE_ADMIN to {}: {}&quot;, login, error);</span>
+<span class="fc" id="L68">      throw new InstitutionAdministratorRoleGrantException();</span>
+    }
+
+<span class="fc" id="L71">    log.info(&quot;Granted ROLE_ADMIN to {} (assignment {})&quot;, login, result.assignmentId());</span>
+<span class="fc" id="L72">  }</span>
+
+<span class="fc" id="L74">  private record AccessControlGrantRequest(String login, String role) {}</span>
+
+<span class="fc" id="L76">  private record AccessControlGrantResult(</span>
+      String login, boolean granted, UUID assignmentId, String error) {}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
