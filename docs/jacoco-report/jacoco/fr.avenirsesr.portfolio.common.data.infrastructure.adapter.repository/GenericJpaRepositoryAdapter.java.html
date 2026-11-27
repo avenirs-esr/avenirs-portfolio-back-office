@@ -174,8 +174,8 @@ public abstract class GenericJpaRepositoryAdapter&lt;
 
   @Override
   public void removeAllFromDatabase(List&lt;D&gt; domains) {
-<span class="fc" id="L177">    jpaRepository.deleteAll(domains.stream().map(mapper::fromDomain).toList());</span>
-<span class="fc" id="L178">  }</span>
+<span class="nc" id="L177">    jpaRepository.deleteAll(domains.stream().map(mapper::fromDomain).toList());</span>
+<span class="nc" id="L178">  }</span>
 
   protected void removeAllFromDatabase(DeleteSpecification&lt;E&gt; specification) {
 <span class="nc" id="L181">    jpaSpecificationExecutor.delete(specification);</span>

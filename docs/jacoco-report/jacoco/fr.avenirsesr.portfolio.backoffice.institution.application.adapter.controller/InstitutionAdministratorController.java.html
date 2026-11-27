@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InstitutionAdministratorController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">avenirs-portfolio-back-office</a> &gt; <a href="index.source.html" class="el_package">fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller</a> &gt; <span class="el_source">InstitutionAdministratorController.java</span></div><h1>InstitutionAdministratorController.java</h1><pre class="source lang-java linenums">package fr.avenirsesr.portfolio.backoffice.institution.application.adapter.controller;
+
+import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.DesignateInstitutionAdministratorRequest;
+import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.InstitutionAdministratorDTO;
+import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.mapper.InstitutionAdministratorApplicationMapper;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionAdministratorService;
+import java.util.List;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+<span class="fc" id="L16">@Slf4j</span>
+@RequiredArgsConstructor
+@RestController
+@RequestMapping(&quot;back-office/institutions/administrators&quot;)
+public class InstitutionAdministratorController {
+
+  private final InstitutionAdministratorService institutionAdministratorService;
+
+  @PreAuthorize(&quot;hasAuthority('rbac:assign')&quot;)
+  @PostMapping(&quot;/{userId}&quot;)
+  public ResponseEntity&lt;List&lt;InstitutionAdministratorDTO&gt;&gt; designateInstitutionAdministrator(
+      @PathVariable UUID userId, @RequestBody DesignateInstitutionAdministratorRequest request) {
+<span class="fc" id="L28">    log.debug(</span>
+        &quot;Received request to designate user {} as administrator of institutions {}&quot;,
+        userId,
+<span class="fc" id="L31">        request.institutionIds());</span>
+
+<span class="fc" id="L33">    List&lt;Institution&gt; administered =</span>
+<span class="fc" id="L34">        institutionAdministratorService.designate(userId, request.institutionIds());</span>
+
+<span class="fc" id="L36">    return ResponseEntity.ok(InstitutionAdministratorApplicationMapper.toDTOs(administered));</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
