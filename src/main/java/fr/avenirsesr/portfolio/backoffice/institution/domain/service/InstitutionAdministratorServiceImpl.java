@@ -9,7 +9,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.Instituti
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionAdministrator;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionAdministratorService;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.client.InstitutionAdministratorRoleGranter;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.client.InstitutionAdministratorRoleAssigner;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionAdministratorRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
@@ -35,7 +35,7 @@ public class InstitutionAdministratorServiceImpl implements InstitutionAdministr
   private final InstitutionRepository institutionRepository;
   private final ExternalUserRepository externalUserRepository;
   private final LoggedInExternalUserService loggedInExternalUserService;
-  private final InstitutionAdministratorRoleGranter roleGranter;
+  private final InstitutionAdministratorRoleAssigner roleGranter;
 
   @Override
   public List<Institution> designate(UUID userId, List<UUID> institutionIds) {
