@@ -2,7 +2,7 @@ package fr.avenirsesr.portfolio.backoffice.institution.infrastructure.adapter.se
 
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.input.InstitutionAdministratorService;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.client.InstitutionAdministratorRoleGranter;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.client.InstitutionAdministratorRoleAssigner;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionAdministratorRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.service.InstitutionAdministratorServiceImpl;
@@ -18,7 +18,7 @@ public class InstitutionAdministratorServiceConfig {
   private final InstitutionRepository institutionRepository;
   private final ExternalUserRepository externalUserRepository;
   private final LoggedInExternalUserService loggedInExternalUserService;
-  private final InstitutionAdministratorRoleGranter roleGranter;
+  private final InstitutionAdministratorRoleAssigner roleGranter;
 
   @Bean
   public InstitutionAdministratorService institutionAdministratorService() {

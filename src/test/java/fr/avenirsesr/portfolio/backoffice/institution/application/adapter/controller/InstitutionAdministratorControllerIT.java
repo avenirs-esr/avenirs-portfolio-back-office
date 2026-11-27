@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.avenirsesr.portfolio.backoffice.ContainerConfigurationTest;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.model.ExternalUser;
+import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.client.SecurityClient;
 import fr.avenirsesr.portfolio.backoffice.externaluser.domain.port.output.repository.ExternalUserRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.application.adapter.dto.DesignateInstitutionAdministratorRequest;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
@@ -19,15 +20,21 @@ import fr.avenirsesr.portfolio.backoffice.shared.infrastructure.adapter.seeder.S
 import fr.avenirsesr.portfolio.common.security.accesscontrol.domain.model.enums.EPermission;
 import fr.avenirsesr.portfolio.common.security.infrastructure.adapter.model.HmacAuthenticationToken;
 import fr.avenirsesr.portfolio.common.testutils.BddLogger;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -38,7 +45,8 @@ public class InstitutionAdministratorControllerIT extends ContainerConfiguration
   private static final String LEARNER_EPPN = "arthur.lambert@university.com";
   private static final String RENNES_UAI = "0350001A";
   private static final String RENNES_IUT_UAI = "0350002B";
-
+  @MockitoBean private SecurityClient securityClient;
+  private static final MockWebServer SECURITY_MOCK_SERVER = startMockServer();
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
   @Autowired private InstitutionRepository institutionRepository;
@@ -68,6 +76,23 @@ public class InstitutionAdministratorControllerIT extends ContainerConfiguration
 
   private ResultActions postAsSuperAdmin(String path, Object payload) throws Exception {
     return postAs(path, payload, EPermission.PERM_RBAC_ASSIGN);
+  }
+
+  @DynamicPropertySource
+  static void configureProperties(DynamicPropertyRegistry registry) {
+    registry.add(
+        "avenirs.security.grant.endpoint",
+        () -> SECURITY_MOCK_SERVER.url("/internal/access-control/grant").toString());
+  }
+
+  private static MockWebServer startMockServer() {
+    MockWebServer server = new MockWebServer();
+    try {
+      server.start();
+      return server;
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   private ResultActions postAs(String path, Object payload, EPermission... permissions)
@@ -146,15 +171,31 @@ public class InstitutionAdministratorControllerIT extends ContainerConfiguration
     @Test
     void shouldDesignateAndPersistOnTheNominalCase() throws Exception {
       BddLogger.given("a staff user and a primary institution");
+
       UUID userId = userIdOf(STAFF_EPPN);
       UUID rennesId = institutionIdOf(RENNES_UAI);
 
+      SECURITY_MOCK_SERVER.enqueue(
+          new MockResponse()
+              .setResponseCode(200)
+              .addHeader("Content-Type", "application/json")
+              .setBody(
+                  """
+                  {
+                      "granted": true,
+                      "assignmentId": "123e4567-e89b-12d3-a456-426614174000",
+                      "error": null
+                  }
+                  """));
+
       BddLogger.when("posting the designation as super admin");
+
       postAsSuperAdmin(path(userId), request(rennesId))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$[*].uai", contains(RENNES_UAI)));
 
       BddLogger.then("the designation is persisted");
+
       assertThat(institutionAdministratorRepository.existsByUserAndInstitution(userId, rennesId))
           .isTrue();
     }

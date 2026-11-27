@@ -14,7 +14,7 @@ import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.Instituti
 import fr.avenirsesr.portfolio.backoffice.institution.domain.exception.InstitutionNotPrimaryException;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.Institution;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.model.InstitutionAdministrator;
-import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.client.InstitutionAdministratorRoleGranter;
+import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.client.InstitutionAdministratorRoleAssigner;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionAdministratorRepository;
 import fr.avenirsesr.portfolio.backoffice.institution.domain.port.output.repository.InstitutionRepository;
 import fr.avenirsesr.portfolio.backoffice.shared.domain.port.input.service.LoggedInExternalUserService;
@@ -41,7 +41,7 @@ public class InstitutionAdministratorServiceImplTest {
   @Mock private InstitutionRepository institutionRepository;
   @Mock private ExternalUserRepository externalUserRepository;
   @Mock private LoggedInExternalUserService loggedInExternalUserService;
-  @Mock private InstitutionAdministratorRoleGranter roleGranter;
+  @Mock private InstitutionAdministratorRoleAssigner roleGranter;
 
   @InjectMocks private InstitutionAdministratorServiceImpl service;
 
