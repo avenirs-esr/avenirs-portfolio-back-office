@@ -19,12 +19,15 @@ import fr.avenirsesr.portfolio.common.error.domain.model.enums.EErrorCode;
 import fr.avenirsesr.portfolio.common.institution.domain.model.enums.EInstitutionType;
 import fr.avenirsesr.portfolio.common.user.domain.exceptions.ExternalUserNotFoundException;
 import fr.avenirsesr.portfolio.common.validation.domain.utils.FieldValidationUtils;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-<span class="fc" id="L27">@Slf4j</span>
+<span class="fc" id="L30">@Slf4j</span>
 @AllArgsConstructor
 public class InstitutionAdministratorServiceImpl implements InstitutionAdministratorService {
 
@@ -36,102 +39,105 @@ public class InstitutionAdministratorServiceImpl implements InstitutionAdministr
 
   @Override
   public List&lt;Institution&gt; designate(UUID userId, List&lt;UUID&gt; institutionIds) {
-<span class="fc" id="L39">    FieldValidationUtils.requireNotNull(&quot;userId&quot;, userId);</span>
-<span class="fc" id="L40">    FieldValidationUtils.requireNotNull(&quot;institutionIds&quot;, institutionIds);</span>
+<span class="fc" id="L42">    FieldValidationUtils.requireNotNull(&quot;userId&quot;, userId);</span>
+<span class="fc" id="L43">    FieldValidationUtils.requireNotNull(&quot;institutionIds&quot;, institutionIds);</span>
 
-<span class="pc bpc" id="L42" title="1 of 2 branches missed.">    if (institutionIds.isEmpty()) {</span>
-<span class="nc" id="L43">      throw new FieldValidationException(EErrorCode.INSTITUTION_ID_NULL);</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">    if (institutionIds.isEmpty()) {</span>
+<span class="nc" id="L46">      throw new FieldValidationException(EErrorCode.INSTITUTION_ID_NULL);</span>
     }
 
-<span class="fc" id="L46">    List&lt;UUID&gt; distinctIds = institutionIds.stream().distinct().toList();</span>
+<span class="fc" id="L49">    List&lt;UUID&gt; distinctIds = institutionIds.stream().distinct().toList();</span>
 
-<span class="fc" id="L48">    ExternalUser user =</span>
-<span class="fc" id="L49">        externalUserRepository.findById(userId).orElseThrow(ExternalUserNotFoundException::new);</span>
+<span class="fc" id="L51">    ExternalUser user =</span>
+<span class="fc" id="L52">        externalUserRepository.findById(userId).orElseThrow(ExternalUserNotFoundException::new);</span>
 
-<span class="fc" id="L51">    requireStaff(user);</span>
+<span class="fc" id="L54">    requireStaff(user);</span>
 
-<span class="fc" id="L53">    List&lt;UUID&gt; requestedIds = institutionAdministratorRepository.findInstitutionIdsByUser(userId);</span>
+<span class="fc" id="L56">    List&lt;UUID&gt; existingInstitutionIds =</span>
+<span class="fc" id="L57">        institutionAdministratorRepository.findInstitutionIdsByUser(userId);</span>
 
-<span class="fc" id="L55">    boolean firstDesignation = requestedIds.isEmpty();</span>
+<span class="fc" id="L59">    boolean firstDesignation = existingInstitutionIds.isEmpty();</span>
 
-<span class="fc" id="L57">    List&lt;Institution&gt; institutions = resolvePrimaryInstitution(distinctIds);</span>
+<span class="fc" id="L61">    List&lt;Institution&gt; institutions = resolvePrimaryInstitution(distinctIds);</span>
 
-<span class="fc" id="L59">    UUID createdBy = loggedInExternalUserService.getLoggedInExternalUser().getId();</span>
+<span class="fc" id="L63">    UUID createdBy = loggedInExternalUserService.getLoggedInExternalUser().getId();</span>
 
-<span class="fc" id="L61">    List&lt;Institution&gt; newlyDesignated = persistMissingDesignations(userId, institutions, createdBy);</span>
+<span class="fc" id="L65">    Set&lt;UUID&gt; assignedInstitutionIds = new HashSet&lt;&gt;(existingInstitutionIds);</span>
 
-<span class="pc bpc" id="L63" title="1 of 4 branches missed.">    if (firstDesignation &amp;&amp; !newlyDesignated.isEmpty()) {</span>
-<span class="fc" id="L64">      grantAdminRole(userId);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">    if (firstDesignation) {</span>
+<span class="fc" id="L68">      grantAdminRole(userId);</span>
     }
 
-<span class="fc" id="L67">    List&lt;UUID&gt; administeredIds =</span>
-<span class="fc" id="L68">        Stream.concat(requestedIds.stream(), newlyDesignated.stream().map(Institution::getId))</span>
-<span class="fc" id="L69">            .distinct()</span>
-<span class="fc" id="L70">            .toList();</span>
-<span class="fc" id="L71">    return administeredInstitutions(administeredIds);</span>
+<span class="fc" id="L71">    List&lt;Institution&gt; newlyDesignated =</span>
+<span class="fc" id="L72">        persistMissingDesignations(userId, institutions, createdBy, assignedInstitutionIds);</span>
+
+<span class="fc" id="L74">    List&lt;UUID&gt; administeredIds =</span>
+<span class="fc" id="L75">        Stream.concat(</span>
+<span class="fc" id="L76">                existingInstitutionIds.stream(), newlyDesignated.stream().map(Institution::getId))</span>
+<span class="fc" id="L77">            .distinct()</span>
+<span class="fc" id="L78">            .toList();</span>
+<span class="fc" id="L79">    return administeredInstitutions(administeredIds);</span>
   }
 
   private void requireStaff(ExternalUser user) {
-<span class="fc bfc" id="L75" title="All 2 branches covered.">    if (!user.getCategories().contains(EUserCategory.STAFF)) {</span>
-<span class="fc" id="L76">      log.warn(</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">    if (!user.getCategories().contains(EUserCategory.STAFF)) {</span>
+<span class="fc" id="L84">      log.warn(</span>
           &quot;User {} is not STAFF and cannot be designated as institution administrator&quot;,
-<span class="fc" id="L78">          user.getId());</span>
-<span class="fc" id="L79">      throw new ExternalUserNotStaffException();</span>
+<span class="fc" id="L86">          user.getId());</span>
+<span class="fc" id="L87">      throw new ExternalUserNotStaffException();</span>
     }
-<span class="fc" id="L81">  }</span>
+<span class="fc" id="L89">  }</span>
 
   private List&lt;Institution&gt; resolvePrimaryInstitution(List&lt;UUID&gt; institutionIds) {
-<span class="fc" id="L84">    Set&lt;UUID&gt; requestedIds = new HashSet&lt;&gt;(institutionIds);</span>
+<span class="fc" id="L92">    List&lt;Institution&gt; institutions = institutionRepository.findAllById(institutionIds);</span>
 
-<span class="fc" id="L86">    List&lt;Institution&gt; institutions = institutionRepository.findAllById(institutionIds);</span>
-
-<span class="fc bfc" id="L88" title="All 2 branches covered.">    if (institutions.size() != requestedIds.size()) {</span>
-<span class="fc" id="L89">      throw new InstitutionNotFoundException();</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">    if (institutions.size() != institutionIds.size()) {</span>
+<span class="fc" id="L95">      throw new InstitutionNotFoundException();</span>
     }
 
-<span class="fc" id="L92">    if (!institutions.stream()</span>
-<span class="fc bfc" id="L93" title="All 4 branches covered.">        .allMatch(institution -&gt; institution.getType() == EInstitutionType.PRIMARY)) {</span>
-<span class="fc" id="L94">      log.warn(&quot;Some institutions are not PRIMARY and cannot have an administrator&quot;);</span>
-<span class="fc" id="L95">      throw new InstitutionNotPrimaryException();</span>
+<span class="fc" id="L98">    if (!institutions.stream()</span>
+<span class="fc bfc" id="L99" title="All 4 branches covered.">        .allMatch(institution -&gt; institution.getType() == EInstitutionType.PRIMARY)) {</span>
+<span class="fc" id="L100">      log.warn(&quot;Some institutions are not PRIMARY and cannot have an administrator&quot;);</span>
+<span class="fc" id="L101">      throw new InstitutionNotPrimaryException();</span>
     }
 
-<span class="fc" id="L98">    return institutions;</span>
+<span class="fc" id="L104">    return institutions;</span>
   }
 
   private List&lt;Institution&gt; persistMissingDesignations(
-      UUID userId, List&lt;Institution&gt; institutions, UUID createdBy) {
-<span class="fc" id="L103">    Set&lt;UUID&gt; existingInstitutionIds =</span>
-<span class="fc" id="L104">        new HashSet&lt;&gt;(institutionAdministratorRepository.findInstitutionIdsByUser(userId));</span>
+      UUID userId,
+      List&lt;Institution&gt; institutions,
+      UUID createdBy,
+      Set&lt;UUID&gt; existingInstitutionIds) {
+<span class="fc" id="L112">    List&lt;Institution&gt; toDesignate =</span>
+<span class="fc" id="L113">        institutions.stream()</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">            .filter(institution -&gt; !existingInstitutionIds.contains(institution.getId()))</span>
+<span class="fc" id="L115">            .toList();</span>
 
-<span class="fc" id="L106">    List&lt;Institution&gt; toDesignate =</span>
-<span class="fc" id="L107">        institutions.stream()</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">            .filter(institution -&gt; !existingInstitutionIds.contains(institution.getId()))</span>
-<span class="fc" id="L109">            .toList();</span>
-
-<span class="fc" id="L111">    toDesignate.forEach(</span>
+<span class="fc" id="L117">    toDesignate.forEach(</span>
         institution -&gt;
-<span class="fc" id="L113">            institutionAdministratorRepository.save(</span>
-<span class="fc" id="L114">                InstitutionAdministrator.create(userId, institution, createdBy)));</span>
+<span class="fc" id="L119">            institutionAdministratorRepository.save(</span>
+<span class="fc" id="L120">                InstitutionAdministrator.create(userId, institution, createdBy)));</span>
 
-<span class="fc" id="L116">    return toDesignate;</span>
+<span class="fc" id="L122">    return toDesignate;</span>
   }
 
   private void grantAdminRole(UUID userId) {
     try {
-<span class="fc" id="L121">      roleGranter.grantAdminRole(userId);</span>
-<span class="fc" id="L122">      log.info(&quot;Granted the administrator role to user {}&quot;, userId);</span>
-<span class="fc" id="L123">    } catch (RuntimeException e) {</span>
-<span class="fc" id="L124">      log.error(</span>
-          &quot;Failed to grant the administrator role to user {};&quot;
-              + &quot;removing the  designation created in this operation&quot;,
+<span class="fc" id="L127">      roleGranter.grantAdminRole(userId);</span>
+<span class="fc" id="L128">      log.info(&quot;Granted the administrator role to user {}&quot;, userId);</span>
+<span class="fc" id="L129">    } catch (RuntimeException e) {</span>
+<span class="fc" id="L130">      log.error(</span>
+          &quot;Failed to grant the administrator role to user {} removing the  designation created in&quot;
+              + &quot; this operation&quot;,
           userId,
           e);
-<span class="fc" id="L129">      throw new InstitutionAdministratorRoleGrantException();</span>
-<span class="fc" id="L130">    }</span>
-<span class="fc" id="L131">  }</span>
+<span class="fc" id="L135">      throw new InstitutionAdministratorRoleGrantException();</span>
+<span class="fc" id="L136">    }</span>
+<span class="fc" id="L137">  }</span>
 
   private List&lt;Institution&gt; administeredInstitutions(List&lt;UUID&gt; institutionIds) {
-<span class="fc" id="L134">    return institutionRepository.findAllById(institutionIds);</span>
+<span class="fc" id="L140">    return institutionRepository.findAllById(institutionIds);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
